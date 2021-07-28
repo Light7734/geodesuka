@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{31ecf721-d7c6-4e50-8599-abedef79069c}</ProjectGuid>
+    <RootNamespace>geodesuka</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(ProjectDir)inc;$(ProjectDir)dep/;$(ProjectDir)dep/glad/inc;$(ProjectDir)dep/glfw/inc;$(ProjectDir)../gcl/inc</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;6386;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)dep\glad\inc;$(ProjectDir)dep\glfw\inc;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(ProjectDir)inc;$(ProjectDir)dep/;$(ProjectDir)dep/glad/inc;$(ProjectDir)dep/glfw/inc;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;6386;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)dep\glad\inc;$(ProjectDir)dep\glfw\inc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(ProjectDir)inc;$(ProjectDir)dep/;$(ProjectDir)dep/glad/inc;$(ProjectDir)dep/glfw/inc;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;6386;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)dep\glad\inc;$(ProjectDir)dep\glfw\inc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(ProjectDir)inc;$(ProjectDir)dep/;$(ProjectDir)dep/glad/inc;$(ProjectDir)dep/glfw/inc;</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4244;6386;26451;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)dep\glad\inc;$(ProjectDir)dep\glfw\inc;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\gcl\buffer.cpp" />
+    <ClCompile Include="src\core\gcl\context.cpp" />
+    <ClCompile Include="src\core\gcl\frame_buffer.cpp" />
+    <ClCompile Include="src\core\gcl\gcl.cpp" />
+    <ClCompile Include="src\core\gcl\graphical_program.cpp" />
+    <ClCompile Include="src\core\gcl\material.cpp" />
+    <ClCompile Include="src\core\gcl\mesh.cpp" />
+    <ClCompile Include="src\core\gcl\model.cpp" />
+    <ClCompile Include="src\core\gcl\shader.cpp" />
+    <ClCompile Include="src\core\gcl\shader_program.cpp" />
+    <ClCompile Include="src\core\gcl\texture.cpp" />
+    <ClCompile Include="src\core\gcl\variable.cpp" />
+    <ClCompile Include="src\core\gcl\vertex_array.cpp" />
+    <ClCompile Include="src\core\hid\joystick.cpp" />
+    <ClCompile Include="src\core\hid\keyboard.cpp" />
+    <ClCompile Include="src\core\hid\mouse.cpp" />
+    <ClCompile Include="src\core\io\file.cpp" />
+    <ClCompile Include="src\core\math\matrices\real2x2.cpp" />
+    <ClCompile Include="src\core\math\matrices\real2x3.cpp" />
+    <ClCompile Include="src\core\math\matrices\real2x4.cpp" />
+    <ClCompile Include="src\core\math\matrices\real3x2.cpp" />
+    <ClCompile Include="src\core\math\matrices\real3x3.cpp" />
+    <ClCompile Include="src\core\math\matrices\real3x4.cpp" />
+    <ClCompile Include="src\core\math\matrices\real4x2.cpp" />
+    <ClCompile Include="src\core\math\matrices\real4x3.cpp" />
+    <ClCompile Include="src\core\math\matrices\real4x4.cpp" />
+    <ClCompile Include="src\core\math\numbers\complex.cpp" />
+    <ClCompile Include="src\core\math\numbers\constants.cpp" />
+    <ClCompile Include="src\core\math\numbers\quaternion.cpp" />
+    <ClCompile Include="src\core\math\numbers\real.cpp" />
+    <ClCompile Include="src\core\math\util\fsupport.cpp" />
+    <ClCompile Include="src\core\math\util\isupport.cpp" />
+    <ClCompile Include="src\core\math\util\matrix_multiply.cpp" />
+    <ClCompile Include="src\core\math\vectors\integer2.cpp" />
+    <ClCompile Include="src\core\math\vectors\integer3.cpp" />
+    <ClCompile Include="src\core\math\vectors\integer4.cpp" />
+    <ClCompile Include="src\core\math\vectors\natural2.cpp" />
+    <ClCompile Include="src\core\math\vectors\natural3.cpp" />
+    <ClCompile Include="src\core\math\vectors\natural4.cpp" />
+    <ClCompile Include="src\core\math\vectors\real2.cpp" />
+    <ClCompile Include="src\core\math\vectors\real3.cpp" />
+    <ClCompile Include="src\core\math\vectors\real4.cpp" />
+    <ClCompile Include="src\core\object\camera.cpp" />
+    <ClCompile Include="src\core\object\camera2d.cpp" />
+    <ClCompile Include="src\core\object\camera3d.cpp" />
+    <ClCompile Include="src\core\object\cube.cpp" />
+    <ClCompile Include="src\core\object\object.cpp" />
+    <ClCompile Include="src\core\object\system_display.cpp" />
+    <ClCompile Include="src\core\object\system_window.cpp" />
+    <ClCompile Include="src\core\object\virtual_window.cpp" />
+    <ClCompile Include="src\core\object\vtext.cpp" />
+    <ClCompile Include="src\core\object\window.cpp" />
+    <ClCompile Include="src\core\util\text.cpp" />
+    <ClCompile Include="src\dep\glad\src\glad.c" />
+    <ClCompile Include="src\dep\glfw\src\egl_context.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_context.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_init.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_input.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_monitor.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_vulkan.c" />
+    <ClCompile Include="src\dep\glfw\src\glfw_window.c" />
+    <ClCompile Include="src\dep\glfw\src\osmesa_context.c" />
+    <ClCompile Include="src\dep\glfw\src\wgl_context.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_init.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_joystick.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_monitor.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_thread.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_time.c" />
+    <ClCompile Include="src\dep\glfw\src\win32_window.c" />
+    <ClCompile Include="src\dep\glfw\src\xkb_unicode.c" />
+    <ClCompile Include="src\engine.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="doc\Notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\github\sauce.png" />
+    <Image Include="res\github\sauce0.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\gcl.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\material.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\model.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\variable.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h" />
+    <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
+    <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
+    <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />
+    <ClInclude Include="inc\geodesuka\core\io\file.h" />
+    <ClInclude Include="inc\geodesuka\core\math\config.h" />
+    <ClInclude Include="inc\geodesuka\core\math\gmath.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\boolean.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\complex.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\constants.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\integer.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\natural.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\quaternion.h" />
+    <ClInclude Include="inc\geodesuka\core\math\numbers\real.h" />
+    <ClInclude Include="inc\geodesuka\core\math\util\fsupport.h" />
+    <ClInclude Include="inc\geodesuka\core\math\util\isupport.h" />
+    <ClInclude Include="inc\geodesuka\core\math\util\matrix_multiply.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real2.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h" />
+    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h" />
+    <ClInclude Include="inc\geodesuka\core\object\camera.h" />
+    <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
+    <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
+    <ClInclude Include="inc\geodesuka\core\object\cube.h" />
+    <ClInclude Include="inc\geodesuka\core\object\object.h" />
+    <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
+    <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
+    <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
+    <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
+    <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\util\text.h" />
+    <ClInclude Include="inc\geodesuka\engine.h" />
+    <ClInclude Include="inc\glad\glad.h" />
+    <ClInclude Include="inc\GLFW\glfw3.h" />
+    <ClInclude Include="inc\GLFW\glfw3native.h" />
+    <ClInclude Include="inc\KHR\khrplatform.h" />
+    <ClInclude Include="src\dep\glfw\src\egl_context.h" />
+    <ClInclude Include="src\dep\glfw\src\glfw_config.h" />
+    <ClInclude Include="src\dep\glfw\src\internal.h" />
+    <ClInclude Include="src\dep\glfw\src\mappings.h" />
+    <ClInclude Include="src\dep\glfw\src\osmesa_context.h" />
+    <ClInclude Include="src\dep\glfw\src\wgl_context.h" />
+    <ClInclude Include="src\dep\glfw\src\win32_joystick.h" />
+    <ClInclude Include="src\dep\glfw\src\win32_platform.h" />
+    <ClInclude Include="src\dep\glfw\src\xkb_unicode.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

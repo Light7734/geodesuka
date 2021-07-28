@@ -1,0 +1,6 @@
+Currently the plan is to add mod support for game makers to allow users of the engine to dll
+inject mods into the game without revealing backend for the code in the first place. All assets
+should be in the assets directory, purely for reference and static use. The appdata folder will
+serve as the folder where saves and so on will go. The "mods" folder will serve as the place where
+dynamic library modding will be supported. Extending object functionality without exposing the main
+game source code.

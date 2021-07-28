@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="bin">
+      <UniqueIdentifier>{0a7f2d3e-33fa-4928-b62e-85b9ac3cac20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{fd19452c-e6df-4b39-bf58-ab8bfeea7124}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{546040b7-ab4c-4bd4-a06e-f39ff91f63f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{41590b42-c512-4bb0-be1e-037db895e0eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="doc">
+      <UniqueIdentifier>{e6163e08-0151-44e5-8272-d4e89c66ad0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="obj">
+      <UniqueIdentifier>{3d934aa7-c757-4d43-9595-417c211ddcc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dep">
+      <UniqueIdentifier>{212517cd-24b1-408e-bfe0-66987a048aae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc">
+      <UniqueIdentifier>{fbf8ebfc-2b32-4ba0-8cc9-76a32c0fb4a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\icons">
+      <UniqueIdentifier>{a2873cf2-d7ed-4930-96a1-1aac0cddee9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\github">
+      <UniqueIdentifier>{f85b908d-34d8-4926-a903-f7092e7e6192}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core">
+      <UniqueIdentifier>{4d3072ee-92c2-4715-8b8d-b4c14b6c9bd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep">
+      <UniqueIdentifier>{bec4e23b-dd7c-4d11-a102-b0705533c4e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\gcl">
+      <UniqueIdentifier>{749f7019-4e75-4e4c-be7a-030e9dabec62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\hid">
+      <UniqueIdentifier>{99fb7f1e-cd83-4f1b-891a-8bb93dc1ecd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\io">
+      <UniqueIdentifier>{0a9c20c6-3738-4efc-82d9-389cf6afcd95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\math">
+      <UniqueIdentifier>{73db8332-05dd-412e-bed8-6dd55587760d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\object">
+      <UniqueIdentifier>{84dbee18-6e0b-431d-b640-aed7869a0932}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\util">
+      <UniqueIdentifier>{aafceda2-290d-4ad8-91f6-23eb3735ae97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep\glad">
+      <UniqueIdentifier>{0f54ef0f-24ab-4403-83e2-9f989a515d83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep\glfw">
+      <UniqueIdentifier>{4d9954e7-9b0d-4628-aba6-cb5c100ef931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\glad">
+      <UniqueIdentifier>{34a9c1f7-62f1-417d-a5e9-56d346d22397}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka">
+      <UniqueIdentifier>{ceb9d42a-12e1-44dd-bd28-e2ad9cbab734}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\GLFW">
+      <UniqueIdentifier>{fec405bc-422e-42fa-aba2-3a5231de0a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\KHR">
+      <UniqueIdentifier>{471c28b9-3cc7-454a-a63c-65701f627a0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core">
+      <UniqueIdentifier>{8a54a22e-9933-4869-a77c-c83740dfbdcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\gcl">
+      <UniqueIdentifier>{abd27731-2834-47de-8e8f-070c494aaffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\hid">
+      <UniqueIdentifier>{26692862-47bf-4141-81c1-b61c4781375b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\io">
+      <UniqueIdentifier>{8ae56fc1-f9a5-44cb-8fcf-01b73da19b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\math">
+      <UniqueIdentifier>{7ca72096-d74a-43e6-90ad-f466d7f8ad42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\object">
+      <UniqueIdentifier>{7f60ddf0-1842-4b83-b224-9b19236cab6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\util">
+      <UniqueIdentifier>{3ac8fb36-4104-4ddd-a5dd-08c770af1180}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\math\matrices">
+      <UniqueIdentifier>{eb201197-03fa-4c03-b87a-275c6448e0aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\math\numbers">
+      <UniqueIdentifier>{da26acab-c5d6-4f74-b93e-bc164316f9ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\math\util">
+      <UniqueIdentifier>{97ba8893-3ec2-4a3f-84f3-4f1592cbec9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\math\vectors">
+      <UniqueIdentifier>{7e2a8f69-eaee-4fab-9771-41f215f46aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\math\matrices">
+      <UniqueIdentifier>{335ffb76-4eb3-41cf-8270-bb79990e1c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\math\numbers">
+      <UniqueIdentifier>{f0d7dc37-445c-436d-9375-655d26dbe823}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\math\util">
+      <UniqueIdentifier>{9bd1d473-2aa2-4561-ad80-bce32c984c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\math\vectors">
+      <UniqueIdentifier>{080d2137-0077-4d75-b60f-cfcafaa3a489}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep\glad\src">
+      <UniqueIdentifier>{7158bad8-cbed-4a0f-b18c-b6e51c0a056a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep\glfw\src">
+      <UniqueIdentifier>{47578ef2-a6bf-41cc-b9d7-225699982818}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\core\gcl\buffer.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\context.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\frame_buffer.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\gcl.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\graphical_program.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\material.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\mesh.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\model.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\shader.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\shader_program.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\texture.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\variable.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\vertex_array.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\hid\joystick.cpp">
+      <Filter>src\core\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\hid\keyboard.cpp">
+      <Filter>src\core\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\hid\mouse.cpp">
+      <Filter>src\core\hid</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\file.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real2x2.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real2x3.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real2x4.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real3x2.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real3x3.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real3x4.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real4x2.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real4x3.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\matrices\real4x4.cpp">
+      <Filter>src\core\math\matrices</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\numbers\complex.cpp">
+      <Filter>src\core\math\numbers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\numbers\constants.cpp">
+      <Filter>src\core\math\numbers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\numbers\quaternion.cpp">
+      <Filter>src\core\math\numbers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\numbers\real.cpp">
+      <Filter>src\core\math\numbers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\util\fsupport.cpp">
+      <Filter>src\core\math\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\util\isupport.cpp">
+      <Filter>src\core\math\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\util\matrix_multiply.cpp">
+      <Filter>src\core\math\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\integer2.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\integer3.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\integer4.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\natural2.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\natural3.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\natural4.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\real2.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\real3.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vectors\real4.cpp">
+      <Filter>src\core\math\vectors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\camera.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\camera2d.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\camera3d.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\cube.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\object.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\system_display.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\system_window.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\virtual_window.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\vtext.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object\window.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\util\text.cpp">
+      <Filter>src\core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glad\src\glad.c">
+      <Filter>src\dep\glad\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\egl_context.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_context.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_init.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_input.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_monitor.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_vulkan.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\glfw_window.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\osmesa_context.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\wgl_context.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_init.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_joystick.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_monitor.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_thread.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_time.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\win32_window.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dep\glfw\src\xkb_unicode.c">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
+    <None Include="Makefile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="doc\Notes.txt">
+      <Filter>doc</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\github\sauce.png">
+      <Filter>res\github</Filter>
+    </Image>
+    <Image Include="res\github\sauce0.jpg">
+      <Filter>res\github</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\geodesuka\core\gcl\buffer.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\context.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\gcl.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\material.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\model.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\shader.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\texture.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\variable.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\hid\joystick.h">
+      <Filter>inc\geodesuka\core\hid</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\hid\keyboard.h">
+      <Filter>inc\geodesuka\core\hid</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\hid\mouse.h">
+      <Filter>inc\geodesuka\core\hid</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\file.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\config.h">
+      <Filter>inc\geodesuka\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\gmath.h">
+      <Filter>inc\geodesuka\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x3.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real2x4.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x2.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x3.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real3x4.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x2.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x3.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\matrices\real4x4.h">
+      <Filter>inc\geodesuka\core\math\matrices</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\boolean.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\complex.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\constants.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\integer.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\natural.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\quaternion.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\numbers\real.h">
+      <Filter>inc\geodesuka\core\math\numbers</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\util\fsupport.h">
+      <Filter>inc\geodesuka\core\math\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\util\isupport.h">
+      <Filter>inc\geodesuka\core\math\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\util\matrix_multiply.h">
+      <Filter>inc\geodesuka\core\math\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer2.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer3.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\integer4.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural2.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural3.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\natural4.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real2.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h">
+      <Filter>inc\geodesuka\core\math\vectors</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\camera.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\camera2d.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\camera3d.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\cube.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\object.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\system_display.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\system_window.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\virtual_window.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\vtext.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\window.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\util\text.h">
+      <Filter>inc\geodesuka\core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\glad\glad.h">
+      <Filter>inc\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\GLFW\glfw3.h">
+      <Filter>inc\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\GLFW\glfw3native.h">
+      <Filter>inc\GLFW</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\KHR\khrplatform.h">
+      <Filter>inc\KHR</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\egl_context.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\glfw_config.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\internal.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\mappings.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\osmesa_context.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\wgl_context.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\win32_joystick.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\win32_platform.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glfw\src\xkb_unicode.h">
+      <Filter>src\dep\glfw\src</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\engine.h">
+      <Filter>inc\geodesuka</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
