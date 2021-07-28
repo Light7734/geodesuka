@@ -2,11 +2,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/07/27
+Branch Birth Date: 2021/07/28
 
-Branch Pull Date: 2021/07/27
+Branch Pull Date: ????/??/??
 
-Version: 0.0.11
+Version: 0.0.12
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/sauce.png)
 
