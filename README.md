@@ -4,7 +4,7 @@ Project Start: 2021/05/15
 
 Branch Birth Date: 2021/07/27
 
-Branch Pull Date: ????/??/??
+Branch Pull Date: 2021/07/27
 
 Version: 0.0.11
 
