@@ -30,34 +30,6 @@ in creating particle systems, vector fields, and so on.
 
 # Updated List:
 
-- Added: text.h, vtext.h, camera2d.h, camera3d.h
-
-- Moved glfw and glad headers to inc/ and source files into
-src/. This was done to make the entire repository only a single
-include into other projects that wish to use this public api
-in inc/
-
-text.h:
-Will be used as a replacemnt for std::string, and extended
-for simple text rendering to window types. If rendered to 
-camera types, will be treated as a physical object floating
-in space.
-
-vtext.h:
-Just simply text.h extended for rendering. Can be rendered to
-existing windows sharing the same render context.
-
-camera.h:
-Will be able to stream its frame buffer contents to a window
-layer.
-
-camera2d.h:
-Just simply a 2d rendering camera for 2d spaces, this disambiguation
-is intentional from draw calls issues to a simple window. 
-
-camera3d.h:
-does the same thing, but in 3d.
-
 # To Do List:
 
 - Add built in extension types for file.h to recognize file types

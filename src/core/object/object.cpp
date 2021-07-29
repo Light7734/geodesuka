@@ -16,6 +16,14 @@ namespace geodesuka {
 				return 0;
 			}
 
+			math::integer object::set_position(math::real3 aPosition) {
+				return 0;
+			}
+
+			math::real3 object::get_position() const {
+				return this->Position;
+			}
+
 		}
 	}
 }

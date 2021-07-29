@@ -3,8 +3,9 @@
 
 #include <stdlib.h>
 
-#include <string>
 #include <vector>
+
+#include "../util/text.h"
 
 /*
 Maybe this should maintain of all accessed files and directories
@@ -99,10 +100,10 @@ namespace geodesuka {
 				* Path = Dir + '/' + Name + '.' + Ext
 				*/
 
-				char* Path;
-				char* Dir;
-				char* Name;
-				char* Ext;
+				util::text Path;
+				util::text Dir;
+				util::text Name;
+				util::text Ext;
 
 				/*
 				* This will be the raw data loaded, maybe even possibly

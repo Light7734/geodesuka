@@ -131,8 +131,8 @@ namespace geodesuka {
 
 				// ------------------------- Utilities ------------------------- //
 
-				virtual math::integer set_position(math::real3 aPosition)		{ return 0; }
-				math::real3 get_position()										{ return this->Position; }
+				virtual math::integer set_position(math::real3 aPosition);
+				math::real3 get_position() const;
 
 			protected:
 

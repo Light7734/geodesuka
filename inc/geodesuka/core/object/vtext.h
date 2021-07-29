@@ -10,7 +10,12 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			//class vtext : public text, public object {};
+			class vtext : public util::text, public object {
+			public:
+
+				// Is both a child of text.h and object.h. Used for
+				// direct text rendering to 
+			};
 
 		}
 	}

@@ -7,92 +7,100 @@
 //#define TEXT_DEBUG
 // Essentially boiler plate code, was not satisfied with the functionality of <string>
 
-class text {
-public:
+namespace geodesuka {
+	namespace core {
+		namespace util {
 
-	int n;
-	char* hptr;
+			class text {
+			public:
 
-	// Default Constructor.
-	text();
+				int n;
+				char* hptr;
 
-	//text(char Arg);
-	//text(short Arg);
-	//text(int Arg);
-	//text(unsigned char Arg);
-	//text(unsigned short Arg);
-	//text(unsigned int Arg);
-	//text(float Arg);
-	//text(double Arg);
+				// Default Constructor.
+				text();
 
-	//text(const char* Format, ...);
+				//text(char Arg);
+				//text(short Arg);
+				//text(int Arg);
+				//text(unsigned char Arg);
+				//text(unsigned short Arg);
+				//text(unsigned int Arg);
+				//text(float Arg);
+				//text(double Arg);
 
-	text(const char* Arg);
-	text(const text& Arg);
-	//text(text&& Arg);
+				//text(const char* Format, ...);
 
-	// Destructor.
-	~text();
+				text(const char* Arg);
+				text(const text& Arg);
+				//text(text&& Arg);
 
-	text& operator=(const char* Rhs);
-	text& operator=(const text& Rhs);
-	//text& operator=(text&& Rhs);
+				// Destructor.
+				~text();
 
-	text operator+(const char* Rhs);
-	text operator+(const text& Rhs);
+				text& operator=(const char* Rhs);
+				text& operator=(const text& Rhs);
+				//text& operator=(text&& Rhs);
 
-	text& operator+=(const char* Rhs);
-	text& operator+=(const text& Rhs);
+				text operator+(const char* Rhs);
+				text operator+(const text& Rhs);
 
-	bool operator==(const char* Rhs) const;
-	bool operator==(const text& Rhs) const;
+				text& operator+=(const char* Rhs);
+				text& operator+=(const text& Rhs);
 
-	//bool operator!=(const char* Rhs) const;
-	//bool operator!=(const text& Rhs) const;
+				bool operator==(const char* Rhs) const;
+				bool operator==(const text& Rhs) const;
 
-	char& operator[](int Index);
-	char operator[](int Index) const;
+				//bool operator!=(const char* Rhs) const;
+				//bool operator!=(const text& Rhs) const;
 
-	// Multi Character Modifiers
-	bool push(const char* Str);
-	bool pop(int Count);
-	bool insert(int Index, const char* Str);
-	bool remove(int Index, int Count);
-	bool exchange(int I, int J, int Count);
-	bool permute(int Count);
-	bool reverse(int Index, int Count);
-	bool reverse();
+				char& operator[](int Index);
+				char operator[](int Index) const;
 
-	bool push(text& Str);
-	bool insert(int Index, text& Str);
+				// Multi Character Modifiers
+				bool push(const char* Str);
+				bool pop(int Count);
+				bool insert(int Index, const char* Str);
+				bool remove(int Index, int Count);
+				bool exchange(int I, int J, int Count);
+				bool permute(int Count);
+				bool reverse(int Index, int Count);
+				bool reverse();
 
-	// Single Character Modifiers
-	bool push(char Character);
-	bool pop();
-	bool insert(int Index, char Character);
-	bool remove(int Index);
-	bool exchange(int I, int J);
+				bool push(text& Str);
+				bool insert(int Index, text& Str);
 
-	text split_at(char Character);
-	text split_at(const char *Pattern);
+				// Single Character Modifiers
+				bool push(char Character);
+				bool pop();
+				bool insert(int Index, char Character);
+				bool remove(int Index);
+				bool exchange(int I, int J);
 
-	const char* str() const;
-	int size() const;
-	bool clear();
+				text split_at(char Character);
+				text split_at(const char* Pattern);
 
-	//bool set_font();
+				const char* str() const;
+				int size() const;
+				bool clear();
 
-	// String number manip
+				//bool set_font();
 
-	static float to_float(const char *Arg);
-	//static float to_float(const text& Arg);
-	static double to_double(const char *Arg);
-	//static double to_double(const text& Arg);
+				// String number manip
 
-};
+				static float to_float(const char* Arg);
+				//static float to_float(const text& Arg);
+				static double to_double(const char* Arg);
+				//static double to_double(const text& Arg);
+
+			};
 
 #ifdef TEXT_DEBUG
-void text_unit_test();
+			void text_unit_test();
 #endif // TEXT_DEBUG
+
+		}
+	}
+}
 
 #endif // !TEXT_H
