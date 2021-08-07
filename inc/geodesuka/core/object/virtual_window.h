@@ -2,7 +2,7 @@
 #ifndef VIRTUAL_WINDOW_H
 #define VIRTUAL_WINDOW_H
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"

@@ -54,7 +54,7 @@ PS = Physical Screen Coordinates
 
 #include "../util/text.h"
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 #include "../gcl/gcl.h"
 #include "../gcl/context.h"

@@ -17,7 +17,7 @@
 * how to stream line 
 */
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 #include "../gcl/gcl.h"
 #include "../gcl/context.h"

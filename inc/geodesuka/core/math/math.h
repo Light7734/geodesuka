@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GMATH_H
-#define GMATH_H
+#ifndef GEODESUKA_CORE_MATH_H
+#define GEODESUKA_CORE_MATH_H
 
 /*\\ ---------------------------------------- gclm.h ---------------------------------------- \\//
 
@@ -92,4 +92,4 @@ TODO List:
 /* Utility Functions */
 #include "util/fsupport.h"
 
-#endif // !GMATH_H
+#endif // !GEODESUKA_CORE_MATH_H

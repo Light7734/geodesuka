@@ -6,7 +6,7 @@
 
 #include "gcl.h"
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 #include "variable.h"
 #include "context.h"

@@ -1,10 +1,8 @@
 #pragma once
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef GEODESUKA_CORE_GCL_TEXTURE_H
+#define GEODESUKA_CORE_GCL_TEXTURE_H
 
 #include "gcl.h"
-
-#include "../math/gmath.h"
 
 #include "variable.h"
 #include "context.h"
@@ -16,6 +14,7 @@ namespace geodesuka {
 			class texture {
 			public:
 
+			private:
 
 
 			};
@@ -24,4 +23,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !TEXTURE_H
+#endif // !GEODESUKA_CORE_GCL_TEXTURE_H

@@ -34,7 +34,7 @@ C26451
 /* --------------- Third Party Libraries --------------- */
 
 // ------------------------- Mathematics Library ------------------------- //
-#include "core/math/gmath.h"
+#include "core/math/math.h"
 
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.

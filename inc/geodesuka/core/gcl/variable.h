@@ -163,7 +163,7 @@ struct_declarator:
 
 #include "../gcl/gcl.h"
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 namespace geodesuka {
 	namespace core {

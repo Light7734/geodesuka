@@ -4,7 +4,7 @@
 
 #include "../gcl/gcl.h"
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 #include "../gcl/device.h"
 #include "../gcl/device_context.h"

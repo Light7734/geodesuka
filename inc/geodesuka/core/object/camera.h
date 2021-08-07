@@ -19,7 +19,7 @@
 #include <vector>
 #include <string>
 
-#include "../math/gmath.h"
+#include "../math/math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"

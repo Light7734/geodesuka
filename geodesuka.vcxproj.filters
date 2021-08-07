@@ -163,6 +163,9 @@
     <Filter Include="src\dep\glslang\StandAlone">
       <UniqueIdentifier>{4e27f004-5c8c-4a99-8691-e5b30ba9c70b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\dep\glslang\glslang\Public">
+      <UniqueIdentifier>{0a27dec1-fa44-4b2a-a6a7-c46c6edfb5dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -587,9 +590,6 @@
     <ClInclude Include="inc\geodesuka\core\math\config.h">
       <Filter>inc\geodesuka\core\math</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\math\gmath.h">
-      <Filter>inc\geodesuka\core\math</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h">
       <Filter>inc\geodesuka\core\math\matrices</Filter>
     </ClInclude>
@@ -919,6 +919,12 @@
     </ClInclude>
     <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h">
       <Filter>src\dep\glslang\StandAlone</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math\math.h">
+      <Filter>inc\geodesuka\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h">
+      <Filter>src\dep\glslang\glslang\Public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

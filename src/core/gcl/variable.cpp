@@ -10,7 +10,7 @@
 
 #include <geodesuka/core/gcl/gcl.h>
 
-#include <geodesuka/core/math/gmath.h>
+#include <geodesuka/core/math/math.h>
 
 #define BUILT_IN_TYPE_LIST_SIZE 28
 

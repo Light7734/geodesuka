@@ -36,6 +36,8 @@ in creating particle systems, vector fields, and so on.
 
 - Removed All OpenGL.
 
+- Changed gmath.h to math.h
+
 # To Do List:
 
 - Update headers guards to minimize probabilty of collision.

@@ -325,7 +325,7 @@
     <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />
     <ClInclude Include="inc\geodesuka\core\io\file.h" />
     <ClInclude Include="inc\geodesuka\core\math\config.h" />
-    <ClInclude Include="inc\geodesuka\core\math\gmath.h" />
+    <ClInclude Include="inc\geodesuka\core\math\math.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x3.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x4.h" />
@@ -415,6 +415,7 @@
     <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.h" />
     <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Versions.h" />
     <ClInclude Include="src\dep\glslang\glslang\OSDependent\osinclude.h" />
+    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h" />
     <ClInclude Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\bitutils.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\disassemble.h" />

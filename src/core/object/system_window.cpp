@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include <geodesuka/core/math/gmath.h>
+#include <geodesuka/core/math/math.h>
 
 #include <geodesuka/core/gcl/gcl.h>
 
