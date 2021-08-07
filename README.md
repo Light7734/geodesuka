@@ -8,7 +8,7 @@ Branch Pull Date: 2021/08/07
 
 Version: 0.0.12
 
-![](https://github.com/ShaderKitty/Geodesuka/blob/d20210728-v0.0.12/res/github/glcringe.jpg)
+![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
 # Current Summary
 
