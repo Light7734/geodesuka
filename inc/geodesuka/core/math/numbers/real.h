@@ -22,8 +22,11 @@ namespace geodesuka {
 
 			typedef REAL_TYPE real;
 
+			// Apparently windows has their own definitions. 
+#ifndef _WINDOWS_
 			real min(real aA, real aB);
 			real max(real aA, real aB);
+#endif
 
 			real ln(real Arg);
 			real log(real Base, real RetVal);

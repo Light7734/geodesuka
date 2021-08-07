@@ -27,29 +27,15 @@ namespace geodesuka {
 			}
 
 			frame_buffer::frame_buffer() {
-				this->Context = nullptr;
-				this->Property = prop();
-				this->ID = -1;
+
 			}
 
 			frame_buffer::frame_buffer(const prop& aProperty) {
-				this->Context = nullptr;
-				this->Property = aProperty;
-				this->ID = -1;
+
 			}
 
-			frame_buffer::frame_buffer(context* aContext, const prop& aProperty) {
-				this->Context = aContext;
-				this->Property = aProperty;
-				if (aContext->Handle != NULL) {
-					// Check is context is current!
-					GLuint temp;
-					glGenFramebuffers(1, &temp);
-					this->ID = (math::integer)temp;
-				}
-				else {
-					this->ID = -1;
-				}
+			frame_buffer::frame_buffer(device_context* aDeviceContext, const struct prop& aProperty) {
+
 			}
 
 			frame_buffer::~frame_buffer() {

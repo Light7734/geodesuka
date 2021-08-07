@@ -44,11 +44,11 @@ namespace geodesuka {
 				//keyboard Keyboard;
 				//joystick Joystick;
 
-				math::real Time;
-				math::real3 Position;
-				math::real Mass;
-				math::real3 Momentum;
-				math::real3 Force;
+				//math::real Time;
+				//math::real3 Position;
+				//math::real Mass;
+				//math::real3 Momentum;
+				//math::real3 Force;
 
 				math::real Theta, Phi;
 				math::real3 Right;

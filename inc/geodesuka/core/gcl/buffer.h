@@ -71,7 +71,7 @@ namespace geodesuka {
 
 			private:
 
-				// Is not null if hollow reference.
+				// Is not nullptr if hollow reference.
 				buffer* SuperBuffer;
 				context* Context;
 

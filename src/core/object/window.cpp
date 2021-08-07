@@ -18,7 +18,7 @@ namespace geodesuka {
 
 			window::prop::prop() {
 				this->Resizable				= GLFW_TRUE;
-				this->Decorated				= GLFW_FALSE;
+				this->Decorated				= GLFW_TRUE;
 				this->UserFocused			= GLFW_TRUE;
 				this->AutoMinimize			= GLFW_TRUE;
 				this->Floating				= GLFW_FALSE;
@@ -30,6 +30,24 @@ namespace geodesuka {
 				this->FocusOnShow			= GLFW_TRUE;
 				this->Hovered				= GLFW_TRUE;
 				this->RefreshRate			= GLFW_DONT_CARE;
+			}
+
+			math::integer window::set_title(util::text aTitle) {
+				return 0;
+			}
+
+			math::integer window::set_size(math::real2 aSize) {
+				this->Size = aSize;
+				return 0;
+			}
+
+			math::integer window::set_resolution(math::natural2 aResolution) {
+				this->Resolution = aResolution;
+				return 0;
+			}
+
+			math::boolean window::should_close() {
+				return false;
 			}
 
 		}

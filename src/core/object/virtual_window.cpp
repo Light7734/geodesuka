@@ -4,8 +4,6 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-
-
 			math::integer virtual_window::input(const hid::keyboard& aKeyboard) {
 				return 0;
 			}

@@ -2,7 +2,7 @@
 #ifndef CAMERA3D_H
 #define CAMERA3D_H
 
-
+#include "object.h"
 #include "camera.h"
 
 namespace geodesuka {
@@ -10,6 +10,11 @@ namespace geodesuka {
 		namespace object {
 
 			class camera3d : public camera {
+
+				// Will produce a camera3d that is perspective rendering.
+				camera3d(gcl::context* aRenderingContext, math::real FOV, math::real aAspectRatio, math::real aNear, math::real aFar);
+
+				//camera3d()
 
 				virtual math::integer input(const hid::keyboard& aKeyboard)				override;
 				virtual math::integer input(const hid::mouse& aMouse)					override;

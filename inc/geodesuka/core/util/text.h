@@ -7,92 +7,106 @@
 //#define TEXT_DEBUG
 // Essentially boiler plate code, was not satisfied with the functionality of <string>
 
-class text {
-public:
+/// <summary>
+/// text.h is simply a class to replace char * arrays for memory
+/// management. will be extended for graphical rendering.
+/// </summary>
 
-	int n;
-	char* hptr;
+namespace geodesuka {
+	namespace core {
+		namespace util {
 
-	// Default Constructor.
-	text();
+			class text {
+			public:
 
-	//text(char Arg);
-	//text(short Arg);
-	//text(int Arg);
-	//text(unsigned char Arg);
-	//text(unsigned short Arg);
-	//text(unsigned int Arg);
-	//text(float Arg);
-	//text(double Arg);
+				//TODO: Update internals to size_t.
+				size_t n;
+				char* hptr;
 
-	//text(const char* Format, ...);
+				// Default Constructor.
+				text();
 
-	text(const char* Arg);
-	text(const text& Arg);
-	//text(text&& Arg);
+				//text(char Arg);
+				//text(short Arg);
+				//text(int Arg);
+				//text(unsigned char Arg);
+				//text(unsigned short Arg);
+				//text(unsigned int Arg);
+				//text(float Arg);
+				//text(double Arg);
 
-	// Destructor.
-	~text();
+				//text(const char* Format, ...);
 
-	text& operator=(const char* Rhs);
-	text& operator=(const text& Rhs);
-	//text& operator=(text&& Rhs);
+				text(const char* Arg);
+				text(const text& Arg);
+				//text(text&& Arg);
 
-	text operator+(const char* Rhs);
-	text operator+(const text& Rhs);
+				// Destructor.
+				~text();
 
-	text& operator+=(const char* Rhs);
-	text& operator+=(const text& Rhs);
+				text& operator=(const char* Rhs);
+				text& operator=(const text& Rhs);
+				//text& operator=(text&& Rhs);
 
-	bool operator==(const char* Rhs) const;
-	bool operator==(const text& Rhs) const;
+				text operator+(const char* Rhs);
+				text operator+(const text& Rhs);
 
-	//bool operator!=(const char* Rhs) const;
-	//bool operator!=(const text& Rhs) const;
+				text& operator+=(const char* Rhs);
+				text& operator+=(const text& Rhs);
 
-	char& operator[](int Index);
-	char operator[](int Index) const;
+				bool operator==(const char* Rhs) const;
+				bool operator==(const text& Rhs) const;
 
-	// Multi Character Modifiers
-	bool push(const char* Str);
-	bool pop(int Count);
-	bool insert(int Index, const char* Str);
-	bool remove(int Index, int Count);
-	bool exchange(int I, int J, int Count);
-	bool permute(int Count);
-	bool reverse(int Index, int Count);
-	bool reverse();
+				//bool operator!=(const char* Rhs) const;
+				//bool operator!=(const text& Rhs) const;
 
-	bool push(text& Str);
-	bool insert(int Index, text& Str);
+				char& operator[](int Index);
+				char operator[](int Index) const;
 
-	// Single Character Modifiers
-	bool push(char Character);
-	bool pop();
-	bool insert(int Index, char Character);
-	bool remove(int Index);
-	bool exchange(int I, int J);
+				// Multi Character Modifiers
+				bool push(const char* Str);
+				bool pop(int Count);
+				bool insert(int Index, const char* Str);
+				bool remove(int Index, int Count);
+				bool exchange(int I, int J, int Count);
+				bool permute(int Count);
+				bool reverse(int Index, int Count);
+				bool reverse();
 
-	text split_at(char Character);
-	text split_at(const char *Pattern);
+				bool push(text& Str);
+				bool insert(int Index, text& Str);
 
-	const char* str() const;
-	int size() const;
-	bool clear();
+				// Single Character Modifiers
+				bool push(char Character);
+				bool pop();
+				bool insert(int Index, char Character);
+				bool remove(int Index);
+				bool exchange(int I, int J);
 
-	//bool set_font();
+				text split_at(char Character);
+				text split_at(const char* Pattern);
 
-	// String number manip
+				const char* str() const;
+				int size() const;
+				bool clear();
 
-	static float to_float(const char *Arg);
-	//static float to_float(const text& Arg);
-	static double to_double(const char *Arg);
-	//static double to_double(const text& Arg);
+				//bool set_font();
 
-};
+				// String number manip
+
+				static float to_float(const char* Arg);
+				//static float to_float(const text& Arg);
+				static double to_double(const char* Arg);
+				//static double to_double(const text& Arg);
+
+			};
 
 #ifdef TEXT_DEBUG
-void text_unit_test();
+			void text_unit_test();
 #endif // TEXT_DEBUG
+
+		}
+	}
+}
 
 #endif // !TEXT_H

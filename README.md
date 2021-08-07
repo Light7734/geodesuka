@@ -2,13 +2,13 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/07/27
+Branch Birth Date: 2021/07/28
 
-Branch Pull Date: 2021/07/27
+Branch Pull Date: 2021/08/07
 
-Version: 0.0.11
+Version: 0.0.12
 
-![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/sauce.png)
+![](https://github.com/ShaderKitty/Geodesuka/blob/d20210728-v0.0.12/res/github/glcringe.jpg)
 
 # Current Summary
 
@@ -30,35 +30,13 @@ in creating particle systems, vector fields, and so on.
 
 # Updated List:
 
-- Added: text.h, vtext.h, camera2d.h, camera3d.h
+- Included glslang as built in to the engine.
 
-- Moved glfw and glad headers to inc/ and source files into
-src/. This was done to make the entire repository only a single
-include into other projects that wish to use this public api
-in inc/
-
-text.h:
-Will be used as a replacemnt for std::string, and extended
-for simple text rendering to window types. If rendered to 
-camera types, will be treated as a physical object floating
-in space.
-
-vtext.h:
-Just simply text.h extended for rendering. Can be rendered to
-existing windows sharing the same render context.
-
-camera.h:
-Will be able to stream its frame buffer contents to a window
-layer.
-
-camera2d.h:
-Just simply a 2d rendering camera for 2d spaces, this disambiguation
-is intentional from draw calls issues to a simple window. 
-
-camera3d.h:
-does the same thing, but in 3d.
+- Moved to Vulkan (OpenGL is garbage).
 
 # To Do List:
+
+- Update headers guards to minimize probabilty of collision.
 
 - Add built in extension types for file.h to recognize file types
 and forward to proper objects.
@@ -84,8 +62,6 @@ on.
 - maybe rename window.h to render_target.h?
 
 - Add support for DirectX API, Vulkan API, and CUDA.
-
-- Include glslang to manage shader parsing. https://github.com/KhronosGroup/glslang
 
 - Include lua to enable backend scripting.
 

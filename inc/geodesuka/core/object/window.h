@@ -52,6 +52,8 @@ PS = Physical Screen Coordinates
 
 //class object;
 
+#include "../util/text.h"
+
 #include "../math/gmath.h"
 
 #include "../gcl/gcl.h"
@@ -79,7 +81,6 @@ namespace geodesuka {
 				};
 
 				struct prop {
-					//prop();
 					int Resizable;
 					int Decorated;
 					int UserFocused;
@@ -93,22 +94,26 @@ namespace geodesuka {
 					int FocusOnShow;
 					int Hovered;
 					int RefreshRate;
+					VkPresentModeKHR PresentationMode;
 
-					// Default constructor
 					prop();
 				};
 
 				// This is to discern what type of target is being drawn to, referenced by object.h
 				virtual math::integer draw(object* aObject) = 0;
 
-				virtual math::integer set_title()									{ return 0; }
-				virtual math::integer set_size(math::real2 aSize)					{ return 0; }
-				virtual math::integer set_resolution(math::natural2 aResolution)	{ return 0; }
-				virtual math::boolean should_close()								{ return false; }
+				virtual math::integer set_title(util::text aTitle);
+				virtual math::integer set_size(math::real2 aSize);
+				virtual math::integer set_resolution(math::natural2 aResolution);
+				virtual math::boolean should_close();
 
-			protected:
+				// Will forward input stream to target object. Can be set to null if
+				// no forwarding is chosen.
+				//virtual math::integer forward_input_stream_to(object* aObject);
 
-				char* Name;
+			//protected:
+
+				util::text Name;
 				math::real2 Size;				// [m]
 				math::natural2 Resolution;		// [pixels]
 				struct prop Property;

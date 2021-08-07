@@ -55,6 +55,8 @@ C26451
 //#include "core/gcl/device.h"
 
 // Needed for all graphics/computation objects
+#include "core/gcl/device.h"
+#include "core/gcl/device_context.h"
 #include "core/gcl/context.h"
 
 // Data Objects, used for meshes, models, materials and
@@ -113,6 +115,14 @@ namespace geodesuka {
 	class engine {
 	public:
 
+		struct version {
+			int Major;
+			int Minor;
+			int Patch;
+		};
+
+		const version Version = { 0, 0, 12 };
+
 		//friend class core::object::system_display;
 		friend class core::object::system_window;
 
@@ -148,14 +158,26 @@ namespace geodesuka {
 
 		double get_time();
 
-	private:
+	//private:
+
+		// Make internal engine flags.
+		bool isDebuggingEnabled;
+
+
+		VkResult ErrorCode;
+		VkInstance Instance;
+
+		// It is the job of the engine to query for physical devices and displays.
+		std::vector<core::gcl::device*> DeviceList;
+		std::vector<core::object::system_display*> Display;
+		// Find a way to map devices to system_displays.
+
 
 		// Keeps track of important System and OS objects.
 		core::object::system_display* PrimaryDisplay;
 
 		// Abstract Window Type
 		std::vector<core::object::window*> Window;
-		std::vector<core::object::system_display*> Display;				// Automatically gathered by engine.
 		std::vector<core::object::system_window*> SystemWindow;			// Automatically managed by engine.
 		std::vector<core::object::virtual_window*> VirtualWindow;		
 		std::vector<core::object::camera*> Camera;
@@ -164,6 +186,7 @@ namespace geodesuka {
 		std::vector<core::object::object*> Object;
 
 		
+		const char *get_er_str(VkResult Res);
 
 	};
 
