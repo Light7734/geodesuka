@@ -44,6 +44,9 @@ TODO: Records OpenGL State Machine in the Backend.
 // #include <CL/cl_gl_ext.h>
 //#endif
 
+// glslang
+#include <glslang/Public/ShaderLang.h>
+
 /* Vulkan API */
 #include <vulkan/vulkan.h>
 

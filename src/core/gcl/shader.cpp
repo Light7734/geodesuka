@@ -1,6 +1,9 @@
 #include <geodesuka/core/gcl/shader.h>
 
+#include <glslang/Public/ShaderLang.h>
+
 #include "../../dep/glslang/StandAlone/ResourceLimits.h"
+#include "../../dep/glslang/SPIRV/GlslangToSpv.h"
 
 namespace geodesuka {
 	namespace core {

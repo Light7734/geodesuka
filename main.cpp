@@ -5,6 +5,9 @@
 #include "src/dep/glslang/glslang/Public/ShaderLang.h"
 #include "src/dep/glslang/StandAlone/ResourceLimits.h"
 
+#include "src/dep/glslang/SPIRV/GlslangToSpv.h"
+
+
 using namespace geodesuka::core;
 //using namespace gcl;
 //using namespace object;
@@ -286,10 +289,23 @@ int main(int argc, char *argv[]) {
 	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
 	VertexShader.setStrings(&VertexShaderSource, 1);
 	
-	//VertexShader.preprocess(&glslang::DefaultTBuiltInResource,  )
+	std::string Out;
+	//VertexShader.preprocess(&glslang::DefaultTBuiltInResource, 100, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo, &OUt,  )
 	VertexShader.parse(&glslang::DefaultTBuiltInResource, 450, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo);
-	
 
+	std::vector<unsigned int> VertexShaderBinary;
+
+	glslang::SpvOptions Options;
+	Options.disableOptimizer = false;
+	Options.disassemble = false;
+	Options.generateDebugInfo = true;
+	Options.optimizeSize = false;
+	Options.stripDebugInfo = false;
+	Options.validate = true;
+
+	glslang::GlslangToSpv(*VertexShader.getIntermediate(), VertexShaderBinary);
+
+	glslang::FinalizeProcess();
 	while (!Window->CloseMe) {
 		// Game Loop Time difference
 		Engine.dt = Engine.get_time() - Engine.t;

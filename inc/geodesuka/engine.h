@@ -33,6 +33,19 @@ C26451
 
 /* --------------- Third Party Libraries --------------- */
 
+// glslang
+#include <glslang/Public/ShaderLang.h>
+
+/* Vulkan API */
+#include <vulkan/vulkan.h>
+
+/* GLFW API */
+//#define VK_USE_PLATFORM_WIN32_KHR
+//#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+//#define GLFW_EXPOSE_NATIVE_WIN32
+//#include <GLFW/glfw3native.h>
+
 // ------------------------- Mathematics Library ------------------------- //
 #include "core/math/math.h"
 
@@ -44,11 +57,8 @@ C26451
 
 // ------------------------- Graphics & Computation API ------------------------- //
 
-// Header which includes third party APIs
-#include "core/gcl/gcl.h"
 
 // May Change to "vertex.h", manages memory layout of
-// vertices.
 #include "core/gcl/variable.h"
 
 // Represents GPGPU programmable devices.

@@ -33,6 +33,8 @@ namespace geodesuka {
 		this->t = 0.0;
 		this->PrimaryDisplay = nullptr;
 
+		glslang::InitializeProcess();
+
 		// GLFW must be initialized first for OS extensions.
 		glfwInit();
 
