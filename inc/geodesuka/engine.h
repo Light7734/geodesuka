@@ -121,7 +121,7 @@ namespace geodesuka {
 			int Patch;
 		};
 
-		const version Version = { 0, 0, 12 };
+		const version Version = { 0, 0, 13 };
 
 		//friend class core::object::system_display;
 		friend class core::object::system_window;

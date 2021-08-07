@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
 
 	//glfwTerminate();
 	///*
-	std::cout << "Geodesuka Engine v20210804" << std::endl << std::endl;
+	std::cout << "Geodesuka Engine v20210807" << std::endl << std::endl;
 	geodesuka::engine Engine(argc, argv);
 
 	// Choose from provided Device List. Just an example.
