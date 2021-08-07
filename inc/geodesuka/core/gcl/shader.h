@@ -1,12 +1,20 @@
 #pragma once
-#ifndef SHADER_H
-#define SHADER_H
-
-#include <glslang/Public/ShaderLang.h>
+#ifndef GEODESUKA_CORE_GCL_SHADER_H
+#define GEODESUKA_CORE_GCL_SHADER_H
 
 #include "gcl.h"
 
-#include "context.h"
+#include "device.h"
+#include "device_context.h"
+
+#include "../io/file.h"
+
+#ifndef _COMPILER_INTERFACE_INCLUDED_
+// Forward Declaration for glslang
+namespace glslang {
+	class TShader;
+}
+#endif // !_COMPILER_INTERFACE_INCLUDED_
 
 namespace geodesuka {
 	namespace core {
@@ -14,6 +22,15 @@ namespace geodesuka {
 
 			class shader /*: public glslang::TIntermTraverser*/ {
 			public:
+
+				enum stage {
+					VERTEX,
+					TESSELLATION_CONTROL,
+					TESSELLATION_EVALUATION,
+					GEOMETRY,
+					PIXEL,
+					COMPUTE
+				};
 
 				//enum stage {
 				//	VERTEX						= EShLanguage::EShLangVertex,
@@ -30,47 +47,8 @@ namespace geodesuka {
 				//	HLSL		= glslang::EShSource::EShSourceHlsl
 				//};
 
-				//enum type_id {
-				//	VERTEX_			= GL_VERTEX_SHADER,
-				//	GEOMETRY		= GL_GEOMETRY_SHADER,
-				//	PIXEL			= GL_FRAGMENT_SHADER
-				//};
-
-				//// Raw Shader Source
-				//glslang::TShader *Shader;
-				//char *Sauce;
-
-				//stage Stage;
-				//language Language;
-
-				int Type;
-				unsigned int ID;
-
-				int ErrorCode;
-				int isLoaded;
-				int isCompiled;
-
-				shader();
-				//shader(const gcl::gl::context& Context, int ShaderType);
-				~shader();
-
-				GLenum set_source(const char* Source);
-				const char* get_source() const;
-
-				GLenum get_param(GLenum ParamName, GLint* ParamVal);
-
-				// ---------- Util ---------- //
-
-				// Deprecate ASAP
-				int read(const char* FilePath);
-				int write(const char* FilePath);
-
-				int load(const char* Source);
-				int clear();
-
-				int parse();
-				int compile();
-
+				shader(device_context* aDeviceContext, io::file* File);
+				 
 				//virtual void visitSymbol(glslang::TIntermSymbol* Symbol)											override;
 				//virtual void visitConstantUnion(glslang::TIntermConstantUnion* ConstantUnion)						override;
 				//virtual bool visitBinary(glslang::TVisit VisitType, glslang::TIntermBinary* Binary)					override;
@@ -81,10 +59,14 @@ namespace geodesuka {
 				//virtual bool visitBranch(glslang::TVisit VisitType, glslang::TIntermBranch* Branch)					override;
 				//virtual bool visitSwitch(glslang::TVisit VisitType, glslang::TIntermSwitch* Switch)					override;
 
+			private:
+
+				// Interface with 
+				glslang::TShader mTShader;
 			};
 
 		}
 	}
 }
 
-#endif // !SHADER_H
+#endif // !GEODESUKA_CORE_GCL_SHADER_H

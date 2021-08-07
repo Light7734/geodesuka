@@ -268,12 +268,34 @@ int main(int argc, char *argv[]) {
 	const char* VertexShaderSource =
 		"#version 450\n\
 		\n\
-		layout (location = 0) in vec3 VertexPosition;\n\
-		layout (location = 1) in vec3 VertexColor;\n\
-		out vec3 Color;\n\
+		layout(location = 0) out vec3 fragColor;\n\
+		\n\
+		vec2 positions[3] = vec2[](\n\
+		    vec2(0.0, -0.5),\n\
+		    vec2(0.5, 0.5),\n\
+		    vec2(-0.5, 0.5)\n\
+		);\n\
+		\n\
+		vec3 colors[3] = vec3[](\n\
+		    vec3(1.0, 0.0, 0.0),\n\
+		    vec3(0.0, 1.0, 0.0),\n\
+		    vec3(0.0, 0.0, 1.0)\n\
+		);\n\
+		\n\
 		void main() {\n\
-			Color = VertexColor;\n\
-			gl_Position = vec4(Vertex, 1.0);\n\
+		    gl_Position = vec4(positions[gl_VertexIndex], 0.0, 1.0);\n\
+		    fragColor = colors[gl_VertexIndex];\n\
+		}";
+
+	const char* FragmentShaderSource =
+		"#version 450\n\
+		\n\
+		layout(location = 0) in vec3 fragColor;\n\
+		\n\
+		layout(location = 0) out vec4 outColor;\n\
+		\n\
+		void main() {\n\
+		    outColor = vec4(fragColor, 1.0);\n\
 		}";
 
 	std::cout << VertexShaderSource << std::endl;
@@ -281,31 +303,93 @@ int main(int argc, char *argv[]) {
 	// Makes simple graphics pipline
 	VkPipeline GraphicsPipeline;
 
-	glslang::InitializeProcess();
+	bool Success = false;
 	glslang::TShader VertexShader(EShLanguage::EShLangVertex);
-	VertexShader.setEntryPoint("main");
-	VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 450);
-	VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+	glslang::TShader FragmentShader(EShLanguage::EShLangFragment);
+	std::vector<unsigned int> VertexShaderSPIRV;
+	std::vector<unsigned int> FragmentShaderSPIRV;
+
 	VertexShader.setStrings(&VertexShaderSource, 1);
+	VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+	VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+	VertexShader.setEntryPoint("main");
+
+	FragmentShader.setStrings(&VertexShaderSource, 1);
+	FragmentShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+	FragmentShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	FragmentShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+	FragmentShader.setEntryPoint("main");
+
+	EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
+
+	Success = VertexShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+	if (Success) {
+		// If parsing successful, take AST and compile to SPIRV.
+		glslang::GlslangToSpv(*VertexShader.getIntermediate(), VertexShaderSPIRV);
+	}
+	else {
+		// Print error message.
+		std::cout << VertexShader.getInfoDebugLog() << std::endl;
+	}
+
+	Success = FragmentShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+	if (Success) {
+		// If parsing successful, take AST and compile to SPIRV.
+		glslang::GlslangToSpv(*FragmentShader.getIntermediate(), FragmentShaderSPIRV);
+	}
+	else {
+		// Print error message.
+		std::cout << FragmentShader.getInfoDebugLog() << std::endl;
+	}
+
+	VkShaderModuleCreateInfo VertexShaderModuleCreateInfo;
+	VertexShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	VertexShaderModuleCreateInfo.pNext		= NULL;
+	VertexShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
+	VertexShaderModuleCreateInfo.codeSize	= VertexShaderSPIRV.size()*sizeof(uint32_t);
+	VertexShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(VertexShaderSPIRV.data());
+
+	VkShaderModule VertexShaderModule;
+	// Create Shader Modules.
+	Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &VertexShaderModuleCreateInfo, NULL, &VertexShaderModule);
+	std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
+
+
+	VkShaderModuleCreateInfo FragmentShaderModuleCreateInfo;
+	FragmentShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	FragmentShaderModuleCreateInfo.pNext		= NULL;
+	FragmentShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
+	FragmentShaderModuleCreateInfo.codeSize		= FragmentShaderSPIRV.size()*sizeof(uint32_t);
+	FragmentShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(FragmentShaderSPIRV.data());
+
+	VkShaderModule FragmentShaderModule;
+	// Create Shader Modules.
+	Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &FragmentShaderModuleCreateInfo, NULL, &FragmentShaderModule);
+	std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
+
+	vkDestroyShaderModule(DeviceContext->get_handle(), VertexShaderModule, NULL);
+	vkDestroyShaderModule(DeviceContext->get_handle(), FragmentShaderModule, NULL);
 	
-	std::string Out;
-	//VertexShader.preprocess(&glslang::DefaultTBuiltInResource, 100, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo, &OUt,  )
-	VertexShader.parse(&glslang::DefaultTBuiltInResource, 450, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo);
+	for (size_t i = 0; i < 7; i++) {
+		std::cout << io::file::BuiltInTypes[i].Type << " ";
+		for (size_t j = 0; j < io::file::BuiltInTypes[i].Extension.size(); j++) {
+			std::cout << io::file::BuiltInTypes[i].Extension[j].str() << " ";
+		}
+		std::cout << std::endl;
+	}
+	
+	std::cout << io::file::str2type("fsh") << std::endl;
 
-	std::vector<unsigned int> VertexShaderBinary;
+	io::file File("assets/shaders/BasicVertex.fsh");
 
-	glslang::SpvOptions Options;
-	Options.disableOptimizer = false;
-	Options.disassemble = false;
-	Options.generateDebugInfo = true;
-	Options.optimizeSize = false;
-	Options.stripDebugInfo = false;
-	Options.validate = true;
+	std::cout << File.get_path().str() << std::endl;
+	std::cout << File.get_dir().str() << std::endl;
+	std::cout << File.get_name().str() << std::endl;
+	std::cout << File.get_ext().str() << std::endl;
 
-	glslang::GlslangToSpv(*VertexShader.getIntermediate(), VertexShaderBinary);
+	//VkGraphicsPipelineCreateInfo GraphicsPipelineCreateInfo;
 
-	glslang::FinalizeProcess();
 	while (!Window->CloseMe) {
 		// Game Loop Time difference
 		Engine.dt = Engine.get_time() - Engine.t;

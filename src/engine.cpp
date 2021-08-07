@@ -7,6 +7,7 @@
 #include <chrono>
 
 /* --------------- Third Party Libraries --------------- */
+#include "dep/glslang/glslang/Public/ShaderLang.h"
 
 /* --------------- Internal --------------- */
 
@@ -167,6 +168,8 @@ namespace geodesuka {
 		vkDestroyInstance(this->Instance, NULL);
 
 		glfwTerminate();
+
+		glslang::FinalizeProcess();
 	}
 
 	int engine::input() {

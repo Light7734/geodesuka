@@ -31,9 +31,86 @@ namespace geodesuka {
 
 			// This is just a lookup table for file type extensions.
 			file::built_in_type file::BuiltInTypes[] = {
-				{ file::type::EXT_BMP, "" }
+				{ file::extid::EXT_DYN,		{"dll", "so", "dylib"}},
+				{ file::extid::EXT_VSH,		{"vsh"}},
+				{ file::extid::EXT_TCSH,	{"tcsh"}},
+				{ file::extid::EXT_TESH,	{"tesh"}},
+				{ file::extid::EXT_GSH,		{"gsh"}},
+				{ file::extid::EXT_PSH,		{"psh", "fsh"}},
+				{ file::extid::EXT_GLSL,	{"glsl"}},
+				{ file::extid::EXT_SPV,		{"spv"}},
 			};
 
+			file::extid file::str2type(util::text aString) {
+				extid temp = EXT_UNK;
+				for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
+					for (size_t j = 0; j < BuiltInTypes[i].Extension.size(); j++)
+					if (BuiltInTypes[i].Extension[j] == aString) {
+						return BuiltInTypes[i].Type;
+					}
+				}
+				return temp;
+			}
+
+			util::text file::type2str(extid aType) {
+				const char* temp = "";
+				for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
+					if (BuiltInTypes[i].Type == aType) {
+						return BuiltInTypes[i].Extension[0].str();
+					}
+				}
+				return temp;
+			}
+
+			file::file(const char* aFilePath) {
+				this->Path = aFilePath;
+				util::text temp = aFilePath;
+				temp.reverse();
+				this->Ext = temp.split_at('.');
+				this->Ext.reverse();
+				this->Name = temp.split_at('\/');
+				this->Name.reverse();
+				this->Dir = temp;
+				this->Dir.reverse();
+				this->ID = str2type(this->Ext);
+			}
+
+			file::file(util::text& aFilePath) {
+				this->Path = aFilePath;
+				util::text temp = aFilePath;
+				temp.reverse();
+				this->Ext = temp.split_at('.');
+				this->Ext.reverse();
+				this->Name = temp.split_at('\/');
+				this->Name.reverse();
+				this->Dir = temp;
+				this->Dir.reverse();
+				this->ID = str2type(this->Ext);
+			}
+
+			file::~file() {
+				if (this->Data != NULL) {
+					free(this->Data);
+					this->Data = NULL;
+				}
+				this->DataSize = 0;
+			}
+
+			util::text file::get_path() {
+				return this->Path;
+			}
+
+			util::text file::get_dir() {
+				return this->Dir;
+			}
+
+			util::text file::get_name() {
+				return this->Name;
+			}
+
+			util::text file::get_ext() {
+				return this->Ext;
+			}
 
 		}
 	}

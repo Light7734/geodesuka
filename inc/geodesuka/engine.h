@@ -33,9 +33,6 @@ C26451
 
 /* --------------- Third Party Libraries --------------- */
 
-// glslang
-#include <glslang/Public/ShaderLang.h>
-
 /* Vulkan API */
 #include <vulkan/vulkan.h>
 
@@ -54,15 +51,13 @@ C26451
 #include "core/util/text.h"
 
 // ------------------------- File System Manager ------------------------- //
+#include "core/io/file.h"
 
 // ------------------------- Graphics & Computation API ------------------------- //
 
 
 // May Change to "vertex.h", manages memory layout of
 #include "core/gcl/variable.h"
-
-// Represents GPGPU programmable devices.
-//#include "core/gcl/device.h"
 
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"

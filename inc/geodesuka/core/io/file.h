@@ -1,5 +1,6 @@
-#ifndef FILE_H
-#define FILE_H
+#pragma once
+#ifndef GEODESUKA_CORE_IO_FILE_H
+#define GEODESUKA_CORE_IO_FILE_H
 
 #include <stdlib.h>
 
@@ -11,8 +12,6 @@
 Maybe this should maintain of all accessed files and directories
 throughout its life.
 */
-
-//#include "../util/text.h"
 
 namespace geodesuka {
 	namespace core {
@@ -26,9 +25,11 @@ namespace geodesuka {
 			class file {
 			public:
 
-				enum type {
+				enum extid {
 					EXT_UNK = -1,
-					// Image Files
+					// --------------- Dynamic Libraries --------------- //
+					EXT_DYN,
+					// --------------- Image Files --------------- //
 					EXT_BMP,
 					EXT_ICO,
 					EXT_JPEG,
@@ -67,27 +68,54 @@ namespace geodesuka {
 					EXT_RAW,
 					EXT_WEBP,
 					EXT_JXR,
-					// 3D Model
-					// Font
+					// --------------- Model Files --------------- //
+					// --------------- Type Face Files --------------- //
 					EXT_TTF,
 					EXT_TTC,
 					EXT_OTF,
 					EXT_PFM,
-					// OpenGL Shader
-					EXT_VSH,
-					EXT_GSH,
-					EXT_FSH,
+					// --------------- Shader Files --------------- //
+					EXT_VSH,		// (Per) Vertex Shaders
+					EXT_TCSH,		// Tesselation Control Shaders
+					EXT_TESH,		// Tesselation Evaluation Shaders
+					EXT_GSH,		// (Per Primitive) Geometry Shaders
+					EXT_PSH,		// (Per Pixel) Fragment Shaders
+					EXT_CSH,		// Compute Shaders
+					EXT_GLSL,		// Include Shader Function Files
+					EXT_SPV,		// SPIR-V Compiled Shaders
 					// OpenCL Kernel
 					EXT_CL,
 					// Lua Script
 					EXT_LUA
 				};
 
-				// This is just a lookup table for file type extensions.
+				// A more general version grouping.
+				enum type {
+					DYNALIB,
+					IMAGE,
+					TYPEFACE,
+					SHADER,
+					KERNEL,
+					SCRIPT,
+				};
+
+
 				static struct built_in_type {
-					type Type;
-					const char* Extension;
+					extid Type;
+					std::vector<util::text> Extension;
 				} BuiltInTypes[];
+
+				static extid str2type(util::text aString);
+				static util::text type2str(extid aType);
+
+				file(const char* aFilePath);
+				file(util::text& aFilePath);
+				~file();
+
+				util::text get_path();
+				util::text get_dir();
+				util::text get_name();
+				util::text get_ext();
 
 			private:
 
@@ -104,6 +132,7 @@ namespace geodesuka {
 				util::text Dir;
 				util::text Name;
 				util::text Ext;
+				extid ID;
 
 				/*
 				* This will be the raw data loaded, maybe even possibly
@@ -112,12 +141,10 @@ namespace geodesuka {
 				size_t DataSize;
 				void* Data;
 
-			public:
-
 			};
 
 		}
 	}
 }
 
-#endif // FILE_H
+#endif // GEODESUKA_CORE_IO_FILE_H
