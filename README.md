@@ -34,6 +34,8 @@ in creating particle systems, vector fields, and so on.
 
 - Moved to Vulkan (OpenGL is garbage).
 
+- Removed All OpenGL.
+
 # To Do List:
 
 - Update headers guards to minimize probabilty of collision.
