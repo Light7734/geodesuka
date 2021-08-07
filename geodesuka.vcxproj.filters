@@ -55,14 +55,8 @@
     <Filter Include="src\core\util">
       <UniqueIdentifier>{aafceda2-290d-4ad8-91f6-23eb3735ae97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glad">
-      <UniqueIdentifier>{0f54ef0f-24ab-4403-83e2-9f989a515d83}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\dep\glfw">
       <UniqueIdentifier>{4d9954e7-9b0d-4628-aba6-cb5c100ef931}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\glad">
-      <UniqueIdentifier>{34a9c1f7-62f1-417d-a5e9-56d346d22397}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\geodesuka">
       <UniqueIdentifier>{ceb9d42a-12e1-44dd-bd28-e2ad9cbab734}</UniqueIdentifier>
@@ -117,9 +111,6 @@
     </Filter>
     <Filter Include="src\core\math\vectors">
       <UniqueIdentifier>{080d2137-0077-4d75-b60f-cfcafaa3a489}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glad\src">
-      <UniqueIdentifier>{7158bad8-cbed-4a0f-b18c-b6e51c0a056a}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glfw\src">
       <UniqueIdentifier>{47578ef2-a6bf-41cc-b9d7-225699982818}</UniqueIdentifier>
@@ -330,9 +321,6 @@
     </ClCompile>
     <ClCompile Include="src\core\util\text.cpp">
       <Filter>src\core\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glad\src\glad.c">
-      <Filter>src\dep\glad\src</Filter>
     </ClCompile>
     <ClCompile Include="src\dep\glfw\src\egl_context.c">
       <Filter>src\dep\glfw\src</Filter>
@@ -721,9 +709,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\text.h">
       <Filter>inc\geodesuka\core\util</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\glad\glad.h">
-      <Filter>inc\glad</Filter>
     </ClInclude>
     <ClInclude Include="inc\GLFW\glfw3.h">
       <Filter>inc\GLFW</Filter>

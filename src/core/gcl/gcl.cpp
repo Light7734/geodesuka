@@ -30,18 +30,18 @@
 #include <string>
 #include <vector>
 
-// OpenGL Function Loader
-#include <glad/glad.h>
-
-#ifdef __APPLE__
- #include <OpenCL/opencl.h>
- #include <OpenCL/cl_gl.h>
- #include <OpenCL/cl_gl_ext.h>
-#else
- #include <CL/cl.h>
- #include <CL/cl_gl.h>
- #include <CL/cl_gl_ext.h>
-#endif
+//// OpenGL Function Loader
+//#include <glad/glad.h>
+//
+//#ifdef __APPLE__
+// #include <OpenCL/opencl.h>
+// #include <OpenCL/cl_gl.h>
+// #include <OpenCL/cl_gl_ext.h>
+//#else
+// #include <CL/cl.h>
+// #include <CL/cl_gl.h>
+// #include <CL/cl_gl_ext.h>
+//#endif
 
 // Vulkan Library
 //#include <vulkan/vulkan.h>

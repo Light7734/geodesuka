@@ -26,6 +26,14 @@ namespace geodesuka {
 					this->sRGBCapable			= GLFW_FALSE;
 			}
 
+			frame_buffer::frame_buffer() {
+
+			}
+
+			frame_buffer::~frame_buffer() {
+
+			}
+
 		}
 	}
 }

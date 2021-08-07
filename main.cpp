@@ -280,15 +280,15 @@ int main(int argc, char *argv[]) {
 	// Makes simple graphics pipline
 	VkPipeline GraphicsPipeline;
 
-	glslang::TShader VertexShader = glslang::TShader(EShLanguage::EShLangVertex);
-	VertexShader.setEntryPoint("main");
-	VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 450);
-	VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
-	VertexShader.setStrings(&VertexShaderSource, 1);
-	
-	//VertexShader.preprocess(&glslang::DefaultTBuiltInResource,  )
-	VertexShader.parse(&glslang::DefaultTBuiltInResource, 450, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo);
+	//glslang::TShader VertexShader = glslang::TShader(EShLanguage::EShLangVertex);
+	//VertexShader.setEntryPoint("main");
+	//VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 450);
+	//VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	//VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+	//VertexShader.setStrings(&VertexShaderSource, 1);
+	//
+	////VertexShader.preprocess(&glslang::DefaultTBuiltInResource,  )
+	//VertexShader.parse(&glslang::DefaultTBuiltInResource, 450, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo);
 
 
 	while (!Window->CloseMe) {
