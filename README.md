@@ -32,7 +32,7 @@ in creating particle systems, vector fields, and so on.
 
 - Included glslang as built in to the engine.
 
-- Moved to Vulkan (OpenGL is garbage)
+- Moved to Vulkan (OpenGL is garbage).
 
 # To Do List:
 
