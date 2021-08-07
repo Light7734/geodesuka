@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GEODESUKA_ENGINE_H
+#define GEODESUKA_ENGINE_H
 
 /*
 // ------------------------- Notes ------------------------- \\
@@ -57,7 +57,6 @@ C26451
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
 #include "core/gcl/device_context.h"
-#include "core/gcl/context.h"
 
 // Data Objects, used for meshes, models, materials and
 // and so on. 
@@ -192,4 +191,4 @@ namespace geodesuka {
 
 }
 
-#endif // !ENGINE_H
+#endif // !GEODESUKA_ENGINE_H

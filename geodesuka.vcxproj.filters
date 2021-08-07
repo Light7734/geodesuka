@@ -157,9 +157,6 @@
     <Filter Include="src\dep\glslang\glslang\OSDependent">
       <UniqueIdentifier>{d4501f49-cb07-4753-a14d-08ad20f304d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glslang\glslang\Public">
-      <UniqueIdentifier>{d4da1b8c-e5ab-4367-80be-29e102d9a9ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\dep\glslang\glslang\MachineIndependent\preprocessor">
       <UniqueIdentifier>{77813ab3-85fd-48ec-9732-c5f2814a373b}</UniqueIdentifier>
     </Filter>
@@ -172,13 +169,13 @@
     <Filter Include="src\dep\glslang\glslang\OSDependent\Windows">
       <UniqueIdentifier>{0c469ea6-49ff-471b-8591-8d787692c1be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\dep\glslang\StandAlone">
+      <UniqueIdentifier>{4e27f004-5c8c-4a99-8691-e5b30ba9c70b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\core\gcl\buffer.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\context.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\gcl\frame_buffer.cpp">
@@ -487,9 +484,6 @@
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\attribute.cpp">
       <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\main.cpp">
-      <Filter>src\dep\glslang\glslang\OSDependent\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp">
       <Filter>src\dep\glslang\glslang\OSDependent\Windows</Filter>
     </ClCompile>
@@ -523,6 +517,9 @@
     <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp">
       <Filter>src\dep\glslang\SPIRV</Filter>
     </ClCompile>
+    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp">
+      <Filter>src\dep\glslang\StandAlone</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -552,9 +549,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\context.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h">
@@ -884,9 +878,6 @@
     <ClInclude Include="src\dep\glslang\glslang\OSDependent\osinclude.h">
       <Filter>src\dep\glslang\glslang\OSDependent</Filter>
     </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h">
-      <Filter>src\dep\glslang\glslang\Public</Filter>
-    </ClInclude>
     <ClInclude Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.h">
       <Filter>src\dep\glslang\OGLCompilersDLL</Filter>
     </ClInclude>
@@ -940,6 +931,9 @@
     </ClInclude>
     <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h">
       <Filter>src\dep\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h">
+      <Filter>src\dep\glslang\StandAlone</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,7 +2,9 @@
 
 #include <geodesuka/engine.h>
 
-#include "src/dep/glslang/glslang/Public/ShaderLang.h"
+#include <glslang/Public/ShaderLang.h>
+
+#include "src/dep/glslang/StandAlone/ResourceLimits.h"
 
 using namespace geodesuka::core;
 //using namespace gcl;
@@ -261,8 +263,33 @@ int main(int argc, char *argv[]) {
 		1.0, 0.0, 0.0, 0.0, 0.0, 1.0
 	};
 
+	const char* VertexShaderSource =
+		"#version 450\n\
+		\n\
+		layout (location = 0) in vec3 VertexPosition;\n\
+		layout (location = 1) in vec3 VertexColor;\n\
+		out vec3 Color;\n\
+		void main() {\n\
+			Color = VertexColor;\n\
+			gl_Position = vec4(Vertex, 1.0);\n\
+		}\n\
+		";
+
+	std::cout << VertexShaderSource << std::endl;
+
 	// Makes simple graphics pipline
 	VkPipeline GraphicsPipeline;
+
+	glslang::TShader VertexShader = glslang::TShader(EShLanguage::EShLangVertex);
+	VertexShader.setEntryPoint("main");
+	VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 450);
+	VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+	VertexShader.setStrings(&VertexShaderSource, 1);
+	
+	//VertexShader.preprocess(&glslang::DefaultTBuiltInResource,  )
+	VertexShader.parse(&glslang::DefaultTBuiltInResource, 450, EProfile::ECoreProfile, false, false, EShMessages::EShMsgDebugInfo);
+
 
 	while (!Window->CloseMe) {
 		// Game Loop Time difference

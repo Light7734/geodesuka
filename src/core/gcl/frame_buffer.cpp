@@ -26,22 +26,6 @@ namespace geodesuka {
 					this->sRGBCapable			= GLFW_FALSE;
 			}
 
-			frame_buffer::frame_buffer() {
-
-			}
-
-			frame_buffer::frame_buffer(const prop& aProperty) {
-
-			}
-
-			frame_buffer::frame_buffer(device_context* aDeviceContext, const struct prop& aProperty) {
-
-			}
-
-			frame_buffer::~frame_buffer() {
-
-			}
-
 		}
 	}
 }

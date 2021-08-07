@@ -2,8 +2,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-//#include <glslang/Include/intermediate.h>
-//#include <glslang/Public/ShaderLang.h>
+#include <glslang/Public/ShaderLang.h>
 
 #include "gcl.h"
 

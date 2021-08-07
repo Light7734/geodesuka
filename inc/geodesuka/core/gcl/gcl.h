@@ -29,20 +29,20 @@ TODO: Records OpenGL State Machine in the Backend.
 #include <string>
 #include <vector>
 
-/* OpenGL API */
-#include <glad/glad.h>
-
-/* OpenCL API */
-#define CL_TARGET_OPENCL_VERSION 120
-#ifdef __APPLE__ // is garbage
- #include <OpenCL/opencl.h>
- #include <OpenCL/cl_gl.h>
- #include <OpenCL/cl_gl_ext.h>
-#else
- #include <CL/cl.h>
- #include <CL/cl_gl.h>
- #include <CL/cl_gl_ext.h>
-#endif
+///* OpenGL API */
+//#include <glad/glad.h>
+//
+///* OpenCL API */
+//#define CL_TARGET_OPENCL_VERSION 120
+//#ifdef __APPLE__ // is garbage
+// #include <OpenCL/opencl.h>
+// #include <OpenCL/cl_gl.h>
+// #include <OpenCL/cl_gl_ext.h>
+//#else
+// #include <CL/cl.h>
+// #include <CL/cl_gl.h>
+// #include <CL/cl_gl_ext.h>
+//#endif
 
 /* Vulkan API */
 #include <vulkan/vulkan.h>

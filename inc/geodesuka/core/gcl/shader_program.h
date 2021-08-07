@@ -28,24 +28,6 @@ namespace geodesuka {
 			class shader_program {
 			public:
 
-				int ShaderCount;
-				shader** Shader;
-
-				variable Input;
-				variable Uniform;
-				variable Output;
-
-				shader_program(context* aContext, int aShaderCount, const shader **aShader);
-				shader_program(context* aContext, shader* aVertexShader, shader* aPixelShader);
-				~shader_program();
-
-
-				int set_input(const variable& Target, const buffer& Variable);
-				int set_uniform(const variable& Target, const buffer& Variable);
-				int set_uniform(const variable& Target, const texture& Variable);
-				int set_output(const variable& Target, const texture& Variable);
-
-			private:
 
 			};
 

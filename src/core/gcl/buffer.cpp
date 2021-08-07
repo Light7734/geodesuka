@@ -13,37 +13,6 @@ namespace geodesuka {
 
 
 			buffer::buffer(context* aContext, id aType, int aCount, variable aMemoryLayout, void* aVertexData) {
-				this->SuperBuffer = nullptr;
-				this->Context = aContext;
-
-				this->Type = aType;
-				this->Layout = aMemoryLayout;
-				this->Count = aCount;
-				
-				this->hptr = malloc(this->Layout.Size * this->Count);
-				if (this->hptr != NULL) {
-					memset(this->hptr, 0, this->Layout.Size * this->Count);
-					if (aVertexData != NULL) {
-						memcpy(this->hptr, aVertexData, this->Layout.Size * this->Count);
-					}
-				}
-
-				// GPU calls
-				GLuint temp = 0;
-				glGenBuffers(1, &temp);
-				if (glIsBuffer(temp) == GL_TRUE) {
-					// Sucessfully created vertex buffer.
-					this->ID = temp;
-				}
-				else {
-					// Failed to create vertex buffer.
-					this->ID = 0;
-				}
-
-				if (this->ID > 0) {
-					glBindBuffer((GLenum)this->Type, this->ID);
-					glBufferData((GLenum)this->Type, this->Layout.Size * this->Count, this->hptr, GL_STATIC_DRAW);
-				}
 
 			}
 

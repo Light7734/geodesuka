@@ -177,7 +177,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\core\gcl\buffer.cpp" />
-    <ClCompile Include="src\core\gcl\context.cpp" />
     <ClCompile Include="src\core\gcl\device.cpp" />
     <ClCompile Include="src\core\gcl\device_context.cpp" />
     <ClCompile Include="src\core\gcl\frame_buffer.cpp" />
@@ -279,7 +278,6 @@
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Versions.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\main.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp" />
     <ClCompile Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\disassemble.cpp" />
@@ -291,6 +289,7 @@
     <ClCompile Include="src\dep\glslang\SPIRV\SpvPostProcess.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\SPVRemapper.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp" />
+    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp" />
     <ClCompile Include="src\engine.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -309,7 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device_context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h" />
@@ -419,7 +417,6 @@
     <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.h" />
     <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Versions.h" />
     <ClInclude Include="src\dep\glslang\glslang\OSDependent\osinclude.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h" />
     <ClInclude Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\bitutils.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\disassemble.h" />
@@ -438,6 +435,7 @@
     <ClInclude Include="src\dep\glslang\SPIRV\spvIR.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\SPVRemapper.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h" />
+    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
