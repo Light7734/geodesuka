@@ -4,11 +4,11 @@ Project Start: 2021/06/01
 
 Branch Birth Date: 2021/07/28
 
-Branch Pull Date: ????/??/??
+Branch Pull Date: 2021/08/07
 
 Version: 0.0.12
 
-![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/sauce.png)
+![](https://github.com/ShaderKitty/Geodesuka/blob/d20210728-v0.0.12/res/github/glcringe.jpg)
 
 # Current Summary
 
@@ -30,7 +30,13 @@ in creating particle systems, vector fields, and so on.
 
 # Updated List:
 
+- Included glslang as built in to the engine.
+
+- Moved to Vulkan (OpenGL is garbage)
+
 # To Do List:
+
+- Update headers guards to minimize probabilty of collision.
 
 - Add built in extension types for file.h to recognize file types
 and forward to proper objects.
@@ -56,8 +62,6 @@ on.
 - maybe rename window.h to render_target.h?
 
 - Add support for DirectX API, Vulkan API, and CUDA.
-
-- Include glslang to manage shader parsing. https://github.com/KhronosGroup/glslang
 
 - Include lua to enable backend scripting.
 

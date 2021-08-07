@@ -18,7 +18,7 @@ namespace geodesuka {
 
 			window::prop::prop() {
 				this->Resizable				= GLFW_TRUE;
-				this->Decorated				= GLFW_FALSE;
+				this->Decorated				= GLFW_TRUE;
 				this->UserFocused			= GLFW_TRUE;
 				this->AutoMinimize			= GLFW_TRUE;
 				this->Floating				= GLFW_FALSE;

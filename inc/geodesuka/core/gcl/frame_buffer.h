@@ -4,6 +4,8 @@
 #include "../gcl/gcl.h"
 #include "../math/gmath.h"
 
+#include "device.h"
+#include "device_context.h"
 #include "context.h"
 // Holds no data, only references.
 
@@ -28,15 +30,21 @@ namespace geodesuka {
 					int Samples;
 					int sRGBCapable;
 
+					uint32_t Count;
+					VkFormat Format;
+					VkColorSpaceKHR ColorSpace;
+					VkExtent2D Extent2D;
+					VkImageUsageFlags Usage;
+					//uint32_t Layers; // Per Image
+
 					// Default Contstructor
 					prop();
 				};
 
-				// Parent Context
-				context* Context;
+				math::natural2 Resolution;
+
+				device_context* Context;
 				struct prop Property;
-				// TODO: Maybe change to integer?
-				math::integer ID;
 
 				// Constructs Default Framebuffer.
 				frame_buffer();
@@ -45,7 +53,7 @@ namespace geodesuka {
 				frame_buffer(const struct prop& aProperty);
 
 				// Constructs FBO with respect to context.
-				frame_buffer(context *aContext, const struct prop& aProperty);
+				frame_buffer(device_context *aDeviceContext, const struct prop& aProperty);
 
 				~frame_buffer();
 

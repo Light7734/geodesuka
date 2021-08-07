@@ -7,6 +7,11 @@
 //#define TEXT_DEBUG
 // Essentially boiler plate code, was not satisfied with the functionality of <string>
 
+/// <summary>
+/// text.h is simply a class to replace char * arrays for memory
+/// management. will be extended for graphical rendering.
+/// </summary>
+
 namespace geodesuka {
 	namespace core {
 		namespace util {
@@ -14,7 +19,8 @@ namespace geodesuka {
 			class text {
 			public:
 
-				int n;
+				//TODO: Update internals to size_t.
+				size_t n;
 				char* hptr;
 
 				// Default Constructor.

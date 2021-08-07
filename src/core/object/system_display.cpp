@@ -16,15 +16,16 @@ namespace geodesuka {
 
 				this->Handle = aMonitor;
 
-				const char* aName = glfwGetMonitorName(this->Handle);
-				if (aName != NULL) {
-					size_t NameSize = strlen(aName);
-					this->Name = (char*)malloc((NameSize + 1) * sizeof(char));
-					if (this->Name != NULL) {
-						memcpy(this->Name, aName, NameSize * sizeof(char));
-						this->Name[NameSize] = '\0';
-					}
-				}
+				this->Name = glfwGetMonitorName(this->Handle);
+				//const char* aName = glfwGetMonitorName(this->Handle);
+				//if (aName != NULL) {
+				//	size_t NameSize = strlen(aName);
+				//	this->Name = (char*)malloc((NameSize + 1) * sizeof(char));
+				//	if (this->Name != NULL) {
+				//		memcpy(this->Name, aName, NameSize * sizeof(char));
+				//		this->Name[NameSize] = '\0';
+				//	}
+				//}
 				
 				glfwGetMonitorPos(this->Handle, &this->PositionSC.x, &this->PositionSC.y);
 				// Loads and converts to meters.

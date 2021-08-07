@@ -81,7 +81,6 @@ namespace geodesuka {
 				};
 
 				struct prop {
-					//prop();
 					int Resizable;
 					int Decorated;
 					int UserFocused;
@@ -95,8 +94,8 @@ namespace geodesuka {
 					int FocusOnShow;
 					int Hovered;
 					int RefreshRate;
+					VkPresentModeKHR PresentationMode;
 
-					// Default constructor
 					prop();
 				};
 
@@ -112,9 +111,9 @@ namespace geodesuka {
 				// no forwarding is chosen.
 				//virtual math::integer forward_input_stream_to(object* aObject);
 
-			protected:
+			//protected:
 
-				char* Name;
+				util::text Name;
 				math::real2 Size;				// [m]
 				math::natural2 Resolution;		// [pixels]
 				struct prop Property;

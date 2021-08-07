@@ -6,6 +6,8 @@
 
 #include "../math/gmath.h"
 
+#include "../gcl/device.h"
+#include "../gcl/device_context.h"
 #include "../gcl/context.h"
 #include "../gcl/frame_buffer.h"
 
@@ -44,15 +46,25 @@ namespace geodesuka {
 			class system_window : public window {
 			public:
 
+				VkResult ErrorCode;
+
 				//friend class system_display;
 
 				math::boolean CloseMe;
 
+				//TODO: Resolve context sharing ambiguities.
 				// Opens window with default settings.
-				system_window(gcl::context *aContext, gcl::frame_buffer::prop *aFrameBufferProp, prop *aWindowProp,
-					math::real aWidth, math::real aHeight, const char* aName, system_display* aDisplay);
+				//system_window(gcl::context *aContext, gcl::frame_buffer::prop *aFrameBufferProp, prop *aWindowProp,
+				//	math::real aWidth, math::real aHeight, const char* aName, system_display* aDisplay);
+
+				//system_window(gcl::context* aRenderingContext, gcl::frame_buffer::prop* aFrameBufferProp, prop* aWindowProp,
+				//	math::real2 &aPos, math::real2 &aSize, util::text &aTitle, system_display* aDisplay);
 
 				//system_window(math::integer Width, math::integer Height, const char* Name, const system_display&);
+
+				// Provide a device_context to create an associated rendering context with it.
+				system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+					math::real3 aPosition, math::real2 aSize, util::text aTitle);
 
 				// Opens window
 				system_window(const system_window* aWindow);
@@ -91,7 +103,7 @@ namespace geodesuka {
 
 
 				math::integer set_parent_display(system_display* aParentDisplay);
-				system_display* get_parent_display() { return this->ParentDisplay; }
+				//system_display* get_parent_display() { return this->ParentDisplay; }
 				math::integer set_input_stream_target(object* aTargetObject);
 
 			private:
@@ -100,13 +112,26 @@ namespace geodesuka {
 				object* InputStreamTarget;
 
 				system_display* ParentDisplay;
-				gcl::context* ParentContext;
-				gcl::context* Context;
+				//gcl::context* ParentDeviceContext;
+				//gcl::context* Context;
 
 				math::integer2 PositionSC;
 				//math::integer2 SizeSC;
 
-				// ------------------------------ Callbacks (Do Not Use) ------------------------------ //
+				gcl::device_context* ParentDeviceContext;
+
+				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
+				VkSwapchainCreateInfoKHR SwapChainProp{};
+
+				math::boolean isValid;
+				GLFWwindow* Handle;
+				VkSurfaceKHR Surface;
+				VkSwapchainKHR SwapChain; 
+
+				const std::vector<const char *> RequiredExtension = { "VK_KHR_swapchain" };
+
+
+				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 				
 				// Window Callbacks
 				static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);

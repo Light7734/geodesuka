@@ -9,6 +9,12 @@
 * and more examples will be provided. The difference here is that the extended
 * classes of object.h will have full control over how they will be rendered to
 * the target window.h or camera.h object.
+* 
+* Since an object will have part of itself associated with memory objects
+* of particular GPUs, it is important to recognize that objects exist within
+* a common space in which they are rendered. On top of that, a rendering context
+* will indicate which graphics capable device it exists on. Maybe figure out
+* how to stream line 
 */
 
 #include "../math/gmath.h"
@@ -38,6 +44,12 @@ namespace geodesuka {
 
 			class object {
 			public:
+
+				/*
+				* Do not forget, position is in reference to a particular space
+				* the object is in. This is up to the user to decide how to 
+				* interpret and use an objects position.
+				*/
 
 				math::real Mass;			// Kilogram		[kg]
 				math::real Time;			// Second 		[s]
@@ -135,6 +147,9 @@ namespace geodesuka {
 				math::real3 get_position() const;
 
 			protected:
+
+				gcl::context* RenderingContext;
+				gcl::context* ComputeContext;
 
 				//std::vector<gcl::context*> Context;
 				//gcl::context* Context;
