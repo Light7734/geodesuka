@@ -64,9 +64,6 @@
     <Filter Include="inc\GLFW">
       <UniqueIdentifier>{fec405bc-422e-42fa-aba2-3a5231de0a9d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\KHR">
-      <UniqueIdentifier>{471c28b9-3cc7-454a-a63c-65701f627a0a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\geodesuka\core">
       <UniqueIdentifier>{8a54a22e-9933-4869-a77c-c83740dfbdcc}</UniqueIdentifier>
     </Filter>
@@ -718,9 +715,6 @@
     </ClInclude>
     <ClInclude Include="inc\GLFW\glfw3native.h">
       <Filter>inc\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\KHR\khrplatform.h">
-      <Filter>inc\KHR</Filter>
     </ClInclude>
     <ClInclude Include="src\dep\glfw\src\egl_context.h">
       <Filter>src\dep\glfw\src</Filter>

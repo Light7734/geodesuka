@@ -379,7 +379,6 @@
     <ClInclude Include="inc\geodesuka\engine.h" />
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
-    <ClInclude Include="inc\KHR\khrplatform.h" />
     <ClInclude Include="src\dep\glfw\src\egl_context.h" />
     <ClInclude Include="src\dep\glfw\src\glfw_config.h" />
     <ClInclude Include="src\dep\glfw\src\internal.h" />
