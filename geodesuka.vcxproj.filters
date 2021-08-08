@@ -298,9 +298,6 @@
     <ClCompile Include="src\core\object\cube.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\object\object.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\object\system_display.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
@@ -505,6 +502,24 @@
     <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp">
       <Filter>src\dep\glslang\StandAlone</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\io\dynalib.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\font.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\image.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\script.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\socket_t.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\object.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -680,9 +695,6 @@
     <ClInclude Include="inc\geodesuka\core\object\cube.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\object.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\system_display.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
@@ -748,9 +760,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\triangle.h">
       <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\math\math.h">
-      <Filter>inc\geodesuka\core\math</Filter>
     </ClInclude>
     <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h">
       <Filter>src\dep\glslang\glslang\Include</Filter>
@@ -913,6 +922,27 @@
     </ClInclude>
     <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h">
       <Filter>src\dep\glslang\StandAlone</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\dynalib.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\font.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\image.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\script.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\socket_t.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object.h">
+      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

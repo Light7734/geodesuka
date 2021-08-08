@@ -1,6 +1,6 @@
 #include <geodesuka/core/object/system_display.h>
 
-#include <geodesuka/core/object/object.h>
+#include <geodesuka/core/object.h>
 #include <geodesuka/core/object/window.h>
 #include <geodesuka/core/object/system_display.h>
 #include <geodesuka/core/object/system_window.h>

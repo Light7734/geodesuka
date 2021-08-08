@@ -2,7 +2,7 @@
 #define FRAME_BUFFER_H
 
 #include "../gcl/gcl.h"
-#include "../math/math.h"
+#include "../math.h"
 
 #include "device.h"
 #include "device_context.h"

@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include <geodesuka/core/math/math.h>
+#include <geodesuka/core/math.h>
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"

@@ -1,6 +1,6 @@
 #include <geodesuka/core/hid/mouse.h>
 
-#include <geodesuka/core/math/math.h>
+#include <geodesuka/core/math.h>
 
 namespace geodesuka {
 	namespace core {

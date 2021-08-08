@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GEODESUKA_CORE_MATH_H
-#define GEODESUKA_CORE_MATH_H
+#ifndef GEODESUKA_CORE_MATH_MATH_H
+#define GEODESUKA_CORE_MATH_MATH_H
 
 /*\\ ---------------------------------------- gclm.h ---------------------------------------- \\//
 
@@ -23,37 +23,37 @@ TODO List:
 #include <cmath>
 
 /* This header configures usage. */
-#include "config.h"
+#include "math/config.h"
 
 /* Basic Internal Utility Functions */
-#include "util/isupport.h"
+#include "math/util/isupport.h"
 
 /* -------------------- All Types Included here -------------------- */
 
 /* Number Types */
-#include "numbers/boolean.h"
-#include "numbers/natural.h"
-#include "numbers/integer.h"
+#include "math/numbers/boolean.h"
+#include "math/numbers/natural.h"
+#include "math/numbers/integer.h"
 //#include "rational.h" Dumb Type
-#include "numbers/real.h"
-#include "numbers/complex.h"
-#include "numbers/quaternion.h"
+#include "math/numbers/real.h"
+#include "math/numbers/complex.h"
+#include "math/numbers/quaternion.h"
 
 /* Built In Numerical Constants */
-#include "numbers/constants.h"
+#include "math/numbers/constants.h"
 
 /* Vector Types */
-#include "vectors/natural2.h"
-#include "vectors/natural3.h"
-#include "vectors/natural4.h"
+#include "math/vectors/natural2.h"
+#include "math/vectors/natural3.h"
+#include "math/vectors/natural4.h"
 
-#include "vectors/integer2.h"
-#include "vectors/integer3.h"
-#include "vectors/integer4.h"
+#include "math/vectors/integer2.h"
+#include "math/vectors/integer3.h"
+#include "math/vectors/integer4.h"
 
-#include "vectors/real2.h"
-#include "vectors/real3.h"
-#include "vectors/real4.h"
+#include "math/vectors/real2.h"
+#include "math/vectors/real3.h"
+#include "math/vectors/real4.h"
 
 /* Matrix Types */
 /*
@@ -62,18 +62,18 @@ TODO List:
 * 
 * Value = A(Row,Column);
 */
-#include "matrices/real2x2.h"
-#include "matrices/real2x3.h"
-#include "matrices/real2x4.h"
-#include "matrices/real3x2.h"
-#include "matrices/real3x3.h"
-#include "matrices/real3x4.h"
-#include "matrices/real4x2.h"
-#include "matrices/real4x3.h"
-#include "matrices/real4x4.h"
+#include "math/matrices/real2x2.h"
+#include "math/matrices/real2x3.h"
+#include "math/matrices/real2x4.h"
+#include "math/matrices/real3x2.h"
+#include "math/matrices/real3x3.h"
+#include "math/matrices/real3x4.h"
+#include "math/matrices/real4x2.h"
+#include "math/matrices/real4x3.h"
+#include "math/matrices/real4x4.h"
 
 /* Inter-Matrix Multiplication */
-#include "util/matrix_multiply.h"
+#include "math/util/matrix_multiply.h"
 
 /* Matrix Multiplication Functions */
 /* Scalar Field Types */
@@ -90,6 +90,6 @@ TODO List:
 /* -------------------- Extended Functions -------------------- */
 
 /* Utility Functions */
-#include "util/fsupport.h"
+#include "math/util/fsupport.h"
 
-#endif // !GEODESUKA_CORE_MATH_H
+#endif // !GEODESUKA_CORE_MATH_MATH_H

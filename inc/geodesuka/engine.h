@@ -44,7 +44,7 @@ C26451
 //#include <GLFW/glfw3native.h>
 
 // ------------------------- Mathematics Library ------------------------- //
-#include "core/math/math.h"
+#include "core/math.h"
 
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.
@@ -87,7 +87,7 @@ C26451
 * The classes included here are built in objects for the core game engine.
 * They will be used for setting up guis and interfaces.
 */
-#include "core/object/object.h"
+#include "core/object.h"
 
 //#include "core/object/render_target.h"
 

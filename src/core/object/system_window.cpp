@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include <geodesuka/core/math/math.h>
+#include <geodesuka/core/math.h>
 
 #include <geodesuka/core/gcl/gcl.h>
 
@@ -10,7 +10,7 @@
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include <geodesuka/core/object/object.h>
+#include <geodesuka/core/object.h>
 #include <geodesuka/core/object/window.h>
 #include <geodesuka/core/object/system_display.h>
 #include <geodesuka/core/object/system_window.h>

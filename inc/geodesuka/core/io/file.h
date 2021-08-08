@@ -116,6 +116,7 @@ namespace geodesuka {
 				util::text get_dir();
 				util::text get_name();
 				util::text get_ext();
+				void* get_data(size_t& ReturnSize);
 
 			private:
 

@@ -1,37 +1,41 @@
-#ifndef FONT_H
-#define FONT_H
+#pragma once
+#ifndef GEODESUKA_CORE_IO_FONT_H
+#define GEODESUKA_CORE_IO_FONT_H
 
-// OpenGL
-#include "opengl.h"
+namespace geodesuka {
+	namespace core {
+		namespace io {
 
-// OpenCL
-#include "opencl.h"
+			// Rename class to typeface?
+			class font {
+			public:
 
-#include "texture.h"
+				/*
+				static bool initialize();
+				static bool terminate();
 
-class font {
-public:
+				texture SymbolSet;
 
-	static bool initialize();
-	static bool terminate();
+				int m, n, l;
+				void *hptr;
+				float *sx;
+				float *sy;
+				float *bx;
+				float *by;
+				float *ax;
+				float *ay;
 
-	texture SymbolSet;
+				font();
+				~font();
 
-	int m, n, l;
-	void *hptr;
-	float *sx;
-	float *sy;
-	float *bx;
-	float *by;
-	float *ax;
-	float *ay;
+				bool read(const char* Path);
+				bool load();
+				bool clear();
+				*/
+			};
 
-	font();
-	~font();
+		}
+	}
+}
 
-	bool read(const char* Path);
-	bool load();
-	bool clear();
-
-};
-#endif // !FONT_H
+#endif // !GEODESUKA_CORE_IO_FONT_H

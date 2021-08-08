@@ -4,7 +4,7 @@
 
 #include "../gcl/gcl.h"
 
-#include "../math/math.h"
+#include "../math.h"
 
 #include "../gcl/device.h"
 #include "../gcl/device_context.h"
@@ -15,7 +15,7 @@
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 #include "window.h"
 //#include "system_display.h"
 //#include "system_window.h"

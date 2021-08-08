@@ -1,4 +1,4 @@
-#include <geodesuka/core/object/object.h>
+#include <geodesuka/core/object.h>
 
 namespace geodesuka {
 	namespace core {

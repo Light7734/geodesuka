@@ -2,7 +2,7 @@
 #ifndef CAMERA2D_H
 #define CAMERA2D_H
 
-#include "object.h"
+#include "../object.h"
 
 #include "camera.h"
 

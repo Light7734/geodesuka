@@ -1,16 +1,20 @@
-#include "font.h"
+#include <geodesuka/core/io/font.h>
 
 #include <stdlib.h>
 #include <string.h>
 
-// OpenGL
-#include "opengl.h"
+namespace geodesuka {
+	namespace core {
+		namespace io {
 
-// OpenCL
-#include "opencl.h"
 
-#include "texture.h"
 
+		}
+	}
+}
+
+// This Stuff WORKS, do NOT LOSE IT.
+/*
 // Font Loading
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -157,3 +161,4 @@ bool font::clear() {
 //		std::cout << std::endl;
 //	}
 //}
+*/

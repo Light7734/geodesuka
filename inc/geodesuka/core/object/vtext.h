@@ -4,7 +4,7 @@
 
 #include "../util/text.h"
 
-#include "object.h"
+#include "../object.h"
 
 namespace geodesuka {
 	namespace core {

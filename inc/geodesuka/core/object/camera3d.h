@@ -2,7 +2,7 @@
 #ifndef CAMERA3D_H
 #define CAMERA3D_H
 
-#include "object.h"
+#include "../object.h"
 #include "camera.h"
 
 namespace geodesuka {

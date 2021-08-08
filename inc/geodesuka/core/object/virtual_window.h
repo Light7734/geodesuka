@@ -2,13 +2,13 @@
 #ifndef VIRTUAL_WINDOW_H
 #define VIRTUAL_WINDOW_H
 
-#include "../math/math.h"
+#include "../math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 #include "window.h"
 
 //#include "../graphical/frame_buffer.h"

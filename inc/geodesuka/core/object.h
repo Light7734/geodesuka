@@ -17,14 +17,14 @@
 * how to stream line 
 */
 
-#include "../math/math.h"
+#include "math.h"
 
-#include "../gcl/gcl.h"
-#include "../gcl/context.h"
+#include "gcl/gcl.h"
+#include "gcl/context.h"
 
-#include "../hid/keyboard.h"
-#include "../hid/mouse.h"
-#include "../hid/joystick.h"
+#include "hid/keyboard.h"
+#include "hid/mouse.h"
+#include "hid/joystick.h"
 
 namespace geodesuka {
 	namespace core {
@@ -160,6 +160,7 @@ namespace geodesuka {
 			};
 
 		}
+
 	}
 }
 

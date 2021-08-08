@@ -14,7 +14,7 @@
 #include "../hid/mouse.h"
 #include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 
 #include "system_display.h"
 #include "system_window.h"

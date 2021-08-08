@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <geodesuka/core/math/math.h>
+#include <geodesuka/core/math.h>
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include <geodesuka/core/object/object.h>
+#include <geodesuka/core/object.h>
 
 namespace geodesuka {
 	namespace core {

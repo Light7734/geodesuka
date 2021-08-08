@@ -2,15 +2,13 @@
 
 #include <stdarg.h>
 
-#include <geodesuka/core/math/math.h>
+#include <geodesuka/core/math.h>
 
 #include <geodesuka/core/gcl/variable.h>
 
 namespace geodesuka {
 	namespace core {
 		namespace gcl {
-
-
 
 			buffer::buffer(context* aContext, id aType, int aCount, variable aMemoryLayout, void* aVertexData) {
 

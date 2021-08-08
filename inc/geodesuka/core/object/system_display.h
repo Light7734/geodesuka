@@ -5,7 +5,7 @@
 #include "../gcl/gcl.h"
 #include "../gcl/frame_buffer.h"
 
-#include "object.h"
+#include "../object.h"
 
 #include "window.h"
 

@@ -61,8 +61,16 @@ namespace geodesuka {
 
 			private:
 
-				// Interface with 
-				glslang::TShader mTShader;
+				io::file* FileHandle;						// Reference Asset File.
+
+				glslang::TShader mTShader;					// glslang shader handle. (Holds AST)
+				std::vector<unsigned int> Binary;			// Compiled SPIRV Binary
+
+
+				device_context* ParentDevice;				// Parent Device Context of this Shader
+				VkShaderModuleCreateInfo CreateInfo;		// Creation Info
+				VkShaderModule Handle;						// Simple Handle
+
 			};
 
 		}

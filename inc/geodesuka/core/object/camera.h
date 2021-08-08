@@ -19,13 +19,13 @@
 #include <vector>
 #include <string>
 
-#include "../math/math.h"
+#include "../math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 
 //#include "../graphical/frame_buffer.h"
 

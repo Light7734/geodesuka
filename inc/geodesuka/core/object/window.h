@@ -54,13 +54,13 @@ PS = Physical Screen Coordinates
 
 #include "../util/text.h"
 
-#include "../math/math.h"
+#include "../math.h"
 
 #include "../gcl/gcl.h"
 #include "../gcl/context.h"
 #include "../gcl/frame_buffer.h"
 
-#include "object.h"
+#include "../object.h"
 
 namespace geodesuka {
 	namespace core {

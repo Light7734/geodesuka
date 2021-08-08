@@ -112,6 +112,11 @@ namespace geodesuka {
 				return this->Ext;
 			}
 
+			void* file::get_data(size_t& ReturnSize) {
+				ReturnSize = this->DataSize;
+				return this->Data;
+			}
+
 		}
 	}
 }
