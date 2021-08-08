@@ -26,7 +26,7 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			class triangle : public object {
+			class triangle : public object_t {
 			public:
 
 				triangle();

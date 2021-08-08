@@ -94,7 +94,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
 				// Mandatory implementation required by window.h
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 				virtual math::integer set_position(math::real3 aPosition)				override;
 				virtual math::integer set_size(math::real2 aSize)						override; // Do not rapidly change size or lag will happen.
@@ -104,20 +104,17 @@ namespace geodesuka {
 
 				math::integer set_parent_display(system_display* aParentDisplay);
 				//system_display* get_parent_display() { return this->ParentDisplay; }
-				math::integer set_input_stream_target(object* aTargetObject);
+				math::integer set_input_stream_target(object_t* aTargetObject);
 
 			private:
 
 				// The target object where polled input will be streamed to.
-				object* InputStreamTarget;
-
-				system_display* ParentDisplay;
-				//gcl::context* ParentDeviceContext;
-				//gcl::context* Context;
+				object_t* InputStreamTarget;
 
 				math::integer2 PositionSC;
 				//math::integer2 SizeSC;
 
+				system_display* ParentDisplay;
 				gcl::device_context* ParentDeviceContext;
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;

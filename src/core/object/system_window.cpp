@@ -457,8 +457,8 @@ namespace geodesuka {
 
 			math::integer system_window::draw(camera3d* aTargetCamera3D) { return 0; }
 
-			math::integer system_window::draw(object* aObject) {
-				if ((object*)this == aObject) return -1;
+			math::integer system_window::draw(object_t* aObject) {
+				if ((object_t*)this == aObject) return -1;
 				return aObject->draw(this);
 			}
 
@@ -509,7 +509,7 @@ namespace geodesuka {
 				return 0;
 			}
 
-			math::integer system_window::set_input_stream_target(object* aTargetObject) {
+			math::integer system_window::set_input_stream_target(object_t* aTargetObject) {
 				this->InputStreamTarget = aTargetObject;
 				return 0;
 			}

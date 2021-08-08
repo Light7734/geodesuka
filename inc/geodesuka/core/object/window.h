@@ -69,7 +69,7 @@ namespace geodesuka {
 			// A window is a general type object that can be drawn to, which also has the properties
 			// of every object, which it too can be drawn. Each window has a canvas, which is what is actually drawn
 			// to. A full window is Canvas + Frame.
-			class window : public object {
+			class window : public object_t {
 			public:
 
 				// Maybe for window types?
@@ -100,7 +100,7 @@ namespace geodesuka {
 				};
 
 				// This is to discern what type of target is being drawn to, referenced by object.h
-				virtual math::integer draw(object* aObject) = 0;
+				virtual math::integer draw(object_t* aObject) = 0;
 
 				virtual math::integer set_title(util::text aTitle);
 				virtual math::integer set_size(math::real2 aSize);
@@ -111,6 +111,7 @@ namespace geodesuka {
 				// no forwarding is chosen.
 				//virtual math::integer forward_input_stream_to(object* aObject);
 
+				// Uncomment when done debugging.
 			//protected:
 
 				util::text Name;

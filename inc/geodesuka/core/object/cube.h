@@ -36,7 +36,7 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			class cube : public object {
+			class cube : public object_t {
 			public:
 
 				//buffer* VertexBuffer;

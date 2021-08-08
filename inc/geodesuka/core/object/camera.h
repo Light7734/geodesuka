@@ -33,7 +33,7 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			class camera : public object {
+			class camera : public object_t {
 			public:
 
 				math::real4x4 Translation;
@@ -60,7 +60,7 @@ namespace geodesuka {
 				math::real MinDistance;
 				math::real MaxDistance;
 
-				virtual math::integer draw(object* aObject) = 0;
+				virtual math::integer draw(object_t* aObject) = 0;
 
 			protected:
 

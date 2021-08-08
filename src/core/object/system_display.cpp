@@ -76,8 +76,8 @@ namespace geodesuka {
 
 			math::integer system_display::draw(camera3d* aTargetCamera3D) { return 0; }
 
-			math::integer system_display::draw(object* aObject) {
-				if ((object*)this == aObject) return -1;
+			math::integer system_display::draw(object_t* aObject) {
+				if ((object_t*)this == aObject) return -1;
 				return aObject->draw(this);
 			}
 

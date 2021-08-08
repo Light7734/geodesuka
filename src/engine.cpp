@@ -176,7 +176,7 @@ namespace geodesuka {
 		// This will conduct system wide input polling and deliver input polls to respective objects in focus.
 		glfwPollEvents();
 
-		for (core::math::integer i = 0; i < SystemWindow.size(); i++) {
+		for (size_t i = 0; i < SystemWindow.size(); i++) {
 
 			// Check if window wants to close.
 	
@@ -191,13 +191,13 @@ namespace geodesuka {
 	int engine::update(core::math::real adt) {
 		// This will conduct the time step interval and evaluate input poll from last section.
 
-		for (core::math::integer i = 0; i < Display.size(); i++) {
+		for (size_t i = 0; i < Display.size(); i++) {
 			Display[i]->update(dt);
 		}
 
 		
 
-		for (core::math::integer i = 0; i < Object.size(); i++) {
+		for (size_t i = 0; i < Object.size(); i++) {
 			Object[i]->update(dt);
 		}
 
@@ -231,9 +231,9 @@ namespace geodesuka {
 		return this->Display;
 	}
 
-	core::object::object* engine::create(core::object::object* aNewObject) {
+	core::object_t* engine::create(core::object_t* aNewObject) {
 		// Checks for redundant elements.
-		for (core::math::integer i = 0; i < Object.size(); i++) {
+		for (size_t i = 0; i < Object.size(); i++) {
 			if (Object[i] == aNewObject) return aNewObject;
 		}
 		// Pushes onto list if not on list.
@@ -243,14 +243,14 @@ namespace geodesuka {
 
 	core::object::system_window* engine::create(core::object::system_window* aNewWindow) {
 		// Checks for redundant elements.
-		for (core::math::integer i = 0; i < SystemWindow.size(); i++) {
+		for (size_t i = 0; i < SystemWindow.size(); i++) {
 			if (SystemWindow[i] == aNewWindow) return aNewWindow;
 		}
 		// Pushes onto list if not on list.
 		SystemWindow.push_back(aNewWindow);
 
 		// Checks for redundant elements.
-		for (core::math::integer i = 0; i < Object.size(); i++) {
+		for (size_t i = 0; i < Object.size(); i++) {
 			if (Object[i] == aNewWindow) return aNewWindow;
 		}
 		// Pushes onto list if not on list.
@@ -258,9 +258,9 @@ namespace geodesuka {
 		return aNewWindow;
 	}
 
-	core::math::integer engine::destroy(core::object::object* aDestroyObject) {
+	core::math::integer engine::destroy(core::object_t* aDestroyObject) {
 		// Searches for object in list, then erases if it exists.
-		for (core::math::integer i = 0; i < Object.size(); i++) {
+		for (size_t i = 0; i < Object.size(); i++) {
 			if (Object[i] == aDestroyObject) {
 				Object.erase(Object.begin() + i);
 				return 0;

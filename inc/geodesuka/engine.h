@@ -153,12 +153,12 @@ namespace geodesuka {
 		// and extending object.h for user choice.
 		// Example: "Engine, create a new sword.".
 		// Object* Sword = Engine.create(new sword());
-		core::object::object* create(core::object::object* aNewObject);
+		core::object_t* create(core::object_t* aNewObject);
 		core::object::window* create(core::object::window* aNewWindow);
 		core::object::system_window* create(core::object::system_window* aNewSystemWindow);
 		core::object::virtual_window* create(core::object::virtual_window* aNewWindow);
 		//core::object::camera* create(core::object::camera* aNewWindow);
-		core::math::integer destroy(core::object::object* aDestroyObject);
+		core::math::integer destroy(core::object_t* aDestroyObject);
 
 		double get_time();
 
@@ -187,7 +187,7 @@ namespace geodesuka {
 		std::vector<core::object::camera*> Camera;
 
 		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
-		std::vector<core::object::object*> Object;
+		std::vector<core::object_t*> Object;
 
 		
 		const char *get_er_str(VkResult Res);

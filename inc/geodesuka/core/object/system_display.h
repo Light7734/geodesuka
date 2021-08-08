@@ -40,7 +40,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
 				// Mandatory implementation required by window.h
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 			private:
 

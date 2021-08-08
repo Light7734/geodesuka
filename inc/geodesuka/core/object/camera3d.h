@@ -28,7 +28,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 			};
 

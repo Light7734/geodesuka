@@ -9,8 +9,8 @@
 
 
 using namespace geodesuka::core;
-//using namespace gcl;
-//using namespace object;
+using namespace gcl;
+using namespace object;
 
 /*
 * setProcessDPIAwarenessContext()
@@ -232,19 +232,19 @@ int main(int argc, char *argv[]) {
 	geodesuka::engine Engine(argc, argv);
 
 	// Choose from provided Device List. Just an example.
-	geodesuka::core::gcl::device *ChosenDevice;
-	geodesuka::core::gcl::device_context* DeviceContext = nullptr;
+	device *ChosenDevice;
+	device_context* DeviceContext = nullptr;
 	for (size_t i = 0; i < Engine.DeviceList.size(); i++) {
 		if (Engine.DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-			DeviceContext = new geodesuka::core::gcl::device_context(Engine.DeviceList[i]);
+			DeviceContext = new device_context(Engine.DeviceList[i]);
 			std::cout << "Device Context Creation Status: " << Engine.get_er_str(DeviceContext->ErrorCode) << std::endl;
 			break;
 		}
 	}
 
 	// Window properties constructor.
-	object::window::prop WindowProperties = object::window::prop();
-	gcl::frame_buffer::prop FramebufferProperties = gcl::frame_buffer::prop();
+	window::prop WindowProperties = window::prop();
+	frame_buffer::prop FramebufferProperties = frame_buffer::prop();
 	
 	WindowProperties.Decorated			= GLFW_TRUE;
 	WindowProperties.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
@@ -253,8 +253,8 @@ int main(int argc, char *argv[]) {
 	FramebufferProperties.Format		= VK_FORMAT_R8G8B8A8_SRGB;
 	FramebufferProperties.ColorSpace	= VK_COLORSPACE_SRGB_NONLINEAR_KHR;
 
-	object::system_display* PrimaryDisplay = Engine.get_primary_display();
-	object::system_window* Window = new object::system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
+	system_display* PrimaryDisplay = Engine.get_primary_display();
+	system_window* Window = new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
 		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL"));
 	std::cout << "Window Creation Status: " << Engine.get_er_str(Window->ErrorCode) << std::endl;
 
