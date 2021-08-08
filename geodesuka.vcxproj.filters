@@ -938,5 +938,8 @@
     <ClInclude Include="inc\geodesuka\core\object.h">
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
+    <ClInclude Include="src\dep\glslang\build_info.h">
+      <Filter>src\dep\glslang</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

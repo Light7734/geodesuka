@@ -388,6 +388,7 @@
     <ClInclude Include="src\dep\glfw\src\win32_joystick.h" />
     <ClInclude Include="src\dep\glfw\src\win32_platform.h" />
     <ClInclude Include="src\dep\glfw\src\xkb_unicode.h" />
+    <ClInclude Include="src\dep\glslang\build_info.h" />
     <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h" />
     <ClInclude Include="src\dep\glslang\glslang\Include\BaseTypes.h" />
     <ClInclude Include="src\dep\glslang\glslang\Include\Common.h" />
