@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GEODESUKA_CORE_OBJECT_T_H
-#define GEODESUKA_CORE_OBJECT_T_H
+#ifndef GEODESUKA_CORE_OBJECT_H
+#define GEODESUKA_CORE_OBJECT_H
 
 // ------------------------------ object.h ------------------------------ //
 /*
@@ -17,7 +17,7 @@
 * how to stream line 
 */
 
-#include "math.h"
+#include "./math.h"
 
 #include "gcl/gcl.h"
 #include "gcl/context.h"
@@ -162,4 +162,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !GEODESUKA_CORE_OBJECT_T_H
+#endif // !GEODESUKA_CORE_OBJECT_H

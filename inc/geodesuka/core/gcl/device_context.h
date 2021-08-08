@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DEVICE_CONTEXT_H
-#define DEVICE_CONTEXT_H
+#ifndef GEODESUKA_CORE_GCL_DEVICE_CONTEXT_H
+#define GEODESUKA_CORE_GCL_DEVICE_CONTEXT_H
 
 #include "gcl.h"
 #include "device.h"
@@ -54,4 +54,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !DEVICE_CONTEXT_H
+#endif // !GEODESUKA_CORE_GCL_DEVICE_CONTEXT_H

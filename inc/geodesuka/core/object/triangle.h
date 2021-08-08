@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TRIANGLE_H
-#define TRIANGLE_H
+#ifndef GEODESUKA_CORE_OBJECT_TRIANGLE_H
+#define GEODESUKA_CORE_OBJECT_TRIANGLE_H
 
 #include "../gcl/buffer.h"
 #include "../gcl/shader.h"
@@ -42,4 +42,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !TRIANGLE_H
+#endif // !GEODESUKA_CORE_OBJECT_TRIANGLE_H

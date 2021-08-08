@@ -1,6 +1,6 @@
 #pragma once
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_WINDOW_H
 
 //#include "../mathematics/mathematics.h"
 //
@@ -128,4 +128,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_WINDOW_H

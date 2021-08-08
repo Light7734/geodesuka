@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CAMERA3D_H
-#define CAMERA3D_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA3D_H
+#define GEODESUKA_CORE_OBJECT_CAMERA3D_H
 
 #include "../object.h"
 #include "camera.h"
@@ -35,4 +35,4 @@ namespace geodesuka {
 		}
 	}
 }
-#endif // !CAMERA3D_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA3D_H

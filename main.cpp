@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
 	geodesuka::engine Engine(argc, argv);
 
 	// Choose from provided Device List. Just an example.
-	device *ChosenDevice;
+	//device *ChosenDevice = nullptr;
 	device_context* DeviceContext = nullptr;
 	for (size_t i = 0; i < Engine.DeviceList.size(); i++) {
 		if (Engine.DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SYSTEM_DISPLAY_H
-#define SYSTEM_DISPLAY_H
+#ifndef GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
+#define GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 
 #include "../gcl/gcl.h"
 #include "../gcl/frame_buffer.h"
@@ -55,4 +55,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !SYSTEM_DISPLAY_H
+#endif // !GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CUBE_H
-#define CUBE_H
+#ifndef GEODESUKA_CORE_OBJECT_CUBE_H
+#define GEODESUKA_CORE_OBJECT_CUBE_H
 
 /*
 // -------------------------------------------------- cube.h -------------------------------------------------- \\
@@ -69,5 +69,5 @@ namespace geodesuka {
 	}
 }
 
-#endif // !CUBE_H
+#endif // !GEODESUKA_CORE_OBJECT_CUBE_H
 

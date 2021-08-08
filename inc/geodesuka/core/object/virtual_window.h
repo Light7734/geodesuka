@@ -1,6 +1,6 @@
 #pragma once
-#ifndef VIRTUAL_WINDOW_H
-#define VIRTUAL_WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H
 
 #include "../math.h"
 
@@ -43,4 +43,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !VIRTUAL_WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H

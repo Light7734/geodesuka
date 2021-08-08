@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA_H
+#define GEODESUKA_CORE_OBJECT_CAMERA_H
 
 // I'm still concerned how this will fit in as
 // an object. It is an object, but is it a window?
@@ -86,4 +86,4 @@ namespace geodesuka {
 		}
 	}
 }
-#endif // !CAMERA_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef VTEXT_H
-#define VTEXT_H
+#ifndef GEODESUKA_CORE_OBJECT_VTEXT_H
+#define GEODESUKA_CORE_OBJECT_VTEXT_H
 
 #include "../util/text.h"
 
@@ -21,4 +21,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !VTEXT_H
+#endif // !GEODESUKA_CORE_OBJECT_VTEXT_H

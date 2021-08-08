@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SYSTEM_WINDOW_H
-#define SYSTEM_WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
 #include "../gcl/gcl.h"
 
@@ -162,4 +162,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !SYSTEM_WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H

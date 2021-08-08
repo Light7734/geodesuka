@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CAMERA2D_H
-#define CAMERA2D_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA2D_H
+#define GEODESUKA_CORE_OBJECT_CAMERA2D_H
 
 #include "../object.h"
 
@@ -33,4 +33,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !CAMERA2D_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA2D_H
