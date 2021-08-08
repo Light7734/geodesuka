@@ -236,6 +236,7 @@ int main(int argc, char *argv[]) {
 	device_context* DeviceContext = nullptr;
 	for (size_t i = 0; i < Engine.DeviceList.size(); i++) {
 		if (Engine.DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			// Creates a context for the chosen device.
 			DeviceContext = new device_context(Engine.DeviceList[i]);
 			std::cout << "Device Context Creation Status: " << Engine.get_er_str(DeviceContext->ErrorCode) << std::endl;
 			break;
