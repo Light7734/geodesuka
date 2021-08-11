@@ -13,6 +13,12 @@ Maybe this should maintain of all accessed files and directories
 throughout its life.
 */
 
+/*
+* 
+* Extension: A file may have an extension of what type of file it
+* may be specifically.
+*/
+
 namespace geodesuka {
 	namespace core {
 		namespace io {
@@ -25,7 +31,7 @@ namespace geodesuka {
 			class file {
 			public:
 
-				enum extid {
+				enum extension {
 					EXT_UNK = -1,
 					// --------------- Dynamic Libraries --------------- //
 					EXT_DYN,
@@ -89,6 +95,16 @@ namespace geodesuka {
 					EXT_LUA
 				};
 
+				enum class category {
+
+					PLAIN_TEXT,
+					BYTE_CODE,
+					IMAGE,
+					AUDIO,
+					MODEL
+
+				};
+
 				// A more general version grouping.
 				enum type {
 					DYNALIB,
@@ -101,13 +117,14 @@ namespace geodesuka {
 
 
 				static struct built_in_type {
-					extid Type;
+					extension Type;
 					std::vector<util::text> Extension;
 				} BuiltInTypes[];
 
-				static extid str2type(util::text aString);
-				static util::text type2str(extid aType);
+				static extension str2type(util::text aString);
+				static util::text type2str(extension aType);
 
+				file();
 				file(const char* aFilePath);
 				file(util::text& aFilePath);
 				~file();
@@ -117,6 +134,10 @@ namespace geodesuka {
 				util::text get_name();
 				util::text get_ext();
 				void* get_data(size_t& ReturnSize);
+
+			protected:
+
+				bool mset_path(util::text aFilePath);
 
 			private:
 
@@ -133,7 +154,7 @@ namespace geodesuka {
 				util::text Dir;
 				util::text Name;
 				util::text Ext;
-				extid ID;
+				extension ID;
 
 				/*
 				* This will be the raw data loaded, maybe even possibly

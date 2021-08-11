@@ -8,7 +8,9 @@
 
 #include "../gcl/device.h"
 #include "../gcl/device_context.h"
-#include "../gcl/context.h"
+
+#include "../gcl/texture.h"
+
 #include "../gcl/frame_buffer.h"
 
 //#include "../hid/mouse.h"
@@ -106,7 +108,7 @@ namespace geodesuka {
 				//system_display* get_parent_display() { return this->ParentDisplay; }
 				math::integer set_input_stream_target(object_t* aTargetObject);
 
-			private:
+			//private:
 
 				// The target object where polled input will be streamed to.
 				object_t* InputStreamTarget;
@@ -114,18 +116,20 @@ namespace geodesuka {
 				math::integer2 PositionSC;
 				//math::integer2 SizeSC;
 
-				system_display* ParentDisplay;
-				gcl::device_context* ParentDeviceContext;
+				system_display* ParentDisplay;			// Parent Display of this system_window.
+				gcl::device_context* ParentDC;			// Parent Context of this window.
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
 				VkSwapchainCreateInfoKHR SwapChainProp{};
 
-				math::boolean isValid;
-				GLFWwindow* Handle;
-				VkSurfaceKHR Surface;
-				VkSwapchainKHR SwapChain; 
+				math::boolean isValid;					// Is instance valid?
+				GLFWwindow* Handle;						// GLFW OS window handle abstraction.
+				VkSurfaceKHR Surface;					// Vulkan window handle.
+				VkSwapchainKHR SwapChain;				// Actual swapchain handle
+				std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
 
-				const std::vector<const char *> RequiredExtension = { "VK_KHR_swapchain" };
+				// Required extensions for the usage of this class
+				const std::vector<const char *> RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 
 				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //

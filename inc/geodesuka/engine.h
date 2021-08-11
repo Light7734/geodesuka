@@ -52,6 +52,7 @@ C26451
 
 // ------------------------- File System Manager ------------------------- //
 #include "core/io/file.h"
+#include "core/io/dynalib.h"
 
 // ------------------------- Graphics & Computation API ------------------------- //
 

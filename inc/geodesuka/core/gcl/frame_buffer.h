@@ -46,72 +46,16 @@ namespace geodesuka {
 				device_context* Context;
 				struct prop Property;
 
-				// Constructs Default Framebuffer.
 				frame_buffer();
-
-				// Constructs Default Framebuffer with hints
-				frame_buffer(const struct prop& aProperty);
-
-				// Constructs FBO with respect to context.
-				frame_buffer(device_context *aDeviceContext, const struct prop& aProperty);
-
+				frame_buffer(device_context* aDeviceContext);
 				~frame_buffer();
 
 				//int set_output(const variable& Target, const texture& Variable);
 
 			private:
-				// TODO: Add back later.
-				/*
-				math::boolean EnableBlending;
-				//boolean EnableColorLogic;
-				math::boolean EnableFaceCulling;
-				//boolean EnableDepthClamp;
-				math::boolean EnableDepthTest;
-				math::boolean EnableDithering;
-				//boolean EnableFramebufferSRGB;
-				//boolean EnableLineSmooth;
-				math::boolean EnableMultisample;
-				//boolean EnablePolygonSmooth;
-				math::boolean EnableScissorTest;
-				math::boolean EnableStencilTest;
 
-				// Face Culling Options
-				gl_enum FrontFaceSelect;
-				gl_enum CullFaceSelect;
-
-				// Scissor Options
-				math::integer ScissorPositionX, ScissorPositionY;
-				GLsizei ScissorSizeX, ScissorSizeY;
-
-				// Multisample Options
-				math::real MultisampleValue;
-				math::boolean MultisampleInversion;
-
-				// Depth Test Options
-				gl_enum DepthOperation;
-				math::boolean DepthFlag;
-				GLclampd DepthNear, DepthFar;
-
-				// Stencil Test Options
-				gl_enum StencilOperation;
-				math::integer StencilReferenceValue;
-				math::natural StencilMask;
-				gl_enum StencilTestFailureAction, DepthTestFailureAction, StencilAndDepthPassAction;
-
-				// Blending Options
-				math::real BlendRed, BlendGreen, BlendBlue, BlendAlpha;
-				gl_enum BlendingSourceMultiplier, BlendingDestinationMultiplier, BlendingOperation;
-
-				// Refresh Frame buffer
-				math::integer FramePositionX, FramePositionY;
-				GLsizei FrameSizeX, FrameSizeY;
-
-				GLbitfield ClearOptions;
-				math::real FrameClearRed, FrameClearGreen, FrameClearBlue, FrameClearAlpha;
-				GLclampd FrameClearDepth;
-				math::integer FrameClearStencil;
-
-				//*/
+				VkFramebufferCreateInfo CreateInfo;
+				VkFramebuffer Handle;
 
 			};
 

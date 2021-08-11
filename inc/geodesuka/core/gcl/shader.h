@@ -2,19 +2,14 @@
 #ifndef GEODESUKA_CORE_GCL_SHADER_H
 #define GEODESUKA_CORE_GCL_SHADER_H
 
+#include <vector>
+
 #include "gcl.h"
 
 #include "device.h"
 #include "device_context.h"
 
 #include "../io/file.h"
-
-#ifndef _COMPILER_INTERFACE_INCLUDED_
-// Forward Declaration for glslang
-namespace glslang {
-	class TShader;
-}
-#endif // !_COMPILER_INTERFACE_INCLUDED_
 
 namespace geodesuka {
 	namespace core {
@@ -24,31 +19,32 @@ namespace geodesuka {
 			public:
 
 				enum stage {
+					UNKNOWN,
 					VERTEX,
 					TESSELLATION_CONTROL,
 					TESSELLATION_EVALUATION,
 					GEOMETRY,
-					PIXEL,
+					FRAGMENT,
 					COMPUTE
 				};
 
-				//enum stage {
-				//	VERTEX						= EShLanguage::EShLangVertex,
-				//	TESSELLATION_CONTROL		= EShLanguage::EShLangTessControl,
-				//	TESSELLATION_EVALUATION		= EShLanguage::EShLangTessEvaluation,
-				//	GEOMETRY					= EShLanguage::EShLangGeometry,
-				//	PIXEL						= EShLanguage::EShLangFragment,
-				//	COMPUTE						= EShLanguage::EShLangCompute
-				//};
+				VkResult ErrorCode;
 
-				//enum language {
-				//	UNK			= glslang::EShSource::EShSourceNone,
-				//	GLSL		= glslang::EShSource::EShSourceGlsl,
-				//	HLSL		= glslang::EShSource::EShSourceHlsl
-				//};
+				// Create a shader from provided source string.
+				shader(device_context* aDeviceContext, stage aStage, const char* aSource);
 
-				shader(device_context* aDeviceContext, io::file* File);
+				// Use for compiling a shader object and creating it.
+				shader(device_context* aDeviceContext, const char* aFilePath);
+
+				// Create a shader from plain_text object.
+				//shader(device_context* aDeviceContext, io::plaintext &aPlainText);
+
+				// Create a shader from SPIRV bytecode object.
+				//shader(device_context *aDeviceContext, io::byte_code &aByteCode);
 				 
+				// Just clears shader up.
+				~shader();
+
 				//virtual void visitSymbol(glslang::TIntermSymbol* Symbol)											override;
 				//virtual void visitConstantUnion(glslang::TIntermConstantUnion* ConstantUnion)						override;
 				//virtual bool visitBinary(glslang::TVisit VisitType, glslang::TIntermBinary* Binary)					override;
@@ -59,16 +55,20 @@ namespace geodesuka {
 				//virtual bool visitBranch(glslang::TVisit VisitType, glslang::TIntermBranch* Branch)					override;
 				//virtual bool visitSwitch(glslang::TVisit VisitType, glslang::TIntermSwitch* Switch)					override;
 
+				VkShaderStageFlagBits get_stage();
+				VkShaderModule get_handle();
+
 			private:
 
 				io::file* FileHandle;						// Reference Asset File.
+				device_context* ParentDC;					// Parent Device Context of this Shader
 
-				glslang::TShader mTShader;					// glslang shader handle. (Holds AST)
+				stage Stage;
+				VkShaderStageFlagBits VkStage;
+
+				bool isValid;
 				std::vector<unsigned int> Binary;			// Compiled SPIRV Binary
-
-
-				device_context* ParentDevice;				// Parent Device Context of this Shader
-				VkShaderModuleCreateInfo CreateInfo;		// Creation Info
+				VkShaderModuleCreateInfo CreateInfo{};		// Creation Info
 				VkShaderModule Handle;						// Simple Handle
 
 			};

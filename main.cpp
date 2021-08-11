@@ -7,6 +7,7 @@
 
 #include "src/dep/glslang/SPIRV/GlslangToSpv.h"
 
+#include <Windows.h>
 
 using namespace geodesuka::core;
 using namespace gcl;
@@ -227,9 +228,38 @@ int main(int argc, char *argv[]) {
  //   vkDestroyInstance(Instance, NULL);
 
 	//glfwTerminate();
-
+	
 	std::cout << "Geodesuka Engine v20210807" << std::endl << std::endl;
 	geodesuka::engine Engine(argc, argv);
+
+	////int mbstowcs(wchar_t* out, const char* in, size_t size);
+	//const char* aName = "test.dll";
+	//const wchar_t* aExample = L"test.dll";
+	//wchar_t* aName2 = (wchar_t *)malloc((strlen(aName) + 1)*sizeof(wchar_t));
+	//aName2[strlen(aName)] = '\0';
+	//std::cout << mbstowcs(aName2, aName, strlen(aName) * sizeof(wchar_t)) << std::endl;
+	////std::cout << aName2 << std::endl;
+	////HMODULE Module = LoadLibrary(TEXT("opengl32.dll"));
+
+	//HMODULE Module = LoadLibrary(aName2);
+	////HMODULE Module = LoadLibrary(TEXT("test.dll"));
+
+	//FreeLibrary(Module);
+
+	//io::dynalib DynamicLibrary("opengl32.dll");
+	//std::cout << GetLastError() << std::endl;
+	//HMODULE Module = reinterpret_cast<HMODULE>(DynamicLibrary.Handle);
+	//void (*proc)();
+	//proc = (void(*)(void))GetProcAddress(Module, "wglGetProcAddress");
+
+	io::dynalib DynamicLibrary("test.dll");
+	std::cout << GetLastError() << std::endl;
+	HMODULE Module = reinterpret_cast<HMODULE>(DynamicLibrary.Handle);
+	int (*add)(int, int);
+	add = (int(*)(int, int))GetProcAddress(Module, "add");
+	std::cout << GetLastError() << std::endl;
+
+	return 0;
 
 	// Choose from provided Device List. Just an example.
 	//device *ChosenDevice = nullptr;
@@ -300,78 +330,295 @@ int main(int argc, char *argv[]) {
 		}";
 
 	std::cout << VertexShaderSource << std::endl;
+	std::cout << FragmentShaderSource << std::endl;
 
-	// Makes simple graphics pipline
+	//bool Success = false;
+	//glslang::TShader VertexShader(EShLanguage::EShLangVertex);
+	//glslang::TShader FragmentShader(EShLanguage::EShLangFragment);
+	//std::vector<unsigned int> VertexShaderSPIRV;
+	//std::vector<unsigned int> FragmentShaderSPIRV;
+
+	//VertexShader.setStrings(&VertexShaderSource, 1);
+	//VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+	//VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	//VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+	//VertexShader.setEntryPoint("main");
+
+	//FragmentShader.setStrings(&VertexShaderSource, 1);
+	//FragmentShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+	//FragmentShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+	//FragmentShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+	//FragmentShader.setEntryPoint("main");
+
+	//EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
+
+	//Success = VertexShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+	//if (Success) {
+	//	// If parsing successful, take AST and compile to SPIRV.
+	//	glslang::GlslangToSpv(*VertexShader.getIntermediate(), VertexShaderSPIRV);
+	//}
+	//else {
+	//	// Print error message.
+	//	std::cout << VertexShader.getInfoDebugLog() << std::endl;
+	//}
+
+	//Success = FragmentShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+	//if (Success) {
+	//	// If parsing successful, take AST and compile to SPIRV.
+	//	glslang::GlslangToSpv(*FragmentShader.getIntermediate(), FragmentShaderSPIRV);
+	//}
+	//else {
+	//	// Print error message.
+	//	std::cout << FragmentShader.getInfoDebugLog() << std::endl;
+	//}
+
+	//// Creat Shader Modules for compiled shader code.
+	//VkShaderModuleCreateInfo VertexShaderModuleCreateInfo;
+	//VertexShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	//VertexShaderModuleCreateInfo.pNext		= NULL;
+	//VertexShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
+	//VertexShaderModuleCreateInfo.codeSize	= VertexShaderSPIRV.size()*sizeof(uint32_t);
+	//VertexShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(VertexShaderSPIRV.data());
+
+	//VkShaderModule VertexShaderModule;
+	//// Create Shader Modules.
+	//Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &VertexShaderModuleCreateInfo, NULL, &VertexShaderModule);
+	//std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
+
+
+	//VkShaderModuleCreateInfo FragmentShaderModuleCreateInfo;
+	//FragmentShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	//FragmentShaderModuleCreateInfo.pNext		= NULL;
+	//FragmentShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
+	//FragmentShaderModuleCreateInfo.codeSize		= FragmentShaderSPIRV.size()*sizeof(uint32_t);
+	//FragmentShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(FragmentShaderSPIRV.data());
+
+	//VkShaderModule FragmentShaderModule;
+	//// Create Shader Modules.
+	//Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &FragmentShaderModuleCreateInfo, NULL, &FragmentShaderModule);
+	//std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
+
+	// Does everything above but in two lines.
+	shader VertexShader(DeviceContext, shader::VERTEX, VertexShaderSource);
+	shader FragmentShader(DeviceContext, shader::FRAGMENT, FragmentShaderSource);
+
+	std::cout << "Vertex Shader Compile Status: " << Engine.get_er_str(VertexShader.ErrorCode) << std::endl;
+	std::cout << "Fragment Shader Compile Status: " << Engine.get_er_str(FragmentShader.ErrorCode) << std::endl;
+
+	VkRenderPassCreateInfo RenderPassCI{};
+	VkRenderPass RenderPass;
+
+	VkFramebufferCreateInfo FramebufferCI{};
+	VkFramebuffer Framebuffer;
+
+
+	FramebufferCI.sType				= VkStructureType::VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	FramebufferCI.pNext				= NULL;
+	FramebufferCI.flags				= 0;
+	//FramebufferCI.renderPass		= Describes the images and attachment layouts?;
+	//FramebufferCI.attachmentCount	= 1;
+	//FramebufferCI.pAttachments		= Image Views go here.;
+	FramebufferCI.width				= Window->FrameBuffer.Property.Extent2D.width;
+	FramebufferCI.height			= Window->FrameBuffer.Property.Extent2D.height;
+	FramebufferCI.layers			= 1;
+
+	vkCreateFramebuffer(DeviceContext->get_handle(), &FramebufferCI, NULL, &Framebuffer);
+
+	// ---------------------------------------- Graphics Pipeline ---------------------------------------- //
+	/*
+	* This is a lot of information to describe a pipeline, but I do prefer this over the state machine model.
+	* At least it is easy to know exactly what is going on. Rather than a global state machine, this is rather
+	* contained.
+	*/
+
+	VkPipelineCache Cache;
 	VkPipeline GraphicsPipeline;
 
-	bool Success = false;
-	glslang::TShader VertexShader(EShLanguage::EShLangVertex);
-	glslang::TShader FragmentShader(EShLanguage::EShLangFragment);
-	std::vector<unsigned int> VertexShaderSPIRV;
-	std::vector<unsigned int> FragmentShaderSPIRV;
+	VkPipelineCacheCreateInfo CacheCI;
+	VkGraphicsPipelineCreateInfo GraphicsPipelineCI;
 
-	VertexShader.setStrings(&VertexShaderSource, 1);
-	VertexShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
-	VertexShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-	VertexShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
-	VertexShader.setEntryPoint("main");
+	// Loads compiled shaders into graphics pipeline
+	std::vector<VkPipelineShaderStageCreateInfo> ShaderStage(2);
 
-	FragmentShader.setStrings(&VertexShaderSource, 1);
-	FragmentShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
-	FragmentShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-	FragmentShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
-	FragmentShader.setEntryPoint("main");
+	// Vertex Shader
+	ShaderStage[0].sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	ShaderStage[0].pNext					= NULL;
+	ShaderStage[0].flags					= 0;
+	ShaderStage[0].stage					= VertexShader.get_stage();
+	ShaderStage[0].module					= VertexShader.get_handle();
+	ShaderStage[0].pName					= "Vertex Shader";
+	ShaderStage[0].pSpecializationInfo		= NULL;
 
-	EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
-
-	Success = VertexShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
-	if (Success) {
-		// If parsing successful, take AST and compile to SPIRV.
-		glslang::GlslangToSpv(*VertexShader.getIntermediate(), VertexShaderSPIRV);
-	}
-	else {
-		// Print error message.
-		std::cout << VertexShader.getInfoDebugLog() << std::endl;
-	}
-
-	Success = FragmentShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
-	if (Success) {
-		// If parsing successful, take AST and compile to SPIRV.
-		glslang::GlslangToSpv(*FragmentShader.getIntermediate(), FragmentShaderSPIRV);
-	}
-	else {
-		// Print error message.
-		std::cout << FragmentShader.getInfoDebugLog() << std::endl;
-	}
-
-	VkShaderModuleCreateInfo VertexShaderModuleCreateInfo;
-	VertexShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	VertexShaderModuleCreateInfo.pNext		= NULL;
-	VertexShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
-	VertexShaderModuleCreateInfo.codeSize	= VertexShaderSPIRV.size()*sizeof(uint32_t);
-	VertexShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(VertexShaderSPIRV.data());
-
-	VkShaderModule VertexShaderModule;
-	// Create Shader Modules.
-	Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &VertexShaderModuleCreateInfo, NULL, &VertexShaderModule);
-	std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
-
-
-	VkShaderModuleCreateInfo FragmentShaderModuleCreateInfo;
-	FragmentShaderModuleCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	FragmentShaderModuleCreateInfo.pNext		= NULL;
-	FragmentShaderModuleCreateInfo.flags		= 0; // Reserved for Future Use.
-	FragmentShaderModuleCreateInfo.codeSize		= FragmentShaderSPIRV.size()*sizeof(uint32_t);
-	FragmentShaderModuleCreateInfo.pCode		= reinterpret_cast<const uint32_t*>(FragmentShaderSPIRV.data());
-
-	VkShaderModule FragmentShaderModule;
-	// Create Shader Modules.
-	Engine.ErrorCode = vkCreateShaderModule(DeviceContext->get_handle(), &FragmentShaderModuleCreateInfo, NULL, &FragmentShaderModule);
-	std::cout << Engine.get_er_str(Engine.ErrorCode) << std::endl;
-
-	vkDestroyShaderModule(DeviceContext->get_handle(), VertexShaderModule, NULL);
-	vkDestroyShaderModule(DeviceContext->get_handle(), FragmentShaderModule, NULL);
+	// Fragment Shader
+	ShaderStage[1].sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	ShaderStage[1].pNext					= NULL;
+	ShaderStage[1].flags					= 0;
+	ShaderStage[1].stage					= FragmentShader.get_stage();
+	ShaderStage[1].module					= FragmentShader.get_handle();
+	ShaderStage[1].pName					= "Fragment Shader";
+	ShaderStage[1].pSpecializationInfo		= NULL;
 	
+	// Describes map for buffers to graphics pipeline.
+	VkPipelineVertexInputStateCreateInfo VertexInputStateCI;
+	VertexInputStateCI.sType								= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	VertexInputStateCI.pNext								= NULL;
+	VertexInputStateCI.flags								= 0; // Reserved for Future use. (Ignore)
+	VertexInputStateCI.vertexBindingDescriptionCount		= 0;
+	VertexInputStateCI.pVertexBindingDescriptions			= NULL;
+	VertexInputStateCI.vertexAttributeDescriptionCount		= 0;
+	VertexInputStateCI.pVertexAttributeDescriptions			= NULL;
+
+	// Input assembly topology for how the rasterizer will interpret vertex data.
+	VkPipelineInputAssemblyStateCreateInfo InputAssemblyStateCI;
+	InputAssemblyStateCI.sType						= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	InputAssemblyStateCI.pNext						= NULL;
+	InputAssemblyStateCI.flags						= 0; // Reserved for future use. (Ignore)
+	InputAssemblyStateCI.topology					= VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	InputAssemblyStateCI.primitiveRestartEnable		= VK_FALSE; // Most likely never going to use this.
+
+	// sub windows maybe?
+	VkViewport Viewport{};
+	Viewport.x			= 0;
+	Viewport.y			= 0;
+	Viewport.width		= Window->Resolution.x;
+	Viewport.height		= Window->Resolution.y;
+	Viewport.minDepth	= 0.0f;
+	Viewport.maxDepth	= 1.0f;
+
+	// Kind of cool, might fuck with later
+	VkRect2D Scissor{};
+	Scissor.offset		= { 0, 0 };
+	Scissor.extent		= Window->FrameBuffer.Property.Extent2D;
+
+	// Creates Viewport, (How can there be multiple scissors and viewports? What does this mean?)
+	VkPipelineViewportStateCreateInfo ViewportStateCI{};
+	ViewportStateCI.sType			= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	ViewportStateCI.pNext			= NULL;
+	ViewportStateCI.flags			= 0; // Reserved for future use (Ignored)
+	ViewportStateCI.viewportCount	= 1;
+	ViewportStateCI.pViewports		= &Viewport;
+	ViewportStateCI.scissorCount	= 1;
+	ViewportStateCI.pScissors		= &Scissor;
+
+	VkPipelineRasterizationStateCreateInfo RasterizationStateCI;
+	RasterizationStateCI.sType						= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	RasterizationStateCI.pNext						= NULL;
+	RasterizationStateCI.flags						= 0; // Cool, reserved for future use.
+	RasterizationStateCI.depthClampEnable			= VK_FALSE;
+	RasterizationStateCI.rasterizerDiscardEnable	= VK_FALSE; // Fuck no
+	RasterizationStateCI.polygonMode				= VkPolygonMode::VK_POLYGON_MODE_FILL;
+	RasterizationStateCI.cullMode					= VkCullModeFlagBits::VK_CULL_MODE_NONE;
+	RasterizationStateCI.frontFace					= VkFrontFace::VK_FRONT_FACE_COUNTER_CLOCKWISE; // Defines CCW as front face.
+	RasterizationStateCI.depthBiasEnable			= VK_FALSE;
+	RasterizationStateCI.depthBiasConstantFactor	= 0.0f;
+	RasterizationStateCI.depthBiasClamp				= 0.0f;
+	RasterizationStateCI.depthBiasSlopeFactor		= 0.0f;
+	RasterizationStateCI.lineWidth					= 1.0f;
+
+	VkPipelineMultisampleStateCreateInfo MultisampleStateCI;
+	MultisampleStateCI.sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	MultisampleStateCI.pNext					= NULL;
+	MultisampleStateCI.flags					= 0; // Fuck yeah
+	MultisampleStateCI.rasterizationSamples		= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
+	MultisampleStateCI.sampleShadingEnable		= VK_FALSE;
+	MultisampleStateCI.minSampleShading			= 1.0f;
+	MultisampleStateCI.pSampleMask				= NULL;
+	MultisampleStateCI.alphaToCoverageEnable	= VK_FALSE;
+	MultisampleStateCI.alphaToOneEnable			= VK_FALSE;
+	
+	/*
+	VkPipelineDepthStencilStateCreateInfo DepthStencilStateCI;
+	DepthStencilStateCI.sType						= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	DepthStencilStateCI.pNext						= NULL;
+	DepthStencilStateCI.flags						= 0; // NICE
+	DepthStencilStateCI.depthTestEnable				;
+	DepthStencilStateCI.depthWriteEnable			;
+	DepthStencilStateCI.depthCompareOp				;
+	DepthStencilStateCI.depthBoundsTestEnable		;
+	DepthStencilStateCI.stencilTestEnable			;
+	DepthStencilStateCI.front						;
+	DepthStencilStateCI.back						;
+	DepthStencilStateCI.minDepthBounds				;
+	DepthStencilStateCI.maxDepthBounds				;
+	*/
+
+	// wtf? the fisrt vulkan struct that doesn't begin with sType and pNext?
+	// Alpha channel is being used in this pipeline.
+	VkPipelineColorBlendAttachmentState Attachment{};
+	Attachment.blendEnable			= VK_TRUE;
+	Attachment.srcColorBlendFactor	= VkBlendFactor::VK_BLEND_FACTOR_SRC_ALPHA;
+	Attachment.dstColorBlendFactor	= VkBlendFactor::VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	Attachment.colorBlendOp			= VkBlendOp::VK_BLEND_OP_ADD;
+	Attachment.srcAlphaBlendFactor	= VkBlendFactor::VK_BLEND_FACTOR_ONE;
+	Attachment.dstAlphaBlendFactor	= VkBlendFactor::VK_BLEND_FACTOR_ZERO;
+	Attachment.alphaBlendOp			= VkBlendOp::VK_BLEND_OP_ADD;
+	//Attachment.colorWriteMask		= 0;
+
+	VkPipelineColorBlendStateCreateInfo ColorBlendStateCI{};
+	ColorBlendStateCI.sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	ColorBlendStateCI.pNext					= NULL;
+	ColorBlendStateCI.flags					= 0;
+	ColorBlendStateCI.logicOpEnable			= VK_FALSE;
+	ColorBlendStateCI.logicOp				= VK_LOGIC_OP_COPY;
+	ColorBlendStateCI.attachmentCount		= 1;
+	ColorBlendStateCI.pAttachments			= &Attachment;
+	ColorBlendStateCI.blendConstants[0]		= 0.0f;
+	ColorBlendStateCI.blendConstants[1]		= 0.0f;
+	ColorBlendStateCI.blendConstants[2]		= 0.0f;
+	ColorBlendStateCI.blendConstants[3]		= 0.0f;
+
+	VkDynamicState DynamicState[] = {
+			VK_DYNAMIC_STATE_VIEWPORT,
+			VK_DYNAMIC_STATE_LINE_WIDTH
+	};
+
+	// Heads up warning for what changes quickly
+	VkPipelineDynamicStateCreateInfo DynamicStateCI{};
+	DynamicStateCI.sType				= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	DynamicStateCI.pNext				= NULL;
+	DynamicStateCI.flags				= 0;
+	DynamicStateCI.dynamicStateCount	= 2;
+	DynamicStateCI.pDynamicStates		= DynamicState;
+
+	// This will apparently be the interface for uniforms in shaders.
+	VkPipelineLayout Layout;
+	VkPipelineLayoutCreateInfo LayoutCI;
+	LayoutCI.sType						= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	LayoutCI.pNext						= NULL;
+	LayoutCI.flags						= 0; // Sweet.
+	LayoutCI.setLayoutCount				= 0;
+	LayoutCI.pSetLayouts				= NULL;
+	LayoutCI.pushConstantRangeCount		= 0;
+	LayoutCI.pPushConstantRanges		= NULL;
+	Engine.ErrorCode = vkCreatePipelineLayout(DeviceContext->get_handle(), &LayoutCI, NULL, &Layout);
+	std::cout << "PipelineLayout Creation Status: " << Engine.get_er_str(Engine.ErrorCode) << std::endl;
+
+	// Finalizes previous steps into graphics pipeline creation info.
+	GraphicsPipelineCI.sType						= VkStructureType::VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	GraphicsPipelineCI.pNext						= NULL;
+	GraphicsPipelineCI.flags						= 0;
+	GraphicsPipelineCI.stageCount					= 2;
+	GraphicsPipelineCI.pStages						= ShaderStage.data();
+	GraphicsPipelineCI.pVertexInputState			= &VertexInputStateCI;
+	GraphicsPipelineCI.pInputAssemblyState			= &InputAssemblyStateCI;
+	GraphicsPipelineCI.pTessellationState			= NULL; // Not using this right now
+	GraphicsPipelineCI.pViewportState				= &ViewportStateCI;
+	GraphicsPipelineCI.pRasterizationState			= &RasterizationStateCI;
+	GraphicsPipelineCI.pMultisampleState			= &MultisampleStateCI;
+	GraphicsPipelineCI.pDepthStencilState			= NULL; // Ignore for now
+	GraphicsPipelineCI.pColorBlendState				= &ColorBlendStateCI;
+	GraphicsPipelineCI.pDynamicState				= &DynamicStateCI;
+	GraphicsPipelineCI.layout						= Layout;
+	GraphicsPipelineCI.renderPass					;
+	/*
+	GraphicsPipelineCI.subpass						;
+	GraphicsPipelineCI.basePipelineHandle			;
+	GraphicsPipelineCI.basePipelineIndex			;
+	*/
+
+	vkCreatePipelineCache(DeviceContext->get_handle(), &CacheCI, NULL, &Cache);
+	vkCreateGraphicsPipelines(DeviceContext->get_handle(), Cache, 1, &GraphicsPipelineCI, NULL, &GraphicsPipeline);
+
 	for (size_t i = 0; i < 7; i++) {
 		std::cout << io::file::BuiltInTypes[i].Type << " ";
 		for (size_t j = 0; j < io::file::BuiltInTypes[i].Extension.size(); j++) {

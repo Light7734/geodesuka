@@ -72,12 +72,10 @@ namespace geodesuka {
 			class window : public object_t {
 			public:
 
-				// Maybe for window types?
-				enum type {
-					SYSTEM_DISPLAY,
-					SYSTEM_WINDOW,
-					VIRTUAL_WINDOW,
-					CAMERA
+				enum present_mode {
+					IMMEDIATE,
+					FIFO,
+					MAILBOX
 				};
 
 				struct prop {
@@ -118,8 +116,6 @@ namespace geodesuka {
 				math::real2 Size;				// [m]
 				math::natural2 Resolution;		// [pixels]
 				struct prop Property;
-
-				// Every window has a framebuffer. (That means it can be drawn to).
 				gcl::frame_buffer FrameBuffer;
 
 			};

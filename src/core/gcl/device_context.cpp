@@ -24,9 +24,9 @@ namespace geodesuka {
 
 				// Searches for desired extensions.
 				for (size_t i = 0; i < PhysicalDeviceExtension.size(); i++) {
+					size_t StrLen1 = strlen(PhysicalDeviceExtension[i].extensionName);
 					for (size_t j = 0; j < DesiredExtension.size(); j++) {
 						//std::cout << PhysicalDeviceExtension[i].extensionName << " = " << this->DesiredExtension[j] << std::endl;
-						size_t StrLen1 = strlen(PhysicalDeviceExtension[i].extensionName);
 						size_t StrLen2 = strlen(this->DesiredExtension[j]);
 						if (StrLen1 == StrLen2) {
 							if (strcmp(PhysicalDeviceExtension[i].extensionName, this->DesiredExtension[j]) == 0) {
@@ -67,6 +67,7 @@ namespace geodesuka {
 
 				// This is how to access the queues for the logical device.
 				//vkGetDeviceQueue(this->Handle, QueueFamilyIndex, QueueIndex, &Queue);
+				
 				
 				
 				// Figure out how to allow user to interact with device queues.

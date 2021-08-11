@@ -27,6 +27,11 @@ namespace geodesuka {
 			}
 
 			frame_buffer::frame_buffer() {
+				VkRenderPassCreateInfo;
+
+			}
+
+			frame_buffer::frame_buffer(device_context* aDeviceContext) {
 
 			}
 

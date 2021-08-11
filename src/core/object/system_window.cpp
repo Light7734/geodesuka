@@ -180,7 +180,7 @@ namespace geodesuka {
 					}
 
 					// Required extension found and validated.
-					if (this->isValid) this->ParentDeviceContext = aDeviceContext;
+					if (this->isValid) this->ParentDC = aDeviceContext;
 				}
 
 				if (this->isValid) {
@@ -288,7 +288,7 @@ namespace geodesuka {
 				// Create Vulkan Surface.
 				if (this->isValid) {
 					// Creates respective Vulkan surface with operating system window.
-					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDeviceContext->get_inst(), this->Handle, NULL, &this->Surface);
+					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDC->get_inst(), this->Handle, NULL, &this->Surface);
 					// If Vulkan Surface not created from OS window, abort following operations.
 					if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
 				}
@@ -297,22 +297,22 @@ namespace geodesuka {
 				if (this->isValid) {
 
 					// Queuries for surface capabilities.
-					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &this->SurfaceCapabilities);
+					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &this->SurfaceCapabilities);
 
 					// Queries for Surface Formats.
 					uint32_t FormatCount = 0;
-					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &FormatCount, NULL);
+					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &FormatCount, NULL);
 					std::vector<VkSurfaceFormatKHR> Format(FormatCount);
 					if (FormatCount > 0) {
-						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &FormatCount, Format.data());
+						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &FormatCount, Format.data());
 					}
 
 					// Queries for Presentation Modes.
 					uint32_t PresentModeCount = 0;
-					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, NULL);
+					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, NULL);
 					std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
 					if (PresentModeCount > 0) {
-						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, PresentMode.data());
+						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, PresentMode.data());
 					}
 					
 
@@ -336,9 +336,9 @@ namespace geodesuka {
 					this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
 					//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
 					//FrameBuffer.Property.ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+					this->FrameBuffer.Property.Extent2D.width	= std::clamp((uint32_t)FrameBufferResolutionX, this->SurfaceCapabilities.minImageExtent.width, this->SurfaceCapabilities.maxImageExtent.width);
+					this->FrameBuffer.Property.Extent2D.height	= std::clamp((uint32_t)FrameBufferResolutionY, this->SurfaceCapabilities.minImageExtent.height, this->SurfaceCapabilities.maxImageExtent.height);
 					this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
-					this->FrameBuffer.Property.Extent2D			= { (uint32_t)FrameBufferResolutionY, (uint32_t)FrameBufferResolutionY };
-					//FrameBuffer.Property.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
 
 					// validate format.
 					bool isValidFormat = false;
@@ -398,8 +398,35 @@ namespace geodesuka {
 					this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
 					this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
 
-					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDeviceContext->get_handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->get_handle(), &this->SwapChainProp, NULL, &this->SwapChain);
 
+					uint32_t lImageCount;
+					std::vector<VkImage> Image;
+					vkGetSwapchainImagesKHR(this->ParentDC->get_handle(), this->SwapChain, &lImageCount, NULL);
+					Image.resize(lImageCount);
+					vkGetSwapchainImagesKHR(this->ParentDC->get_handle(), this->SwapChain, &lImageCount, Image.data());
+					//this->Texture.resize(lImageCount);
+
+					for (size_t i = 0; i < Image.size(); i++) {
+						VkImageCreateInfo tempci;
+						tempci.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+						tempci.pNext					= NULL;
+						tempci.flags					= 0;
+						tempci.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+						tempci.format					= FrameBuffer.Property.Format;
+						tempci.extent					= { FrameBuffer.Property.Extent2D.width, FrameBuffer.Property.Extent2D.height, 1 };
+						tempci.mipLevels				= 1;
+						tempci.arrayLayers				= 1;
+						tempci.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
+						tempci.tiling					= VkImageTiling::VK_IMAGE_TILING_OPTIMAL;
+						tempci.usage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+						tempci.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+						tempci.queueFamilyIndexCount	= 0;
+						tempci.pQueueFamilyIndices		= NULL;
+						tempci.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+						// Just stores swapchain images.
+						this->Texture.push_back(gcl::texture(this, this->ParentDC, Image[i], tempci));
+					}
 				}
 			}
 
@@ -407,9 +434,9 @@ namespace geodesuka {
 				// Destroys 
 				if (this->isValid) {
 					// Destroys swapchain.
-					vkDestroySwapchainKHR(this->ParentDeviceContext->get_handle(), this->SwapChain, NULL);
+					vkDestroySwapchainKHR(this->ParentDC->get_handle(), this->SwapChain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(*this->ParentDeviceContext->get_inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(*this->ParentDC->get_inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
