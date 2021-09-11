@@ -172,56 +172,56 @@ namespace geodesuka {
 		glslang::FinalizeProcess();
 	}
 
-	int engine::input() {
-		// This will conduct system wide input polling and deliver input polls to respective objects in focus.
-		glfwPollEvents();
+	//int engine::input() {
+	//	// This will conduct system wide input polling and deliver input polls to respective objects in focus.
+	//	glfwPollEvents();
 
-		for (size_t i = 0; i < SystemWindow.size(); i++) {
+	//	for (size_t i = 0; i < SystemWindow.size(); i++) {
 
-			// Check if window wants to close.
-	
+	//		// Check if window wants to close.
+	//
 
-			// Check if system_window has entered new display region.
+	//		// Check if system_window has entered new display region.
 
-		}
+	//	}
 
-		return 0;
-	}
+	//	return 0;
+	//}
 
-	int engine::update(core::math::real adt) {
-		// This will conduct the time step interval and evaluate input poll from last section.
+	//int engine::update(core::math::real adt) {
+	//	// This will conduct the time step interval and evaluate input poll from last section.
 
-		for (size_t i = 0; i < Display.size(); i++) {
-			Display[i]->update(dt);
-		}
+	//	for (size_t i = 0; i < Display.size(); i++) {
+	//		Display[i]->update(dt);
+	//	}
 
-		
+	//	
 
-		for (size_t i = 0; i < Object.size(); i++) {
-			Object[i]->update(dt);
-		}
+	//	for (size_t i = 0; i < Object.size(); i++) {
+	//		Object[i]->update(dt);
+	//	}
 
-		return 0;
-	}
+	//	return 0;
+	//}
 
-	int engine::render() {
-		// This will conduct all final draw calls required by the engine internally.
+	//int engine::render() {
+	//	// This will conduct all final draw calls required by the engine internally.
 
-		// Should first submit all obj
+	//	// Should first submit all obj
 
-		//for (core::math::integer i = 0; i < Object.size(); i++) {
-		//	PrimaryDisplay->draw(Object[i]);
-		//}
+	//	//for (core::math::integer i = 0; i < Object.size(); i++) {
+	//	//	PrimaryDisplay->draw(Object[i]);
+	//	//}
 
-		
-		// Will draw to (means update) system_displays.
-		//for (int i = 0; i < this->SystemWindow.size(); i++) {
-		//	core::object::system_display* ParentDisplay = this->SystemWindow[i]->get_parent_display();
-		//	ParentDisplay->draw(this->SystemWindow[i]);
-		//}
+	//	
+	//	// Will draw to (means update) system_displays.
+	//	//for (int i = 0; i < this->SystemWindow.size(); i++) {
+	//	//	core::object::system_display* ParentDisplay = this->SystemWindow[i]->get_parent_display();
+	//	//	ParentDisplay->draw(this->SystemWindow[i]);
+	//	//}
 
-		return 0;
-	}
+	//	return 0;
+	//}
 
 	core::object::system_display* engine::get_primary_display() {
 		return this->PrimaryDisplay;
@@ -403,6 +403,18 @@ namespace geodesuka {
 		VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT = VK_PIPELINE_COMPILE_REQUIRED_EXT,
 		VK_RESULT_MAX_ENUM = 0x7FFFFFFF
 		*/
+	}
+
+	void engine::tupdate() {
+
+	}
+
+	void engine::trender() {
+
+	}
+
+	void engine::taudio() {
+
 	}
 
 

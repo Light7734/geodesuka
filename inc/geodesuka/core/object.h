@@ -45,36 +45,7 @@ namespace geodesuka {
 		class object_t {
 		public:
 
-			/*
-			* Do not forget, position is in reference to a particular space
-			* the object is in. This is up to the user to decide how to
-			* interpret and use an objects position.
-			*/
-
-			math::real Mass;			// Kilogram		[kg]
-			math::real Time;			// Second 		[s]
-			math::real3 Position;		// Meter		[m]
-			math::real3 Momentum;		//				[kg*m/s]
-			math::real3 Force;			// Newton		[kg*m^2/s^2]
-			math::real3 DirectionX;		// Right		[Normalized]
-			math::real3 DirectionY;		// Up			[Normalized]
-			math::real3 DirectionZ;		// Forward		[Normalized]
-
-			//integer WorldID;				// Which world is this object in?
-			//integer LevelID;				// Which Level is this object in?
-			//integer StageID;				// Which Stage is this object in?
-			//integer ID;						// 
-
-			//boolean isStationary;			// Is this object stationary, or is it allowed to move?
-			//boolean isDeterministic;		// Does this object have predefined motion?
-			//boolean isAnimate;				// Is this object a living creature?
-			//boolean isPickup;				// Can an entitiy pick up this object?
-
-			//boolean isCollisionActive;
-			//boolean isGraphicalActive;
-
-			//explicit object(gcl::context* aContext);
-			//~object() = default;
+			virtual ~object_t() = default;
 
 			/*
 			* If input stream is being forwarded to a particular instance of an object,
@@ -148,14 +119,44 @@ namespace geodesuka {
 
 		protected:
 
-			gcl::context* RenderingContext;
-			gcl::context* ComputeContext;
+			//gcl::context* RenderingContext;
+			//gcl::context* ComputeContext;
 
 			//std::vector<gcl::context*> Context;
 			//gcl::context* Context;
 
 			math::real3 InputVelocity;
 			math::real3 InputForce;
+
+			/*
+			* Do not forget, position is in reference to a particular space
+			* the object is in. This is up to the user to decide how to
+			* interpret and use an objects position.
+			*/
+
+			math::real Mass;			// Kilogram		[kg]
+			math::real Time;			// Second 		[s]
+			math::real3 Position;		// Meter		[m]
+			math::real3 Momentum;		//				[kg*m/s]
+			math::real3 Force;			// Newton		[kg*m^2/s^2]
+			math::real3 DirectionX;		// Right		[Normalized]
+			math::real3 DirectionY;		// Up			[Normalized]
+			math::real3 DirectionZ;		// Forward		[Normalized]
+
+			//integer WorldID;				// Which world is this object in?
+			//integer LevelID;				// Which Level is this object in?
+			//integer StageID;				// Which Stage is this object in?
+			//integer ID;						// 
+
+			//boolean isStationary;			// Is this object stationary, or is it allowed to move?
+			//boolean isDeterministic;		// Does this object have predefined motion?
+			//boolean isAnimate;				// Is this object a living creature?
+			//boolean isPickup;				// Can an entitiy pick up this object?
+
+			//boolean isCollisionActive;
+			//boolean isGraphicalActive;
+
+			void init_parent();
 
 		};
 

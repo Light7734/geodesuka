@@ -31,6 +31,8 @@ C26451
 #include <vector>
 //#include <chrono>
 
+#include <thread>
+
 /* --------------- Third Party Libraries --------------- */
 
 /* Vulkan API */
@@ -108,7 +110,7 @@ C26451
 
 // Cube is supposed to be a simple template
 // example for extending object.h
-#include "core/object/cube.h"
+//#include "core/object/cube.h"
 
 namespace geodesuka {
 
@@ -140,12 +142,6 @@ namespace geodesuka {
 
 		engine(int argc, char* argv[]);
 		~engine();
-
-		// .input() gathers input polls, and dispatches to listening objects.
-		// .update() calculates elapsed time and updates the time difference.
-		int input();
-		int update(core::math::real adt);
-		int render();
 
 		core::object::system_display* get_primary_display();
 		std::vector<core::object::system_display*> get_display_list();
@@ -192,6 +188,15 @@ namespace geodesuka {
 
 		
 		const char *get_er_str(VkResult Res);
+
+		
+		std::thread UpdateThread;
+		std::thread RenderThread;
+		std::thread AudioThread;
+
+		void tupdate();
+		void trender();
+		void taudio();
 
 	};
 

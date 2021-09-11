@@ -228,10 +228,8 @@
     <ClCompile Include="src\core\object\camera.cpp" />
     <ClCompile Include="src\core\object\camera2d.cpp" />
     <ClCompile Include="src\core\object\camera3d.cpp" />
-    <ClCompile Include="src\core\object\cube.cpp" />
     <ClCompile Include="src\core\object\system_display.cpp" />
     <ClCompile Include="src\core\object\system_window.cpp" />
-    <ClCompile Include="src\core\object\triangle.cpp" />
     <ClCompile Include="src\core\object\virtual_window.cpp" />
     <ClCompile Include="src\core\object\vtext.cpp" />
     <ClCompile Include="src\core\object\window.cpp" />
@@ -295,6 +293,7 @@
     <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp" />
     <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -368,10 +367,8 @@
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
-    <ClInclude Include="inc\geodesuka\core\object\cube.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
-    <ClInclude Include="inc\geodesuka\core\object\triangle.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
@@ -443,6 +440,7 @@
     <ClInclude Include="src\dep\glslang\SPIRV\SPVRemapper.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h" />
     <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h" />
+    <ClInclude Include="triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

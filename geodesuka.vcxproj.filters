@@ -292,9 +292,6 @@
     <ClCompile Include="src\core\object\camera3d.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\object\cube.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\object\system_display.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
@@ -369,9 +366,6 @@
     </ClCompile>
     <ClCompile Include="src\core\gcl\device_context.cpp">
       <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\triangle.cpp">
-      <Filter>src\core\object</Filter>
     </ClCompile>
     <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\CodeGen.cpp">
       <Filter>src\dep\glslang\glslang\GenericCodeGen</Filter>
@@ -517,6 +511,7 @@
     <ClCompile Include="src\core\object.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -689,9 +684,6 @@
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\cube.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\system_display.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
@@ -751,9 +743,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\device_context.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\triangle.h">
-      <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
     <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h">
       <Filter>src\dep\glslang\glslang\Include</Filter>
@@ -941,5 +930,6 @@
     <ClInclude Include="src\dep\glslang\build_info.h">
       <Filter>src\dep\glslang</Filter>
     </ClInclude>
+    <ClInclude Include="triangle.h" />
   </ItemGroup>
 </Project>
