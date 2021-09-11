@@ -143,8 +143,14 @@ namespace geodesuka {
 		engine(int argc, char* argv[]);
 		~engine();
 
+		// Query functions
 		core::object::system_display* get_primary_display();
-		std::vector<core::object::system_display*> get_display_list();
+		core::object::system_display** get_display_list(size_t* ListSize);
+		core::gcl::device** get_device_list(size_t* ListSize);
+
+		// File management system.
+		core::io::file* open(const char* FilePath);
+		core::math::integer close(core::io::file* FileHandle);
 
 		// Intended to be used to create and register new objects. Can be used for debuging memory leaks
 		// and extending object.h for user choice.
@@ -159,7 +165,7 @@ namespace geodesuka {
 
 		double get_time();
 
-	//private:
+	private:
 
 		// Make internal engine flags.
 		bool isDebuggingEnabled;
@@ -186,9 +192,7 @@ namespace geodesuka {
 		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
 		std::vector<core::object_t*> Object;
 
-		
-		const char *get_er_str(VkResult Res);
-
+		std::vector<core::io::file*> File;
 		
 		std::thread UpdateThread;
 		std::thread RenderThread;

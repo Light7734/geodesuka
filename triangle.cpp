@@ -42,12 +42,14 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 		    PixelColor = vec4(InterpColor, 1.0);\n\
 		}";
 
+
+
 	// Does everything above but in two lines.
 	shader VertexShader(aDeviceContext, shader::VERTEX, VertexShaderSource);
 	shader FragmentShader(aDeviceContext, shader::FRAGMENT, FragmentShaderSource);
 
-	std::cout << "Vertex Shader Compile Status: " << aEngine.get_er_str(VertexShader.ErrorCode) << std::endl;
-	std::cout << "Fragment Shader Compile Status: " << aEngine.get_er_str(FragmentShader.ErrorCode) << std::endl;
+	//std::cout << "Vertex Shader Compile Status: " << aEngine.get_er_str(VertexShader.ErrorCode) << std::endl;
+	//std::cout << "Fragment Shader Compile Status: " << aEngine.get_er_str(FragmentShader.ErrorCode) << std::endl;
 
 	// Sets up shaders in graphics pipeline
 	this->ShaderStage.resize(2);
@@ -77,16 +79,16 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 
 	this->InputAttributeDescription.resize(2);
 	// Describes "layout (location = 0) in vec2 VertexPosition;"
-	this->InputAttributeDescription[0].location = 0; // Specifies the location within the appropriate shader.
-	this->InputAttributeDescription[0].binding	= 0;
-	this->InputAttributeDescription[0].format	= VkFormat::VK_FORMAT_R32G32_SFLOAT;
-	this->InputAttributeDescription[0].offset	= 0;
+	this->InputAttributeDescription[0].location		= 0; // Specifies the location within the appropriate shader.
+	this->InputAttributeDescription[0].binding		= 0;
+	this->InputAttributeDescription[0].format		= VkFormat::VK_FORMAT_R32G32_SFLOAT;
+	this->InputAttributeDescription[0].offset		= 0;
 
 	// Describes "layout (location = 1) in vec3 VertexColor;"
-	this->InputAttributeDescription[1].location = 1; // Specifies the location within the appropriate shader.
-	this->InputAttributeDescription[1].binding	= 0;
-	this->InputAttributeDescription[1].format	= VkFormat::VK_FORMAT_R32G32B32_SFLOAT;
-	this->InputAttributeDescription[1].offset	= 2 * sizeof(float);
+	this->InputAttributeDescription[1].location		= 1; // Specifies the location within the appropriate shader.
+	this->InputAttributeDescription[1].binding		= 0;
+	this->InputAttributeDescription[1].format		= VkFormat::VK_FORMAT_R32G32B32_SFLOAT;
+	this->InputAttributeDescription[1].offset		= 2 * sizeof(float);
 
 	// Wrap binding and attribute descriptions in VertexInput state create info.
 	this->VertexInput.sType								= VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -97,23 +99,32 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 	this->VertexInput.vertexAttributeDescriptionCount	= this->InputAttributeDescription.size();
 	this->VertexInput.pVertexAttributeDescriptions		= this->InputAttributeDescription.data();
 
+	// Interpret Vertices as triangle.
+	this->InputAssembly.sType					= VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	this->InputAssembly.pNext					= NULL;
+	this->InputAssembly.flags					= 0;
+	this->InputAssembly.topology				= VkPrimitiveTopology::VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	this->InputAssembly.primitiveRestartEnable	= VK_FALSE;
 
-	//// Full pipeline create info
-	//this->CreateInfo.sType					= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-	//this->CreateInfo.pNext					= NULL;
-	//this->CreateInfo.flags					= 0;
-	//this->CreateInfo.stageCount				= (uint32_t)this->ShaderStage.size();
-	//this->CreateInfo.pStages				= this->ShaderStage.data();
-	//this->CreateInfo.pVertexInputState		= &VertexInput;
-	//this->CreateInfo.pInputAssemblyState	= &InputAssembly;
-	//this->CreateInfo.pTessellationState		= NULL;
-	//this->CreateInfo.pViewportState			= &Viewport;
-	//this->CreateInfo.pRasterizationState	= &Rasterizer;
-	//this->CreateInfo.pMultisampleState		= &Multisample;
-	//this->CreateInfo.pDepthStencilState		= &DepthStencil;
-	//this->CreateInfo.pColorBlendState		= &ColorBlend;
-	//this->CreateInfo.pDynamicState			= &DynamicState;
-	////this->CreateInfo.layout  = 
+	// Viewport Options.
+
+	// sub windows maybe?
+	VkViewport Viewport{};
+	Viewport.x = 0;
+	Viewport.y = 0;
+	Viewport.width = 640;
+	Viewport.height = 480;
+	Viewport.minDepth = 0.0f;
+	Viewport.maxDepth = 1.0f;
+
+	// Kind of cool, might fuck with later
+	VkRect2D Scissor{};
+	Scissor.offset = { 0, 0 };
+	//Scissor.extent = Window->FrameBuffer.Property.Extent2D;
+
+	this->Viewport.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	this->Viewport.pNext = NULL;
+	//this->Viewport
 
 	// Full pipeline create info
 	this->CreateInfo.sType					= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;

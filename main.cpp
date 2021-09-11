@@ -34,15 +34,12 @@ int main(int argc, char *argv[]) {
 	std::cout << "Geodesuka Engine v20210807" << std::endl << std::endl;
 	geodesuka::engine Engine(argc, argv);
 
-	// Choose from provided Device List. Just an example.
-	//device *ChosenDevice = nullptr;
+	size_t DeviceCount = 0;
+	device** DeviceList = Engine.get_device_list(&DeviceCount);
 	device_context* DeviceContext = nullptr;
-	for (size_t i = 0; i < Engine.DeviceList.size(); i++) {
-		if (Engine.DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-			// Creates a context for the chosen device.
-			DeviceContext = new device_context(Engine.DeviceList[i]);
-			std::cout << "Device Context Creation Status: " << Engine.get_er_str(DeviceContext->ErrorCode) << std::endl;
-			break;
+	for (size_t i = 0; i < DeviceCount; i++) {
+		if (DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			DeviceContext = new device_context(DeviceList[i]);
 		}
 	}
 
@@ -60,20 +57,13 @@ int main(int argc, char *argv[]) {
 	system_display* PrimaryDisplay = Engine.get_primary_display();
 	system_window* Window = new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
 		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL"));
-	std::cout << "Window Creation Status: " << Engine.get_er_str(Window->ErrorCode) << std::endl;
+	std::cout << "Window Creation Status: " << DeviceContext->get_er_str(Window->ErrorCode) << std::endl;
 
 	//triangle Triangle(&Engine, DeviceContext);
 	object_t* Triangle = new triangle(Engine, DeviceContext);
 
 	while (!Window->CloseMe) {
 
-		//Window->set_position(0.1*math::real3(cos(Engine.t), sin(Engine.t), 0.0));
-		////Window->set_size(0.5 * (sin(20.0 * Engine.t) + 1.0) * math::real2(0.05, 0.05));
-		//Window2->set_size(0.5 * (sin(0.5*Engine.t) + 1.0) * math::real2(0.05, 0.05));
-
-		//for (size_t i = 0; i < Display.size(); i++) {
-		//	Window[i]->set_size(0.5 * (sin(5.0*Engine.t) + 1.0) * math::real2(0.05, 0.05));
-		//
 	}
 
 	delete Triangle;

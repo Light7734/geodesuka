@@ -27,6 +27,8 @@ namespace geodesuka {
 				VkDevice get_handle();
 				bool ext_supported(const char* aExtension);
 
+				// Parse error into string.
+				static const char* get_er_str(VkResult Res);
 
 			private:
 

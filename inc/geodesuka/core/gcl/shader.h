@@ -45,16 +45,6 @@ namespace geodesuka {
 				// Just clears shader up.
 				~shader();
 
-				//virtual void visitSymbol(glslang::TIntermSymbol* Symbol)											override;
-				//virtual void visitConstantUnion(glslang::TIntermConstantUnion* ConstantUnion)						override;
-				//virtual bool visitBinary(glslang::TVisit VisitType, glslang::TIntermBinary* Binary)					override;
-				//virtual bool visitUnary(glslang::TVisit VisitType, glslang::TIntermUnary* Unary)					override;
-				//virtual bool visitSelection(glslang::TVisit VisitType, glslang::TIntermSelection* Selection)		override;
-				//virtual bool visitAggregate(glslang::TVisit VisitType, glslang::TIntermAggregate* Aggregate)		override;
-				//virtual bool visitLoop(glslang::TVisit VisitType, glslang::TIntermLoop* Loop)						override;
-				//virtual bool visitBranch(glslang::TVisit VisitType, glslang::TIntermBranch* Branch)					override;
-				//virtual bool visitSwitch(glslang::TVisit VisitType, glslang::TIntermSwitch* Switch)					override;
-
 				VkShaderStageFlagBits get_stage();
 				VkShaderModule get_handle();
 
