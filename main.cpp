@@ -30,10 +30,27 @@ using namespace object;
 */
 // Creates a window on every display
 
-int main(int argc, char *argv[]) {
-	std::cout << "Geodesuka Engine v20210807" << std::endl << std::endl;
-	geodesuka::engine Engine(argc, argv);
+#include <Windows.h>
 
+int main(int argc, char *argv[]) {
+	geodesuka::engine Engine(argc, argv);
+	if (!Engine.is_ready()) return -1;
+	std::cout << "Geodesuka Engine";
+	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
+	std::cout << " - Date: 20210911" << std::endl;
+
+	//int RunTime = 0;
+	//while (true) {
+	//	Sleep(1000);
+	//	if (RunTime > 3 * 1000) {
+	//		break;
+	//	}
+	//	else {
+	//		RunTime += 1000;
+	//	}
+	//}
+
+	/*
 	size_t DeviceCount = 0;
 	device** DeviceList = Engine.get_device_list(&DeviceCount);
 	device_context* DeviceContext = nullptr;
@@ -53,24 +70,19 @@ int main(int argc, char *argv[]) {
 	FramebufferProperties.Count			= 2;
 	FramebufferProperties.Format		= VK_FORMAT_R8G8B8A8_SRGB;
 	FramebufferProperties.ColorSpace	= VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-
+	
 	system_display* PrimaryDisplay = Engine.get_primary_display();
-	system_window* Window = new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
-		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL"));
-	std::cout << "Window Creation Status: " << DeviceContext->get_er_str(Window->ErrorCode) << std::endl;
+	window* Window = (window*)Engine.create(new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
+		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
+	object_t* Triangle = Engine.create(new triangle(Engine, DeviceContext));
 
-	//triangle Triangle(&Engine, DeviceContext);
-	object_t* Triangle = new triangle(Engine, DeviceContext);
+	Window->draw(Triangle);
 
-	while (!Window->CloseMe) {
+	while (true) {
 
 	}
 
-	delete Triangle;
-
-	delete Window;
-
 	delete DeviceContext;
-
+	//*/
 	return 0;
 }

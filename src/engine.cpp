@@ -6,8 +6,18 @@
 #include <vector>
 #include <chrono>
 
+/* --------------- Platform Dependent Libraries --------------- */
+#if defined(_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#elif defined(__APPLE__) || defined(MACOSX)
+
+#elif defined(__linux__) && !defined(__ANDROID__)
+#include <unistd.h>
+#elif defined(__ANDROID__)
+#include <unistd.h>
+#endif
+
 /* --------------- Third Party Libraries --------------- */
-#include "dep/glslang/glslang/Public/ShaderLang.h"
 
 /* --------------- Internal --------------- */
 
@@ -29,41 +39,112 @@ namespace geodesuka {
 	*/
 	engine::engine(int argc, char* argv[]) {
 
-		this->ExitApp = false;
-		this->dt = 0.0;
-		this->t = 0.0;
+		this->isGLSLANGReady = false;
+		this->isGLFWReady = false;
+		this->isVulkanReady = false;
+		this->isSystemDisplayAvailable = false;
+		this->isGCDeviceAvailable = false;
+
+		this->isReady = false;
+		this->Shutdown = false;
+
 		this->PrimaryDisplay = nullptr;
 
-		glslang::InitializeProcess();
+		// --------------- Initialization Process --------------- //
 
-		// GLFW must be initialized first for OS extensions.
-		glfwInit();
+		// Init Process:
+		// Start glslang
+		// Start glfw
+		// Start vulkan
+		// Query for Monitors (No primary monitor = Start up failure)
+		// Query for gcl devices (No discrete gpu = Start up failure)
+		//
 
-		// This function will initialize the engine as a whole, and
-		// all the backend libraries it depends upon such as GLFW.
+		// (GLSLang)
+		this->isGLSLANGReady = glslang::InitializeProcess();
 
-		// Queries for monitors.
-		if (glfwGetPrimaryMonitor() != NULL) {
-			// Get System displays.
-			core::object::system_display* tmpDisplay = new core::object::system_display(glfwGetPrimaryMonitor());
-			this->PrimaryDisplay = tmpDisplay;
-			this->Display.push_back(tmpDisplay);
-			this->Object.push_back(tmpDisplay);
-			int lCount;
-			GLFWmonitor** lMon = glfwGetMonitors(&lCount);
-			for (int i = 0; i < lCount; i++) {
-				if (PrimaryDisplay->Handle != lMon[i]) {
-					// Excludes already cached primary monitor.
-					tmpDisplay = new core::object::system_display(lMon[i]);
-					this->Display.push_back(tmpDisplay);
-					this->Object.push_back(tmpDisplay);
-				}
+		// (GLFW) Must be initialized first for OS extensions.
+		this->isGLFWReady = glfwInit();
+
+		// (Vulkan) Load required window extensions.
+		if (this->isGLFWReady) {
+			// Certain extensions needed for interacting with Operating System window system.
+			uint32_t OSExtensionCount = 0;
+			const char** OSExtensionList = glfwGetRequiredInstanceExtensions(&OSExtensionCount);
+
+			this->AppProp.sType = VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			this->AppProp.pNext = NULL;
+			this->AppProp.pApplicationName = "No Name";
+			this->AppProp.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
+			this->AppProp.pEngineName = "Geodesuka Engine";
+			this->AppProp.engineVersion = VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
+			this->AppProp.apiVersion = VK_MAKE_VERSION(1, 2, 0);
+
+			this->InstProp.sType = VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			this->InstProp.pNext = NULL;
+			this->InstProp.flags = 0;
+			this->InstProp.pApplicationInfo = &AppProp;
+			this->InstProp.enabledLayerCount = 0;
+			this->InstProp.ppEnabledLayerNames = NULL;
+			this->InstProp.enabledExtensionCount = OSExtensionCount;
+			this->InstProp.ppEnabledExtensionNames = OSExtensionList;
+
+			VkResult Result = vkCreateInstance(&InstProp, NULL, &this->Instance);
+			if (Result == VK_SUCCESS) {
+				this->isVulkanReady = true;
+			}
+			else {
+				this->isVulkanReady = false;
 			}
 		}
-		else {
-			// No primary monitors found!
-			this->ExitApp = true;
+
+		if (this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady) {
+
+			// Queries for monitors.
+			if (glfwGetPrimaryMonitor() != NULL) {
+				// Get System displays.
+				core::object::system_display* tmpDisplay = new core::object::system_display(glfwGetPrimaryMonitor());
+				this->PrimaryDisplay = tmpDisplay;
+				this->Display.push_back(tmpDisplay);
+				this->Object.push_back(tmpDisplay);
+				int lCount;
+				GLFWmonitor** lMon = glfwGetMonitors(&lCount);
+				for (int i = 0; i < lCount; i++) {
+					if (PrimaryDisplay->Handle != lMon[i]) {
+						// Excludes already cached primary monitor.
+						tmpDisplay = new core::object::system_display(lMon[i]);
+						this->Display.push_back(tmpDisplay);
+						this->Object.push_back(tmpDisplay);
+					}
+				}
+				this->isSystemDisplayAvailable = true;
+			}
+
+			// Query for gcl devices
+			uint32_t PhysicalDeviceCount = 0;
+			vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, NULL);
+			if (PhysicalDeviceCount > 0) {
+				std::vector<VkPhysicalDevice> PhysicalDeviceList(PhysicalDeviceCount);
+				vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, PhysicalDeviceList.data());
+				for (size_t i = 0; i < PhysicalDeviceList.size(); i++) {
+					this->DeviceList.push_back(new core::gcl::device(&this->Instance, PhysicalDeviceList[i]));
+				}
+				this->isGCDeviceAvailable = true;
+			}
+
 		}
+
+		this->isReady = this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady && this->isSystemDisplayAvailable && this->isGCDeviceAvailable;
+
+		// Engine is ready, initialize loops.
+		if (this->isReady) {
+
+			// Initialize update thread for all objects.
+			this->UpdateThread = std::thread(&engine::tupdate, this);
+
+		}
+
+		// ------------------------- Debug Print Info ------------------------- //
 
 		// Will print out display info.
 		for (size_t i = 0; i < Display.size(); i++) {
@@ -72,41 +153,6 @@ namespace geodesuka {
 			std::cout << "Display Resolution:\t" << Display[i]->Resolution.x << ", " << Display[i]->Resolution.y << "\t[pixels]" << std::endl;
 			std::cout << "Display Refresh Rate:\t" << Display[i]->Property.RefreshRate << "\t\t[1/s]" << std::endl;
 			std::cout << std::endl;
-		}
-
-		// Certain extensions needed for interacting with Operating System window system.
-		uint32_t OSExtensionCount = 0;
-		const char** OSExtensionList = glfwGetRequiredInstanceExtensions(&OSExtensionCount);
-
-		VkApplicationInfo AppProp{};
-		AppProp.sType					= VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
-		//AppProp.pNext					= NULL;
-		AppProp.pApplicationName		= "No Name";
-		AppProp.applicationVersion		= VK_MAKE_VERSION(0, 0, 1);
-		AppProp.pEngineName				= "Geodesuka Engine";
-		AppProp.engineVersion			= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
-		AppProp.apiVersion				= VK_MAKE_VERSION(1, 2, 0);
-
-		VkInstanceCreateInfo InstanceCreateProp{};
-		InstanceCreateProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-		InstanceCreateProp.pNext						= NULL;
-		InstanceCreateProp.flags						= 0;
-		InstanceCreateProp.pApplicationInfo				= &AppProp;
-		InstanceCreateProp.enabledLayerCount			= 0;
-		InstanceCreateProp.ppEnabledLayerNames			= NULL;
-		InstanceCreateProp.enabledExtensionCount		= OSExtensionCount;
-		InstanceCreateProp.ppEnabledExtensionNames		= OSExtensionList;
-
-		this->ErrorCode = vkCreateInstance(&InstanceCreateProp, NULL, &this->Instance);
-
-		uint32_t PhysicalDeviceCount = 0;
-		vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, NULL);
-		if (PhysicalDeviceCount > 0) {
-			std::vector<VkPhysicalDevice> PhysicalDeviceList(PhysicalDeviceCount);
-			vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, PhysicalDeviceList.data());
-			for (size_t i = 0; i < PhysicalDeviceList.size(); i++) {
-				this->DeviceList.push_back(new core::gcl::device(&this->Instance, PhysicalDeviceList[i]));
-			}
 		}
 
 		// Just simply prints out device info.
@@ -152,18 +198,31 @@ namespace geodesuka {
 	* Also must shut down backend API. 
 	*/
 	engine::~engine() {
-		// The destructor will insure that all memory allocating objects are cleared from memory.
-		//core::gcl::terminate();
-		
-		// Clear all active objects, starting from the end.
-		for (size_t i = 1; i <= Object.size(); i++) {
-			size_t ind = Object.size() - i;
-			if (Object[ind] != nullptr) {
-				delete Object[ind];
-				Object[ind] = nullptr;
-				Object.pop_back();
+		// Begin termination, stop threads.
+		this->Mutex.lock();
+		this->Shutdown = true;
+		this->Mutex.unlock();
+
+		this->UpdateThread.join();
+
+		// Clears all objects from memory.
+		for (size_t i = 1; i <= this->Object.size(); i++) {
+			size_t Index = this->Object.size() - i;
+			if (this->Object[Index] != nullptr) {
+				delete this->Object[Index];
+				this->Object[Index] = nullptr;
 			}
 		}
+		this->Object.clear();
+
+		// Clears all loaded resources from memory.
+		for (size_t i = 0; i < this->File.size(); i++) {
+			if (this->File[i] != nullptr) {
+				delete this->File[i];
+				this->File[i] = nullptr;
+			}
+		}
+		this->File.clear();
 
 		vkDestroyInstance(this->Instance, NULL);
 
@@ -171,57 +230,6 @@ namespace geodesuka {
 
 		glslang::FinalizeProcess();
 	}
-
-	//int engine::input() {
-	//	// This will conduct system wide input polling and deliver input polls to respective objects in focus.
-	//	glfwPollEvents();
-
-	//	for (size_t i = 0; i < SystemWindow.size(); i++) {
-
-	//		// Check if window wants to close.
-	//
-
-	//		// Check if system_window has entered new display region.
-
-	//	}
-
-	//	return 0;
-	//}
-
-	//int engine::update(core::math::real adt) {
-	//	// This will conduct the time step interval and evaluate input poll from last section.
-
-	//	for (size_t i = 0; i < Display.size(); i++) {
-	//		Display[i]->update(dt);
-	//	}
-
-	//	
-
-	//	for (size_t i = 0; i < Object.size(); i++) {
-	//		Object[i]->update(dt);
-	//	}
-
-	//	return 0;
-	//}
-
-	//int engine::render() {
-	//	// This will conduct all final draw calls required by the engine internally.
-
-	//	// Should first submit all obj
-
-	//	//for (core::math::integer i = 0; i < Object.size(); i++) {
-	//	//	PrimaryDisplay->draw(Object[i]);
-	//	//}
-
-	//	
-	//	// Will draw to (means update) system_displays.
-	//	//for (int i = 0; i < this->SystemWindow.size(); i++) {
-	//	//	core::object::system_display* ParentDisplay = this->SystemWindow[i]->get_parent_display();
-	//	//	ParentDisplay->draw(this->SystemWindow[i]);
-	//	//}
-
-	//	return 0;
-	//}
 
 	core::object::system_display* engine::get_primary_display() {
 		return this->PrimaryDisplay;
@@ -237,6 +245,15 @@ namespace geodesuka {
 		return this->DeviceList.data();
 	}
 
+	core::io::file* engine::open(const char* FilePath) {
+
+		return nullptr;
+	}
+
+	core::math::integer engine::close(core::io::file* FileHandle) {
+		return core::math::integer();
+	}
+
 	core::object_t* engine::create(core::object_t* aNewObject) {
 		// Checks for redundant elements.
 		for (size_t i = 0; i < Object.size(); i++) {
@@ -247,7 +264,7 @@ namespace geodesuka {
 		return aNewObject;
 	}
 
-	core::object::system_window* engine::create(core::object::system_window* aNewWindow) {
+	core::object_t* engine::create(core::object::system_window* aNewWindow) {
 		// Checks for redundant elements.
 		for (size_t i = 0; i < SystemWindow.size(); i++) {
 			if (SystemWindow[i] == aNewWindow) return aNewWindow;
@@ -256,11 +273,13 @@ namespace geodesuka {
 		SystemWindow.push_back(aNewWindow);
 
 		// Checks for redundant elements.
-		for (size_t i = 0; i < Object.size(); i++) {
-			if (Object[i] == aNewWindow) return aNewWindow;
-		}
-		// Pushes onto list if not on list.
-		Object.push_back(aNewWindow);
+		size_t Offset = this->Display.size() + this->SystemWindow.size();
+		this->Object.insert(this->Object.begin() + Offset, aNewWindow);
+		//for (size_t i = 0; i < Object.size(); i++) {
+		//	if (Object[i] == aNewWindow) return aNewWindow;
+		//}
+		//// Pushes onto list if not on list.
+		//Object.push_back(aNewWindow);
 		return aNewWindow;
 	}
 
@@ -275,12 +294,72 @@ namespace geodesuka {
 		return -1;
 	}
 
+	bool engine::is_ready() {
+		return this->isReady;
+	}
+
+	engine::ecode engine::error_code() {
+		return this->ErrorCode;
+	}
+
+	engine::version engine::get_version() {
+		return this->Version;
+	}
+
 	double engine::get_time() {
 		return glfwGetTime();
 	}
 
-	void engine::tupdate() {
+	void engine::tsleep(double Seconds) {
+		double Microseconds = 1000.0 * Seconds;
+#if defined(_WIN32) || defined(_WIN64)
+		DWORD Duration = (DWORD)std::floor(Microseconds);
+		Sleep(Duration);
+#elif defined(__APPLE__) || defined(MACOSX)
 
+#elif defined(__linux__) && !defined(__ANDROID__)
+		int Duration = (int)std::floor(Microseconds);
+		usleep(Duration);
+#elif defined(__ANDROID__)
+
+#endif
+	}
+
+	// --------------- Update Loop --------------- //
+	// Updates all objects that have been created asynchronously.
+	// --------------- Update Loop --------------- //
+	void engine::tupdate() {
+		bool ExitCondition = false;
+		double t1, t2;
+		double wt, ht;
+		double t, dt;
+		double ts = 1.0 / 2.0;
+		dt = 0.0;
+		while (!ExitCondition) {
+			t1 = this->get_time();
+			// glfw
+			//
+			// Update object list.
+			//for (size_t i = 0; i < this->Object.size(); i++) {
+			//	this->Object[i]->update(dt);
+			//}
+			//std::cout << "Loop Time:\t" << dt << std::endl;
+
+			t2 = this->get_time();
+			wt = t2 - t1;
+			if (wt < ts) {
+				ht = ts - wt;
+				this->tsleep(ht);
+			}
+			else {
+				ht = 0.0;
+			}
+			dt = wt + ht;
+			this->Mutex.lock();
+			ExitCondition = this->Shutdown;
+			this->Mutex.unlock();
+		}
+		//std::cout << "Update Thread has exited." << std::endl;
 	}
 
 	void engine::trender() {

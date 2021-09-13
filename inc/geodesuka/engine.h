@@ -29,9 +29,10 @@ C26451
 
 /* --------------- Standard C++ Libraries --------------- */
 #include <vector>
-//#include <chrono>
 
+#include <chrono>
 #include <thread>
+#include <mutex>
 
 /* --------------- Third Party Libraries --------------- */
 
@@ -122,23 +123,19 @@ namespace geodesuka {
 	class engine {
 	public:
 
+		enum ecode {
+			GE_SUCCESS = 0,
+			GE_ERROR_CODE_STARTUP_FAILURE = -1,
+		};
+
 		struct version {
 			int Major;
 			int Minor;
 			int Patch;
 		};
 
-		const version Version = { 0, 0, 13 };
-
 		//friend class core::object::system_display;
 		friend class core::object::system_window;
-
-		// Use for main game loop. Set true if client wished to make app close.
-		// Will also set true if there is a terminal error.
-		bool ExitApp;
-
-		// "t" is the total time (seconds) elapsed, while "dt" is the time step.
-		double t, dt;
 
 		engine(int argc, char* argv[]);
 		~engine();
@@ -157,22 +154,40 @@ namespace geodesuka {
 		// Example: "Engine, create a new sword.".
 		// Object* Sword = Engine.create(new sword());
 		core::object_t* create(core::object_t* aNewObject);
-		core::object::window* create(core::object::window* aNewWindow);
-		core::object::system_window* create(core::object::system_window* aNewSystemWindow);
-		core::object::virtual_window* create(core::object::virtual_window* aNewWindow);
-		//core::object::camera* create(core::object::camera* aNewWindow);
+		core::object_t* create(core::object::system_window* aNewSystemWindow);
 		core::math::integer destroy(core::object_t* aDestroyObject);
 
+		bool is_ready();
+		ecode error_code();
+		version get_version();
 		double get_time();
+		void tsleep(double Seconds);
 
 	private:
 
-		// Make internal engine flags.
-		bool isDebuggingEnabled;
+		// Engine Mutex
+		std::mutex Mutex;
 
+		// Maintain versioning system.
+		const version Version = { 0, 0, 13 };
 
-		VkResult ErrorCode;
+		ecode ErrorCode;
+
+		// Engine Startup Conditions
+		bool isGLSLANGReady;
+		bool isGLFWReady;
+		bool isVulkanReady;
+		bool isSystemDisplayAvailable;
+		bool isGCDeviceAvailable;
+
+		bool isReady;
+		bool Shutdown;
+
+		VkApplicationInfo AppProp{};
+		VkInstanceCreateInfo InstProp{};
 		VkInstance Instance;
+		
+
 
 		// It is the job of the engine to query for physical devices and displays.
 		std::vector<core::gcl::device*> DeviceList;
@@ -184,16 +199,20 @@ namespace geodesuka {
 		core::object::system_display* PrimaryDisplay;
 
 		// Abstract Window Type
-		std::vector<core::object::window*> Window;
+		//std::vector<core::object::window*> Window;
 		std::vector<core::object::system_window*> SystemWindow;			// Automatically managed by engine.
-		std::vector<core::object::virtual_window*> VirtualWindow;		
-		std::vector<core::object::camera*> Camera;
+		//std::vector<core::object::virtual_window*> VirtualWindow;		
+		//std::vector<core::object::camera*> Camera;
 
 		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
 		std::vector<core::object_t*> Object;
 
+		// Reduce redundant file loading by matching paths.
+		// If current working directory changes, 
 		std::vector<core::io::file*> File;
 		
+		// ------------------------------ Back end runtime ------------------------------ //
+
 		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;

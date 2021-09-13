@@ -42,8 +42,6 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 		    PixelColor = vec4(InterpColor, 1.0);\n\
 		}";
 
-
-
 	// Does everything above but in two lines.
 	shader VertexShader(aDeviceContext, shader::VERTEX, VertexShaderSource);
 	shader FragmentShader(aDeviceContext, shader::FRAGMENT, FragmentShaderSource);
@@ -122,6 +120,7 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 	Scissor.offset = { 0, 0 };
 	//Scissor.extent = Window->FrameBuffer.Property.Extent2D;
 
+
 	this->Viewport.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	this->Viewport.pNext = NULL;
 	//this->Viewport
@@ -145,7 +144,7 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 
 	vkCreateGraphicsPipelines(aDeviceContext->get_handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
 
-
+	VkAttachmentDescription;
 
 	//VkRenderPassCreateInfo RenderPassCI{};
 	//VkRenderPass RenderPass;

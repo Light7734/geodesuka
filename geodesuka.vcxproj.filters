@@ -508,10 +508,10 @@
     <ClCompile Include="src\core\io\socket_t.cpp">
       <Filter>src\core\io</Filter>
     </ClCompile>
+    <ClCompile Include="triangle.cpp" />
     <ClCompile Include="src\core\object.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
-    <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -924,12 +924,12 @@
     <ClInclude Include="inc\geodesuka\core\math.h">
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object.h">
-      <Filter>inc\geodesuka\core</Filter>
-    </ClInclude>
     <ClInclude Include="src\dep\glslang\build_info.h">
       <Filter>src\dep\glslang</Filter>
     </ClInclude>
     <ClInclude Include="triangle.h" />
+    <ClInclude Include="inc\geodesuka\core\object.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
