@@ -2,7 +2,6 @@
 #ifndef GEODESUKA_CORE_GCL_DEVICE_CONTEXT_H
 #define GEODESUKA_CORE_GCL_DEVICE_CONTEXT_H
 
-#include "gcl.h"
 #include "device.h"
 
 namespace geodesuka {

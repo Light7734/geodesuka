@@ -1,7 +1,5 @@
 #include <geodesuka/core/hid/keyboard.h>
 
-#include <geodesuka/core/gcl/gcl.h>
-
 namespace geodesuka {
 	namespace core {
 		namespace hid {

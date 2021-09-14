@@ -56,9 +56,9 @@ C26451
 // ------------------------- File System Manager ------------------------- //
 #include "core/io/file.h"
 #include "core/io/dynalib.h"
-
+//#include "core/io/image.h"
+//#include "core/io/font.h"
 // ------------------------- Graphics & Computation API ------------------------- //
-
 
 // May Change to "vertex.h", manages memory layout of
 #include "core/gcl/variable.h"
@@ -75,8 +75,8 @@ C26451
 
 // The objects are for linking various inputs, uniforms, and outputs
 // of shaders, buffers and textures.
-#include "core/gcl/vertex_array.h"
-#include "core/gcl/shader_program.h"
+//#include "core/gcl/vertex_array.h"
+//#include "core/gcl/shader_program.h"
 #include "core/gcl/frame_buffer.h"
 
 // ------------------------- Human Interface Devices ------------------------- //

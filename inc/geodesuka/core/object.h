@@ -19,9 +19,6 @@
 
 #include "./math.h"
 
-#include "gcl/gcl.h"
-#include "gcl/context.h"
-
 #include "hid/keyboard.h"
 #include "hid/mouse.h"
 #include "hid/joystick.h"

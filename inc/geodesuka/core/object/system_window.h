@@ -2,8 +2,6 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
-#include "../gcl/gcl.h"
-
 #include "../math.h"
 
 #include "../gcl/device.h"

@@ -161,8 +161,6 @@ struct_declarator:
 #include <vector>
 #endif // MODE_DEBUG
 
-#include "../gcl/gcl.h"
-
 #include "../math.h"
 
 namespace geodesuka {

@@ -10,20 +10,12 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(context* aContext, id aType, int aCount, variable aMemoryLayout, void* aVertexData) {
-
-			}
-
 			buffer::buffer(const buffer& Inp) {
 
 			}
 
 			buffer::buffer(buffer&& Inp) {
 
-			}
-
-			buffer::~buffer() {
-				this->Context = nullptr;
 			}
 
 

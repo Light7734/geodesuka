@@ -4,12 +4,9 @@
 
 #include <stdarg.h>
 
-#include "gcl.h"
-
 #include "../math.h"
 
 #include "variable.h"
-#include "context.h"
 
 namespace geodesuka {
 	namespace core {
@@ -23,7 +20,7 @@ namespace geodesuka {
 				};
 
 				// Will generate vertex buffer according to VertexLayout, with VertexCount.
-				buffer(context* aContext, id aType, int aVertexCount, variable aVertexLayout, void *aVertexData);
+				//buffer(context* aContext, id aType, int aVertexCount, variable aVertexLayout, void *aVertexData);
 
 				buffer(const buffer& Inp);																					// Copy Constructor
 				buffer(buffer&& Inp);																						// Move Constructor
@@ -67,7 +64,7 @@ namespace geodesuka {
 
 				// Is not nullptr if hollow reference.
 				buffer* SuperBuffer;
-				context* Context;
+				//context* Context;
 
 				id Type;
 				int Count;

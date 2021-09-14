@@ -4,8 +4,6 @@
 
 #include <vector>
 
-#include "gcl.h"
-
 #include "device.h"
 #include "device_context.h"
 

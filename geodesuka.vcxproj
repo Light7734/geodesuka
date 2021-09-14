@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;$(ProjectDir)../gcl/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -128,7 +128,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -147,7 +147,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -159,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -170,7 +170,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -180,16 +180,12 @@
     <ClCompile Include="src\core\gcl\device.cpp" />
     <ClCompile Include="src\core\gcl\device_context.cpp" />
     <ClCompile Include="src\core\gcl\frame_buffer.cpp" />
-    <ClCompile Include="src\core\gcl\gcl.cpp" />
-    <ClCompile Include="src\core\gcl\graphical_program.cpp" />
     <ClCompile Include="src\core\gcl\material.cpp" />
     <ClCompile Include="src\core\gcl\mesh.cpp" />
     <ClCompile Include="src\core\gcl\model.cpp" />
     <ClCompile Include="src\core\gcl\shader.cpp" />
-    <ClCompile Include="src\core\gcl\shader_program.cpp" />
     <ClCompile Include="src\core\gcl\texture.cpp" />
     <ClCompile Include="src\core\gcl\variable.cpp" />
-    <ClCompile Include="src\core\gcl\vertex_array.cpp" />
     <ClCompile Include="src\core\hid\joystick.cpp" />
     <ClCompile Include="src\core\hid\keyboard.cpp" />
     <ClCompile Include="src\core\hid\mouse.cpp" />
@@ -314,15 +310,12 @@
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device_context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\material.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\mesh.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\model.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\variable.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
     <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />

@@ -1,12 +1,14 @@
 #ifndef FRAME_BUFFER_H
 #define FRAME_BUFFER_H
 
-#include "../gcl/gcl.h"
+#include <vulkan/vulkan.h>
+
+#include <GLFW/glfw3.h>
+
 #include "../math.h"
 
 #include "device.h"
 #include "device_context.h"
-#include "context.h"
 // Holds no data, only references.
 
 namespace geodesuka {

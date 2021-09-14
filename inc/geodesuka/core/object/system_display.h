@@ -2,7 +2,6 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 
-#include "../gcl/gcl.h"
 #include "../gcl/frame_buffer.h"
 
 #include "../object.h"

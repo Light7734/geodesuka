@@ -56,8 +56,6 @@ PS = Physical Screen Coordinates
 
 #include "../math.h"
 
-#include "../gcl/gcl.h"
-#include "../gcl/context.h"
 #include "../gcl/frame_buffer.h"
 
 #include "../object.h"

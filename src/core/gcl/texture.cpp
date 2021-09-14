@@ -9,8 +9,6 @@
 #include <stdint.h>
 #include <float.h>
 
-#include <geodesuka/core/gcl/gcl.h>
-
 #include <geodesuka/core/math.h>
 
 #include <geodesuka/core/gcl/variable.h>

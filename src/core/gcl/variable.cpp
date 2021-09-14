@@ -8,8 +8,6 @@
 #include <vector>
 #endif // MODE_DEBUG
 
-#include <geodesuka/core/gcl/gcl.h>
-
 #include <geodesuka/core/math.h>
 
 #define BUILT_IN_TYPE_LIST_SIZE 28

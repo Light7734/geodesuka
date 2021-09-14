@@ -2,8 +2,6 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "../gcl/gcl.h"
-
 #include "buffer.h"
 
 namespace geodesuka {

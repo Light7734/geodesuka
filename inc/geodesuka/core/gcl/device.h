@@ -1,10 +1,12 @@
 #pragma once
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef GEODESUKA_CORE_GCL_DEVICE_H
+#define GEODESUKA_CORE_GCL_DEVICE_H
+
+#include <vector>
+
+#include <vulkan/vulkan.h>
 
 #include "../util/text.h"
-
-#include "gcl.h"
 
 namespace geodesuka {
 	namespace core {
@@ -38,4 +40,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !DEVICE_H
+#endif // !GEODESUKA_CORE_GCL_DEVICE_H

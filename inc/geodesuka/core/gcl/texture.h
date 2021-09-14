@@ -2,13 +2,10 @@
 #ifndef GEODESUKA_CORE_GCL_TEXTURE_H
 #define GEODESUKA_CORE_GCL_TEXTURE_H
 
-#include "gcl.h"
-
 #include "../io/file.h"
 #include "../io/image.h"
 
 #include "variable.h"
-#include "context.h"
 
 #include "device.h"
 #include "device_context.h"

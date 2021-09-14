@@ -1,8 +1,5 @@
 #include <geodesuka/core/gcl/frame_buffer.h>
 
-#include <geodesuka/core/gcl/gcl.h>
-
-
 namespace geodesuka {
 	namespace core {
 		namespace gcl {

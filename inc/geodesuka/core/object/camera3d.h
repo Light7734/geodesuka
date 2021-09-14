@@ -12,7 +12,7 @@ namespace geodesuka {
 			class camera3d : public camera {
 
 				// Will produce a camera3d that is perspective rendering.
-				camera3d(gcl::context* aRenderingContext, math::real FOV, math::real aAspectRatio, math::real aNear, math::real aFar);
+				//camera3d(gcl::context* aRenderingContext, math::real FOV, math::real aAspectRatio, math::real aNear, math::real aFar);
 
 				//camera3d()
 

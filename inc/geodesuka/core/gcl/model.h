@@ -4,11 +4,8 @@
 
 #include <vector>
 
-#include "../gcl/gcl.h"
-
 #include "mesh.h"
 #include "material.h"
-#include "shader_program.h"
 
 namespace geodesuka {
 	namespace core {
@@ -19,7 +16,7 @@ namespace geodesuka {
 
 				std::vector<mesh*> Mesh;
 				std::vector<material*> Material;
-				std::vector<shader_program> Program;
+				//std::vector<shader_program> Program;
 
 				model();
 				~model();

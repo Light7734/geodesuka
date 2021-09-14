@@ -19,6 +19,8 @@
 
 /* --------------- Third Party Libraries --------------- */
 
+#include <glslang/Public/ShaderLang.h>
+
 /* --------------- Internal --------------- */
 
 //#include <geodesuka/core/object.h>

@@ -166,12 +166,6 @@
     <ClCompile Include="src\core\gcl\frame_buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\gcl.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\graphical_program.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\gcl\material.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
@@ -184,16 +178,10 @@
     <ClCompile Include="src\core\gcl\shader.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\shader_program.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\gcl\texture.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\gcl\variable.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\vertex_array.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\hid\joystick.cpp">
@@ -546,9 +534,6 @@
     <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\material.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
@@ -561,16 +546,10 @@
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\variable.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h">

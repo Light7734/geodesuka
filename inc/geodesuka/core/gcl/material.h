@@ -4,8 +4,6 @@
 
 #include <vector>
 
-#include "../gcl/gcl.h"
-
 #include "texture.h"
 #include "shader.h"
 

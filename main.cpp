@@ -39,16 +39,16 @@ int main(int argc, char *argv[]) {
 	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
 	std::cout << " - Date: 20210911" << std::endl;
 
-	//int RunTime = 0;
-	//while (true) {
-	//	Sleep(1000);
-	//	if (RunTime > 3 * 1000) {
-	//		break;
-	//	}
-	//	else {
-	//		RunTime += 1000;
-	//	}
-	//}
+	int RunTime = 0;
+	while (true) {
+		Sleep(1000);
+		if (RunTime > 3 * 1000) {
+			break;
+		}
+		else {
+			RunTime += 1000;
+		}
+	}
 
 	/*
 	size_t DeviceCount = 0;

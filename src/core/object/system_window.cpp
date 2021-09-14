@@ -4,8 +4,6 @@
 
 #include <geodesuka/core/math.h>
 
-#include <geodesuka/core/gcl/gcl.h>
-
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
