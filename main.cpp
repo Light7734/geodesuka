@@ -39,18 +39,18 @@ int main(int argc, char *argv[]) {
 	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
 	std::cout << " - Date: 20210911" << std::endl;
 
-	int RunTime = 0;
-	while (true) {
-		Sleep(1000);
-		if (RunTime > 3 * 1000) {
-			break;
-		}
-		else {
-			RunTime += 1000;
-		}
-	}
+	//int RunTime = 0;
+	//while (true) {
+	//	Sleep(1000);
+	//	if (RunTime > 3 * 1000) {
+	//		break;
+	//	}
+	//	else {
+	//		RunTime += 1000;
+	//	}
+	//}
 
-	/*
+	///*
 	size_t DeviceCount = 0;
 	device** DeviceList = Engine.get_device_list(&DeviceCount);
 	device_context* DeviceContext = nullptr;
@@ -75,8 +75,6 @@ int main(int argc, char *argv[]) {
 	window* Window = (window*)Engine.create(new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
 		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
 	object_t* Triangle = Engine.create(new triangle(Engine, DeviceContext));
-
-	Window->draw(Triangle);
 
 	while (true) {
 

@@ -268,20 +268,12 @@ namespace geodesuka {
 
 	core::object_t* engine::create(core::object::system_window* aNewWindow) {
 		// Checks for redundant elements.
-		for (size_t i = 0; i < SystemWindow.size(); i++) {
-			if (SystemWindow[i] == aNewWindow) return aNewWindow;
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			if (this->Object[i] == aNewWindow) return aNewWindow;
 		}
-		// Pushes onto list if not on list.
-		SystemWindow.push_back(aNewWindow);
-
-		// Checks for redundant elements.
 		size_t Offset = this->Display.size() + this->SystemWindow.size();
 		this->Object.insert(this->Object.begin() + Offset, aNewWindow);
-		//for (size_t i = 0; i < Object.size(); i++) {
-		//	if (Object[i] == aNewWindow) return aNewWindow;
-		//}
-		//// Pushes onto list if not on list.
-		//Object.push_back(aNewWindow);
+		this->SystemWindow.push_back(aNewWindow);
 		return aNewWindow;
 	}
 

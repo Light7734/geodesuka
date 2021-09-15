@@ -10,12 +10,70 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(const buffer& Inp) {
+			buffer::buffer(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+				this->aParentDC = aContext;
 
+				this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				this->CreateInfo.pNext = NULL;
+				this->CreateInfo.flags = (VkBufferCreateFlags)aFlags;
+				this->CreateInfo.size = aCount * aMemoryLayout.Type.Size;
+				this->CreateInfo.usage = (VkBufferUsageFlags)aUsage;
+				this->CreateInfo.sharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+				this->CreateInfo.queueFamilyIndexCount = 0;
+				this->CreateInfo.pQueueFamilyIndices = NULL;
+
+				this->Handle = VK_NULL_HANDLE;
+				this->MemoryHandle = VK_NULL_HANDLE;
+
+				this->Flags = aFlags;
+				this->Usage = aUsage;
+				this->Count = aCount;
+				this->MemoryLayout = aMemoryLayout;
+
+				VkResult Result = vkCreateBuffer(aContext->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+				if (Result != VK_SUCCESS) {
+
+				}
 			}
 
-			buffer::buffer(buffer&& Inp) {
+			buffer::buffer(device_context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData) {
+				this->init_all(aContext, aFlags, aUsage, aCount, variable(aTypeSpecifier, aIdentifier), aBufferData);
+			}
 
+			buffer::~buffer() {
+				this->clear_all();
+			}
+
+			bool buffer::init_all(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+				this->aParentDC = aContext;
+
+				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				this->CreateInfo.pNext						= NULL;
+				this->CreateInfo.flags						= (VkBufferCreateFlags)aFlags;
+				this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
+				this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
+				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+				this->CreateInfo.queueFamilyIndexCount		= 0;
+				this->CreateInfo.pQueueFamilyIndices		= NULL;
+
+				this->Handle = VK_NULL_HANDLE;
+				this->MemoryHandle = VK_NULL_HANDLE;
+
+				this->Flags = aFlags;
+				this->Usage = aUsage;
+				this->Count = aCount;
+				this->MemoryLayout = aMemoryLayout;
+
+				VkResult Result = vkCreateBuffer(aContext->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+				if (Result != VK_SUCCESS) {
+
+				}
+				return false;
+			}
+
+			bool buffer::clear_all() {
+
+				return false;
 			}
 
 

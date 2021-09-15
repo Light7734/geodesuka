@@ -1,12 +1,15 @@
 #pragma once
-#ifndef BUFFER_H
-#define BUFFER_H
+#ifndef GEODESUKA_CORE_GCL_BUFFER_H
+#define GEODESUKA_CORE_GCL_BUFFER_H
 
 #include <stdarg.h>
 
 #include "../math.h"
 
 #include "variable.h"
+
+#include "device.h"
+#include "device_context.h"
 
 namespace geodesuka {
 	namespace core {
@@ -19,21 +22,33 @@ namespace geodesuka {
 					none
 				};
 
-				// Will generate vertex buffer according to VertexLayout, with VertexCount.
-				//buffer(context* aContext, id aType, int aVertexCount, variable aVertexLayout, void *aVertexData);
+				enum usage {
+					TRANSFER_SRC_BIT			= 0x00000001,
+					TRANSFER_DST_BIT			= 0x00000002,
+					UNIFORM_TEXEL_BUFFER_BIT	= 0x00000004,
+					STORAGE_TEXEL_BUFFER_BIT	= 0x00000008,
+					UNIFORM_BUFFER_BIT			= 0x00000010,
+					STORAGE_BUFFER_BIT			= 0x00000020,
+					INDEX_BUFFER_BIT			= 0x00000040,
+					VERTEX_BUFFER_BIT			= 0x00000080,
+					INDIRECT_BUFFER_BIT			= 0x00000100,
+					SHADER_DEVICE_ADDRESS_BIT	= 0x00020000,
+				};
 
-				buffer(const buffer& Inp);																					// Copy Constructor
-				buffer(buffer&& Inp);																						// Move Constructor
-
+				buffer(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
+				buffer(device_context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData);
+				
 				~buffer();
 
-				buffer& operator=(const buffer& Rhs);																		// Copy Assign
-				buffer& operator=(buffer&& Rhs);																			// Move Assign
+				//buffer(const buffer& Inp);																					// Copy Constructor
+				//buffer(buffer&& Inp);																						// Move Constructor
+				//buffer& operator=(const buffer& Rhs);																		// Copy Assign
+				//buffer& operator=(buffer&& Rhs);																			// Move Assign
 
 
 				// Grabs sub buffers from memory layout memory layout
-				buffer operator[](const char* Str);
-				buffer operator[](int Index);
+				//buffer operator[](const char* Str);
+				//buffer operator[](int Index);
 
 				//int get_type_id_of(const char* TypeSpecifier);
 				//const char* get_type_name_of(int TypeSpecifier);
@@ -62,23 +77,26 @@ namespace geodesuka {
 
 			private:
 
-				// Is not nullptr if hollow reference.
-				buffer* SuperBuffer;
-				//context* Context;
+				// Does not hold an host memory data unless explicity requested by API.
 
-				id Type;
+				device_context* aParentDC;
+
+				VkBufferCreateInfo CreateInfo;
+				VkBuffer Handle;
+				VkDeviceMemory MemoryHandle;
+
+				int Flags;
+				int Usage;
 				int Count;
-				variable Layout;
+				variable MemoryLayout;
 
-				void* hptr;
-				unsigned int ID;
-
-				//boolean is_identifier_valid(const char* IdentifierString);
-				//boolean is_identifier_taken(const char* IdentifierString);
+				// Internal: reduce code error from redundancy.
+				bool init_all(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
+				bool clear_all();
 			};
 
 		}
 	}
 }
 
-#endif // !BUFFER_H
+#endif // !GEODESUKA_CORE_GCL_BUFFER_H
