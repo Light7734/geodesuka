@@ -21,9 +21,9 @@ namespace geodesuka {
 				device_context(device* aDevice);
 				~device_context();
 
-				VkInstance* get_inst();
-				device* get_pdevice();
-				VkDevice get_handle();
+				VkInstance* inst();
+				device* parent();
+				VkDevice handle();
 				bool ext_supported(const char* aExtension);
 
 				// Parse error into string.

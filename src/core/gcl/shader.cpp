@@ -78,7 +78,7 @@ namespace geodesuka {
 					this->CreateInfo.codeSize		= this->Binary.size()*sizeof(uint32_t);
 					this->CreateInfo.pCode			= reinterpret_cast<const uint32_t*>(this->Binary.data());
 
-					this->ErrorCode = vkCreateShaderModule(this->ParentDC->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+					this->ErrorCode = vkCreateShaderModule(this->ParentDC->handle(), &this->CreateInfo, NULL, &this->Handle);
 					if (this->ErrorCode != VkResult::VK_SUCCESS) this->isValid = false;
 				}
 			}
@@ -90,7 +90,7 @@ namespace geodesuka {
 				//this->VkStage		= (VkShaderStageFlagBits)0;
 				//this->isValid		= false;
 				this->Binary.clear();
-				vkDestroyShaderModule(this->ParentDC->get_handle(), this->Handle, NULL);
+				vkDestroyShaderModule(this->ParentDC->handle(), this->Handle, NULL);
 			}
 
 			VkShaderStageFlagBits shader::get_stage() {

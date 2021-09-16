@@ -22,11 +22,11 @@ namespace geodesuka {
 			
 			}
 
-			VkInstance* device::get_inst() {
+			VkInstance* device::inst() {
 				return this->ParentInstance;
 			}
 
-			VkPhysicalDevice device::get_handle() {
+			VkPhysicalDevice device::handle() {
 				return this->Handle;
 			}
 

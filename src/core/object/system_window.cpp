@@ -22,144 +22,9 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			// ------------------------- Instance Methods ------------------------- \\
-
-			
-			//system_window::system_window(
-			//	gcl::context* aContext, gcl::frame_buffer::prop* aFrameBufferProp, prop* aWindowProp, 
-			//	math::real aWidth, math::real aHeight, const char* aName,
-			//	system_display* aDisplay
-			//) {
-
-			//	// Use this to forward input data to object.
-			//	this->InputStreamTarget = nullptr;
-
-			//	this->ParentDisplay = aDisplay;
-			//	// The context doesn't actually get created until here.
-			//	if (aContext->Handle != NULL) {
-			//		// Already active context, implies sharing.
-			//		this->ParentDeviceContext = aContext;
-			//		// TODO: This is not safe...
-			//		this->Context = new gcl::context(aContext, &aContext->Property);
-			//	}
-			//	else {
-			//		// Inactive context.
-			//		this->ParentDeviceContext = nullptr;
-			//		this->Context = aContext;
-			//	}
-
-			//	// Sets up Default Framebuffer, do NOT use constructor method.
-			//	this->FrameBuffer.Context = aContext;
-			//	this->FrameBuffer.Property = *aFrameBufferProp;
-			//	this->FrameBuffer.ID = 0;
-			//	this->Property = *aWindowProp;
-
-			//	//this->Resolution.x = aWidth;
-			//	//this->Resolution.y = aHeight;
-			//	this->Size = math::real2(aWidth, aHeight);
-			//	this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
-			//	this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
-
-			//	// Copies window name.
-			//	this->Name = aName;
-			//	//if (aName != NULL) {
-			//	//	size_t NameSize = strlen(aName);
-			//	//	this->Name = (char*)malloc((NameSize + 1) * sizeof(char));
-			//	//	if (this->Name != NULL) {
-			//	//		memcpy(this->Name, aName, NameSize * sizeof(char));
-			//	//		this->Name[NameSize] = '\0';
-			//	//	}
-			//	//}
-
-			//	// Loads all context, window, and frame hints.
-			//	glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
-			//	glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
-			//	glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
-			//	glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
-			//	glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
-			//	glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
-			//	glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
-			//	glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
-			//	glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
-			//	glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
-			//	glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
-			//	//glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
-			//	glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
-			//	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
-			//	glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
-			//	glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
-			//	glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
-			//	glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
-			//	glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
-			//	glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
-			//	glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
-			//	glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
-			//	glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
-			//	//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
-			//	//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
-			//	glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
-			//	glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
-			//	glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
-			//	glfwWindowHint(GLFW_CLIENT_API					, this->Context->Property.ClientAPI					);
-			//	glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
-			//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
-			//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
-			//	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
-			//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
-			//	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
-			//	glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
-			//	glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
-			//	glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
-			//	glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
-
-			//	// Actually creates the context/window. Is treated the same by GLFW.
-			//	if (this->ParentDeviceContext != nullptr) {
-			//		this->Context->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, this->Name.str(), NULL/*this->ParentDisplay->Handle*/, this->ParentDeviceContext->Handle);
-			//	}
-			//	else {
-			//		this->Context->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, this->Name.str(), NULL/*this->ParentDisplay->Handle*/, NULL);
-			//	}
-
-			//	glfwMakeContextCurrent(this->Context->Handle);
-			//	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-			//	glfwSwapInterval(0);
-
-			//	// Should be at center of display.
-			//	this->set_position(math::real3(0.0, 0.0, 0.0));
-
-			//	// User pointer to forward input stream.
-			//	glfwSetWindowUserPointer(this->Context->Handle, (void*)this);
-
-			//	// system_window callbacks
-			//	glfwSetWindowPosCallback(this->Context->Handle, system_window::position_callback);
-			//	glfwSetWindowSizeCallback(this->Context->Handle, system_window::size_callback);
-			//	glfwSetWindowCloseCallback(this->Context->Handle, system_window::close_callback);
-			//	glfwSetWindowRefreshCallback(this->Context->Handle, system_window::refresh_callback);
-			//	glfwSetWindowFocusCallback(this->Context->Handle, system_window::focus_callback);
-			//	glfwSetWindowIconifyCallback(this->Context->Handle, system_window::iconify_callback);
-			//	glfwSetWindowMaximizeCallback(this->Context->Handle, system_window::maximize_callback);
-			//	glfwSetWindowContentScaleCallback(this->Context->Handle, system_window::content_scale_callback);
-
-			//	// framebuffer callbacks
-			//	glfwSetFramebufferSizeCallback(this->Context->Handle, system_window::framebuffer_size_callback);
-
-			//	// Mouse callbacks
-			//	glfwSetMouseButtonCallback(this->Context->Handle, system_window::mouse_button_callback);
-			//	glfwSetCursorPosCallback(this->Context->Handle, system_window::cursor_position_callback);
-			//	glfwSetCursorEnterCallback(this->Context->Handle, system_window::cursor_enter_callback);
-			//	glfwSetScrollCallback(this->Context->Handle, system_window::scroll_callback);
-
-			//	// Keyboard callbacks
-			//	glfwSetKeyCallback(this->Context->Handle, system_window::key_callback);
-			//	glfwSetCharCallback(this->Context->Handle, system_window::character_callback);
-
-			//	// File drop
-			//	glfwSetDropCallback(this->Context->Handle, system_window::file_drop_callback);
-			//	
-			//	//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
-
-			//	// Should create the first framebuffer with the newly active context.
-			//}
+			// Order
+			// glfwCreateWindow
+			// glfwCreateWindowSurface
 
 			system_window::system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
 				math::real3 aPosition, math::real2 aSize, util::text aTitle) {
@@ -238,44 +103,6 @@ namespace geodesuka {
 					this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
 					this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
 					this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
-					
-					if (this->Handle != NULL) {
-
-						this->set_position(aPosition);
-						// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
-
-						// User pointer to forward input stream.
-						glfwSetWindowUserPointer(this->Handle, (void*)this);
-
-						// system_window callbacks
-						glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
-						glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
-						glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
-						glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
-						glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
-						glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
-						glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
-						glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
-
-						// framebuffer callbacks
-						glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
-
-						// Mouse callbacks
-						glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
-						glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
-						glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
-						glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
-
-						// Keyboard callbacks
-						glfwSetKeyCallback(this->Handle, system_window::key_callback);
-						glfwSetCharCallback(this->Handle, system_window::character_callback);
-
-						// File drop
-						glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
-
-						//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
-
-					}
 
 					// If OS window creation failed, abort following steps.
 					if (this->Handle == NULL) this->isValid = false;
@@ -286,7 +113,7 @@ namespace geodesuka {
 				// Create Vulkan Surface.
 				if (this->isValid) {
 					// Creates respective Vulkan surface with operating system window.
-					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDC->get_inst(), this->Handle, NULL, &this->Surface);
+					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
 					// If Vulkan Surface not created from OS window, abort following operations.
 					if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
 				}
@@ -295,22 +122,22 @@ namespace geodesuka {
 				if (this->isValid) {
 
 					// Queuries for surface capabilities.
-					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &this->SurfaceCapabilities);
+					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
 
 					// Queries for Surface Formats.
 					uint32_t FormatCount = 0;
-					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &FormatCount, NULL);
+					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, NULL);
 					std::vector<VkSurfaceFormatKHR> Format(FormatCount);
 					if (FormatCount > 0) {
-						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &FormatCount, Format.data());
+						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, Format.data());
 					}
 
 					// Queries for Presentation Modes.
 					uint32_t PresentModeCount = 0;
-					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, NULL);
+					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, NULL);
 					std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
 					if (PresentModeCount > 0) {
-						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, PresentMode.data());
+						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
 					}
 					
 
@@ -396,13 +223,13 @@ namespace geodesuka {
 					this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
 					this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
 
-					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->get_handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
 
 					uint32_t lImageCount;
 					std::vector<VkImage> Image;
-					vkGetSwapchainImagesKHR(this->ParentDC->get_handle(), this->SwapChain, &lImageCount, NULL);
+					vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, NULL);
 					Image.resize(lImageCount);
-					vkGetSwapchainImagesKHR(this->ParentDC->get_handle(), this->SwapChain, &lImageCount, Image.data());
+					vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, Image.data());
 					//this->Texture.resize(lImageCount);
 
 					for (size_t i = 0; i < Image.size(); i++) {
@@ -432,9 +259,9 @@ namespace geodesuka {
 				// Destroys 
 				if (this->isValid) {
 					// Destroys swapchain.
-					vkDestroySwapchainKHR(this->ParentDC->get_handle(), this->SwapChain, NULL);
+					vkDestroySwapchainKHR(this->ParentDC->handle(), this->SwapChain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(*this->ParentDC->get_inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(*this->ParentDC->inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
@@ -542,6 +369,44 @@ namespace geodesuka {
 			// --------------- These are the system_window callbacks --------------- //
 
 			// system_window callbacks
+
+			bool system_window::pmset_callbacks() {
+				if (this->Handle != NULL) {
+					// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
+
+					// User pointer to forward input stream.
+					glfwSetWindowUserPointer(this->Handle, (void*)this);
+
+					// system_window callbacks
+					glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
+					glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
+					glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
+					glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
+					glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
+					glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
+					glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
+					glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+
+					// framebuffer callbacks
+					glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
+
+					// Mouse callbacks
+					glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
+					glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
+					glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
+					glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
+
+					// Keyboard callbacks
+					glfwSetKeyCallback(this->Handle, system_window::key_callback);
+					glfwSetCharCallback(this->Handle, system_window::character_callback);
+
+					// File drop
+					glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
+
+					//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
+
+				}
+			}
 
 			void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
 				//tex:

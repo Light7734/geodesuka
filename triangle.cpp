@@ -142,7 +142,7 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceConte
 	this->CreateInfo.pDynamicState			= NULL;// &DynamicState;
 	//this->CreateInfo.layout  = 
 
-	vkCreateGraphicsPipelines(aDeviceContext->get_handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
+	vkCreateGraphicsPipelines(aDeviceContext->handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
 
 	VkAttachmentDescription;
 

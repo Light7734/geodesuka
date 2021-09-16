@@ -25,8 +25,8 @@ namespace geodesuka {
 				device(VkInstance *aParentInstance, VkPhysicalDevice aPhysicalDevice);
 				~device();
 
-				VkInstance* get_inst();
-				VkPhysicalDevice get_handle();
+				VkInstance* inst();
+				VkPhysicalDevice handle();
 
 			private:
 

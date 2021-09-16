@@ -6,15 +6,13 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-
-
 			device_context::device_context(device* aDevice) {
 				ActiveExtension.resize(DesiredExtension.size());
 				// Queuries physical device extensions.
 				uint32_t PhysicalDeviceExtensionCount;
-				vkEnumerateDeviceExtensionProperties(aDevice->get_handle(), NULL, &PhysicalDeviceExtensionCount, NULL);
+				vkEnumerateDeviceExtensionProperties(aDevice->handle(), NULL, &PhysicalDeviceExtensionCount, NULL);
 				std::vector<VkExtensionProperties> PhysicalDeviceExtension(PhysicalDeviceExtensionCount);
-				vkEnumerateDeviceExtensionProperties(aDevice->get_handle(), NULL, &PhysicalDeviceExtensionCount, PhysicalDeviceExtension.data());
+				vkEnumerateDeviceExtensionProperties(aDevice->handle(), NULL, &PhysicalDeviceExtensionCount, PhysicalDeviceExtension.data());
 				// Now that list of extensions is exposed from device, search for desired extensions.
 
 				// Default is disabled
@@ -83,15 +81,15 @@ namespace geodesuka {
 				vkDestroyDevice(this->Handle, NULL);
 			}
 
-			VkInstance* device_context::get_inst() {
-				return this->ParentDevice->get_inst();
+			VkInstance* device_context::inst() {
+				return this->ParentDevice->inst();
 			}
 
-			device* device_context::get_pdevice() {
+			device* device_context::parent() {
 				return this->ParentDevice;
 			}
 
-			VkDevice device_context::get_handle() {
+			VkDevice device_context::handle() {
 				return this->Handle;
 			}
 

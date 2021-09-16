@@ -46,6 +46,15 @@ namespace geodesuka {
 			class system_window : public window {
 			public:
 
+				struct create_info {
+					system_display* ParentDisplay;
+					gcl::frame_buffer::prop FramebufferProp;
+					prop WindowProp;
+					math::real3 Position;
+					math::real2 Size;
+					util::text Title;
+				};
+
 				VkResult ErrorCode;
 
 				//friend class system_display;
@@ -61,6 +70,8 @@ namespace geodesuka {
 				//	math::real2 &aPos, math::real2 &aSize, util::text &aTitle, system_display* aDisplay);
 
 				//system_window(math::integer Width, math::integer Height, const char* Name, const system_display&);
+
+				//system_window(gcl::device_context* aDC, );
 
 				// Provide a device_context to create an associated rendering context with it.
 				system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
@@ -129,6 +140,8 @@ namespace geodesuka {
 				// Required extensions for the usage of this class
 				const std::vector<const char *> RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+				//bool pmload_hints();
+				bool pmset_callbacks();
 
 				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 				

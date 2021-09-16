@@ -43,7 +43,7 @@ namespace geodesuka {
 				this->CreateInfo.pQueueFamilyIndices		= NULL;
 				this->CreateInfo.initialLayout				= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
 				
-				this->ErrorCode = vkCreateImage(ParentDC->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+				this->ErrorCode = vkCreateImage(ParentDC->handle(), &this->CreateInfo, NULL, &this->Handle);
 			}
 
 			// This call just simply stores the image handles for a system_window swap chain.
@@ -63,7 +63,7 @@ namespace geodesuka {
 
 			texture::~texture() {
 				if ((this->ParentSW == nullptr) && (this->Handle != VK_NULL_HANDLE)) {
-					vkDestroyImage(this->ParentDC->get_handle(), this->Handle, NULL);
+					vkDestroyImage(this->ParentDC->handle(), this->Handle, NULL);
 					this->Handle = VK_NULL_HANDLE;
 				}
 				this->ErrorCode = VkResult::VK_SUCCESS;

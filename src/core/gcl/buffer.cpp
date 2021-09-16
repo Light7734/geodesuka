@@ -30,7 +30,7 @@ namespace geodesuka {
 				this->Count = aCount;
 				this->MemoryLayout = aMemoryLayout;
 
-				VkResult Result = vkCreateBuffer(aContext->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+				VkResult Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 				if (Result != VK_SUCCESS) {
 
 				}
@@ -64,7 +64,7 @@ namespace geodesuka {
 				this->Count = aCount;
 				this->MemoryLayout = aMemoryLayout;
 
-				VkResult Result = vkCreateBuffer(aContext->get_handle(), &this->CreateInfo, NULL, &this->Handle);
+				VkResult Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 				if (Result != VK_SUCCESS) {
 
 				}
