@@ -1,5 +1,8 @@
 #include <geodesuka/core/gcl/device.h>
 
+#include <cstdlib>
+#include <cstring>
+
 namespace geodesuka {
 	namespace core {
 		namespace gcl {
@@ -50,7 +53,18 @@ namespace geodesuka {
 
 			bool device::check_extension_list(uint32_t aExtensionCount, const char** aExtensionList) const {
 				// Checks if args are valid extensions.
-				return false;
+				bool isSupported = false;
+				for (uint32_t i = 0; i < aExtensionCount; i++) {
+					size_t L1 = strlen(aExtensionList[i]);
+					for (uint32_t j = 0; j < this->ExtensionCount; j++) {
+						size_t L2 = strlen(this->Extension[j].extensionName);
+						if (L1 == L2) {
+							// Compare
+						}
+					}
+				}
+
+				return isSupported;
 			}
 
 			VkPhysicalDeviceProperties device::get_properties() const {

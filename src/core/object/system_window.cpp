@@ -26,234 +26,234 @@ namespace geodesuka {
 			// glfwCreateWindow
 			// glfwCreateWindowSurface
 
-			system_window::system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
-				math::real3 aPosition, math::real2 aSize, util::text aTitle) {
-				// Check for required extensions, if not met, terminate window
-				// creation.
+			//system_window::system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+			//	math::real3 aPosition, math::real2 aSize, util::text aTitle) {
+			//	// Check for required extensions, if not met, terminate window
+			//	// creation.
 
-				this->isValid = true;
-				if (this->isValid) {
+			//	this->isValid = true;
+			//	if (this->isValid) {
 
-					for (size_t i = 0; i < RequiredExtension.size(); i++) {
-						// Extension not found, terminate window creation.
-						if (!aDeviceContext->ext_supported(RequiredExtension[i])) {
-							this->isValid = false;
-							break;
-						}
-					}
+			//		for (size_t i = 0; i < RequiredExtension.size(); i++) {
+			//			// Extension not found, terminate window creation.
+			//			if (!aDeviceContext->ext_supported(RequiredExtension[i])) {
+			//				this->isValid = false;
+			//				break;
+			//			}
+			//		}
 
-					// Required extension found and validated.
-					if (this->isValid) this->ParentDC = aDeviceContext;
-				}
+			//		// Required extension found and validated.
+			//		if (this->isValid) this->ParentDC = aDeviceContext;
+			//	}
 
-				if (this->isValid) {
-					// Get Parent Display.
-					this->ParentDisplay = aDisplay;
-					if (this->ParentDisplay == nullptr) this->isValid = false;
-				}
+			//	if (this->isValid) {
+			//		// Get Parent Display.
+			//		this->ParentDisplay = aDisplay;
+			//		if (this->ParentDisplay == nullptr) this->isValid = false;
+			//	}
 
-				// Create OS window Stage.
-				if (this->isValid) {
+			//	// Create OS window Stage.
+			//	if (this->isValid) {
 
-					// Loads window properties.
-					this->Property = aWindowProp;
-					// Loads all context, window, and frame hints.
-					//glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
-					//glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
-					//glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
-					//glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
-					//glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
-					//glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
-					//glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
-					//glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
-					//glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
-					//glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
-					//glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
-					////glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
-					//glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
-					//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
-					//glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
-					//glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
-					glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
-					glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
-					glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
-					glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
-					glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
-					glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
-					glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
-					//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
-					//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
-					glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
-					glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
-					glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
-					glfwWindowHint(GLFW_CLIENT_API					, GLFW_NO_API										);
-					//glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
-					//glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
-					//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
-					//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
-					//glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
-					//glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
-					//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
-					glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
-
-
-					this->Size = aSize;
-					this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
-					this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
-					this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
-
-					// If OS window creation failed, abort following steps.
-					if (this->Handle == NULL) this->isValid = false;
+			//		// Loads window properties.
+			//		this->Property = aWindowProp;
+			//		// Loads all context, window, and frame hints.
+			//		//glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
+			//		//glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
+			//		//glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
+			//		//glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
+			//		//glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
+			//		//glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
+			//		//glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
+			//		//glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
+			//		//glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
+			//		//glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
+			//		//glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
+			//		////glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
+			//		//glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
+			//		//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
+			//		//glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
+			//		//glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
+			//		glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
+			//		glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
+			//		glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
+			//		glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
+			//		glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
+			//		glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
+			//		glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
+			//		//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
+			//		//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
+			//		glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
+			//		glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
+			//		glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
+			//		glfwWindowHint(GLFW_CLIENT_API					, GLFW_NO_API										);
+			//		//glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
+			//		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
+			//		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
+			//		//glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
+			//		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
+			//		//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
+			//		//glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
+			//		//glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
+			//		//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
+			//		glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
 
 
-				}
+			//		this->Size = aSize;
+			//		this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
+			//		this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
+			//		this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
 
-				// Create Vulkan Surface.
-				if (this->isValid) {
-					// Creates respective Vulkan surface with operating system window.
-					this->ErrorCode = glfwCreateWindowSurface(this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
-					// If Vulkan Surface not created from OS window, abort following operations.
-					if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
-				}
+			//		// If OS window creation failed, abort following steps.
+			//		if (this->Handle == NULL) this->isValid = false;
 
-				// Create Swapchain.
-				if (this->isValid) {
 
-					// Queuries for surface capabilities.
-					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
+			//	}
 
-					// Queries for Surface Formats.
-					uint32_t FormatCount = 0;
-					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, NULL);
-					std::vector<VkSurfaceFormatKHR> Format(FormatCount);
-					if (FormatCount > 0) {
-						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, Format.data());
-					}
+			//	// Create Vulkan Surface.
+			//	if (this->isValid) {
+			//		// Creates respective Vulkan surface with operating system window.
+			//		this->ErrorCode = glfwCreateWindowSurface(this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
+			//		// If Vulkan Surface not created from OS window, abort following operations.
+			//		if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
+			//	}
 
-					// Queries for Presentation Modes.
-					uint32_t PresentModeCount = 0;
-					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, NULL);
-					std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
-					if (PresentModeCount > 0) {
-						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
-					}
-					
+			//	// Create Swapchain.
+			//	if (this->isValid) {
 
-					/*
-					* User Control:
-					* Min Image Count
-					* Image Format
-					* Image Color Space
-					* Image Layers?
-					* Image Usage
-					* Presentation Mode
-					*/
+			//		// Queuries for surface capabilities.
+			//		this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
 
-					FrameBuffer.Property = aFrameBufferProp;
+			//		// Queries for Surface Formats.
+			//		uint32_t FormatCount = 0;
+			//		vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, NULL);
+			//		std::vector<VkSurfaceFormatKHR> Format(FormatCount);
+			//		if (FormatCount > 0) {
+			//			vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, Format.data());
+			//		}
 
-					// Gets appropriate resolution.
-					int FrameBufferResolutionX, FrameBufferResolutionY;
-					glfwGetFramebufferSize(this->Handle, &FrameBufferResolutionX, &FrameBufferResolutionY);
+			//		// Queries for Presentation Modes.
+			//		uint32_t PresentModeCount = 0;
+			//		vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, NULL);
+			//		std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
+			//		if (PresentModeCount > 0) {
+			//			vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
+			//		}
+			//		
 
-					// Make sure Image Count is within range.
-					this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
-					//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
-					//FrameBuffer.Property.ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-					this->FrameBuffer.Property.Extent2D.width	= std::clamp((uint32_t)FrameBufferResolutionX, this->SurfaceCapabilities.minImageExtent.width, this->SurfaceCapabilities.maxImageExtent.width);
-					this->FrameBuffer.Property.Extent2D.height	= std::clamp((uint32_t)FrameBufferResolutionY, this->SurfaceCapabilities.minImageExtent.height, this->SurfaceCapabilities.maxImageExtent.height);
-					this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
+			//		/*
+			//		* User Control:
+			//		* Min Image Count
+			//		* Image Format
+			//		* Image Color Space
+			//		* Image Layers?
+			//		* Image Usage
+			//		* Presentation Mode
+			//		*/
 
-					// validate format.
-					bool isValidFormat = false;
-					bool isValidColorSpace = false;
-					for (size_t i = 0; i < Format.size(); i++) {
-						if (FrameBuffer.Property.Format == Format[i].format) {
-							isValidFormat = true;
-						}
-						if (FrameBuffer.Property.ColorSpace == Format[i].colorSpace) {
-							isValidColorSpace = true;
-						}
-					}
+			//		FrameBuffer.Property = aFrameBufferProp;
 
-					bool isValidPresentMode = false;
-					for (size_t i = 0; i < PresentMode.size(); i++) {
-						if (Property.PresentationMode == PresentMode[i]) {
-							isValidPresentMode = true;
-						}
-					}
+			//		// Gets appropriate resolution.
+			//		int FrameBufferResolutionX, FrameBufferResolutionY;
+			//		glfwGetFramebufferSize(this->Handle, &FrameBufferResolutionX, &FrameBufferResolutionY);
 
-					if (!isValidFormat) {
-						std::cout << "Error: Unsupported format" << std::endl;
-					}
+			//		// Make sure Image Count is within range.
+			//		this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
+			//		//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
+			//		//FrameBuffer.Property.ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+			//		this->FrameBuffer.Property.Extent2D.width	= std::clamp((uint32_t)FrameBufferResolutionX, this->SurfaceCapabilities.minImageExtent.width, this->SurfaceCapabilities.maxImageExtent.width);
+			//		this->FrameBuffer.Property.Extent2D.height	= std::clamp((uint32_t)FrameBufferResolutionY, this->SurfaceCapabilities.minImageExtent.height, this->SurfaceCapabilities.maxImageExtent.height);
+			//		this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
 
-					if (!isValidColorSpace) {
-						std::cout << "Error: Unsupported color space" << std::endl;
-					}
+			//		// validate format.
+			//		bool isValidFormat = false;
+			//		bool isValidColorSpace = false;
+			//		for (size_t i = 0; i < Format.size(); i++) {
+			//			if (FrameBuffer.Property.Format == Format[i].format) {
+			//				isValidFormat = true;
+			//			}
+			//			if (FrameBuffer.Property.ColorSpace == Format[i].colorSpace) {
+			//				isValidColorSpace = true;
+			//			}
+			//		}
 
-					if (!isValidPresentMode) {
-						std::cout << "Error: Unsupported presentation mode" << std::endl;
-					}
+			//		bool isValidPresentMode = false;
+			//		for (size_t i = 0; i < PresentMode.size(); i++) {
+			//			if (Property.PresentationMode == PresentMode[i]) {
+			//				isValidPresentMode = true;
+			//			}
+			//		}
 
-					this->SwapChainProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-					this->SwapChainProp.pNext						= NULL;
-					this->SwapChainProp.flags						= 0;
-					this->SwapChainProp.surface						= this->Surface;
-					this->SwapChainProp.minImageCount				= FrameBuffer.Property.Count;
-					this->SwapChainProp.imageFormat					= FrameBuffer.Property.Format;
-					this->SwapChainProp.imageColorSpace				= FrameBuffer.Property.ColorSpace;
-					this->SwapChainProp.imageExtent					= FrameBuffer.Property.Extent2D;
-					this->SwapChainProp.imageArrayLayers			= 1; // Number of Layers per Vulkan Image.
-					this->SwapChainProp.imageUsage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // 
-					if (true/*If GraphicsQueue == PresentationQueue*/) {
-						// Assumes that Queue has Graphcis and Presentation Capability. (Fix This Later)
-						this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-						this->SwapChainProp.queueFamilyIndexCount		= 0;
-						this->SwapChainProp.pQueueFamilyIndices			= NULL;
-					}
-					else {
-						this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_CONCURRENT;
-						this->SwapChainProp.queueFamilyIndexCount		= 2;
-						this->SwapChainProp.pQueueFamilyIndices			= NULL; // Change to QueueFamily Indices
-					}
-					this->SwapChainProp.preTransform				= this->SurfaceCapabilities.currentTransform; // Matches it with current surface transform. (Fucking stupid option)
-					this->SwapChainProp.compositeAlpha				= VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // 
-					this->SwapChainProp.presentMode					= this->Property.PresentationMode; // Presentation Mode. 
-					this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
-					this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
+			//		if (!isValidFormat) {
+			//			std::cout << "Error: Unsupported format" << std::endl;
+			//		}
 
-					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+			//		if (!isValidColorSpace) {
+			//			std::cout << "Error: Unsupported color space" << std::endl;
+			//		}
 
-					uint32_t lImageCount;
-					std::vector<VkImage> Image;
-					vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, NULL);
-					Image.resize(lImageCount);
-					vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, Image.data());
-					//this->Texture.resize(lImageCount);
+			//		if (!isValidPresentMode) {
+			//			std::cout << "Error: Unsupported presentation mode" << std::endl;
+			//		}
 
-					for (size_t i = 0; i < Image.size(); i++) {
-						VkImageCreateInfo tempci;
-						tempci.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-						tempci.pNext					= NULL;
-						tempci.flags					= 0;
-						tempci.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
-						tempci.format					= FrameBuffer.Property.Format;
-						tempci.extent					= { FrameBuffer.Property.Extent2D.width, FrameBuffer.Property.Extent2D.height, 1 };
-						tempci.mipLevels				= 1;
-						tempci.arrayLayers				= 1;
-						tempci.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
-						tempci.tiling					= VkImageTiling::VK_IMAGE_TILING_OPTIMAL;
-						tempci.usage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
-						tempci.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-						tempci.queueFamilyIndexCount	= 0;
-						tempci.pQueueFamilyIndices		= NULL;
-						tempci.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-						// Just stores swapchain images.
-						this->Texture.push_back(gcl::texture(this, this->ParentDC, Image[i], tempci));
-					}
-				}
-			}
+			//		this->SwapChainProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+			//		this->SwapChainProp.pNext						= NULL;
+			//		this->SwapChainProp.flags						= 0;
+			//		this->SwapChainProp.surface						= this->Surface;
+			//		this->SwapChainProp.minImageCount				= FrameBuffer.Property.Count;
+			//		this->SwapChainProp.imageFormat					= FrameBuffer.Property.Format;
+			//		this->SwapChainProp.imageColorSpace				= FrameBuffer.Property.ColorSpace;
+			//		this->SwapChainProp.imageExtent					= FrameBuffer.Property.Extent2D;
+			//		this->SwapChainProp.imageArrayLayers			= 1; // Number of Layers per Vulkan Image.
+			//		this->SwapChainProp.imageUsage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // 
+			//		if (true/*If GraphicsQueue == PresentationQueue*/) {
+			//			// Assumes that Queue has Graphcis and Presentation Capability. (Fix This Later)
+			//			this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+			//			this->SwapChainProp.queueFamilyIndexCount		= 0;
+			//			this->SwapChainProp.pQueueFamilyIndices			= NULL;
+			//		}
+			//		else {
+			//			this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_CONCURRENT;
+			//			this->SwapChainProp.queueFamilyIndexCount		= 2;
+			//			this->SwapChainProp.pQueueFamilyIndices			= NULL; // Change to QueueFamily Indices
+			//		}
+			//		this->SwapChainProp.preTransform				= this->SurfaceCapabilities.currentTransform; // Matches it with current surface transform. (Fucking stupid option)
+			//		this->SwapChainProp.compositeAlpha				= VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // 
+			//		this->SwapChainProp.presentMode					= this->Property.PresentationMode; // Presentation Mode. 
+			//		this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
+			//		this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
+
+			//		this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+
+			//		uint32_t lImageCount;
+			//		std::vector<VkImage> Image;
+			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, NULL);
+			//		Image.resize(lImageCount);
+			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, Image.data());
+			//		//this->Texture.resize(lImageCount);
+
+			//		for (size_t i = 0; i < Image.size(); i++) {
+			//			VkImageCreateInfo tempci;
+			//			tempci.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			//			tempci.pNext					= NULL;
+			//			tempci.flags					= 0;
+			//			tempci.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+			//			tempci.format					= FrameBuffer.Property.Format;
+			//			tempci.extent					= { FrameBuffer.Property.Extent2D.width, FrameBuffer.Property.Extent2D.height, 1 };
+			//			tempci.mipLevels				= 1;
+			//			tempci.arrayLayers				= 1;
+			//			tempci.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
+			//			tempci.tiling					= VkImageTiling::VK_IMAGE_TILING_OPTIMAL;
+			//			tempci.usage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			//			tempci.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+			//			tempci.queueFamilyIndexCount	= 0;
+			//			tempci.pQueueFamilyIndices		= NULL;
+			//			tempci.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+			//			// Just stores swapchain images.
+			//			this->Texture.push_back(gcl::texture(this, this->ParentDC, Image[i], tempci));
+			//		}
+			//	}
+			//}
 
 			system_window::~system_window() {
 				// Destroys 

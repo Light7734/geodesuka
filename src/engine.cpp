@@ -148,50 +148,50 @@ namespace geodesuka {
 
 		// ------------------------- Debug Print Info ------------------------- //
 
-		// Will print out display info.
-		for (size_t i = 0; i < Display.size(); i++) {
-			std::cout << "Display Name:\t\t" << Display[i]->Name.str() << std::endl;
-			std::cout << "Display Size:\t\t" << Display[i]->Size.x << ", " << Display[i]->Size.y << "\t[m]" << std::endl;
-			std::cout << "Display Resolution:\t" << Display[i]->Resolution.x << ", " << Display[i]->Resolution.y << "\t[pixels]" << std::endl;
-			std::cout << "Display Refresh Rate:\t" << Display[i]->Property.RefreshRate << "\t\t[1/s]" << std::endl;
-			std::cout << std::endl;
-		}
-
-		// Just simply prints out device info.
-		for (size_t i = 0; i < this->DeviceList.size(); i++) {
-			std::cout << "Device ID:\t" << this->DeviceList[i]->Properties.deviceID << std::endl;
-			std::cout << "Device Name:\t" << this->DeviceList[i]->Properties.deviceName << std::endl;
-			std::cout << "Device Type:\t";
-			switch (this->DeviceList[i]->Properties.deviceType) {
-			case VK_PHYSICAL_DEVICE_TYPE_OTHER:
-				std::cout << "Unknown" << std::endl;
-				break;
-			case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-				std::cout << "Integrated GPU" << std::endl;
-				break;
-			case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-				std::cout << "Discrete GPU" << std::endl;
-				break;
-			case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-				std::cout << "Virtual GPU" << std::endl;
-				break;
-			case VK_PHYSICAL_DEVICE_TYPE_CPU:
-				std::cout << "CPU" << std::endl;
-				break;
-			}
-			std::cout << std::endl;
-			for (size_t j = 0; j < this->DeviceList[i]->QueueFamilyProperties.size(); j++) {
-				std::cout << "Family Index:\t" << j << std::endl;
-				std::cout << "Queue Count:\t" << this->DeviceList[i]->QueueFamilyProperties[j].queueCount << std::endl;
-				std::cout << "Graphics:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) >> 0) << std::endl;
-				std::cout << "Compute:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) >> 1) << std::endl;
-				std::cout << "Transfer:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) >> 2) << std::endl;
-				// No idea what sparse binding is..
-				//std::cout << "Sparse Binding:\t" << ((QueueFamilyPropList[i].queueFlags & VkQueueFlagBits::VK_QUEUE_SPARSE_BINDING_BIT) >> 3) << std::endl << std::endl;
-				std::cout << std::endl;
-			}
-			std::cout << std::endl;
-		}
+		//// Will print out display info.
+		//for (size_t i = 0; i < Display.size(); i++) {
+		//	std::cout << "Display Name:\t\t" << Display[i]->Name.str() << std::endl;
+		//	std::cout << "Display Size:\t\t" << Display[i]->Size.x << ", " << Display[i]->Size.y << "\t[m]" << std::endl;
+		//	std::cout << "Display Resolution:\t" << Display[i]->Resolution.x << ", " << Display[i]->Resolution.y << "\t[pixels]" << std::endl;
+		//	std::cout << "Display Refresh Rate:\t" << Display[i]->Property.RefreshRate << "\t\t[1/s]" << std::endl;
+		//	std::cout << std::endl;
+		//}
+		//
+		//// Just simply prints out device info.
+		//for (size_t i = 0; i < this->DeviceList.size(); i++) {
+		//	std::cout << "Device ID:\t" << this->DeviceList[i]->Properties.deviceID << std::endl;
+		//	std::cout << "Device Name:\t" << this->DeviceList[i]->Properties.deviceName << std::endl;
+		//	std::cout << "Device Type:\t";
+		//	switch (this->DeviceList[i]->Properties.deviceType) {
+		//	case VK_PHYSICAL_DEVICE_TYPE_OTHER:
+		//		std::cout << "Unknown" << std::endl;
+		//		break;
+		//	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
+		//		std::cout << "Integrated GPU" << std::endl;
+		//		break;
+		//	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
+		//		std::cout << "Discrete GPU" << std::endl;
+		//		break;
+		//	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
+		//		std::cout << "Virtual GPU" << std::endl;
+		//		break;
+		//	case VK_PHYSICAL_DEVICE_TYPE_CPU:
+		//		std::cout << "CPU" << std::endl;
+		//		break;
+		//	}
+		//	std::cout << std::endl;
+		//	for (size_t j = 0; j < this->DeviceList[i]->QueueFamilyProperties.size(); j++) {
+		//		std::cout << "Family Index:\t" << j << std::endl;
+		//		std::cout << "Queue Count:\t" << this->DeviceList[i]->QueueFamilyProperties[j].queueCount << std::endl;
+		//		std::cout << "Graphics:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) >> 0) << std::endl;
+		//		std::cout << "Compute:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) >> 1) << std::endl;
+		//		std::cout << "Transfer:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) >> 2) << std::endl;
+		//		// No idea what sparse binding is..
+		//		//std::cout << "Sparse Binding:\t" << ((QueueFamilyPropList[i].queueFlags & VkQueueFlagBits::VK_QUEUE_SPARSE_BINDING_BIT) >> 3) << std::endl << std::endl;
+		//		std::cout << std::endl;
+		//	}
+		//	std::cout << std::endl;
+		//}
 
 	}
 

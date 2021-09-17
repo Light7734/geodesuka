@@ -1,6 +1,6 @@
 #include <geodesuka/core/gcl/context.h>
 
-#include <iostream>
+#include <cstdlib>
 
 namespace geodesuka {
 	namespace core {
@@ -15,129 +15,115 @@ namespace geodesuka {
 
 				VkResult Result = VK_SUCCESS;
 				if (aDevice->check_extension_list(aExtensionCount, aExtensionList)) {
+					this->ParentDevice = aDevice;
+					this->Handle = VK_NULL_HANDLE;
+
 					uint32_t QueueFamilyCount = 0;
 					const VkQueueFamilyProperties* QueueFamily = aDevice->get_queue_families(&QueueFamilyCount);
 
+					bool Allocated = false;
 					this->QueueCreateInfoCount = QueueFamilyCount;
-					this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(this->QueueCreateInfoCount * sizeof(VkDeviceQueueCreateInfo));
-					// How to deal with different queue priorities?
+					this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(QueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
+					this->QueueFamilyPriority = (float**)malloc(QueueFamilyCount * sizeof(float*));
+					Allocated = (this->QueueCreateInfo != NULL) && (this->QueueFamilyPriority != NULL);
 					if (this->QueueCreateInfo != NULL) {
 						for (uint32_t i = 0; i < QueueFamilyCount; i++) {
-							QueueCreateInfo[i].sType				= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-							QueueCreateInfo[i].pNext				= NULL;
-							QueueCreateInfo[i].flags				= 0;
-							QueueCreateInfo[i].queueFamilyIndex		= i;
-							QueueCreateInfo[i].queueCount			= QueueFamily[i].queueCount;
-							QueueCreateInfo[i].pQueuePriorities		= &Priority;
+							this->QueueFamilyPriority[i] = (float*)malloc(QueueFamily[i].queueCount * sizeof(float));
+							Allocated &= (this->QueueFamilyPriority[i] != NULL);
 						}
+					}
+
+					// Memory Allocated, fill out rest.
+					if (Allocated) {
+
+						// Set priority values. (Adjust later)
+						for (uint32_t i = 0; i < QueueFamilyCount; i++) {
+							for (uint32_t j = 0; j < QueueFamily[i].queueCount; j++) {
+								this->QueueFamilyPriority[i][j] = 1.0f;
+							}
+						}
+
+						for (uint32_t i = 0; i < QueueFamilyCount; i++) {
+							QueueCreateInfo[i].sType					= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+							QueueCreateInfo[i].pNext					= NULL;
+							QueueCreateInfo[i].flags					= 0;
+							QueueCreateInfo[i].queueFamilyIndex			= i;
+							QueueCreateInfo[i].queueCount				= QueueFamily[i].queueCount;
+							QueueCreateInfo[i].pQueuePriorities			= QueueFamilyPriority[i];
+						}
+
+						this->EnabledFeatures = aDevice->get_features();
 
 						this->CreationInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 						this->CreationInfo.pNext						= NULL;
 						this->CreationInfo.flags						= 0;
-						this->CreationInfo.queueCreateInfoCount			;
-						this->CreationInfo.pQueueCreateInfos			;
+						this->CreationInfo.queueCreateInfoCount			= this->QueueCreateInfoCount;
+						this->CreationInfo.pQueueCreateInfos			= this->QueueCreateInfo;
 						this->CreationInfo.enabledLayerCount			= 0;
 						this->CreationInfo.ppEnabledLayerNames			= NULL;
 						this->CreationInfo.enabledExtensionCount		= aExtensionCount;
 						this->CreationInfo.ppEnabledExtensionNames		= aExtensionList;
-						this->CreationInfo.pEnabledFeatures				= &aDevice->get_features();
+						this->CreationInfo.pEnabledFeatures				= &this->EnabledFeatures;
 
 						Result = vkCreateDevice(aDevice->handle(), &this->CreationInfo, NULL, &this->Handle);
 					}
-				}
-
-
-				/*
-				ActiveExtension.resize(DesiredExtension.size());
-				// Queuries physical device extensions.
-				uint32_t PhysicalDeviceExtensionCount;
-				vkEnumerateDeviceExtensionProperties(aDevice->handle(), NULL, &PhysicalDeviceExtensionCount, NULL);
-				std::vector<VkExtensionProperties> PhysicalDeviceExtension(PhysicalDeviceExtensionCount);
-				vkEnumerateDeviceExtensionProperties(aDevice->handle(), NULL, &PhysicalDeviceExtensionCount, PhysicalDeviceExtension.data());
-				// Now that list of extensions is exposed from device, search for desired extensions.
-
-				// Default is disabled
-				for (size_t i = 0; i < ActiveExtension.size(); i++) {
-					ActiveExtension[i] = false;
-				}
-
-				// Searches for desired extensions.
-				for (size_t i = 0; i < PhysicalDeviceExtension.size(); i++) {
-					size_t StrLen1 = strlen(PhysicalDeviceExtension[i].extensionName);
-					for (size_t j = 0; j < DesiredExtension.size(); j++) {
-						//std::cout << PhysicalDeviceExtension[i].extensionName << " = " << this->DesiredExtension[j] << std::endl;
-						size_t StrLen2 = strlen(this->DesiredExtension[j]);
-						if (StrLen1 == StrLen2) {
-							if (strcmp(PhysicalDeviceExtension[i].extensionName, this->DesiredExtension[j]) == 0) {
-								this->ActiveExtension[j] = true;
-								this->FoundExtension.push_back(PhysicalDeviceExtension[i].extensionName);
-							}
+					else {
+						if (this->QueueCreateInfo != NULL) {
+							free(this->QueueCreateInfo);
+							this->QueueCreateInfo = NULL;
 						}
+						if (this->QueueFamilyPriority != NULL) {
+							for (uint32_t i = 0; i < this->QueueCreateInfoCount; i++) {
+								if (this->QueueFamilyPriority[i] != NULL) {
+									free(this->QueueFamilyPriority[i]);
+									this->QueueFamilyPriority[i] = NULL;
+								}
+							}
+							free(this->QueueFamilyPriority);
+							this->QueueFamilyPriority = NULL;
+						}
+						this->QueueCreateInfoCount = 0;
+
+						this->ParentDevice = nullptr;
+						this->Handle = VK_NULL_HANDLE;
 					}
+
 				}
-
-				// Begin Device creation here.
-				this->ParentDevice = aDevice;
-				// Create Info for all available queues?
-				this->QueueCreateInfo.resize(aDevice->QueueFamilyProperties.size());
-				for (size_t i = 0; i < aDevice->QueueFamilyProperties.size(); i++) {
-					VkDeviceQueueCreateInfo temp;
-					temp.sType				= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-					temp.pNext				= NULL;
-					temp.flags				= 0;
-					temp.queueFamilyIndex	= (uint32_t)i;
-					temp.queueCount			= aDevice->QueueFamilyProperties[i].queueCount;
-					temp.pQueuePriorities	= &this->Priority; // Seems fucking retarded. Why a reference?
-					this->QueueCreateInfo.push_back(temp);
-				}
-
-				this->CreationInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-				this->CreationInfo.pNext					= NULL; // No idea what this is for.
-				this->CreationInfo.flags					= 0;	// Reserved for Future use. (Ignored)
-				this->CreationInfo.queueCreateInfoCount		= (uint32_t)this->QueueCreateInfo.size();
-				this->CreationInfo.pQueueCreateInfos		= this->QueueCreateInfo.data(); 
-				this->CreationInfo.enabledLayerCount		= 0;
-				this->CreationInfo.ppEnabledLayerNames		= NULL;
-				this->CreationInfo.enabledExtensionCount	= (uint32_t)this->FoundExtension.size();
-				this->CreationInfo.ppEnabledExtensionNames	= this->FoundExtension.data();
-				this->CreationInfo.pEnabledFeatures			= &aDevice->get_features(); // Important
-
-				this->ErrorCode = vkCreateDevice(aDevice->Handle, &this->CreationInfo, NULL, &this->Handle);
-				*/
-
-				
-				// This is how to access the queues for the logical device.
-				//vkGetDeviceQueue(this->Handle, QueueFamilyIndex, QueueIndex, &Queue);
-				
-				
-				
-				// Figure out how to allow user to interact with device queues.
-				//for (size_t i = 0; i < aDevice->QueueFamilyProperties.size(); i++) {
-				//	VkQueue temp;
-				//	// Help?
-				//	vkGetDeviceQueue(this->Handle, i, 0, &temp);
-				//	this->Queue.push_back(temp);
-				//}
 			}
 
 			context::~context() {
-				this->ParentDevice = nullptr;
 				vkDestroyDevice(this->Handle, NULL);
 				this->Handle = VK_NULL_HANDLE;
+				this->ParentDevice = nullptr;
+				if (this->QueueCreateInfo != NULL) {
+					free(this->QueueCreateInfo);
+					this->QueueCreateInfo = NULL;
+				}
+				if (this->QueueFamilyPriority != NULL) {
+					for (uint32_t i = 0; i < this->QueueCreateInfoCount; i++) {
+						if (this->QueueFamilyPriority[i] != NULL) {
+							free(this->QueueFamilyPriority[i]);
+							this->QueueFamilyPriority[i] = NULL;
+						}
+					}
+					free(this->QueueFamilyPriority);
+					this->QueueFamilyPriority = NULL;
+				}
+				this->QueueCreateInfoCount = 0;
 			}
 
-			bool context::ext_supported(const char* aExtension) {
-				// Make hash map.
-				for (size_t i = 0; i < ActiveExtension.size(); i++) {
-					if (strcmp(this->DesiredExtension[i], aExtension) == 0) {
-						return this->ActiveExtension[i];
-					}
-					else {
-						return false;
-					}
-				}
-				return false;
-			}
+			//bool context::ext_supported(const char* aExtension) {
+			//	// Make hash map.
+			//	for (size_t i = 0; i < ActiveExtension.size(); i++) {
+			//		if (strcmp(this->DesiredExtension[i], aExtension) == 0) {
+			//			return this->ActiveExtension[i];
+			//		}
+			//		else {
+			//			return false;
+			//		}
+			//	}
+			//	return false;
+			//}
 
 			VkInstance context::inst() {
 				return this->ParentDevice->inst();

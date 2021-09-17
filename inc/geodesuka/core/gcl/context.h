@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_GCL_CONTEXT_H
 #define GEODESUKA_CORE_GCL_CONTEXT_H
 
+#include <vulkan/vulkan.h>
+
 #include "device.h"
 
 namespace geodesuka {
@@ -11,18 +13,12 @@ namespace geodesuka {
 			class context {
 			public:
 
-				struct queue_family {
-					VkDeviceQueueCreateInfo CreateInfo;
-					float Priority;
-				};
-
 
 				context(device* aDevice, uint32_t aExtensionCount, const char **aExtensionList);
 				~context();
 
 				// ----- Query ----- //
 
-				bool ext_supported(const char* aExtension);
 				VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
 
 				// ----- Handles ----- //
@@ -36,17 +32,16 @@ namespace geodesuka {
 
 			private:
 
-				device* ParentDevice;
-				VkDevice Handle;
+				uint32_t QueueCreateInfoCount;
+				VkDeviceQueueCreateInfo* QueueCreateInfo;
+				float** QueueFamilyPriority;
+				VkPhysicalDeviceFeatures EnabledFeatures{};
 
 				// Stores queues and stuff.
 				VkDeviceCreateInfo CreationInfo{};
 
-				uint32_t QueueCreateInfoCount;
-				VkDeviceQueueCreateInfo* QueueCreateInfo;
-				//float* QueueFamilyPriority;
-				const float Priority = 1.0f;
-
+				device* ParentDevice;
+				VkDevice Handle;
 
 			};
 

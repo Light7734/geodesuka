@@ -51,36 +51,40 @@ int main(int argc, char *argv[]) {
 	//}
 
 	///*
+
+	std::vector<const char*> RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	size_t DeviceCount = 0;
-	device** DeviceList = Engine.get_device_list(&DeviceCount);
-	context* DeviceContext = nullptr;
+	device** Device = Engine.get_device_list(&DeviceCount);
+	context* Context = nullptr;
 	for (size_t i = 0; i < DeviceCount; i++) {
-		if (DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-			DeviceContext = new context(DeviceList[i]);
+		VkPhysicalDeviceProperties Properties = Device[i]->get_properties();
+		VkPhysicalDeviceFeatures Features = Device[i]->get_features();
+		if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			Context = new context(Device[i], RequiredExtension.size(), RequiredExtension.data());
 		}
 	}
 
-	// Window properties constructor.
-	window::prop WindowProperties = window::prop();
-	frame_buffer::prop FramebufferProperties = frame_buffer::prop();
-	
-	WindowProperties.Decorated			= GLFW_TRUE;
-	WindowProperties.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
+	//// Window properties constructor.
+	//window::prop WindowProperties = window::prop();
+	//frame_buffer::prop FramebufferProperties = frame_buffer::prop();
+	//
+	//WindowProperties.Decorated			= GLFW_TRUE;
+	//WindowProperties.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
 
-	FramebufferProperties.Count			= 2;
-	FramebufferProperties.Format		= VK_FORMAT_R8G8B8A8_SRGB;
-	FramebufferProperties.ColorSpace	= VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-	
-	system_display* PrimaryDisplay = Engine.get_primary_display();
-	window* Window = (window*)Engine.create(new system_window(DeviceContext, PrimaryDisplay, FramebufferProperties, WindowProperties,
-		math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
-	object_t* Triangle = Engine.create(new triangle(Engine, DeviceContext));
+	//FramebufferProperties.Count			= 2;
+	//FramebufferProperties.Format		= VK_FORMAT_R8G8B8A8_SRGB;
+	//FramebufferProperties.ColorSpace	= VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+	//
+	//system_display* PrimaryDisplay = Engine.get_primary_display();
+	//window* Window = (window*)Engine.create(new system_window(Context, PrimaryDisplay, FramebufferProperties, WindowProperties,
+	//	math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
+	//object_t* Triangle = Engine.create(new triangle(Engine, Context));
 
-	while (true) {
+	//while (true) {
 
-	}
+	//}
 
-	delete DeviceContext;
+	delete Context;
 	//*/
 	return 0;
 }

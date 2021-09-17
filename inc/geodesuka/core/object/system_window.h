@@ -61,21 +61,9 @@ namespace geodesuka {
 
 				math::boolean CloseMe;
 
-				//TODO: Resolve context sharing ambiguities.
-				// Opens window with default settings.
-				//system_window(gcl::context *aContext, gcl::frame_buffer::prop *aFrameBufferProp, prop *aWindowProp,
-				//	math::real aWidth, math::real aHeight, const char* aName, system_display* aDisplay);
-
-				//system_window(gcl::context* aRenderingContext, gcl::frame_buffer::prop* aFrameBufferProp, prop* aWindowProp,
-				//	math::real2 &aPos, math::real2 &aSize, util::text &aTitle, system_display* aDisplay);
-
-				//system_window(math::integer Width, math::integer Height, const char* Name, const system_display&);
-
-				//system_window(gcl::device_context* aDC, );
-
-				// Provide a device_context to create an associated rendering context with it.
-				system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
-					math::real3 aPosition, math::real2 aSize, util::text aTitle);
+				//// Provide a device_context to create an associated rendering context with it.
+				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+				//	math::real3 aPosition, math::real2 aSize, util::text aTitle);
 
 				// Opens window
 				system_window(const system_window* aWindow);
