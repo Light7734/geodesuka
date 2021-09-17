@@ -8,7 +8,7 @@ using namespace hid;
 using namespace math;
 using namespace gcl;
 
-triangle::triangle(geodesuka::engine &aEngine, gcl::device_context* aDeviceContext) {
+triangle::triangle(geodesuka::engine &aEngine, gcl::context* aDeviceContext) {
 
 	// Hard coded vertices
 	float Vertices[] = {

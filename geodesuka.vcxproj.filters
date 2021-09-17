@@ -352,9 +352,6 @@
     <ClCompile Include="src\core\gcl\device.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\device_context.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\CodeGen.cpp">
       <Filter>src\dep\glslang\glslang\GenericCodeGen</Filter>
     </ClCompile>
@@ -499,6 +496,9 @@
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="src\core\object.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\context.cpp">
+      <Filter>src\core\gcl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -720,9 +720,6 @@
     <ClInclude Include="inc\geodesuka\core\gcl\device.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\device_context.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h">
       <Filter>src\dep\glslang\glslang\Include</Filter>
     </ClInclude>
@@ -909,6 +906,9 @@
     <ClInclude Include="triangle.h" />
     <ClInclude Include="inc\geodesuka\core\object.h">
       <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\context.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

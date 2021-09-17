@@ -10,7 +10,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+			buffer::buffer(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
 				this->aParentDC = aContext;
 
 				this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -36,7 +36,7 @@ namespace geodesuka {
 				}
 			}
 
-			buffer::buffer(device_context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData) {
+			buffer::buffer(context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData) {
 				this->init_all(aContext, aFlags, aUsage, aCount, variable(aTypeSpecifier, aIdentifier), aBufferData);
 			}
 
@@ -44,7 +44,7 @@ namespace geodesuka {
 				this->clear_all();
 			}
 
-			bool buffer::init_all(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+			bool buffer::init_all(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
 				this->aParentDC = aContext;
 
 				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

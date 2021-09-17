@@ -129,7 +129,7 @@ namespace geodesuka {
 				std::vector<VkPhysicalDevice> PhysicalDeviceList(PhysicalDeviceCount);
 				vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, PhysicalDeviceList.data());
 				for (size_t i = 0; i < PhysicalDeviceList.size(); i++) {
-					this->DeviceList.push_back(new core::gcl::device(&this->Instance, PhysicalDeviceList[i]));
+					this->DeviceList.push_back(new core::gcl::device(this->Instance, PhysicalDeviceList[i]));
 				}
 				this->isGCDeviceAvailable = true;
 			}

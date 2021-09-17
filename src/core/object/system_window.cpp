@@ -26,7 +26,7 @@ namespace geodesuka {
 			// glfwCreateWindow
 			// glfwCreateWindowSurface
 
-			system_window::system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+			system_window::system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
 				math::real3 aPosition, math::real2 aSize, util::text aTitle) {
 				// Check for required extensions, if not met, terminate window
 				// creation.
@@ -113,7 +113,7 @@ namespace geodesuka {
 				// Create Vulkan Surface.
 				if (this->isValid) {
 					// Creates respective Vulkan surface with operating system window.
-					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
+					this->ErrorCode = glfwCreateWindowSurface(this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
 					// If Vulkan Surface not created from OS window, abort following operations.
 					if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
 				}
@@ -261,7 +261,7 @@ namespace geodesuka {
 					// Destroys swapchain.
 					vkDestroySwapchainKHR(this->ParentDC->handle(), this->SwapChain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(*this->ParentDC->inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(this->ParentDC->inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
@@ -406,6 +406,7 @@ namespace geodesuka {
 					//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
 
 				}
+				return false;
 			}
 
 			void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {

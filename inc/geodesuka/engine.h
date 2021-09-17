@@ -65,7 +65,7 @@ C26451
 
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
-#include "core/gcl/device_context.h"
+#include "core/gcl/context.h"
 
 // Data Objects, used for meshes, models, materials and
 // and so on. 

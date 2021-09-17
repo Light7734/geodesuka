@@ -53,10 +53,10 @@ int main(int argc, char *argv[]) {
 	///*
 	size_t DeviceCount = 0;
 	device** DeviceList = Engine.get_device_list(&DeviceCount);
-	device_context* DeviceContext = nullptr;
+	context* DeviceContext = nullptr;
 	for (size_t i = 0; i < DeviceCount; i++) {
 		if (DeviceList[i]->Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-			DeviceContext = new device_context(DeviceList[i]);
+			DeviceContext = new context(DeviceList[i]);
 		}
 	}
 

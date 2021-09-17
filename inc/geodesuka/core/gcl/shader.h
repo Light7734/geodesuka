@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "device.h"
-#include "device_context.h"
+#include "context.h"
 
 #include "../io/file.h"
 
@@ -29,10 +29,10 @@ namespace geodesuka {
 				VkResult ErrorCode;
 
 				// Create a shader from provided source string.
-				shader(device_context* aDeviceContext, stage aStage, const char* aSource);
+				shader(context* aDeviceContext, stage aStage, const char* aSource);
 
 				// Use for compiling a shader object and creating it.
-				shader(device_context* aDeviceContext, const char* aFilePath);
+				shader(context* aDeviceContext, const char* aFilePath);
 
 				// Create a shader from plain_text object.
 				//shader(device_context* aDeviceContext, io::plaintext &aPlainText);
@@ -49,7 +49,7 @@ namespace geodesuka {
 			private:
 
 				io::file* FileHandle;						// Reference Asset File.
-				device_context* ParentDC;					// Parent Device Context of this Shader
+				context* ParentDC;					// Parent Device Context of this Shader
 
 				stage Stage;
 				VkShaderStageFlagBits VkStage;

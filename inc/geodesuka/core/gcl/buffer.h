@@ -9,7 +9,7 @@
 #include "variable.h"
 
 #include "device.h"
-#include "device_context.h"
+#include "context.h"
 
 namespace geodesuka {
 	namespace core {
@@ -35,8 +35,8 @@ namespace geodesuka {
 					SHADER_DEVICE_ADDRESS_BIT	= 0x00020000,
 				};
 
-				buffer(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
-				buffer(device_context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData);
+				buffer(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
+				buffer(context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData);
 				
 				~buffer();
 
@@ -79,7 +79,7 @@ namespace geodesuka {
 
 				// Does not hold an host memory data unless explicity requested by API.
 
-				device_context* aParentDC;
+				context* aParentDC;
 
 				VkBufferCreateInfo CreateInfo;
 				VkBuffer Handle;
@@ -91,7 +91,7 @@ namespace geodesuka {
 				variable MemoryLayout;
 
 				// Internal: reduce code error from redundancy.
-				bool init_all(device_context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
+				bool init_all(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
 				bool clear_all();
 			};
 

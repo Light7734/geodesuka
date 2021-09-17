@@ -1,4 +1,4 @@
-#include <geodesuka/core/gcl/device_context.h>
+#include <geodesuka/core/gcl/context.h>
 
 #include <iostream>
 
@@ -6,7 +6,48 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			device_context::device_context(device* aDevice) {
+			context::context(device* aDevice, uint32_t aExtensionCount, const char** aExtensionList) {
+				// List of operations.
+				// Check for support of required extensions requested i
+				// 1: Check for extensions.
+				// 2: Queue Create Info.
+				// 3: Create Logical Device.
+
+				VkResult Result = VK_SUCCESS;
+				if (aDevice->check_extension_list(aExtensionCount, aExtensionList)) {
+					uint32_t QueueFamilyCount = 0;
+					const VkQueueFamilyProperties* QueueFamily = aDevice->get_queue_families(&QueueFamilyCount);
+
+					this->QueueCreateInfoCount = QueueFamilyCount;
+					this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(this->QueueCreateInfoCount * sizeof(VkDeviceQueueCreateInfo));
+					// How to deal with different queue priorities?
+					if (this->QueueCreateInfo != NULL) {
+						for (uint32_t i = 0; i < QueueFamilyCount; i++) {
+							QueueCreateInfo[i].sType				= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+							QueueCreateInfo[i].pNext				= NULL;
+							QueueCreateInfo[i].flags				= 0;
+							QueueCreateInfo[i].queueFamilyIndex		= i;
+							QueueCreateInfo[i].queueCount			= QueueFamily[i].queueCount;
+							QueueCreateInfo[i].pQueuePriorities		= &Priority;
+						}
+
+						this->CreationInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+						this->CreationInfo.pNext						= NULL;
+						this->CreationInfo.flags						= 0;
+						this->CreationInfo.queueCreateInfoCount			;
+						this->CreationInfo.pQueueCreateInfos			;
+						this->CreationInfo.enabledLayerCount			= 0;
+						this->CreationInfo.ppEnabledLayerNames			= NULL;
+						this->CreationInfo.enabledExtensionCount		= aExtensionCount;
+						this->CreationInfo.ppEnabledExtensionNames		= aExtensionList;
+						this->CreationInfo.pEnabledFeatures				= &aDevice->get_features();
+
+						Result = vkCreateDevice(aDevice->handle(), &this->CreationInfo, NULL, &this->Handle);
+					}
+				}
+
+
+				/*
 				ActiveExtension.resize(DesiredExtension.size());
 				// Queuries physical device extensions.
 				uint32_t PhysicalDeviceExtensionCount;
@@ -59,10 +100,12 @@ namespace geodesuka {
 				this->CreationInfo.ppEnabledLayerNames		= NULL;
 				this->CreationInfo.enabledExtensionCount	= (uint32_t)this->FoundExtension.size();
 				this->CreationInfo.ppEnabledExtensionNames	= this->FoundExtension.data();
-				this->CreationInfo.pEnabledFeatures			= &aDevice->Features; // Important
+				this->CreationInfo.pEnabledFeatures			= &aDevice->get_features(); // Important
 
 				this->ErrorCode = vkCreateDevice(aDevice->Handle, &this->CreationInfo, NULL, &this->Handle);
+				*/
 
+				
 				// This is how to access the queues for the logical device.
 				//vkGetDeviceQueue(this->Handle, QueueFamilyIndex, QueueIndex, &Queue);
 				
@@ -77,23 +120,13 @@ namespace geodesuka {
 				//}
 			}
 
-			device_context::~device_context() {
+			context::~context() {
+				this->ParentDevice = nullptr;
 				vkDestroyDevice(this->Handle, NULL);
+				this->Handle = VK_NULL_HANDLE;
 			}
 
-			VkInstance* device_context::inst() {
-				return this->ParentDevice->inst();
-			}
-
-			device* device_context::parent() {
-				return this->ParentDevice;
-			}
-
-			VkDevice device_context::handle() {
-				return this->Handle;
-			}
-
-			bool device_context::ext_supported(const char* aExtension) {
+			bool context::ext_supported(const char* aExtension) {
 				// Make hash map.
 				for (size_t i = 0; i < ActiveExtension.size(); i++) {
 					if (strcmp(this->DesiredExtension[i], aExtension) == 0) {
@@ -106,7 +139,19 @@ namespace geodesuka {
 				return false;
 			}
 
-			const char* device_context::get_er_str(VkResult Res) {
+			VkInstance context::inst() {
+				return this->ParentDevice->inst();
+			}
+
+			device* context::parent() {
+				return this->ParentDevice;
+			}
+
+			VkDevice context::handle() {
+				return this->Handle;
+			}
+
+			const char* context::get_er_str(VkResult Res) {
 				const char* temp;
 				switch (Res) {
 				default:

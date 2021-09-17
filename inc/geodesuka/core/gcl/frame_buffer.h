@@ -8,7 +8,7 @@
 #include "../math.h"
 
 #include "device.h"
-#include "device_context.h"
+#include "context.h"
 // Holds no data, only references.
 
 namespace geodesuka {
@@ -45,11 +45,11 @@ namespace geodesuka {
 
 				math::natural2 Resolution;
 
-				device_context* Context;
+				context* Context;
 				struct prop Property;
 
 				frame_buffer();
-				frame_buffer(device_context* aDeviceContext);
+				frame_buffer(context* aDeviceContext);
 				~frame_buffer();
 
 				//int set_output(const variable& Target, const texture& Variable);

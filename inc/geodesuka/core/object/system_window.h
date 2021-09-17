@@ -5,7 +5,7 @@
 #include "../math.h"
 
 #include "../gcl/device.h"
-#include "../gcl/device_context.h"
+#include "../gcl/context.h"
 
 #include "../gcl/texture.h"
 
@@ -74,7 +74,7 @@ namespace geodesuka {
 				//system_window(gcl::device_context* aDC, );
 
 				// Provide a device_context to create an associated rendering context with it.
-				system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+				system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
 					math::real3 aPosition, math::real2 aSize, util::text aTitle);
 
 				// Opens window
@@ -126,7 +126,7 @@ namespace geodesuka {
 				//math::integer2 SizeSC;
 
 				system_display* ParentDisplay;			// Parent Display of this system_window.
-				gcl::device_context* ParentDC;			// Parent Context of this window.
+				gcl::context* ParentDC;			// Parent Context of this window.
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
 				VkSwapchainCreateInfoKHR SwapChainProp{};

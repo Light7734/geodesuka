@@ -8,7 +8,7 @@ class triangle : public geodesuka::core::object_t {
 public:
 
 	//triangle(geodesuka::engine* aEngine);
-	triangle(geodesuka::engine &aEngine, geodesuka::core::gcl::device_context* aDeviceContext);
+	triangle(geodesuka::engine &aEngine, geodesuka::core::gcl::context* aDeviceContext);
 
 	// overriden fron object.h
 	// Should be called if input stream is directed to it

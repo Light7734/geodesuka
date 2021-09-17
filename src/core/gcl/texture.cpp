@@ -20,7 +20,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			texture::texture(device_context* aDeviceContext, VkFormat aFormat, math::natural3 aGridSize) {
+			texture::texture(context* aDeviceContext, VkFormat aFormat, math::natural3 aGridSize) {
 
 				VkImageType lType = VkImageType::VK_IMAGE_TYPE_1D;
 
@@ -47,7 +47,7 @@ namespace geodesuka {
 			}
 
 			// This call just simply stores the image handles for a system_window swap chain.
-			texture::texture(object::system_window* aSystemWindow, device_context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo) {
+			texture::texture(object::system_window* aSystemWindow, context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo) {
 				this->ErrorCode = VkResult::VK_SUCCESS;
 				this->ParentSW = aSystemWindow;
 				this->ParentDC = aDeviceContext;

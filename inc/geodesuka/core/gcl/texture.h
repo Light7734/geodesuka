@@ -8,7 +8,7 @@
 #include "variable.h"
 
 #include "device.h"
-#include "device_context.h"
+#include "context.h"
 
 namespace geodesuka {
 	namespace core {
@@ -32,24 +32,24 @@ namespace geodesuka {
 				// Load raw data into texture.
 				//texture(device_context* aDeviceContext, )
 
-				texture(device_context* aDeviceContext, io::file* aImage);
+				texture(context* aDeviceContext, io::file* aImage);
 				//texture(device_context* aDeviceContext, VkFormat aFormat, math::natural aGridSize);
 				//texture(device_context* aDeviceContext, VkFormat aFormat, math::natural2 aGridSize);
-				texture(device_context *aDeviceContext, VkFormat aFormat, math::natural3 aGridSize);
+				texture(context *aDeviceContext, VkFormat aFormat, math::natural3 aGridSize);
 				~texture();
 
 			private:
 
 				// Data Handles
 				object::system_window *ParentSW;
-				device_context* ParentDC;
+				context* ParentDC;
 				VkImage Handle;
 
 				// Parameters of texture.
 				VkImageCreateInfo CreateInfo{};
 
 				// Used for window swap chain. (Should not be public API).
-				texture(object::system_window* aSystemWindow, device_context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo);
+				texture(object::system_window* aSystemWindow, context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo);
 
 				VkExtent3D convert_to_extent(math::natural aX, math::natural aY, math::natural aZ);
 

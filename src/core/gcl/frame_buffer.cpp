@@ -28,7 +28,7 @@ namespace geodesuka {
 
 			}
 
-			frame_buffer::frame_buffer(device_context* aDeviceContext) {
+			frame_buffer::frame_buffer(context* aDeviceContext) {
 
 			}
 

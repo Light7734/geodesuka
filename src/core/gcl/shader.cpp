@@ -9,7 +9,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			shader::shader(device_context* aDeviceContext, stage aStage, const char* aSource) {
+			shader::shader(context* aDeviceContext, stage aStage, const char* aSource) {
 				this->ErrorCode = VkResult::VK_SUCCESS;
 
 				this->FileHandle = nullptr;
