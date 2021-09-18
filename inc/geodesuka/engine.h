@@ -61,7 +61,7 @@ C26451
 // ------------------------- Graphics & Computation API ------------------------- //
 
 // May Change to "vertex.h", manages memory layout of
-#include "core/gcl/variable.h"
+#include "core/util/variable.h"
 
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
@@ -77,7 +77,7 @@ C26451
 // of shaders, buffers and textures.
 //#include "core/gcl/vertex_array.h"
 //#include "core/gcl/shader_program.h"
-#include "core/gcl/frame_buffer.h"
+#include "core/gcl/framebuffer.h"
 
 // ------------------------- Human Interface Devices ------------------------- //
 

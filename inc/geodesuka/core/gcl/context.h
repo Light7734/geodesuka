@@ -19,7 +19,7 @@ namespace geodesuka {
 
 				// ----- Query ----- //
 
-				VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
+				//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
 
 				// ----- Handles ----- //
 

@@ -6,7 +6,7 @@
 
 #include "../math.h"
 
-#include "variable.h"
+#include "../util/variable.h"
 
 #include "device.h"
 #include "context.h"

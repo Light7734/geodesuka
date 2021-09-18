@@ -179,13 +179,9 @@
     <ClCompile Include="src\core\gcl\buffer.cpp" />
     <ClCompile Include="src\core\gcl\context.cpp" />
     <ClCompile Include="src\core\gcl\device.cpp" />
-    <ClCompile Include="src\core\gcl\frame_buffer.cpp" />
-    <ClCompile Include="src\core\gcl\material.cpp" />
-    <ClCompile Include="src\core\gcl\mesh.cpp" />
-    <ClCompile Include="src\core\gcl\model.cpp" />
+    <ClCompile Include="src\core\gcl\framebuffer.cpp" />
     <ClCompile Include="src\core\gcl\shader.cpp" />
     <ClCompile Include="src\core\gcl\texture.cpp" />
-    <ClCompile Include="src\core\gcl\variable.cpp" />
     <ClCompile Include="src\core\hid\joystick.cpp" />
     <ClCompile Include="src\core\hid\keyboard.cpp" />
     <ClCompile Include="src\core\hid\mouse.cpp" />
@@ -230,6 +226,7 @@
     <ClCompile Include="src\core\object\vtext.cpp" />
     <ClCompile Include="src\core\object\window.cpp" />
     <ClCompile Include="src\core\util\text.cpp" />
+    <ClCompile Include="src\core\util\variable.cpp" />
     <ClCompile Include="src\dep\glfw\src\egl_context.c" />
     <ClCompile Include="src\dep\glfw\src\glfw_context.c" />
     <ClCompile Include="src\dep\glfw\src\glfw_init.c" />
@@ -309,13 +306,9 @@
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\material.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\model.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\variable.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
     <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />
@@ -366,6 +359,7 @@
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
+    <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />

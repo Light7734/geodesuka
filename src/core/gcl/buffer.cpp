@@ -4,7 +4,7 @@
 
 #include <geodesuka/core/math.h>
 
-#include <geodesuka/core/gcl/variable.h>
+#include <geodesuka/core/util/variable.h>
 
 namespace geodesuka {
 	namespace core {

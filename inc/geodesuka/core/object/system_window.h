@@ -9,7 +9,7 @@
 
 #include "../gcl/texture.h"
 
-#include "../gcl/frame_buffer.h"
+#include "../gcl/framebuffer.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
@@ -48,7 +48,7 @@ namespace geodesuka {
 
 				struct create_info {
 					system_display* ParentDisplay;
-					gcl::frame_buffer::prop FramebufferProp;
+					gcl::framebuffer::prop FramebufferProp;
 					prop WindowProp;
 					math::real3 Position;
 					math::real2 Size;
@@ -105,7 +105,7 @@ namespace geodesuka {
 				//system_display* get_parent_display() { return this->ParentDisplay; }
 				math::integer set_input_stream_target(object_t* aTargetObject);
 
-			//private:
+			private:
 
 				// The target object where polled input will be streamed to.
 				object_t* InputStreamTarget;

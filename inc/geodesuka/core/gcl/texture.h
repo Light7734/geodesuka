@@ -5,7 +5,7 @@
 #include "../io/file.h"
 #include "../io/image.h"
 
-#include "variable.h"
+#include "../util/variable.h"
 
 #include "device.h"
 #include "context.h"

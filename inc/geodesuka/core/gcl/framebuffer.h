@@ -15,7 +15,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			class frame_buffer {
+			class framebuffer {
 			public:
 
 				// Enums go here
@@ -48,9 +48,9 @@ namespace geodesuka {
 				context* Context;
 				struct prop Property;
 
-				frame_buffer();
-				frame_buffer(context* aDeviceContext);
-				~frame_buffer();
+				framebuffer();
+				framebuffer(context* aDeviceContext);
+				~framebuffer();
 
 				//int set_output(const variable& Target, const texture& Variable);
 

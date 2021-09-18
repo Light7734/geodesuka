@@ -56,7 +56,7 @@ PS = Physical Screen Coordinates
 
 #include "../math.h"
 
-#include "../gcl/frame_buffer.h"
+#include "../gcl/framebuffer.h"
 
 #include "../object.h"
 
@@ -114,7 +114,7 @@ namespace geodesuka {
 				math::real2 Size;				// [m]
 				math::natural2 Resolution;		// [pixels]
 				struct prop Property;
-				gcl::frame_buffer FrameBuffer;
+				gcl::framebuffer FrameBuffer;
 
 			};
 

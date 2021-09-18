@@ -1,10 +1,10 @@
-#include <geodesuka/core/gcl/frame_buffer.h>
+#include <geodesuka/core/gcl/framebuffer.h>
 
 namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			frame_buffer::prop::prop() {
+			framebuffer::prop::prop() {
 					this->ColorBits[0]			= 8;
 					this->ColorBits[1]			= 8;
 					this->ColorBits[2]			= 8;
@@ -23,16 +23,16 @@ namespace geodesuka {
 					this->sRGBCapable			= GLFW_FALSE;
 			}
 
-			frame_buffer::frame_buffer() {
+			framebuffer::framebuffer() {
 				VkRenderPassCreateInfo;
 
 			}
 
-			frame_buffer::frame_buffer(context* aDeviceContext) {
+			framebuffer::framebuffer(context* aDeviceContext) {
 
 			}
 
-			frame_buffer::~frame_buffer() {
+			framebuffer::~framebuffer() {
 
 			}
 

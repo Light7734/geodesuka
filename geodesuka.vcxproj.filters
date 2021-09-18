@@ -163,25 +163,10 @@
     <ClCompile Include="src\core\gcl\buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\frame_buffer.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\material.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\mesh.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\model.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\gcl\shader.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\gcl\texture.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\variable.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\hid\joystick.cpp">
@@ -500,6 +485,12 @@
     <ClCompile Include="src\core\gcl\context.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\gcl\framebuffer.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\util\variable.cpp">
+      <Filter>src\core\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -531,25 +522,10 @@
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\material.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\model.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\variable.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h">
@@ -909,6 +885,12 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\context.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\util\variable.h">
+      <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

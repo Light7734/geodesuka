@@ -1,4 +1,4 @@
-#include <geodesuka/core/gcl/variable.h>
+#include <geodesuka/core/util/variable.h>
 
 #include <stdio.h>
 
