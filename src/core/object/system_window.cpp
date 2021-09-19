@@ -350,7 +350,7 @@ namespace geodesuka {
 				);
 
 				// Compensate for shift.
-				PositionSC = 
+				this->PositionSC = 
 					r_tmp
 					- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
 					+ ParentDisplay->PositionSC
@@ -432,11 +432,28 @@ namespace geodesuka {
 			}
 
 			math::integer2 system_window::phys2scrn(math::real2 R) {
-				return math::integer2();
+				math::integer2 temp;
+
+				// Converts Direction and length.
+				this->Position = aPosition;
+				math::integer2 r_tmp = math::integer2(
+					(math::integer)(this->Position.x * (((math::real)(ParentDisplay->Resolution.x)) / (ParentDisplay->Size.x))),
+					(math::integer)(-this->Position.y * (((math::real)(ParentDisplay->Resolution.y)) / (ParentDisplay->Size.y)))
+				);
+
+				// Compensate for shift.
+				this->PositionSC = 
+					r_tmp
+					- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
+					+ ParentDisplay->PositionSC
+					+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
+
+				return temp;
 			}
 
 			math::real2 system_window::scrn2phys(math::integer2 R) {
-				return math::real2();
+				math::real2 temp;
+				return temp;
 			}
 
 			void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
