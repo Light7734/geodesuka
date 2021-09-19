@@ -2,6 +2,11 @@
 
 #include <cstdlib>
 
+#include <geodesuka/core/gcl/buffer.h>
+#include <geodesuka/core/gcl/shader.h>
+#include <geodesuka/core/gcl/texture.h>
+#include <geodesuka/core/gcl/framebuffer.h>
+
 namespace geodesuka {
 	namespace core {
 		namespace gcl {
@@ -13,8 +18,15 @@ namespace geodesuka {
 				// 2: Queue Create Info.
 				// 3: Create Logical Device.
 
+				this->QueueCreateInfoCount = 0;
+				this->QueueCreateInfo = NULL;
+				this->QueueFamilyPriority = NULL;
+				
+				this->ParentDevice = nullptr;
+				this->Handle = VK_NULL_HANDLE;
+
 				VkResult Result = VK_SUCCESS;
-				if (aDevice->check_extension_list(aExtensionCount, aExtensionList)) {
+				if (aDevice->is_extension_list_supported(aExtensionCount, aExtensionList)) {
 					this->ParentDevice = aDevice;
 					this->Handle = VK_NULL_HANDLE;
 
@@ -26,7 +38,7 @@ namespace geodesuka {
 					this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(QueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
 					this->QueueFamilyPriority = (float**)malloc(QueueFamilyCount * sizeof(float*));
 					Allocated = (this->QueueCreateInfo != NULL) && (this->QueueFamilyPriority != NULL);
-					if (this->QueueCreateInfo != NULL) {
+					if (Allocated) {
 						for (uint32_t i = 0; i < QueueFamilyCount; i++) {
 							this->QueueFamilyPriority[i] = (float*)malloc(QueueFamily[i].queueCount * sizeof(float));
 							Allocated &= (this->QueueFamilyPriority[i] != NULL);
@@ -92,23 +104,20 @@ namespace geodesuka {
 			}
 
 			context::~context() {
-				vkDestroyDevice(this->Handle, NULL);
-				this->Handle = VK_NULL_HANDLE;
+				vkDestroyDevice(this->Handle, NULL); this->Handle = VK_NULL_HANDLE;
+
 				this->ParentDevice = nullptr;
-				if (this->QueueCreateInfo != NULL) {
-					free(this->QueueCreateInfo);
-					this->QueueCreateInfo = NULL;
-				}
+
+				free(this->QueueCreateInfo); this->QueueCreateInfo = NULL;
+
 				if (this->QueueFamilyPriority != NULL) {
 					for (uint32_t i = 0; i < this->QueueCreateInfoCount; i++) {
-						if (this->QueueFamilyPriority[i] != NULL) {
-							free(this->QueueFamilyPriority[i]);
-							this->QueueFamilyPriority[i] = NULL;
-						}
+						free(this->QueueFamilyPriority[i]); this->QueueFamilyPriority[i] = NULL;
 					}
-					free(this->QueueFamilyPriority);
-					this->QueueFamilyPriority = NULL;
 				}
+
+				free(this->QueueFamilyPriority); this->QueueFamilyPriority = NULL;
+
 				this->QueueCreateInfoCount = 0;
 			}
 

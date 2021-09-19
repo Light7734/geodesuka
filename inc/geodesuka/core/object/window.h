@@ -108,7 +108,7 @@ namespace geodesuka {
 				//virtual math::integer forward_input_stream_to(object* aObject);
 
 				// Uncomment when done debugging.
-			//protected:
+			protected:
 
 				util::text Name;
 				math::real2 Size;				// [m]

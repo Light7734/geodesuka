@@ -10,12 +10,22 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
+			class buffer;
+			class shader;
+			class texture;
+
+			class renderpass;
+			class framebuffer;
+			class pipeline;
+
 			class context {
 			public:
 
 
 				context(device* aDevice, uint32_t aExtensionCount, const char **aExtensionList);
 				~context();
+
+				
 
 				// ----- Query ----- //
 

@@ -22,6 +22,8 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
+			const std::vector<const char*> system_window::RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 			// Order
 			// glfwCreateWindow
 			// glfwCreateWindowSurface

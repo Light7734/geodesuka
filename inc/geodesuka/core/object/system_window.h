@@ -46,6 +46,9 @@ namespace geodesuka {
 			class system_window : public window {
 			public:
 
+				// Required Extensions for the class
+				static const std::vector<const char*> RequiredExtension;
+
 				struct create_info {
 					system_display* ParentDisplay;
 					gcl::framebuffer::prop FramebufferProp;
@@ -60,6 +63,8 @@ namespace geodesuka {
 				//friend class system_display;
 
 				math::boolean CloseMe;
+
+				//system_window(gcl::context* aContext, system_display *aDisplay, );
 
 				//// Provide a device_context to create an associated rendering context with it.
 				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
@@ -107,6 +112,7 @@ namespace geodesuka {
 
 			private:
 
+
 				// The target object where polled input will be streamed to.
 				object_t* InputStreamTarget;
 
@@ -124,9 +130,6 @@ namespace geodesuka {
 				VkSurfaceKHR Surface;					// Vulkan window handle.
 				VkSwapchainKHR SwapChain;				// Actual swapchain handle
 				std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
-
-				// Required extensions for the usage of this class
-				const std::vector<const char *> RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 				//bool pmload_hints();
 				bool pmset_callbacks();

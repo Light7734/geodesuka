@@ -52,15 +52,13 @@ int main(int argc, char *argv[]) {
 
 	///*
 
-	std::vector<const char*> RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
 	context* Context = nullptr;
 	for (size_t i = 0; i < DeviceCount; i++) {
-		VkPhysicalDeviceProperties Properties = Device[i]->get_properties();
-		VkPhysicalDeviceFeatures Features = Device[i]->get_features();
-		if (Properties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-			Context = new context(Device[i], RequiredExtension.size(), RequiredExtension.data());
+		if (Device[i]->get_properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+			// Provide required extensions to allow context to create system windows.
+			Context = new context(Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 		}
 	}
 

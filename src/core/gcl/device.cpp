@@ -51,19 +51,26 @@ namespace geodesuka {
 				this->QueueFamily = NULL;
 			}
 
-			bool device::check_extension_list(uint32_t aExtensionCount, const char** aExtensionList) const {
-				// Checks if args are valid extensions.
-				bool isSupported = false;
+			bool device::is_extension_list_supported(uint32_t aExtensionCount, const char** aExtensionList) const {
+				// Checks if ExtensionList is a subset of existing extensions.
+				bool isSupported = true;
 				for (uint32_t i = 0; i < aExtensionCount; i++) {
 					size_t L1 = strlen(aExtensionList[i]);
+					bool isExtSupported = false;
+					// Iterate through suppported extensions.
 					for (uint32_t j = 0; j < this->ExtensionCount; j++) {
 						size_t L2 = strlen(this->Extension[j].extensionName);
 						if (L1 == L2) {
-							// Compare
+							// If support is found, the set isExtSupported.
+							if (memcmp(aExtensionList[i], this->Extension[j].extensionName, L1 * sizeof(char)) == 0) {
+								isExtSupported = true;
+							}
 						}
 					}
+					// Is equivalent to.
+					// isSupported = (isExt1Supported) && (isExt2Supported) && ... (isExtNSupported);
+					isSupported &= isExtSupported;
 				}
-
 				return isSupported;
 			}
 

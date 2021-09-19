@@ -1,5 +1,5 @@
-#ifndef FRAME_BUFFER_H
-#define FRAME_BUFFER_H
+#ifndef GEODESUKA_CORE_GCL_FRAMEBUFFER_H
+#define GEODESUKA_CORE_GCL_FRAMEBUFFER_H
 
 #include <vulkan/vulkan.h>
 
@@ -50,6 +50,7 @@ namespace geodesuka {
 
 				framebuffer();
 				framebuffer(context* aDeviceContext);
+
 				~framebuffer();
 
 				//int set_output(const variable& Target, const texture& Variable);
@@ -65,4 +66,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !FRAME_BUFFER_H
+#endif // !GEODESUKA_CORE_GCL_FRAMEBUFFER_H

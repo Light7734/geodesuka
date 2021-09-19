@@ -15,8 +15,10 @@ namespace geodesuka {
 				device(VkInstance aInstance, VkPhysicalDevice aPhysicalDevice);
 				~device();
 
-				// Checks if device supports proposed extension list.
-				bool check_extension_list(uint32_t aExtensionCount, const char** aExtensionList) const;
+				// User can provide a list of extensions to this method to check if they are all
+				// supported. Will return true if provided list of extensions is supported. Will
+				// return false if at least one extension is not supported.
+				bool is_extension_list_supported(uint32_t aExtensionCount, const char** aExtensionList) const;
 
 				// ----- Query ----- //
 

@@ -52,6 +52,7 @@ C26451
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.
 #include "core/util/text.h"
+#include "core/util/variable.h"
 
 // ------------------------- File System Manager ------------------------- //
 #include "core/io/file.h"
@@ -60,24 +61,15 @@ C26451
 //#include "core/io/font.h"
 // ------------------------- Graphics & Computation API ------------------------- //
 
-// May Change to "vertex.h", manages memory layout of
-#include "core/util/variable.h"
-
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
-
-// Data Objects, used for meshes, models, materials and
-// and so on. 
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
-
-// The objects are for linking various inputs, uniforms, and outputs
-// of shaders, buffers and textures.
-//#include "core/gcl/vertex_array.h"
-//#include "core/gcl/shader_program.h"
+//#include "core/gcl/renderpass.h"
 #include "core/gcl/framebuffer.h"
+//#include "core/gcl/pipeline.h"
 
 // ------------------------- Human Interface Devices ------------------------- //
 
