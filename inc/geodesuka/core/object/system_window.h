@@ -46,6 +46,44 @@ namespace geodesuka {
 			class system_window : public window {
 			public:
 
+				/*
+				
+				Member variables of system_window
+
+				--- object_t.h ---
+
+				--- window.h ---
+
+				util::text Name;
+				math::float2 Size;
+				math::uint2 Resolution;
+
+
+				util::text Name;
+				math::real2 Size;	
+				math::natural2 Resolution;
+				struct prop Property;
+				gcl::framebuffer FrameBuffer;
+
+				--- system_window.h ---
+
+				bool Resizable;
+				bool Decorated;
+				bool UserFocused;
+				bool AutoMinimize;
+				bool Floating;
+				bool Maximized;
+				bool Minimized;
+				bool Visible;
+				bool ScaleToMonitor;
+				bool CenterCursor;
+				bool FocusOnShow;
+				bool Hovered;
+
+				int RefreshRate;
+
+				*/
+
 				// Required Extensions for the class
 				static const std::vector<const char*> RequiredExtension;
 
@@ -64,7 +102,9 @@ namespace geodesuka {
 
 				math::boolean CloseMe;
 
-				//system_window(gcl::context* aContext, system_display *aDisplay, );
+				system_window(gcl::context *aContext);
+
+				system_window(gcl::context* aContext, system_display *aDisplay, );
 
 				//// Provide a device_context to create an associated rendering context with it.
 				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
@@ -120,7 +160,7 @@ namespace geodesuka {
 				//math::integer2 SizeSC;
 
 				system_display* ParentDisplay;			// Parent Display of this system_window.
-				gcl::context* ParentDC;			// Parent Context of this window.
+				gcl::context* ParentContext;			// Parent Context of this window.
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
 				VkSwapchainCreateInfoKHR SwapChainProp{};
@@ -133,6 +173,10 @@ namespace geodesuka {
 
 				//bool pmload_hints();
 				bool pmset_callbacks();
+
+				// Internal Utils, Physical coordinates to Screen coordinates
+				math::integer2 phys2scrn(math::real2 R);
+				math::real2 scrn2phys(math::integer2 R);
 
 				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 				

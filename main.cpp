@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
 	//	}
 	//}
 
-	///*
 
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
@@ -62,6 +61,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	///*
 	//// Window properties constructor.
 	//window::prop WindowProperties = window::prop();
 	//frame_buffer::prop FramebufferProperties = frame_buffer::prop();
@@ -77,12 +77,8 @@ int main(int argc, char *argv[]) {
 	//window* Window = (window*)Engine.create(new system_window(Context, PrimaryDisplay, FramebufferProperties, WindowProperties,
 	//	math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
 	//object_t* Triangle = Engine.create(new triangle(Engine, Context));
-
-	//while (true) {
-
-	//}
+	//*/
 
 	delete Context;
-	//*/
 	return 0;
 }

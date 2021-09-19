@@ -32,10 +32,10 @@ namespace geodesuka {
 			//	math::real3 aPosition, math::real2 aSize, util::text aTitle) {
 			//	// Check for required extensions, if not met, terminate window
 			//	// creation.
-
+			//
 			//	this->isValid = true;
 			//	if (this->isValid) {
-
+			//
 			//		for (size_t i = 0; i < RequiredExtension.size(); i++) {
 			//			// Extension not found, terminate window creation.
 			//			if (!aDeviceContext->ext_supported(RequiredExtension[i])) {
@@ -43,20 +43,20 @@ namespace geodesuka {
 			//				break;
 			//			}
 			//		}
-
+			//
 			//		// Required extension found and validated.
 			//		if (this->isValid) this->ParentDC = aDeviceContext;
 			//	}
-
+			//
 			//	if (this->isValid) {
 			//		// Get Parent Display.
 			//		this->ParentDisplay = aDisplay;
 			//		if (this->ParentDisplay == nullptr) this->isValid = false;
 			//	}
-
+			//
 			//	// Create OS window Stage.
 			//	if (this->isValid) {
-
+			//
 			//		// Loads window properties.
 			//		this->Property = aWindowProp;
 			//		// Loads all context, window, and frame hints.
@@ -99,19 +99,19 @@ namespace geodesuka {
 			//		//glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
 			//		//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
 			//		glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
-
-
+			//
+			//
 			//		this->Size = aSize;
 			//		this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
 			//		this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
 			//		this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
-
+			//
 			//		// If OS window creation failed, abort following steps.
 			//		if (this->Handle == NULL) this->isValid = false;
-
-
+			//
+			//
 			//	}
-
+			//
 			//	// Create Vulkan Surface.
 			//	if (this->isValid) {
 			//		// Creates respective Vulkan surface with operating system window.
@@ -119,13 +119,13 @@ namespace geodesuka {
 			//		// If Vulkan Surface not created from OS window, abort following operations.
 			//		if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
 			//	}
-
+			//
 			//	// Create Swapchain.
 			//	if (this->isValid) {
-
+			//
 			//		// Queuries for surface capabilities.
 			//		this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
-
+			//
 			//		// Queries for Surface Formats.
 			//		uint32_t FormatCount = 0;
 			//		vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, NULL);
@@ -133,7 +133,7 @@ namespace geodesuka {
 			//		if (FormatCount > 0) {
 			//			vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, Format.data());
 			//		}
-
+			//
 			//		// Queries for Presentation Modes.
 			//		uint32_t PresentModeCount = 0;
 			//		vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, NULL);
@@ -142,7 +142,7 @@ namespace geodesuka {
 			//			vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
 			//		}
 			//		
-
+			//
 			//		/*
 			//		* User Control:
 			//		* Min Image Count
@@ -152,13 +152,13 @@ namespace geodesuka {
 			//		* Image Usage
 			//		* Presentation Mode
 			//		*/
-
+			//
 			//		FrameBuffer.Property = aFrameBufferProp;
-
+			//
 			//		// Gets appropriate resolution.
 			//		int FrameBufferResolutionX, FrameBufferResolutionY;
 			//		glfwGetFramebufferSize(this->Handle, &FrameBufferResolutionX, &FrameBufferResolutionY);
-
+			//
 			//		// Make sure Image Count is within range.
 			//		this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
 			//		//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
@@ -166,7 +166,7 @@ namespace geodesuka {
 			//		this->FrameBuffer.Property.Extent2D.width	= std::clamp((uint32_t)FrameBufferResolutionX, this->SurfaceCapabilities.minImageExtent.width, this->SurfaceCapabilities.maxImageExtent.width);
 			//		this->FrameBuffer.Property.Extent2D.height	= std::clamp((uint32_t)FrameBufferResolutionY, this->SurfaceCapabilities.minImageExtent.height, this->SurfaceCapabilities.maxImageExtent.height);
 			//		this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
-
+			//
 			//		// validate format.
 			//		bool isValidFormat = false;
 			//		bool isValidColorSpace = false;
@@ -178,26 +178,26 @@ namespace geodesuka {
 			//				isValidColorSpace = true;
 			//			}
 			//		}
-
+			//
 			//		bool isValidPresentMode = false;
 			//		for (size_t i = 0; i < PresentMode.size(); i++) {
 			//			if (Property.PresentationMode == PresentMode[i]) {
 			//				isValidPresentMode = true;
 			//			}
 			//		}
-
+			//
 			//		if (!isValidFormat) {
 			//			std::cout << "Error: Unsupported format" << std::endl;
 			//		}
-
+			//
 			//		if (!isValidColorSpace) {
 			//			std::cout << "Error: Unsupported color space" << std::endl;
 			//		}
-
+			//
 			//		if (!isValidPresentMode) {
 			//			std::cout << "Error: Unsupported presentation mode" << std::endl;
 			//		}
-
+			//
 			//		this->SwapChainProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			//		this->SwapChainProp.pNext						= NULL;
 			//		this->SwapChainProp.flags						= 0;
@@ -224,16 +224,16 @@ namespace geodesuka {
 			//		this->SwapChainProp.presentMode					= this->Property.PresentationMode; // Presentation Mode. 
 			//		this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
 			//		this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
-
+			//
 			//		this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
-
+			//
 			//		uint32_t lImageCount;
 			//		std::vector<VkImage> Image;
 			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, NULL);
 			//		Image.resize(lImageCount);
 			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, Image.data());
 			//		//this->Texture.resize(lImageCount);
-
+			//
 			//		for (size_t i = 0; i < Image.size(); i++) {
 			//			VkImageCreateInfo tempci;
 			//			tempci.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -257,13 +257,33 @@ namespace geodesuka {
 			//	}
 			//}
 
+			system_window::system_window(gcl::context* aContext) {
+
+
+
+				// glfwCreateWindow()
+				// glfwCreateWindowSurface()
+				// vkCreateSwapchainKHR()
+
+
+				this->Handle = glfwCreateWindow(this->);
+
+
+
+				glfwCreateWindowSurface(this->ParentContext->inst(), this->Handle, NULL, &this->Surface);
+
+
+
+				vkCreateSwapchainKHR(this->ParentContext->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+			}
+
 			system_window::~system_window() {
 				// Destroys 
 				if (this->isValid) {
 					// Destroys swapchain.
-					vkDestroySwapchainKHR(this->ParentDC->handle(), this->SwapChain, NULL);
+					vkDestroySwapchainKHR(this->ParentContext->handle(), this->SwapChain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(this->ParentDC->inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(this->ParentContext->inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
@@ -409,6 +429,14 @@ namespace geodesuka {
 
 				}
 				return false;
+			}
+
+			math::integer2 system_window::phys2scrn(math::real2 R) {
+				return math::integer2();
+			}
+
+			math::real2 system_window::scrn2phys(math::integer2 R) {
+				return math::real2();
 			}
 
 			void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
