@@ -1,16 +1,16 @@
 #pragma once
-#ifndef VTEXT_H
-#define VTEXT_H
+#ifndef GEODESUKA_CORE_OBJECT_VTEXT_H
+#define GEODESUKA_CORE_OBJECT_VTEXT_H
 
 #include "../util/text.h"
 
-#include "object.h"
+#include "../object.h"
 
 namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			class vtext : public util::text, public object {
+			class vtext : public util::text, public object_t {
 			public:
 
 				// Is both a child of text.h and object.h. Used for
@@ -21,4 +21,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !VTEXT_H
+#endif // !GEODESUKA_CORE_OBJECT_VTEXT_H

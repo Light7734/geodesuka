@@ -1,8 +1,6 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#include "../gcl/gcl.h"
-
 namespace geodesuka {
 	namespace core {
 		namespace hid {

@@ -1,13 +1,13 @@
 #pragma once
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef GEODESUKA_CORE_GCL_SHADER_H
+#define GEODESUKA_CORE_GCL_SHADER_H
 
-//#include <glslang/Include/intermediate.h>
-//#include <glslang/Public/ShaderLang.h>
+#include <vector>
 
-#include "gcl.h"
-
+#include "device.h"
 #include "context.h"
+
+#include "../io/file.h"
 
 namespace geodesuka {
 	namespace core {
@@ -16,71 +16,48 @@ namespace geodesuka {
 			class shader /*: public glslang::TIntermTraverser*/ {
 			public:
 
-				//enum stage {
-				//	VERTEX						= EShLanguage::EShLangVertex,
-				//	TESSELLATION_CONTROL		= EShLanguage::EShLangTessControl,
-				//	TESSELLATION_EVALUATION		= EShLanguage::EShLangTessEvaluation,
-				//	GEOMETRY					= EShLanguage::EShLangGeometry,
-				//	PIXEL						= EShLanguage::EShLangFragment,
-				//	COMPUTE						= EShLanguage::EShLangCompute
-				//};
+				enum stage {
+					UNKNOWN,
+					VERTEX,
+					TESSELLATION_CONTROL,
+					TESSELLATION_EVALUATION,
+					GEOMETRY,
+					FRAGMENT,
+					COMPUTE
+				};
 
-				//enum language {
-				//	UNK			= glslang::EShSource::EShSourceNone,
-				//	GLSL		= glslang::EShSource::EShSourceGlsl,
-				//	HLSL		= glslang::EShSource::EShSourceHlsl
-				//};
+				VkResult ErrorCode;
 
-				//enum type_id {
-				//	VERTEX_			= GL_VERTEX_SHADER,
-				//	GEOMETRY		= GL_GEOMETRY_SHADER,
-				//	PIXEL			= GL_FRAGMENT_SHADER
-				//};
+				// Create a shader from provided source string.
+				shader(context* aDeviceContext, stage aStage, const char* aSource);
 
-				//// Raw Shader Source
-				//glslang::TShader *Shader;
-				//char *Sauce;
+				// Use for compiling a shader object and creating it.
+				shader(context* aDeviceContext, const char* aFilePath);
 
-				//stage Stage;
-				//language Language;
+				// Create a shader from plain_text object.
+				//shader(device_context* aDeviceContext, io::plaintext &aPlainText);
 
-				int Type;
-				unsigned int ID;
-
-				int ErrorCode;
-				int isLoaded;
-				int isCompiled;
-
-				shader();
-				//shader(const gcl::gl::context& Context, int ShaderType);
+				// Create a shader from SPIRV bytecode object.
+				//shader(device_context *aDeviceContext, io::byte_code &aByteCode);
+				 
+				// Just clears shader up.
 				~shader();
 
-				GLenum set_source(const char* Source);
-				const char* get_source() const;
+				VkShaderStageFlagBits get_stage();
+				VkShaderModule get_handle();
 
-				GLenum get_param(GLenum ParamName, GLint* ParamVal);
+			private:
 
-				// ---------- Util ---------- //
+				io::file* FileHandle;						// Reference Asset File.
+				context* ParentDC;					// Parent Device Context of this Shader
 
-				// Deprecate ASAP
-				int read(const char* FilePath);
-				int write(const char* FilePath);
+				stage Stage;
+				VkShaderStageFlagBits VkStage;
 
-				int load(const char* Source);
-				int clear();
-
-				int parse();
-				int compile();
-
-				//virtual void visitSymbol(glslang::TIntermSymbol* Symbol)											override;
-				//virtual void visitConstantUnion(glslang::TIntermConstantUnion* ConstantUnion)						override;
-				//virtual bool visitBinary(glslang::TVisit VisitType, glslang::TIntermBinary* Binary)					override;
-				//virtual bool visitUnary(glslang::TVisit VisitType, glslang::TIntermUnary* Unary)					override;
-				//virtual bool visitSelection(glslang::TVisit VisitType, glslang::TIntermSelection* Selection)		override;
-				//virtual bool visitAggregate(glslang::TVisit VisitType, glslang::TIntermAggregate* Aggregate)		override;
-				//virtual bool visitLoop(glslang::TVisit VisitType, glslang::TIntermLoop* Loop)						override;
-				//virtual bool visitBranch(glslang::TVisit VisitType, glslang::TIntermBranch* Branch)					override;
-				//virtual bool visitSwitch(glslang::TVisit VisitType, glslang::TIntermSwitch* Switch)					override;
+				bool isValid;
+				std::vector<unsigned int> Binary;			// Compiled SPIRV Binary
+				VkShaderModuleCreateInfo CreateInfo{};		// Creation Info
+				VkShaderModule Handle;						// Simple Handle
 
 			};
 
@@ -88,4 +65,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !SHADER_H
+#endif // !GEODESUKA_CORE_GCL_SHADER_H

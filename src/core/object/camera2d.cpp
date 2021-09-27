@@ -36,8 +36,8 @@ namespace geodesuka {
 				return 0;
 			}
 
-			math::integer camera2d::draw(object* aObject) {
-				if ((object*)this == aObject) return -1;
+			math::integer camera2d::draw(object_t* aObject) {
+				if ((object_t*)this == aObject) return -1;
 				return aObject->draw(this);
 			}
 

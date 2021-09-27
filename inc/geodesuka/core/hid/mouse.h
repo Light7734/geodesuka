@@ -3,7 +3,7 @@
 
 //#include "../gcl/gcl.h"
 
-#include "../math/gmath.h"
+#include "../math.h"
 
 namespace geodesuka {
 	namespace core {

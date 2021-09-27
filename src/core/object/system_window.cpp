@@ -2,15 +2,13 @@
 
 #include <algorithm>
 
-#include <geodesuka/core/math/gmath.h>
-
-#include <geodesuka/core/gcl/gcl.h>
+#include <geodesuka/core/math.h>
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include <geodesuka/core/object/object.h>
+#include <geodesuka/core/object.h>
 #include <geodesuka/core/object/window.h>
 #include <geodesuka/core/object/system_display.h>
 #include <geodesuka/core/object/system_window.h>
@@ -24,392 +22,327 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			// ------------------------- Instance Methods ------------------------- \\
+			const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-			
-			//system_window::system_window(
-			//	gcl::context* aContext, gcl::frame_buffer::prop* aFrameBufferProp, prop* aWindowProp, 
-			//	math::real aWidth, math::real aHeight, const char* aName,
-			//	system_display* aDisplay
-			//) {
+			// Order
+			// glfwCreateWindow
+			// glfwCreateWindowSurface
 
-			//	// Use this to forward input data to object.
-			//	this->InputStreamTarget = nullptr;
-
-			//	this->ParentDisplay = aDisplay;
-			//	// The context doesn't actually get created until here.
-			//	if (aContext->Handle != NULL) {
-			//		// Already active context, implies sharing.
-			//		this->ParentDeviceContext = aContext;
-			//		// TODO: This is not safe...
-			//		this->Context = new gcl::context(aContext, &aContext->Property);
+			//system_window::system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+			//	math::real3 aPosition, math::real2 aSize, util::text aTitle) {
+			//	// Check for required extensions, if not met, terminate window
+			//	// creation.
+			//
+			//	this->isValid = true;
+			//	if (this->isValid) {
+			//
+			//		for (size_t i = 0; i < RequiredExtension.size(); i++) {
+			//			// Extension not found, terminate window creation.
+			//			if (!aDeviceContext->ext_supported(RequiredExtension[i])) {
+			//				this->isValid = false;
+			//				break;
+			//			}
+			//		}
+			//
+			//		// Required extension found and validated.
+			//		if (this->isValid) this->ParentDC = aDeviceContext;
 			//	}
-			//	else {
-			//		// Inactive context.
-			//		this->ParentDeviceContext = nullptr;
-			//		this->Context = aContext;
+			//
+			//	if (this->isValid) {
+			//		// Get Parent Display.
+			//		this->ParentDisplay = aDisplay;
+			//		if (this->ParentDisplay == nullptr) this->isValid = false;
 			//	}
-
-			//	// Sets up Default Framebuffer, do NOT use constructor method.
-			//	this->FrameBuffer.Context = aContext;
-			//	this->FrameBuffer.Property = *aFrameBufferProp;
-			//	this->FrameBuffer.ID = 0;
-			//	this->Property = *aWindowProp;
-
-			//	//this->Resolution.x = aWidth;
-			//	//this->Resolution.y = aHeight;
-			//	this->Size = math::real2(aWidth, aHeight);
-			//	this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
-			//	this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
-
-			//	// Copies window name.
-			//	this->Name = aName;
-			//	//if (aName != NULL) {
-			//	//	size_t NameSize = strlen(aName);
-			//	//	this->Name = (char*)malloc((NameSize + 1) * sizeof(char));
-			//	//	if (this->Name != NULL) {
-			//	//		memcpy(this->Name, aName, NameSize * sizeof(char));
-			//	//		this->Name[NameSize] = '\0';
-			//	//	}
-			//	//}
-
-			//	// Loads all context, window, and frame hints.
-			//	glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
-			//	glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
-			//	glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
-			//	glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
-			//	glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
-			//	glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
-			//	glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
-			//	glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
-			//	glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
-			//	glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
-			//	glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
-			//	//glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
-			//	glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
-			//	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
-			//	glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
-			//	glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
-			//	glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
-			//	glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
-			//	glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
-			//	glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
-			//	glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
-			//	glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
-			//	glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
-			//	//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
-			//	//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
-			//	glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
-			//	glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
-			//	glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
-			//	glfwWindowHint(GLFW_CLIENT_API					, this->Context->Property.ClientAPI					);
-			//	glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
-			//	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
-			//	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
-			//	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
-			//	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
-			//	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
-			//	glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
-			//	glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
-			//	glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
-			//	glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
-
-			//	// Actually creates the context/window. Is treated the same by GLFW.
-			//	if (this->ParentDeviceContext != nullptr) {
-			//		this->Context->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, this->Name.str(), NULL/*this->ParentDisplay->Handle*/, this->ParentDeviceContext->Handle);
+			//
+			//	// Create OS window Stage.
+			//	if (this->isValid) {
+			//
+			//		// Loads window properties.
+			//		this->Property = aWindowProp;
+			//		// Loads all context, window, and frame hints.
+			//		//glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
+			//		//glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
+			//		//glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
+			//		//glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
+			//		//glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
+			//		//glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
+			//		//glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
+			//		//glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
+			//		//glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
+			//		//glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
+			//		//glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
+			//		////glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
+			//		//glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
+			//		//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
+			//		//glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
+			//		//glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
+			//		glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
+			//		glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
+			//		glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
+			//		glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
+			//		glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
+			//		glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
+			//		glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
+			//		//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
+			//		//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
+			//		glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
+			//		glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
+			//		glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
+			//		glfwWindowHint(GLFW_CLIENT_API					, GLFW_NO_API										);
+			//		//glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
+			//		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
+			//		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
+			//		//glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
+			//		//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
+			//		//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
+			//		//glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
+			//		//glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
+			//		//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
+			//		glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
+			//
+			//
+			//		this->Size = aSize;
+			//		this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
+			//		this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
+			//		this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
+			//
+			//		// If OS window creation failed, abort following steps.
+			//		if (this->Handle == NULL) this->isValid = false;
+			//
+			//
 			//	}
-			//	else {
-			//		this->Context->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, this->Name.str(), NULL/*this->ParentDisplay->Handle*/, NULL);
+			//
+			//	// Create Vulkan Surface.
+			//	if (this->isValid) {
+			//		// Creates respective Vulkan surface with operating system window.
+			//		this->ErrorCode = glfwCreateWindowSurface(this->ParentDC->inst(), this->Handle, NULL, &this->Surface);
+			//		// If Vulkan Surface not created from OS window, abort following operations.
+			//		if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
 			//	}
-
-			//	glfwMakeContextCurrent(this->Context->Handle);
-			//	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-			//	glfwSwapInterval(0);
-
-			//	// Should be at center of display.
-			//	this->set_position(math::real3(0.0, 0.0, 0.0));
-
-			//	// User pointer to forward input stream.
-			//	glfwSetWindowUserPointer(this->Context->Handle, (void*)this);
-
-			//	// system_window callbacks
-			//	glfwSetWindowPosCallback(this->Context->Handle, system_window::position_callback);
-			//	glfwSetWindowSizeCallback(this->Context->Handle, system_window::size_callback);
-			//	glfwSetWindowCloseCallback(this->Context->Handle, system_window::close_callback);
-			//	glfwSetWindowRefreshCallback(this->Context->Handle, system_window::refresh_callback);
-			//	glfwSetWindowFocusCallback(this->Context->Handle, system_window::focus_callback);
-			//	glfwSetWindowIconifyCallback(this->Context->Handle, system_window::iconify_callback);
-			//	glfwSetWindowMaximizeCallback(this->Context->Handle, system_window::maximize_callback);
-			//	glfwSetWindowContentScaleCallback(this->Context->Handle, system_window::content_scale_callback);
-
-			//	// framebuffer callbacks
-			//	glfwSetFramebufferSizeCallback(this->Context->Handle, system_window::framebuffer_size_callback);
-
-			//	// Mouse callbacks
-			//	glfwSetMouseButtonCallback(this->Context->Handle, system_window::mouse_button_callback);
-			//	glfwSetCursorPosCallback(this->Context->Handle, system_window::cursor_position_callback);
-			//	glfwSetCursorEnterCallback(this->Context->Handle, system_window::cursor_enter_callback);
-			//	glfwSetScrollCallback(this->Context->Handle, system_window::scroll_callback);
-
-			//	// Keyboard callbacks
-			//	glfwSetKeyCallback(this->Context->Handle, system_window::key_callback);
-			//	glfwSetCharCallback(this->Context->Handle, system_window::character_callback);
-
-			//	// File drop
-			//	glfwSetDropCallback(this->Context->Handle, system_window::file_drop_callback);
-			//	
-			//	//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
-
-			//	// Should create the first framebuffer with the newly active context.
+			//
+			//	// Create Swapchain.
+			//	if (this->isValid) {
+			//
+			//		// Queuries for surface capabilities.
+			//		this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDC->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
+			//
+			//		// Queries for Surface Formats.
+			//		uint32_t FormatCount = 0;
+			//		vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, NULL);
+			//		std::vector<VkSurfaceFormatKHR> Format(FormatCount);
+			//		if (FormatCount > 0) {
+			//			vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDC->parent()->handle(), this->Surface, &FormatCount, Format.data());
+			//		}
+			//
+			//		// Queries for Presentation Modes.
+			//		uint32_t PresentModeCount = 0;
+			//		vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, NULL);
+			//		std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
+			//		if (PresentModeCount > 0) {
+			//			vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDC->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
+			//		}
+			//		
+			//
+			//		/*
+			//		* User Control:
+			//		* Min Image Count
+			//		* Image Format
+			//		* Image Color Space
+			//		* Image Layers?
+			//		* Image Usage
+			//		* Presentation Mode
+			//		*/
+			//
+			//		FrameBuffer.Property = aFrameBufferProp;
+			//
+			//		// Gets appropriate resolution.
+			//		int FrameBufferResolutionX, FrameBufferResolutionY;
+			//		glfwGetFramebufferSize(this->Handle, &FrameBufferResolutionX, &FrameBufferResolutionY);
+			//
+			//		// Make sure Image Count is within range.
+			//		this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
+			//		//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
+			//		//FrameBuffer.Property.ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+			//		this->FrameBuffer.Property.Extent2D.width	= std::clamp((uint32_t)FrameBufferResolutionX, this->SurfaceCapabilities.minImageExtent.width, this->SurfaceCapabilities.maxImageExtent.width);
+			//		this->FrameBuffer.Property.Extent2D.height	= std::clamp((uint32_t)FrameBufferResolutionY, this->SurfaceCapabilities.minImageExtent.height, this->SurfaceCapabilities.maxImageExtent.height);
+			//		this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
+			//
+			//		// validate format.
+			//		bool isValidFormat = false;
+			//		bool isValidColorSpace = false;
+			//		for (size_t i = 0; i < Format.size(); i++) {
+			//			if (FrameBuffer.Property.Format == Format[i].format) {
+			//				isValidFormat = true;
+			//			}
+			//			if (FrameBuffer.Property.ColorSpace == Format[i].colorSpace) {
+			//				isValidColorSpace = true;
+			//			}
+			//		}
+			//
+			//		bool isValidPresentMode = false;
+			//		for (size_t i = 0; i < PresentMode.size(); i++) {
+			//			if (Property.PresentationMode == PresentMode[i]) {
+			//				isValidPresentMode = true;
+			//			}
+			//		}
+			//
+			//		if (!isValidFormat) {
+			//			std::cout << "Error: Unsupported format" << std::endl;
+			//		}
+			//
+			//		if (!isValidColorSpace) {
+			//			std::cout << "Error: Unsupported color space" << std::endl;
+			//		}
+			//
+			//		if (!isValidPresentMode) {
+			//			std::cout << "Error: Unsupported presentation mode" << std::endl;
+			//		}
+			//
+			//		this->SwapChainProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+			//		this->SwapChainProp.pNext						= NULL;
+			//		this->SwapChainProp.flags						= 0;
+			//		this->SwapChainProp.surface						= this->Surface;
+			//		this->SwapChainProp.minImageCount				= FrameBuffer.Property.Count;
+			//		this->SwapChainProp.imageFormat					= FrameBuffer.Property.Format;
+			//		this->SwapChainProp.imageColorSpace				= FrameBuffer.Property.ColorSpace;
+			//		this->SwapChainProp.imageExtent					= FrameBuffer.Property.Extent2D;
+			//		this->SwapChainProp.imageArrayLayers			= 1; // Number of Layers per Vulkan Image.
+			//		this->SwapChainProp.imageUsage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // 
+			//		if (true/*If GraphicsQueue == PresentationQueue*/) {
+			//			// Assumes that Queue has Graphcis and Presentation Capability. (Fix This Later)
+			//			this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+			//			this->SwapChainProp.queueFamilyIndexCount		= 0;
+			//			this->SwapChainProp.pQueueFamilyIndices			= NULL;
+			//		}
+			//		else {
+			//			this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_CONCURRENT;
+			//			this->SwapChainProp.queueFamilyIndexCount		= 2;
+			//			this->SwapChainProp.pQueueFamilyIndices			= NULL; // Change to QueueFamily Indices
+			//		}
+			//		this->SwapChainProp.preTransform				= this->SurfaceCapabilities.currentTransform; // Matches it with current surface transform. (Fucking stupid option)
+			//		this->SwapChainProp.compositeAlpha				= VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // 
+			//		this->SwapChainProp.presentMode					= this->Property.PresentationMode; // Presentation Mode. 
+			//		this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
+			//		this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
+			//
+			//		this->ErrorCode = vkCreateSwapchainKHR(this->ParentDC->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
+			//
+			//		uint32_t lImageCount;
+			//		std::vector<VkImage> Image;
+			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, NULL);
+			//		Image.resize(lImageCount);
+			//		vkGetSwapchainImagesKHR(this->ParentDC->handle(), this->SwapChain, &lImageCount, Image.data());
+			//		//this->Texture.resize(lImageCount);
+			//
+			//		for (size_t i = 0; i < Image.size(); i++) {
+			//			VkImageCreateInfo tempci;
+			//			tempci.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			//			tempci.pNext					= NULL;
+			//			tempci.flags					= 0;
+			//			tempci.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+			//			tempci.format					= FrameBuffer.Property.Format;
+			//			tempci.extent					= { FrameBuffer.Property.Extent2D.width, FrameBuffer.Property.Extent2D.height, 1 };
+			//			tempci.mipLevels				= 1;
+			//			tempci.arrayLayers				= 1;
+			//			tempci.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
+			//			tempci.tiling					= VkImageTiling::VK_IMAGE_TILING_OPTIMAL;
+			//			tempci.usage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			//			tempci.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+			//			tempci.queueFamilyIndexCount	= 0;
+			//			tempci.pQueueFamilyIndices		= NULL;
+			//			tempci.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+			//			// Just stores swapchain images.
+			//			this->Texture.push_back(gcl::texture(this, this->ParentDC, Image[i], tempci));
+			//		}
+			//	}
 			//}
 
-			system_window::system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
-				math::real3 aPosition, math::real2 aSize, util::text aTitle) {
-				// Check for required extensions, if not met, terminate window
-				// creation.
-
-				this->isValid = true;
-				if (this->isValid) {
-
-					for (size_t i = 0; i < RequiredExtension.size(); i++) {
-						// Extension not found, terminate window creation.
-						if (!aDeviceContext->ext_supported(RequiredExtension[i])) {
-							this->isValid = false;
-							break;
-						}
-					}
-
-					// Required extension found and validated.
-					if (this->isValid) this->ParentDeviceContext = aDeviceContext;
-				}
-
-				if (this->isValid) {
-					// Get Parent Display.
-					this->ParentDisplay = aDisplay;
-					if (this->ParentDisplay == nullptr) this->isValid = false;
-				}
-
-				// Create OS window Stage.
-				if (this->isValid) {
-
-					// Loads window properties.
-					this->Property = aWindowProp;
-					// Loads all context, window, and frame hints.
-					//glfwWindowHint(GLFW_RED_BITS					, this->FrameBuffer.Property.ColorBits[0]			);
-					//glfwWindowHint(GLFW_GREEN_BITS					, this->FrameBuffer.Property.ColorBits[1]			);
-					//glfwWindowHint(GLFW_BLUE_BITS					, this->FrameBuffer.Property.ColorBits[2]			);
-					//glfwWindowHint(GLFW_ALPHA_BITS					, this->FrameBuffer.Property.ColorBits[3]			);
-					//glfwWindowHint(GLFW_DEPTH_BITS					, this->FrameBuffer.Property.DepthBits				);
-					//glfwWindowHint(GLFW_STENCIL_BITS				, this->FrameBuffer.Property.StencilBits			);
-					//glfwWindowHint(GLFW_ACCUM_RED_BITS				, this->FrameBuffer.Property.AccumColorBits[0]		);
-					//glfwWindowHint(GLFW_ACCUM_GREEN_BITS			, this->FrameBuffer.Property.AccumColorBits[1]		);
-					//glfwWindowHint(GLFW_ACCUM_BLUE_BITS				, this->FrameBuffer.Property.AccumColorBits[2]		);
-					//glfwWindowHint(GLFW_ACCUM_ALPHA_BITS			, this->FrameBuffer.Property.AccumColorBits[3]		);
-					//glfwWindowHint(GLFW_AUX_BUFFERS					, this->FrameBuffer.Property.AuxBuffers				);
-					////glfwWindowHint(GLFW_STEREO						, this->FrameBuffer.Property.Stereo					);
-					//glfwWindowHint(GLFW_DOUBLEBUFFER				, this->FrameBuffer.Property.DoubleBuffer			);
-					//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER		, this->FrameBuffer.Property.Transparent			);
-					//glfwWindowHint(GLFW_SAMPLES						, this->FrameBuffer.Property.Samples				);
-					//glfwWindowHint(GLFW_SRGB_CAPABLE				, this->FrameBuffer.Property.sRGBCapable			);
-					glfwWindowHint(GLFW_RESIZABLE					, this->Property.Resizable							);
-					glfwWindowHint(GLFW_DECORATED					, this->Property.Decorated							);
-					glfwWindowHint(GLFW_FOCUSED						, this->Property.UserFocused						);
-					glfwWindowHint(GLFW_AUTO_ICONIFY				, this->Property.AutoMinimize						);
-					glfwWindowHint(GLFW_FLOATING					, this->Property.Floating							);
-					glfwWindowHint(GLFW_MAXIMIZED					, this->Property.Maximized							);
-					glfwWindowHint(GLFW_VISIBLE						, this->Property.Visible							);
-					//glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER	, 0 );
-					//glfwWindowHint(GLFW_COCOA_GRAPHICS_SWITCHING	, 0 );
-					glfwWindowHint(GLFW_SCALE_TO_MONITOR			, this->Property.ScaleToMonitor						);
-					glfwWindowHint(GLFW_CENTER_CURSOR				, this->Property.CenterCursor						);
-					glfwWindowHint(GLFW_FOCUS_ON_SHOW				, this->Property.FocusOnShow						);
-					glfwWindowHint(GLFW_CLIENT_API					, GLFW_NO_API										);
-					//glfwWindowHint(GLFW_CONTEXT_CREATION_API		, this->Context->Property.CreationAPI				);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR		, this->Context->Property.Version[0]				);
-					//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR		, this->Context->Property.Version[1]				);
-					//glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS			, this->Context->Property.Robustness				);
-					//glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT		, this->Context->Property.ForwardCompat				);
-					//glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT		, this->Context->Property.DebugMode					);
-					//glfwWindowHint(GLFW_CONTEXT_NO_ERROR			, this->Context->Property.NoError					);
-					//glfwWindowHint(GLFW_OPENGL_PROFILE				, this->Context->Property.Profile					);
-					//glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR	, this->Context->Property.ReleaseBehavior			);
-					glfwWindowHint(GLFW_REFRESH_RATE				, this->Property.RefreshRate						);
+			system_window::system_window(gcl::context* aContext) {
 
 
-					this->Size = aSize;
-					this->Resolution.x = this->Size.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
-					this->Resolution.y = this->Size.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
-					this->Handle = glfwCreateWindow(this->Resolution.x, this->Resolution.y, "I hate OpenGL", NULL, NULL);
-					
-					if (this->Handle != NULL) {
+				// Load all window creation hints...
+				glfwWindowHint(GLFW_RESIZABLE,				this->Property.Resizable		);
+				glfwWindowHint(GLFW_DECORATED,				this->Property.Decorated		);
+				glfwWindowHint(GLFW_FOCUSED,				this->Property.UserFocused		);
+				glfwWindowHint(GLFW_AUTO_ICONIFY,			this->Property.AutoMinimize		);
+				glfwWindowHint(GLFW_FLOATING,				this->Property.Floating			);
+				glfwWindowHint(GLFW_MAXIMIZED,				this->Property.Maximized		);
+				glfwWindowHint(GLFW_VISIBLE,				this->Property.Visible			);
+				glfwWindowHint(GLFW_SCALE_TO_MONITOR,		this->Property.ScaleToMonitor	);
+				glfwWindowHint(GLFW_CENTER_CURSOR,			this->Property.CenterCursor		);
+				glfwWindowHint(GLFW_FOCUS_ON_SHOW,			this->Property.FocusOnShow		);
+				glfwWindowHint(GLFW_CLIENT_API,				GLFW_NO_API						);
+				glfwWindowHint(GLFW_REFRESH_RATE,			this->Property.RefreshRate		);
 
-						this->set_position(aPosition);
-						// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
+				// Create System Window Handle
+				this->Handle = glfwCreateWindow(this->PositionSC.x, this->PositionSC.y, this->Name.str(), NULL, NULL);
 
-						// User pointer to forward input stream.
-						glfwSetWindowUserPointer(this->Handle, (void*)this);
+				// Set post creation window options...
 
-						// system_window callbacks
-						glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
-						glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
-						glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
-						glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
-						glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
-						glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
-						glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
-						glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+				// Load call back functions...
 
-						// framebuffer callbacks
-						glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
+				VkResult ReturnCode = VK_SUCCESS;
 
-						// Mouse callbacks
-						glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
-						glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
-						glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
-						glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
+				// Create Vulkan WSI Surface
+				ReturnCode = glfwCreateWindowSurface(this->Context->inst(), this->Handle, NULL, &this->Surface);
 
-						// Keyboard callbacks
-						glfwSetKeyCallback(this->Handle, system_window::key_callback);
-						glfwSetCharCallback(this->Handle, system_window::character_callback);
 
-						// File drop
-						glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
+				// Get CAPABILITIES
+				ReturnCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->Context->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
 
-						//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
+				// Get FORMATS
+				uint32_t FormatCount = 0;
+				ReturnCode = vkGetPhysicalDeviceSurfaceFormatsKHR(this->Context->parent()->handle(), this->Surface, &FormatCount, NULL);
 
-					}
+				// Get PRESENT MODES
+				uint32_t PresentModeCount = 0;
+				ReturnCode = vkGetPhysicalDeviceSurfacePresentModesKHR(this->Context->parent()->handle(), this->Surface, &FormatCount, NULL);
 
-					// If OS window creation failed, abort following steps.
-					if (this->Handle == NULL) this->isValid = false;
+				//vkGetPhysicalDeviceSurfaceSupportKHR();
+
+				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+				this->CreateInfo.pNext						= NULL;
+				this->CreateInfo.flags						= 0;
+				this->CreateInfo.surface					= this->Surface;
+				this->CreateInfo.minImageCount				;
+				this->CreateInfo.imageFormat				;
+				this->CreateInfo.imageColorSpace			;
+				this->CreateInfo.imageExtent				;
+				this->CreateInfo.imageArrayLayers			;
+				this->CreateInfo.imageUsage					;
+				this->CreateInfo.imageSharingMode			;
+				this->CreateInfo.queueFamilyIndexCount		= 0;
+				this->CreateInfo.pQueueFamilyIndices		= NULL;
+				this->CreateInfo.preTransform				;
+				this->CreateInfo.compositeAlpha				;
+				this->CreateInfo.presentMode				;
+				this->CreateInfo.clipped					;
+				this->CreateInfo.oldSwapchain				;
+
+				// Create Swapchain
+				vkCreateSwapchainKHR(this->Context->handle(), &this->CreateInfo, NULL, &this->Swapchain);
+
+
+				uint32_t ImageCount = 0;
+				vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain, &ImageCount, NULL);
+				std::vector<VkImage> Image(ImageCount);
+				vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain, &ImageCount, Image.data());
+
+				for (uint32_t i = 0; i < ImageCount; i++) {
+
 
 
 				}
 
-				// Create Vulkan Surface.
-				if (this->isValid) {
-					// Creates respective Vulkan surface with operating system window.
-					this->ErrorCode = glfwCreateWindowSurface(*this->ParentDeviceContext->get_inst(), this->Handle, NULL, &this->Surface);
-					// If Vulkan Surface not created from OS window, abort following operations.
-					if (this->ErrorCode != VK_SUCCESS) this->isValid = false;
-				}
-
-				// Create Swapchain.
-				if (this->isValid) {
-
-					// Queuries for surface capabilities.
-					this->ErrorCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &this->SurfaceCapabilities);
-
-					// Queries for Surface Formats.
-					uint32_t FormatCount = 0;
-					vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &FormatCount, NULL);
-					std::vector<VkSurfaceFormatKHR> Format(FormatCount);
-					if (FormatCount > 0) {
-						vkGetPhysicalDeviceSurfaceFormatsKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &FormatCount, Format.data());
-					}
-
-					// Queries for Presentation Modes.
-					uint32_t PresentModeCount = 0;
-					vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, NULL);
-					std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
-					if (PresentModeCount > 0) {
-						vkGetPhysicalDeviceSurfacePresentModesKHR(this->ParentDeviceContext->get_pdevice()->get_handle(), this->Surface, &PresentModeCount, PresentMode.data());
-					}
-					
-
-					/*
-					* User Control:
-					* Min Image Count
-					* Image Format
-					* Image Color Space
-					* Image Layers?
-					* Image Usage
-					* Presentation Mode
-					*/
-
-					FrameBuffer.Property = aFrameBufferProp;
-
-					// Gets appropriate resolution.
-					int FrameBufferResolutionX, FrameBufferResolutionY;
-					glfwGetFramebufferSize(this->Handle, &FrameBufferResolutionX, &FrameBufferResolutionY);
-
-					// Make sure Image Count is within range.
-					this->FrameBuffer.Property.Count			= std::clamp(this->FrameBuffer.Property.Count, this->SurfaceCapabilities.minImageCount, this->SurfaceCapabilities.maxImageCount);
-					//FrameBuffer.Property.Format				= VK_FORMAT_R8G8B8A8_SRGB;
-					//FrameBuffer.Property.ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
-					this->FrameBuffer.Resolution				= { (math::natural)FrameBufferResolutionY, (math::natural)FrameBufferResolutionY };
-					this->FrameBuffer.Property.Extent2D			= { (uint32_t)FrameBufferResolutionY, (uint32_t)FrameBufferResolutionY };
-					//FrameBuffer.Property.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
-
-					// validate format.
-					bool isValidFormat = false;
-					bool isValidColorSpace = false;
-					for (size_t i = 0; i < Format.size(); i++) {
-						if (FrameBuffer.Property.Format == Format[i].format) {
-							isValidFormat = true;
-						}
-						if (FrameBuffer.Property.ColorSpace == Format[i].colorSpace) {
-							isValidColorSpace = true;
-						}
-					}
-
-					bool isValidPresentMode = false;
-					for (size_t i = 0; i < PresentMode.size(); i++) {
-						if (Property.PresentationMode == PresentMode[i]) {
-							isValidPresentMode = true;
-						}
-					}
-
-					if (!isValidFormat) {
-						std::cout << "Error: Unsupported format" << std::endl;
-					}
-
-					if (!isValidColorSpace) {
-						std::cout << "Error: Unsupported color space" << std::endl;
-					}
-
-					if (!isValidPresentMode) {
-						std::cout << "Error: Unsupported presentation mode" << std::endl;
-					}
-
-					this->SwapChainProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-					this->SwapChainProp.pNext						= NULL;
-					this->SwapChainProp.flags						= 0;
-					this->SwapChainProp.surface						= this->Surface;
-					this->SwapChainProp.minImageCount				= FrameBuffer.Property.Count;
-					this->SwapChainProp.imageFormat					= FrameBuffer.Property.Format;
-					this->SwapChainProp.imageColorSpace				= FrameBuffer.Property.ColorSpace;
-					this->SwapChainProp.imageExtent					= FrameBuffer.Property.Extent2D;
-					this->SwapChainProp.imageArrayLayers			= 1; // Number of Layers per Vulkan Image.
-					this->SwapChainProp.imageUsage					= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT; // 
-					if (true/*If GraphicsQueue == PresentationQueue*/) {
-						// Assumes that Queue has Graphcis and Presentation Capability. (Fix This Later)
-						this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-						this->SwapChainProp.queueFamilyIndexCount		= 0;
-						this->SwapChainProp.pQueueFamilyIndices			= NULL;
-					}
-					else {
-						this->SwapChainProp.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_CONCURRENT;
-						this->SwapChainProp.queueFamilyIndexCount		= 2;
-						this->SwapChainProp.pQueueFamilyIndices			= NULL; // Change to QueueFamily Indices
-					}
-					this->SwapChainProp.preTransform				= this->SurfaceCapabilities.currentTransform; // Matches it with current surface transform. (Fucking stupid option)
-					this->SwapChainProp.compositeAlpha				= VkCompositeAlphaFlagBitsKHR::VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR; // 
-					this->SwapChainProp.presentMode					= this->Property.PresentationMode; // Presentation Mode. 
-					this->SwapChainProp.clipped						= VK_TRUE; // Pixels obscured by other windows will not be drawn.
-					this->SwapChainProp.oldSwapchain				= VK_NULL_HANDLE; // No old swapchain in window creation. (Use for window resizing)
-
-					this->ErrorCode = vkCreateSwapchainKHR(this->ParentDeviceContext->get_handle(), &this->SwapChainProp, NULL, &this->SwapChain);
-
-				}
 			}
 
 			system_window::~system_window() {
 				// Destroys 
 				if (this->isValid) {
 					// Destroys swapchain.
-					vkDestroySwapchainKHR(this->ParentDeviceContext->get_handle(), this->SwapChain, NULL);
+					vkDestroySwapchainKHR(this->Context->handle(), this->Swapchain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(*this->ParentDeviceContext->get_inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(this->Context->inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
@@ -457,8 +390,8 @@ namespace geodesuka {
 
 			math::integer system_window::draw(camera3d* aTargetCamera3D) { return 0; }
 
-			math::integer system_window::draw(object* aObject) {
-				if ((object*)this == aObject) return -1;
+			math::integer system_window::draw(object_t* aObject) {
+				if ((object_t*)this == aObject) return -1;
 				return aObject->draw(this);
 			}
 
@@ -476,7 +409,7 @@ namespace geodesuka {
 				);
 
 				// Compensate for shift.
-				PositionSC = 
+				this->PositionSC = 
 					r_tmp
 					- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
 					+ ParentDisplay->PositionSC
@@ -509,7 +442,7 @@ namespace geodesuka {
 				return 0;
 			}
 
-			math::integer system_window::set_input_stream_target(object* aTargetObject) {
+			math::integer system_window::set_input_stream_target(object_t* aTargetObject) {
 				this->InputStreamTarget = aTargetObject;
 				return 0;
 			}
@@ -517,6 +450,70 @@ namespace geodesuka {
 			// --------------- These are the system_window callbacks --------------- //
 
 			// system_window callbacks
+
+			bool system_window::pmset_callbacks() {
+				if (this->Handle != NULL) {
+					// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
+
+					// User pointer to forward input stream.
+					glfwSetWindowUserPointer(this->Handle, (void*)this);
+
+					// system_window callbacks
+					glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
+					glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
+					glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
+					glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
+					glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
+					glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
+					glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
+					glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+
+					// framebuffer callbacks
+					glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
+
+					// Mouse callbacks
+					glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
+					glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
+					glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
+					glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
+
+					// Keyboard callbacks
+					glfwSetKeyCallback(this->Handle, system_window::key_callback);
+					glfwSetCharCallback(this->Handle, system_window::character_callback);
+
+					// File drop
+					glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
+
+					//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
+
+				}
+				return false;
+			}
+
+			math::integer2 system_window::phys2scrn(math::real2 R) {
+				math::integer2 temp;
+
+				//// Converts Direction and length.
+				//this->Position = aPosition;
+				//math::integer2 r_tmp = math::integer2(
+				//	(math::integer)(this->Position.x * (((math::real)(ParentDisplay->Resolution.x)) / (ParentDisplay->Size.x))),
+				//	(math::integer)(-this->Position.y * (((math::real)(ParentDisplay->Resolution.y)) / (ParentDisplay->Size.y)))
+				//);
+
+				//// Compensate for shift.
+				//this->PositionSC = 
+				//	r_tmp
+				//	- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
+				//	+ ParentDisplay->PositionSC
+				//	+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
+
+				return temp;
+			}
+
+			math::real2 system_window::scrn2phys(math::integer2 R) {
+				math::real2 temp;
+				return temp;
+			}
 
 			void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
 				//tex:

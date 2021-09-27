@@ -1,14 +1,14 @@
 #pragma once
-#ifndef VIRTUAL_WINDOW_H
-#define VIRTUAL_WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H
 
-#include "../math/gmath.h"
+#include "../math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 #include "window.h"
 
 //#include "../graphical/frame_buffer.h"
@@ -35,7 +35,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
 				// Mandatory implementation required by window.h
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 			};
 
@@ -43,4 +43,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !VIRTUAL_WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_VIRTUAL_WINDOW_H

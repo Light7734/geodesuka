@@ -1,21 +1,21 @@
 #pragma once
-#ifndef SYSTEM_WINDOW_H
-#define SYSTEM_WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
-#include "../gcl/gcl.h"
-
-#include "../math/gmath.h"
+#include "../math.h"
 
 #include "../gcl/device.h"
-#include "../gcl/device_context.h"
 #include "../gcl/context.h"
-#include "../gcl/frame_buffer.h"
+
+#include "../gcl/texture.h"
+
+#include "../gcl/framebuffer.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 #include "window.h"
 //#include "system_display.h"
 //#include "system_window.h"
@@ -46,25 +46,73 @@ namespace geodesuka {
 			class system_window : public window {
 			public:
 
+				/*
+				
+				Member variables of system_window
+
+				--- object_t.h ---
+
+				--- window.h ---
+
+				util::text Name;
+				math::float2 Size;
+				math::uint2 Resolution;
+
+
+				util::text Name;
+				math::real2 Size;	
+				math::natural2 Resolution;
+				struct prop Property;
+				gcl::framebuffer FrameBuffer;
+
+				--- system_window.h ---
+
+				bool Resizable;
+				bool Decorated;
+				bool UserFocused;
+				bool AutoMinimize;
+				bool Floating;
+				bool Maximized;
+				bool Minimized;
+				bool Visible;
+				bool ScaleToMonitor;
+				bool CenterCursor;
+				bool FocusOnShow;
+				bool Hovered;
+
+				int RefreshRate;
+
+				*/
+
+				enum present_mode {
+					IMMEDIATE	,
+					FIFO		,
+					MAILBOX
+				};
+
+				struct create_info {
+					system_display* ParentDisplay;
+					gcl::framebuffer::prop FramebufferProp;
+					prop WindowProp;
+					math::real3 Position;
+					math::real2 Size;
+					util::text Title;
+				};
+
+				// Required Extensions for the class
+				static const std::vector<const char*> RequiredExtension;
+
 				VkResult ErrorCode;
 
 				//friend class system_display;
 
 				math::boolean CloseMe;
 
-				//TODO: Resolve context sharing ambiguities.
-				// Opens window with default settings.
-				//system_window(gcl::context *aContext, gcl::frame_buffer::prop *aFrameBufferProp, prop *aWindowProp,
-				//	math::real aWidth, math::real aHeight, const char* aName, system_display* aDisplay);
+				system_window(gcl::context *aContext);
 
-				//system_window(gcl::context* aRenderingContext, gcl::frame_buffer::prop* aFrameBufferProp, prop* aWindowProp,
-				//	math::real2 &aPos, math::real2 &aSize, util::text &aTitle, system_display* aDisplay);
-
-				//system_window(math::integer Width, math::integer Height, const char* Name, const system_display&);
-
-				// Provide a device_context to create an associated rendering context with it.
-				system_window(gcl::device_context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
-					math::real3 aPosition, math::real2 aSize, util::text aTitle);
+				//// Provide a device_context to create an associated rendering context with it.
+				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
+				//	math::real3 aPosition, math::real2 aSize, util::text aTitle);
 
 				// Opens window
 				system_window(const system_window* aWindow);
@@ -94,7 +142,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
 				// Mandatory implementation required by window.h
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 				virtual math::integer set_position(math::real3 aPosition)				override;
 				virtual math::integer set_size(math::real2 aSize)						override; // Do not rapidly change size or lag will happen.
@@ -104,32 +152,35 @@ namespace geodesuka {
 
 				math::integer set_parent_display(system_display* aParentDisplay);
 				//system_display* get_parent_display() { return this->ParentDisplay; }
-				math::integer set_input_stream_target(object* aTargetObject);
+				math::integer set_input_stream_target(object_t* aTargetObject);
 
 			private:
 
-				// The target object where polled input will be streamed to.
-				object* InputStreamTarget;
 
-				system_display* ParentDisplay;
-				//gcl::context* ParentDeviceContext;
-				//gcl::context* Context;
+				// The target object where polled input will be streamed to.
+				object_t* InputStreamTarget;
 
 				math::integer2 PositionSC;
 				//math::integer2 SizeSC;
 
-				gcl::device_context* ParentDeviceContext;
+				system_display* ParentDisplay;			// Parent Display of this system_window.
+				gcl::context* Context;			// Parent Context of this window.
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
-				VkSwapchainCreateInfoKHR SwapChainProp{};
+				VkSwapchainCreateInfoKHR CreateInfo{};
 
-				math::boolean isValid;
-				GLFWwindow* Handle;
-				VkSurfaceKHR Surface;
-				VkSwapchainKHR SwapChain; 
+				math::boolean isValid;					// Is instance valid?
+				GLFWwindow* Handle;						// GLFW OS window handle abstraction.
+				VkSurfaceKHR Surface;					// Vulkan window handle.
+				VkSwapchainKHR Swapchain;				// Actual swapchain handle
+				std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
 
-				const std::vector<const char *> RequiredExtension = { "VK_KHR_swapchain" };
+				//bool pmload_hints();
+				bool pmset_callbacks();
 
+				// Internal Utils, Physical coordinates to Screen coordinates
+				math::integer2 phys2scrn(math::real2 R);
+				math::real2 scrn2phys(math::integer2 R);
 
 				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 				
@@ -165,4 +216,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !SYSTEM_WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H

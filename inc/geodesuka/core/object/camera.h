@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA_H
+#define GEODESUKA_CORE_OBJECT_CAMERA_H
 
 // I'm still concerned how this will fit in as
 // an object. It is an object, but is it a window?
@@ -19,13 +19,13 @@
 #include <vector>
 #include <string>
 
-#include "../math/gmath.h"
+#include "../math.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "object.h"
+#include "../object.h"
 
 //#include "../graphical/frame_buffer.h"
 
@@ -33,7 +33,7 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			class camera : public object {
+			class camera : public object_t {
 			public:
 
 				math::real4x4 Translation;
@@ -60,7 +60,7 @@ namespace geodesuka {
 				math::real MinDistance;
 				math::real MaxDistance;
 
-				virtual math::integer draw(object* aObject) = 0;
+				virtual math::integer draw(object_t* aObject) = 0;
 
 			protected:
 
@@ -86,4 +86,4 @@ namespace geodesuka {
 		}
 	}
 }
-#endif // !CAMERA_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA_H

@@ -2,11 +2,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/07/28
+Branch Birth Date: 2021/08/07
 
-Branch Pull Date: 2021/08/07
+Branch Pull Date: ????/??/??
 
-Version: 0.0.12
+Version: 0.0.13
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
@@ -30,9 +30,17 @@ in creating particle systems, vector fields, and so on.
 
 # Updated List:
 
-- Included glslang as built in to the engine.
+- Removed GLSLANG from engine internal and is now linked against with
+vulkan SDK.
 
 - Moved to Vulkan (OpenGL is garbage).
+
+- Removed All OpenGL.
+
+- Changed gmath.h to math.h
+
+- Fixed object namespace and class. Made class into "object_t" and
+namespace just "object".
 
 # To Do List:
 
@@ -50,9 +58,6 @@ on.
 
 # Back Burner:
 
-- FIXME: collision between "object" namespace and "object" class, cannot use
-"using namespace object" without ambiguity.
-
 - Set up compilation unit directories to prevent source name space over writing.
 
 - Add compile support for linux.
@@ -61,17 +66,13 @@ on.
 
 - maybe rename window.h to render_target.h?
 
-- Add support for DirectX API, Vulkan API, and CUDA.
-
-- Include lua to enable backend scripting.
+- Include lua.
 
 - Include freetype
 
 - Include FreeImage
 
 - Include Assimp
-
-- Update core/graphics/
 
 # Third Party Libraries
 
@@ -82,13 +83,13 @@ OpenCL - https://software.intel.com/content/www/us/en/develop/tools/opencl-sdk.h
     If you wish to use another OpenCL SDK, just change the proper directories associated with
     the project files to do so. Otherwise go to the link provided to download Intel's OpenCL.
 
-GLAD - https://github.com/Dav1dde/glad
-    This library manages loading in OpenGL functions, and making the functions easily presentable.
-
 GLFW - https://github.com/glfw/glfw
     GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development.
     It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, 
     handling events, etc.
+
+glslang: - https://github.com/KhronosGroup/glslang
+    Is backend compiler to SPIRV in this project.
 
 # Contact Info:
 ShaderKitty#1696 

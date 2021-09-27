@@ -96,17 +96,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;$(ProjectDir)../gcl/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;vulkan-1.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,10 +117,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,8 +128,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;vulkan-1.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,17 +138,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;vulkan-1.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,10 +159,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;C:\Program Files\VulkanSDK\1.2.182.0\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -170,8 +170,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;C:\Program Files\VulkanSDK\1.2.182.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;vulkan-1.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,22 +179,18 @@
     <ClCompile Include="src\core\gcl\buffer.cpp" />
     <ClCompile Include="src\core\gcl\context.cpp" />
     <ClCompile Include="src\core\gcl\device.cpp" />
-    <ClCompile Include="src\core\gcl\device_context.cpp" />
-    <ClCompile Include="src\core\gcl\frame_buffer.cpp" />
-    <ClCompile Include="src\core\gcl\gcl.cpp" />
-    <ClCompile Include="src\core\gcl\graphical_program.cpp" />
-    <ClCompile Include="src\core\gcl\material.cpp" />
-    <ClCompile Include="src\core\gcl\mesh.cpp" />
-    <ClCompile Include="src\core\gcl\model.cpp" />
+    <ClCompile Include="src\core\gcl\framebuffer.cpp" />
     <ClCompile Include="src\core\gcl\shader.cpp" />
-    <ClCompile Include="src\core\gcl\shader_program.cpp" />
     <ClCompile Include="src\core\gcl\texture.cpp" />
-    <ClCompile Include="src\core\gcl\variable.cpp" />
-    <ClCompile Include="src\core\gcl\vertex_array.cpp" />
     <ClCompile Include="src\core\hid\joystick.cpp" />
     <ClCompile Include="src\core\hid\keyboard.cpp" />
     <ClCompile Include="src\core\hid\mouse.cpp" />
+    <ClCompile Include="src\core\io\dynalib.cpp" />
     <ClCompile Include="src\core\io\file.cpp" />
+    <ClCompile Include="src\core\io\font.cpp" />
+    <ClCompile Include="src\core\io\image.cpp" />
+    <ClCompile Include="src\core\io\script.cpp" />
+    <ClCompile Include="src\core\io\socket_t.cpp" />
     <ClCompile Include="src\core\math\matrices\real2x2.cpp" />
     <ClCompile Include="src\core\math\matrices\real2x3.cpp" />
     <ClCompile Include="src\core\math\matrices\real2x4.cpp" />
@@ -220,19 +216,17 @@
     <ClCompile Include="src\core\math\vectors\real2.cpp" />
     <ClCompile Include="src\core\math\vectors\real3.cpp" />
     <ClCompile Include="src\core\math\vectors\real4.cpp" />
+    <ClCompile Include="src\core\object.cpp" />
     <ClCompile Include="src\core\object\camera.cpp" />
     <ClCompile Include="src\core\object\camera2d.cpp" />
     <ClCompile Include="src\core\object\camera3d.cpp" />
-    <ClCompile Include="src\core\object\cube.cpp" />
-    <ClCompile Include="src\core\object\object.cpp" />
     <ClCompile Include="src\core\object\system_display.cpp" />
     <ClCompile Include="src\core\object\system_window.cpp" />
-    <ClCompile Include="src\core\object\triangle.cpp" />
     <ClCompile Include="src\core\object\virtual_window.cpp" />
     <ClCompile Include="src\core\object\vtext.cpp" />
     <ClCompile Include="src\core\object\window.cpp" />
     <ClCompile Include="src\core\util\text.cpp" />
-    <ClCompile Include="src\dep\glad\src\glad.c" />
+    <ClCompile Include="src\core\util\variable.cpp" />
     <ClCompile Include="src\dep\glfw\src\egl_context.c" />
     <ClCompile Include="src\dep\glfw\src\glfw_context.c" />
     <ClCompile Include="src\dep\glfw\src\glfw_init.c" />
@@ -279,7 +273,6 @@
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Versions.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\main.cpp" />
     <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp" />
     <ClCompile Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\disassemble.cpp" />
@@ -291,7 +284,9 @@
     <ClCompile Include="src\dep\glslang\SPIRV\SpvPostProcess.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\SPVRemapper.cpp" />
     <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp" />
+    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile" />
@@ -304,6 +299,7 @@
     <Text Include="doc\Notes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="doc\renderpass.png" />
     <Image Include="res\github\sauce.png" />
     <Image Include="res\github\sauce0.jpg" />
   </ItemGroup>
@@ -311,24 +307,20 @@
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\device_context.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\gcl.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\material.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\model.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\variable.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
     <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />
+    <ClInclude Include="inc\geodesuka\core\io\dynalib.h" />
     <ClInclude Include="inc\geodesuka\core\io\file.h" />
+    <ClInclude Include="inc\geodesuka\core\io\font.h" />
+    <ClInclude Include="inc\geodesuka\core\io\image.h" />
+    <ClInclude Include="inc\geodesuka\core\io\script.h" />
+    <ClInclude Include="inc\geodesuka\core\io\socket_t.h" />
+    <ClInclude Include="inc\geodesuka\core\math.h" />
     <ClInclude Include="inc\geodesuka\core\math\config.h" />
-    <ClInclude Include="inc\geodesuka\core\math\gmath.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x3.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x4.h" />
@@ -358,23 +350,20 @@
     <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h" />
+    <ClInclude Include="inc\geodesuka\core\object.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
-    <ClInclude Include="inc\geodesuka\core\object\cube.h" />
-    <ClInclude Include="inc\geodesuka\core\object\object.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
-    <ClInclude Include="inc\geodesuka\core\object\triangle.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
+    <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />
-    <ClInclude Include="inc\glad\glad.h" />
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
-    <ClInclude Include="inc\KHR\khrplatform.h" />
     <ClInclude Include="src\dep\glfw\src\egl_context.h" />
     <ClInclude Include="src\dep\glfw\src\glfw_config.h" />
     <ClInclude Include="src\dep\glfw\src\internal.h" />
@@ -438,6 +427,8 @@
     <ClInclude Include="src\dep\glslang\SPIRV\spvIR.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\SPVRemapper.h" />
     <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h" />
+    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h" />
+    <ClInclude Include="triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

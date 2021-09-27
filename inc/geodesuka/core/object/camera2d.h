@@ -1,8 +1,8 @@
 #pragma once
-#ifndef CAMERA2D_H
-#define CAMERA2D_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA2D_H
+#define GEODESUKA_CORE_OBJECT_CAMERA2D_H
 
-#include "object.h"
+#include "../object.h"
 
 #include "camera.h"
 
@@ -25,7 +25,7 @@ namespace geodesuka {
 				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 			};
 
@@ -33,4 +33,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !CAMERA2D_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA2D_H

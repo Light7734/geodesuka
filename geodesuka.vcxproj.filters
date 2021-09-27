@@ -55,23 +55,14 @@
     <Filter Include="src\core\util">
       <UniqueIdentifier>{aafceda2-290d-4ad8-91f6-23eb3735ae97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glad">
-      <UniqueIdentifier>{0f54ef0f-24ab-4403-83e2-9f989a515d83}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\dep\glfw">
       <UniqueIdentifier>{4d9954e7-9b0d-4628-aba6-cb5c100ef931}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\glad">
-      <UniqueIdentifier>{34a9c1f7-62f1-417d-a5e9-56d346d22397}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\geodesuka">
       <UniqueIdentifier>{ceb9d42a-12e1-44dd-bd28-e2ad9cbab734}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\GLFW">
       <UniqueIdentifier>{fec405bc-422e-42fa-aba2-3a5231de0a9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\KHR">
-      <UniqueIdentifier>{471c28b9-3cc7-454a-a63c-65701f627a0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\geodesuka\core">
       <UniqueIdentifier>{8a54a22e-9933-4869-a77c-c83740dfbdcc}</UniqueIdentifier>
@@ -118,9 +109,6 @@
     <Filter Include="src\core\math\vectors">
       <UniqueIdentifier>{080d2137-0077-4d75-b60f-cfcafaa3a489}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glad\src">
-      <UniqueIdentifier>{7158bad8-cbed-4a0f-b18c-b6e51c0a056a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\dep\glfw\src">
       <UniqueIdentifier>{47578ef2-a6bf-41cc-b9d7-225699982818}</UniqueIdentifier>
     </Filter>
@@ -134,43 +122,40 @@
       <UniqueIdentifier>{e67b6899-d7b8-47f3-b4f0-b3e8074af088}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang">
-      <UniqueIdentifier>{a6339fb3-844e-456e-9440-c11c978ce50c}</UniqueIdentifier>
+      <UniqueIdentifier>{a404e792-8788-4695-bc91-2c495a0ee433}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang">
-      <UniqueIdentifier>{c4c28110-3409-47f2-a473-ab37b1b3b439}</UniqueIdentifier>
+      <UniqueIdentifier>{3a107a0e-7d5e-42b7-8fc2-ac04c9b43c40}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\OGLCompilersDLL">
-      <UniqueIdentifier>{23a4c045-6c91-4f3a-84d4-911e9549f8e9}</UniqueIdentifier>
+      <UniqueIdentifier>{b4b1a700-95a9-42ca-8d37-ce6e153ff131}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\SPIRV">
-      <UniqueIdentifier>{d7d19457-e553-4a52-920c-09612f20f9b7}</UniqueIdentifier>
+      <UniqueIdentifier>{82564eac-479c-4967-9dcf-d58bea3c9603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\dep\glslang\StandAlone">
+      <UniqueIdentifier>{87e78361-3bc4-40a5-a8a4-1852a0f31363}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\GenericCodeGen">
-      <UniqueIdentifier>{19f2b292-62f3-4148-8584-2665d53a76dd}</UniqueIdentifier>
+      <UniqueIdentifier>{50be7166-4718-4ca6-8d2a-1231d928c943}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\Include">
-      <UniqueIdentifier>{a2adad8c-f78d-43ed-aa02-1914c2e5e93e}</UniqueIdentifier>
+      <UniqueIdentifier>{ac0c05f1-31a5-46f8-a51f-a9bd69c5c587}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\MachineIndependent">
-      <UniqueIdentifier>{b3177161-7a64-407c-91ea-3df24441dc10}</UniqueIdentifier>
+      <UniqueIdentifier>{43da8b4d-e88c-4138-84bc-e53d94620290}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\OSDependent">
-      <UniqueIdentifier>{d4501f49-cb07-4753-a14d-08ad20f304d0}</UniqueIdentifier>
+      <UniqueIdentifier>{e0071b6b-6465-4f3b-a4c4-3b0b2a0b9a3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\Public">
-      <UniqueIdentifier>{d4da1b8c-e5ab-4367-80be-29e102d9a9ab}</UniqueIdentifier>
+      <UniqueIdentifier>{a7a722ba-8b07-4419-9f5c-7e7d676df629}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\MachineIndependent\preprocessor">
-      <UniqueIdentifier>{77813ab3-85fd-48ec-9732-c5f2814a373b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\OSDependent\Unix">
-      <UniqueIdentifier>{a136d828-7b1a-4131-9d12-ccb06849ffd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\OSDependent\Web">
-      <UniqueIdentifier>{fcf90e65-3dc0-4238-9399-76ce33c56ec3}</UniqueIdentifier>
+      <UniqueIdentifier>{db054ce6-0789-4b33-ac97-ecfd204ca186}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\dep\glslang\glslang\OSDependent\Windows">
-      <UniqueIdentifier>{0c469ea6-49ff-471b-8591-8d787692c1be}</UniqueIdentifier>
+      <UniqueIdentifier>{6126a724-7885-4c5f-8c3a-3187322be2e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -178,40 +163,10 @@
     <ClCompile Include="src\core\gcl\buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\context.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\frame_buffer.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\gcl.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\graphical_program.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\material.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\mesh.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\model.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\gcl\shader.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\shader_program.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\gcl\texture.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\variable.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\vertex_array.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\core\hid\joystick.cpp">
@@ -310,12 +265,6 @@
     <ClCompile Include="src\core\object\camera3d.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\object\cube.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\object.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\object\system_display.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
@@ -333,9 +282,6 @@
     </ClCompile>
     <ClCompile Include="src\core\util\text.cpp">
       <Filter>src\core\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glad\src\glad.c">
-      <Filter>src\dep\glad\src</Filter>
     </ClCompile>
     <ClCompile Include="src\dep\glfw\src\egl_context.c">
       <Filter>src\dep\glfw\src</Filter>
@@ -390,12 +336,6 @@
     </ClCompile>
     <ClCompile Include="src\core\gcl\device.cpp">
       <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\device_context.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\triangle.cpp">
-      <Filter>src\core\object</Filter>
     </ClCompile>
     <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\CodeGen.cpp">
       <Filter>src\dep\glslang\glslang\GenericCodeGen</Filter>
@@ -487,9 +427,6 @@
     <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\attribute.cpp">
       <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
     </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\main.cpp">
-      <Filter>src\dep\glslang\glslang\OSDependent\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp">
       <Filter>src\dep\glslang\glslang\OSDependent\Windows</Filter>
     </ClCompile>
@@ -523,6 +460,37 @@
     <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp">
       <Filter>src\dep\glslang\SPIRV</Filter>
     </ClCompile>
+    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp">
+      <Filter>src\dep\glslang\StandAlone</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\dynalib.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\font.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\image.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\script.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\io\socket_t.cpp">
+      <Filter>src\core\io</Filter>
+    </ClCompile>
+    <ClCompile Include="triangle.cpp" />
+    <ClCompile Include="src\core\object.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\context.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\gcl\framebuffer.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\util\variable.cpp">
+      <Filter>src\core\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -549,45 +517,18 @@
     <Image Include="res\github\sauce0.jpg">
       <Filter>res\github</Filter>
     </Image>
+    <Image Include="doc\renderpass.png">
+      <Filter>doc</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\context.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\frame_buffer.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\gcl.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\graphical_program.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\material.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\mesh.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\model.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\shader_program.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\variable.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\vertex_array.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h">
@@ -603,9 +544,6 @@
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math\config.h">
-      <Filter>inc\geodesuka\core\math</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\math\gmath.h">
       <Filter>inc\geodesuka\core\math</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h">
@@ -704,12 +642,6 @@
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\cube.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\object.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\system_display.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
@@ -728,17 +660,11 @@
     <ClInclude Include="inc\geodesuka\core\util\text.h">
       <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
-    <ClInclude Include="inc\glad\glad.h">
-      <Filter>inc\glad</Filter>
-    </ClInclude>
     <ClInclude Include="inc\GLFW\glfw3.h">
       <Filter>inc\GLFW</Filter>
     </ClInclude>
     <ClInclude Include="inc\GLFW\glfw3native.h">
       <Filter>inc\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\KHR\khrplatform.h">
-      <Filter>inc\KHR</Filter>
     </ClInclude>
     <ClInclude Include="src\dep\glfw\src\egl_context.h">
       <Filter>src\dep\glfw\src</Filter>
@@ -772,15 +698,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\device.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\device_context.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\triangle.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\build_info.h">
-      <Filter>src\dep\glslang</Filter>
     </ClInclude>
     <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h">
       <Filter>src\dep\glslang\glslang\Include</Filter>
@@ -940,6 +857,43 @@
     </ClInclude>
     <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h">
       <Filter>src\dep\glslang\SPIRV</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h">
+      <Filter>src\dep\glslang\StandAlone</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\dynalib.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\font.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\image.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\script.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\io\socket_t.h">
+      <Filter>inc\geodesuka\core\io</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\math.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dep\glslang\build_info.h">
+      <Filter>src\dep\glslang</Filter>
+    </ClInclude>
+    <ClInclude Include="triangle.h" />
+    <ClInclude Include="inc\geodesuka\core\object.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\context.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\util\variable.h">
+      <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,7 +32,7 @@ namespace geodesuka {
 
 			math::integer virtual_window::draw(camera3d* aTargetCamera3D) { return 0; }
 
-			math::integer virtual_window::draw(object* aObject) {
+			math::integer virtual_window::draw(object_t* aObject) {
 				return 0;
 			}
 

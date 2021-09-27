@@ -1,114 +1,64 @@
 #pragma once
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#ifndef GEODESUKA_CORE_GCL_TEXTURE_H
+#define GEODESUKA_CORE_GCL_TEXTURE_H
 
-#include "gcl.h"
+#include "../io/file.h"
+#include "../io/image.h"
 
-#include "../math/gmath.h"
+#include "../util/variable.h"
 
-#include "variable.h"
+#include "device.h"
 #include "context.h"
+
+#include "buffer.h"
 
 namespace geodesuka {
 	namespace core {
+
+		namespace object {
+			class system_window;
+		}
+
 		namespace gcl {
 
 			class texture {
 			public:
 
-				enum texture_type {
-					TEXTURE_1D = GL_TEXTURE_1D,
-					TEXTURE_1D_ARRAY = GL_TEXTURE_1D_ARRAY,
-					TEXTURE_2D = GL_TEXTURE_2D,
-					TEXTURE_2D_ARRAY = GL_TEXTURE_2D_ARRAY,
-					TEXTURE_2D_MULTISAMPLE = GL_TEXTURE_2D_MULTISAMPLE,
-					TEXTURE_2D_MULTISAMPLE_ARRAY = GL_TEXTURE_2D_MULTISAMPLE_ARRAY,
-					TEXTURE_3D = GL_TEXTURE_3D,
+				friend class object::system_window;
 
-					TEXTURE_CUBE_MAP = GL_TEXTURE_CUBE_MAP,
-					TEXTURE_RECTANGLE = GL_TEXTURE_RECTANGLE,
-					TEXTURE_BUFFER = GL_TEXTURE_BUFFER
+				enum tiling {
+					OPTIMAL = 0,
+					LINEAR	= 1,
 				};
 
-				enum channel_format {
-					RED = GL_RED,
-					RG = GL_RG,
-					RGB = GL_RGB, BGR = GL_BGR,
-					RGBA = GL_RGBA, BGRA = GL_BGRA
+				enum usage {
+					TRANSFER_SRC_BIT				= 0x00000001,
+					TRANSFER_DST_BIT				= 0x00000002,
+					SAMPLED_BIT						= 0x00000004,
+					STORAGE_BIT						= 0x00000008,
+					COLOR_ATTACHMENT_BIT			= 0x00000010,
+					DEPTH_STENCIL_ATTACHMENT_BIT	= 0x00000020,
+					TRANSIENT_ATTACHMENT_BIT		= 0x00000040,
+					INPUT_ATTACHMENT_BIT			= 0x00000080
 				};
 
-				enum wrapping {
-					CLAMP_TO_EDGE = GL_CLAMP_TO_EDGE,
-					CLAMP_TO_BORDER = GL_CLAMP_TO_BORDER,
-					REPEAT = GL_REPEAT,
-					MIRRORED_REPEAT = GL_MIRRORED_REPEAT
-				};
 
-				enum filter {
-					NEAREST = GL_NEAREST,
-					LINEAR = GL_LINEAR,
-					NEAREST_MIPMAP_NEAREST = GL_NEAREST_MIPMAP_NEAREST,
-					LINEAR_MIPMAP_NEAREST = GL_LINEAR_MIPMAP_NEAREST,
-					NEAREST_MIPMAP_LINEAR = GL_NEAREST_MIPMAP_LINEAR,
-					LINEAR_MIPMAP_LINEAR = GL_LINEAR_MIPMAP_LINEAR
-				};
-
-				int BindingPoint;
-				unsigned int HandleID;
-				//int BitsPerPixel;
-
-				// -------------------- Image Info -------------------- //
-				int LevelOfDetail;
-				int InternalFormat;
-				math::integer3 GridSize;
-				int ChannelFormat;
-				int DataType;
-				size_t MemSize;
-				void* hptr;
-
-				bool EnableMipmap;
-				math::integer2 Parameters[6];
-
-				// --------------- Reflects Host Memory --------------- //
-				int hInternalType;		// GL_FLOAT_VEC3
-				int hInternalFormat;	// GL_RGB32F
-				math::integer3 hGridSize;		// { 512, 512, 0 }
-				int hBaseFormat;		// GL_RGB
-				int hBaseDataType;		// GL_FLOAT
-
-				texture();
+				
+				//texture(gcl::context* aContext, VkFormat aFormat, uint32_t aWidth, uint32_t aHeight, uint32_t aDepth);
 				~texture();
 
-				texture(const texture& inp);
-				texture(texture&& inp);
+				VkImageView get_view();
 
-				texture& operator=(const texture& rhs);
-				texture& operator=(const texture&& rhs);
+			private:
 
-				int reserve_host_memory(int SamplerType, math::integer3 SamplerSize, int ChannelFormat, int DataType);
-
-				int image_2d();
-
-				//texture(texture& inp);
-				//texture(texture&& inp);
-				//texture& operator=(texture& rhs);
-				//texture& operator=(texture&& rhs);
-
-				//bool read(const char* FilePath);
-				//bool write(const char* FilePath);
+				gcl::context* Context;
 
 
-				bool reserve_host_memory(texture_type TextureType, math::integer3 TextureSize, channel_format TextureChannelFormat, int TextureDataType);
-				bool release_host_memory();
+				VkImageCreateInfo CreateInfo{};
+				VkImage Handle;
+				VkMemoryAllocateInfo AllocateInfo{};
+				VkDeviceMemory MemoryHandle;
 
-				bool reserve_device_memory(texture_type TextureType, math::integer3 TextureSize, channel_format TextureChannelFormat, int TextureDataType);
-				bool release_device_memory();
-
-				bool send_to_device();
-
-				void set_wrapping(int S, int T, int R);
-				void set_filter(int Min, int Mag);
-				void generate_mip_maps();
 
 			};
 
@@ -116,4 +66,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !TEXTURE_H
+#endif // !GEODESUKA_CORE_GCL_TEXTURE_H

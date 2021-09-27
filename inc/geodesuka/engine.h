@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ENGINE_H
-#define ENGINE_H
+#ifndef GEODESUKA_ENGINE_H
+#define GEODESUKA_ENGINE_H
 
 /*
 // ------------------------- Notes ------------------------- \\
@@ -29,47 +29,47 @@ C26451
 
 /* --------------- Standard C++ Libraries --------------- */
 #include <vector>
-//#include <chrono>
+
+#include <chrono>
+#include <thread>
+#include <mutex>
 
 /* --------------- Third Party Libraries --------------- */
 
+/* Vulkan API */
+#include <vulkan/vulkan.h>
+
+/* GLFW API */
+//#define VK_USE_PLATFORM_WIN32_KHR
+//#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
+//#define GLFW_EXPOSE_NATIVE_WIN32
+//#include <GLFW/glfw3native.h>
+
 // ------------------------- Mathematics Library ------------------------- //
-#include "core/math/gmath.h"
+#include "core/math.h"
 
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.
 #include "core/util/text.h"
+#include "core/util/variable.h"
 
 // ------------------------- File System Manager ------------------------- //
-
+#include "core/io/file.h"
+#include "core/io/dynalib.h"
+//#include "core/io/image.h"
+//#include "core/io/font.h"
 // ------------------------- Graphics & Computation API ------------------------- //
-
-// Header which includes third party APIs
-#include "core/gcl/gcl.h"
-
-// May Change to "vertex.h", manages memory layout of
-// vertices.
-#include "core/gcl/variable.h"
-
-// Represents GPGPU programmable devices.
-//#include "core/gcl/device.h"
 
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
-#include "core/gcl/device_context.h"
 #include "core/gcl/context.h"
-
-// Data Objects, used for meshes, models, materials and
-// and so on. 
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
-
-// The objects are for linking various inputs, uniforms, and outputs
-// of shaders, buffers and textures.
-#include "core/gcl/vertex_array.h"
-#include "core/gcl/shader_program.h"
-#include "core/gcl/frame_buffer.h"
+//#include "core/gcl/renderpass.h"
+#include "core/gcl/framebuffer.h"
+//#include "core/gcl/pipeline.h"
 
 // ------------------------- Human Interface Devices ------------------------- //
 
@@ -83,7 +83,7 @@ C26451
 * The classes included here are built in objects for the core game engine.
 * They will be used for setting up guis and interfaces.
 */
-#include "core/object/object.h"
+#include "core/object.h"
 
 //#include "core/object/render_target.h"
 
@@ -103,7 +103,7 @@ C26451
 
 // Cube is supposed to be a simple template
 // example for extending object.h
-#include "core/object/cube.h"
+//#include "core/object/cube.h"
 
 namespace geodesuka {
 
@@ -115,57 +115,73 @@ namespace geodesuka {
 	class engine {
 	public:
 
+		enum ecode {
+			GE_SUCCESS = 0,
+			GE_ERROR_CODE_STARTUP_FAILURE = -1,
+		};
+
 		struct version {
 			int Major;
 			int Minor;
 			int Patch;
 		};
 
-		const version Version = { 0, 0, 12 };
-
 		//friend class core::object::system_display;
 		friend class core::object::system_window;
-
-		// Use for main game loop. Set true if client wished to make app close.
-		// Will also set true if there is a terminal error.
-		bool ExitApp;
-
-		// "t" is the total time (seconds) elapsed, while "dt" is the time step.
-		double t, dt;
 
 		engine(int argc, char* argv[]);
 		~engine();
 
-		// .input() gathers input polls, and dispatches to listening objects.
-		// .update() calculates elapsed time and updates the time difference.
-		int input();
-		int update(core::math::real adt);
-		int render();
-
+		// Query functions
 		core::object::system_display* get_primary_display();
-		std::vector<core::object::system_display*> get_display_list();
+		core::object::system_display** get_display_list(size_t* ListSize);
+		core::gcl::device** get_device_list(size_t* ListSize);
+
+		// File management system.
+		core::io::file* open(const char* FilePath);
+		core::math::integer close(core::io::file* FileHandle);
 
 		// Intended to be used to create and register new objects. Can be used for debuging memory leaks
 		// and extending object.h for user choice.
 		// Example: "Engine, create a new sword.".
 		// Object* Sword = Engine.create(new sword());
-		core::object::object* create(core::object::object* aNewObject);
-		core::object::window* create(core::object::window* aNewWindow);
-		core::object::system_window* create(core::object::system_window* aNewSystemWindow);
-		core::object::virtual_window* create(core::object::virtual_window* aNewWindow);
-		//core::object::camera* create(core::object::camera* aNewWindow);
-		core::math::integer destroy(core::object::object* aDestroyObject);
+		core::object_t* create(core::object_t* aNewObject);
+		core::object_t* create(core::object::system_window* aNewSystemWindow);
+		core::math::integer destroy(core::object_t* aDestroyObject);
 
+		bool is_ready();
+		ecode error_code();
+		version get_version();
 		double get_time();
+		void tsleep(double Seconds);
 
-	//private:
+	private:
 
-		// Make internal engine flags.
-		bool isDebuggingEnabled;
+		std::vector<const char*> RequiredExtension;
 
+		// Engine Mutex
+		std::mutex Mutex;
 
-		VkResult ErrorCode;
+		// Maintain versioning system.
+		const version Version = { 0, 0, 13 };
+
+		ecode ErrorCode;
+
+		// Engine Startup Conditions
+		bool isGLSLANGReady;
+		bool isGLFWReady;
+		bool isVulkanReady;
+		bool isSystemDisplayAvailable;
+		bool isGCDeviceAvailable;
+
+		bool isReady;
+		bool Shutdown;
+
+		VkApplicationInfo AppProp{};
+		VkInstanceCreateInfo InstProp{};
 		VkInstance Instance;
+		
+
 
 		// It is the job of the engine to query for physical devices and displays.
 		std::vector<core::gcl::device*> DeviceList;
@@ -177,19 +193,30 @@ namespace geodesuka {
 		core::object::system_display* PrimaryDisplay;
 
 		// Abstract Window Type
-		std::vector<core::object::window*> Window;
+		//std::vector<core::object::window*> Window;
 		std::vector<core::object::system_window*> SystemWindow;			// Automatically managed by engine.
-		std::vector<core::object::virtual_window*> VirtualWindow;		
-		std::vector<core::object::camera*> Camera;
+		//std::vector<core::object::virtual_window*> VirtualWindow;		
+		//std::vector<core::object::camera*> Camera;
 
 		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
-		std::vector<core::object::object*> Object;
+		std::vector<core::object_t*> Object;
 
+		// Reduce redundant file loading by matching paths.
+		// If current working directory changes, 
+		std::vector<core::io::file*> File;
 		
-		const char *get_er_str(VkResult Res);
+		// ------------------------------ Back end runtime ------------------------------ //
+
+		std::thread UpdateThread;
+		std::thread RenderThread;
+		std::thread AudioThread;
+
+		void tupdate();
+		void trender();
+		void taudio();
 
 	};
 
 }
 
-#endif // !ENGINE_H
+#endif // !GEODESUKA_ENGINE_H

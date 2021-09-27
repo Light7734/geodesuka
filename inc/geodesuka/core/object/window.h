@@ -1,6 +1,6 @@
 #pragma once
-#ifndef WINDOW_H
-#define WINDOW_H
+#ifndef GEODESUKA_CORE_OBJECT_WINDOW_H
+#define GEODESUKA_CORE_OBJECT_WINDOW_H
 
 //#include "../mathematics/mathematics.h"
 //
@@ -54,13 +54,11 @@ PS = Physical Screen Coordinates
 
 #include "../util/text.h"
 
-#include "../math/gmath.h"
+#include "../math.h"
 
-#include "../gcl/gcl.h"
-#include "../gcl/context.h"
-#include "../gcl/frame_buffer.h"
+#include "../gcl/framebuffer.h"
 
-#include "object.h"
+#include "../object.h"
 
 namespace geodesuka {
 	namespace core {
@@ -69,17 +67,10 @@ namespace geodesuka {
 			// A window is a general type object that can be drawn to, which also has the properties
 			// of every object, which it too can be drawn. Each window has a canvas, which is what is actually drawn
 			// to. A full window is Canvas + Frame.
-			class window : public object {
+			class window : public object_t {
 			public:
 
-				// Maybe for window types?
-				enum type {
-					SYSTEM_DISPLAY,
-					SYSTEM_WINDOW,
-					VIRTUAL_WINDOW,
-					CAMERA
-				};
-
+				//
 				struct prop {
 					int Resizable;
 					int Decorated;
@@ -93,6 +84,7 @@ namespace geodesuka {
 					int CenterCursor;
 					int FocusOnShow;
 					int Hovered;
+
 					int RefreshRate;
 					VkPresentModeKHR PresentationMode;
 
@@ -100,7 +92,7 @@ namespace geodesuka {
 				};
 
 				// This is to discern what type of target is being drawn to, referenced by object.h
-				virtual math::integer draw(object* aObject) = 0;
+				virtual math::integer draw(object_t* aObject) = 0;
 
 				virtual math::integer set_title(util::text aTitle);
 				virtual math::integer set_size(math::real2 aSize);
@@ -111,15 +103,14 @@ namespace geodesuka {
 				// no forwarding is chosen.
 				//virtual math::integer forward_input_stream_to(object* aObject);
 
-			//protected:
+				// Uncomment when done debugging.
+			protected:
 
 				util::text Name;
 				math::real2 Size;				// [m]
 				math::natural2 Resolution;		// [pixels]
 				struct prop Property;
-
-				// Every window has a framebuffer. (That means it can be drawn to).
-				gcl::frame_buffer FrameBuffer;
+				gcl::framebuffer FrameBuffer;
 
 			};
 
@@ -127,4 +118,4 @@ namespace geodesuka {
 	}
 }
 
-#endif // !WINDOW_H
+#endif // !GEODESUKA_CORE_OBJECT_WINDOW_H

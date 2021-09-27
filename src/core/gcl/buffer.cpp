@@ -2,64 +2,51 @@
 
 #include <stdarg.h>
 
-#include <geodesuka/core/math/gmath.h>
+#include <geodesuka/core/math.h>
 
-#include <geodesuka/core/gcl/variable.h>
+#include <geodesuka/core/util/variable.h>
 
 namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
+			buffer::buffer(context* aContext, usage aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+				VkResult Result = VK_SUCCESS;
 
-
-			buffer::buffer(context* aContext, id aType, int aCount, variable aMemoryLayout, void* aVertexData) {
-				this->SuperBuffer = nullptr;
 				this->Context = aContext;
 
-				this->Type = aType;
-				this->Layout = aMemoryLayout;
-				this->Count = aCount;
-				
-				this->hptr = malloc(this->Layout.Size * this->Count);
-				if (this->hptr != NULL) {
-					memset(this->hptr, 0, this->Layout.Size * this->Count);
-					if (aVertexData != NULL) {
-						memcpy(this->hptr, aVertexData, this->Layout.Size * this->Count);
-					}
-				}
+				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				this->CreateInfo.pNext						= NULL;
+				this->CreateInfo.flags						= 0; // Ignore.
+				this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
+				this->CreateInfo.usage						= aUsage;
+				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+				this->CreateInfo.queueFamilyIndexCount		= 0;
+				this->CreateInfo.pQueueFamilyIndices		= NULL;
 
-				// GPU calls
-				GLuint temp = 0;
-				glGenBuffers(1, &temp);
-				if (glIsBuffer(temp) == GL_TRUE) {
-					// Sucessfully created vertex buffer.
-					this->ID = temp;
-				}
-				else {
-					// Failed to create vertex buffer.
-					this->ID = 0;
-				}
+				this->Handle			= VK_NULL_HANDLE;
+				this->MemoryHandle		= VK_NULL_HANDLE;
 
-				if (this->ID > 0) {
-					glBindBuffer((GLenum)this->Type, this->ID);
-					glBufferData((GLenum)this->Type, this->Layout.Size * this->Count, this->hptr, GL_STATIC_DRAW);
-				}
+				this->Count				= aCount;
+				this->MemoryLayout		= aMemoryLayout;
 
-			}
+				// Create Device Buffer Object.
+				Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 
-			buffer::buffer(const buffer& Inp) {
 
-			}
+				this->AllocateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				this->AllocateInfo.pNext				= NULL;
+				this->AllocateInfo.allocationSize		;
+				this->AllocateInfo.memoryTypeIndex		;
 
-			buffer::buffer(buffer&& Inp) {
+				// Allocate Device Memory.
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
 
 			}
 
 			buffer::~buffer() {
-				this->Context = nullptr;
+				
 			}
-
-
 
 		}
 	}

@@ -1,8 +1,8 @@
 #pragma once
-#ifndef CAMERA3D_H
-#define CAMERA3D_H
+#ifndef GEODESUKA_CORE_OBJECT_CAMERA3D_H
+#define GEODESUKA_CORE_OBJECT_CAMERA3D_H
 
-#include "object.h"
+#include "../object.h"
 #include "camera.h"
 
 namespace geodesuka {
@@ -12,7 +12,7 @@ namespace geodesuka {
 			class camera3d : public camera {
 
 				// Will produce a camera3d that is perspective rendering.
-				camera3d(gcl::context* aRenderingContext, math::real FOV, math::real aAspectRatio, math::real aNear, math::real aFar);
+				//camera3d(gcl::context* aRenderingContext, math::real FOV, math::real aAspectRatio, math::real aNear, math::real aFar);
 
 				//camera3d()
 
@@ -28,11 +28,11 @@ namespace geodesuka {
 				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
 				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
 
-				virtual math::integer draw(object* aObject)								override;
+				virtual math::integer draw(object_t* aObject)							override;
 
 			};
 
 		}
 	}
 }
-#endif // !CAMERA3D_H
+#endif // !GEODESUKA_CORE_OBJECT_CAMERA3D_H

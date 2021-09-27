@@ -71,10 +71,8 @@ namespace geodesuka {
 			}
 			*/
 			text::~text() {
-				if (this->hptr == NULL) {
-					free(this->hptr);
-					this->hptr = NULL;
-				}
+				free(this->hptr);
+				this->hptr = NULL;
 				this->n = 0;
 			}
 			text& text::operator=(const char* Rhs) {
@@ -391,10 +389,8 @@ namespace geodesuka {
 			}
 
 			bool text::clear() {
-				if (this->hptr != NULL) {
-					free(this->hptr);
-					this->hptr = NULL;
-				}
+				free(this->hptr);
+				this->hptr = NULL;
 				this->n = 0;
 				return false;
 			}

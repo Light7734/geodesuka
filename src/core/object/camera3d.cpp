@@ -38,9 +38,9 @@ namespace geodesuka {
 				return 0;
 			}
 
-			math::integer camera3d::draw(object* aObject) {
+			math::integer camera3d::draw(object_t* aObject) {
 				// Checks if this and aObject are the same object.
-				if ((object*)this == aObject) return -1;
+				if ((object_t*)this == aObject) return -1;
 
 				// Checks if both camera3d instance and aObject have
 				// the same rendering context.
