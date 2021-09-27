@@ -30,7 +30,8 @@ in creating particle systems, vector fields, and so on.
 
 # Updated List:
 
-- Included glslang as built in to the engine.
+- Removed GLSLANG from engine internal and is now linked against with
+vulkan SDK.
 
 - Moved to Vulkan (OpenGL is garbage).
 

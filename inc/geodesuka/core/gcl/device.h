@@ -27,6 +27,7 @@ namespace geodesuka {
 				const VkExtensionProperties *get_extensions(uint32_t *aExtensionCount) const;
 				const VkQueueFamilyProperties *get_queue_families(uint32_t *aQueueFamilyCount) const;
 
+
 				// ----- Handles ----- //
 
 				VkInstance inst();

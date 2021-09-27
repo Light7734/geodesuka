@@ -10,73 +10,43 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
-				this->aParentDC = aContext;
+			buffer::buffer(context* aContext, usage aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+				VkResult Result = VK_SUCCESS;
 
-				this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				this->CreateInfo.pNext = NULL;
-				this->CreateInfo.flags = (VkBufferCreateFlags)aFlags;
-				this->CreateInfo.size = aCount * aMemoryLayout.Type.Size;
-				this->CreateInfo.usage = (VkBufferUsageFlags)aUsage;
-				this->CreateInfo.sharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-				this->CreateInfo.queueFamilyIndexCount = 0;
-				this->CreateInfo.pQueueFamilyIndices = NULL;
-
-				this->Handle = VK_NULL_HANDLE;
-				this->MemoryHandle = VK_NULL_HANDLE;
-
-				this->Flags = aFlags;
-				this->Usage = aUsage;
-				this->Count = aCount;
-				this->MemoryLayout = aMemoryLayout;
-
-				VkResult Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
-				if (Result != VK_SUCCESS) {
-
-				}
-			}
-
-			buffer::buffer(context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData) {
-				this->init_all(aContext, aFlags, aUsage, aCount, variable(aTypeSpecifier, aIdentifier), aBufferData);
-			}
-
-			buffer::~buffer() {
-				this->clear_all();
-			}
-
-			bool buffer::init_all(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
-				this->aParentDC = aContext;
+				this->Context = aContext;
 
 				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 				this->CreateInfo.pNext						= NULL;
-				this->CreateInfo.flags						= (VkBufferCreateFlags)aFlags;
+				this->CreateInfo.flags						= 0; // Ignore.
 				this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
-				this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
+				this->CreateInfo.usage						= aUsage;
 				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 				this->CreateInfo.queueFamilyIndexCount		= 0;
 				this->CreateInfo.pQueueFamilyIndices		= NULL;
 
-				this->Handle = VK_NULL_HANDLE;
-				this->MemoryHandle = VK_NULL_HANDLE;
+				this->Handle			= VK_NULL_HANDLE;
+				this->MemoryHandle		= VK_NULL_HANDLE;
 
-				this->Flags = aFlags;
-				this->Usage = aUsage;
-				this->Count = aCount;
-				this->MemoryLayout = aMemoryLayout;
+				this->Count				= aCount;
+				this->MemoryLayout		= aMemoryLayout;
 
-				VkResult Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
-				if (Result != VK_SUCCESS) {
+				// Create Device Buffer Object.
+				Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 
-				}
-				return false;
+
+				this->AllocateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				this->AllocateInfo.pNext				= NULL;
+				this->AllocateInfo.allocationSize		;
+				this->AllocateInfo.memoryTypeIndex		;
+
+				// Allocate Device Memory.
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+
 			}
 
-			bool buffer::clear_all() {
-
-				return false;
+			buffer::~buffer() {
+				
 			}
-
-
 
 		}
 	}

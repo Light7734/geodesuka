@@ -84,8 +84,11 @@ namespace geodesuka {
 
 				*/
 
-				// Required Extensions for the class
-				static const std::vector<const char*> RequiredExtension;
+				enum present_mode {
+					IMMEDIATE	,
+					FIFO		,
+					MAILBOX
+				};
 
 				struct create_info {
 					system_display* ParentDisplay;
@@ -96,6 +99,9 @@ namespace geodesuka {
 					util::text Title;
 				};
 
+				// Required Extensions for the class
+				static const std::vector<const char*> RequiredExtension;
+
 				VkResult ErrorCode;
 
 				//friend class system_display;
@@ -103,8 +109,6 @@ namespace geodesuka {
 				math::boolean CloseMe;
 
 				system_window(gcl::context *aContext);
-
-				system_window(gcl::context* aContext, system_display *aDisplay, );
 
 				//// Provide a device_context to create an associated rendering context with it.
 				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
@@ -160,15 +164,15 @@ namespace geodesuka {
 				//math::integer2 SizeSC;
 
 				system_display* ParentDisplay;			// Parent Display of this system_window.
-				gcl::context* ParentContext;			// Parent Context of this window.
+				gcl::context* Context;			// Parent Context of this window.
 
 				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
-				VkSwapchainCreateInfoKHR SwapChainProp{};
+				VkSwapchainCreateInfoKHR CreateInfo{};
 
 				math::boolean isValid;					// Is instance valid?
 				GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 				VkSurfaceKHR Surface;					// Vulkan window handle.
-				VkSwapchainKHR SwapChain;				// Actual swapchain handle
+				VkSwapchainKHR Swapchain;				// Actual swapchain handle
 				std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
 
 				//bool pmload_hints();

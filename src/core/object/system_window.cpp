@@ -22,7 +22,7 @@ namespace geodesuka {
 	namespace core {
 		namespace object {
 
-			const std::vector<const char*> system_window::RequiredExtension = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+			const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 			// Order
 			// glfwCreateWindow
@@ -260,30 +260,89 @@ namespace geodesuka {
 			system_window::system_window(gcl::context* aContext) {
 
 
+				// Load all window creation hints...
+				glfwWindowHint(GLFW_RESIZABLE,				this->Property.Resizable		);
+				glfwWindowHint(GLFW_DECORATED,				this->Property.Decorated		);
+				glfwWindowHint(GLFW_FOCUSED,				this->Property.UserFocused		);
+				glfwWindowHint(GLFW_AUTO_ICONIFY,			this->Property.AutoMinimize		);
+				glfwWindowHint(GLFW_FLOATING,				this->Property.Floating			);
+				glfwWindowHint(GLFW_MAXIMIZED,				this->Property.Maximized		);
+				glfwWindowHint(GLFW_VISIBLE,				this->Property.Visible			);
+				glfwWindowHint(GLFW_SCALE_TO_MONITOR,		this->Property.ScaleToMonitor	);
+				glfwWindowHint(GLFW_CENTER_CURSOR,			this->Property.CenterCursor		);
+				glfwWindowHint(GLFW_FOCUS_ON_SHOW,			this->Property.FocusOnShow		);
+				glfwWindowHint(GLFW_CLIENT_API,				GLFW_NO_API						);
+				glfwWindowHint(GLFW_REFRESH_RATE,			this->Property.RefreshRate		);
 
-				// glfwCreateWindow()
-				// glfwCreateWindowSurface()
-				// vkCreateSwapchainKHR()
+				// Create System Window Handle
+				this->Handle = glfwCreateWindow(this->PositionSC.x, this->PositionSC.y, this->Name.str(), NULL, NULL);
+
+				// Set post creation window options...
+
+				// Load call back functions...
+
+				VkResult ReturnCode = VK_SUCCESS;
+
+				// Create Vulkan WSI Surface
+				ReturnCode = glfwCreateWindowSurface(this->Context->inst(), this->Handle, NULL, &this->Surface);
 
 
-				this->Handle = glfwCreateWindow(this->);
+				// Get CAPABILITIES
+				ReturnCode = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(this->Context->parent()->handle(), this->Surface, &this->SurfaceCapabilities);
+
+				// Get FORMATS
+				uint32_t FormatCount = 0;
+				ReturnCode = vkGetPhysicalDeviceSurfaceFormatsKHR(this->Context->parent()->handle(), this->Surface, &FormatCount, NULL);
+
+				// Get PRESENT MODES
+				uint32_t PresentModeCount = 0;
+				ReturnCode = vkGetPhysicalDeviceSurfacePresentModesKHR(this->Context->parent()->handle(), this->Surface, &FormatCount, NULL);
+
+				//vkGetPhysicalDeviceSurfaceSupportKHR();
+
+				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+				this->CreateInfo.pNext						= NULL;
+				this->CreateInfo.flags						= 0;
+				this->CreateInfo.surface					= this->Surface;
+				this->CreateInfo.minImageCount				;
+				this->CreateInfo.imageFormat				;
+				this->CreateInfo.imageColorSpace			;
+				this->CreateInfo.imageExtent				;
+				this->CreateInfo.imageArrayLayers			;
+				this->CreateInfo.imageUsage					;
+				this->CreateInfo.imageSharingMode			;
+				this->CreateInfo.queueFamilyIndexCount		= 0;
+				this->CreateInfo.pQueueFamilyIndices		= NULL;
+				this->CreateInfo.preTransform				;
+				this->CreateInfo.compositeAlpha				;
+				this->CreateInfo.presentMode				;
+				this->CreateInfo.clipped					;
+				this->CreateInfo.oldSwapchain				;
+
+				// Create Swapchain
+				vkCreateSwapchainKHR(this->Context->handle(), &this->CreateInfo, NULL, &this->Swapchain);
+
+
+				uint32_t ImageCount = 0;
+				vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain, &ImageCount, NULL);
+				std::vector<VkImage> Image(ImageCount);
+				vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain, &ImageCount, Image.data());
+
+				for (uint32_t i = 0; i < ImageCount; i++) {
 
 
 
-				glfwCreateWindowSurface(this->ParentContext->inst(), this->Handle, NULL, &this->Surface);
+				}
 
-
-
-				vkCreateSwapchainKHR(this->ParentContext->handle(), &this->SwapChainProp, NULL, &this->SwapChain);
 			}
 
 			system_window::~system_window() {
 				// Destroys 
 				if (this->isValid) {
 					// Destroys swapchain.
-					vkDestroySwapchainKHR(this->ParentContext->handle(), this->SwapChain, NULL);
+					vkDestroySwapchainKHR(this->Context->handle(), this->Swapchain, NULL);
 					// Destroys suface.
-					vkDestroySurfaceKHR(this->ParentContext->inst(), this->Surface, NULL);
+					vkDestroySurfaceKHR(this->Context->inst(), this->Surface, NULL);
 					// Destroys window handle.
 					glfwDestroyWindow(this->Handle);
 				}
@@ -434,19 +493,19 @@ namespace geodesuka {
 			math::integer2 system_window::phys2scrn(math::real2 R) {
 				math::integer2 temp;
 
-				// Converts Direction and length.
-				this->Position = aPosition;
-				math::integer2 r_tmp = math::integer2(
-					(math::integer)(this->Position.x * (((math::real)(ParentDisplay->Resolution.x)) / (ParentDisplay->Size.x))),
-					(math::integer)(-this->Position.y * (((math::real)(ParentDisplay->Resolution.y)) / (ParentDisplay->Size.y)))
-				);
+				//// Converts Direction and length.
+				//this->Position = aPosition;
+				//math::integer2 r_tmp = math::integer2(
+				//	(math::integer)(this->Position.x * (((math::real)(ParentDisplay->Resolution.x)) / (ParentDisplay->Size.x))),
+				//	(math::integer)(-this->Position.y * (((math::real)(ParentDisplay->Resolution.y)) / (ParentDisplay->Size.y)))
+				//);
 
-				// Compensate for shift.
-				this->PositionSC = 
-					r_tmp
-					- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
-					+ ParentDisplay->PositionSC
-					+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
+				//// Compensate for shift.
+				//this->PositionSC = 
+				//	r_tmp
+				//	- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
+				//	+ ParentDisplay->PositionSC
+				//	+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
 
 				return temp;
 			}

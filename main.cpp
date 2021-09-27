@@ -61,6 +61,26 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+
+
+	uint32_t BindingCount = 10;
+	VkDescriptorSetLayoutBinding* BindingList = NULL;
+	BindingList = new VkDescriptorSetLayoutBinding[BindingCount]{};
+
+	BindingList[0].binding = 0;
+
+	VkDescriptorSetLayoutCreateInfo DSLCI{};
+	VkDescriptorSetLayout DSL;
+
+	DSLCI.sType = VkStructureType::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	DSLCI.pNext = NULL;
+	DSLCI.flags = 0;
+	DSLCI.bindingCount = BindingCount;
+	DSLCI.pBindings = BindingList;
+	vkCreateDescriptorSetLayout(Context->handle(), &DSLCI, NULL, &DSL);
+
+
+
 	///*
 	//// Window properties constructor.
 	//window::prop WindowProperties = window::prop();

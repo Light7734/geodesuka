@@ -70,12 +70,7 @@ namespace geodesuka {
 			class window : public object_t {
 			public:
 
-				enum present_mode {
-					IMMEDIATE,
-					FIFO,
-					MAILBOX
-				};
-
+				//
 				struct prop {
 					int Resizable;
 					int Decorated;
@@ -89,6 +84,7 @@ namespace geodesuka {
 					int CenterCursor;
 					int FocusOnShow;
 					int Hovered;
+
 					int RefreshRate;
 					VkPresentModeKHR PresentationMode;
 

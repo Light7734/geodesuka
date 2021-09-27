@@ -10,6 +10,8 @@
 #include "device.h"
 #include "context.h"
 
+#include "buffer.h"
+
 namespace geodesuka {
 	namespace core {
 
@@ -21,37 +23,42 @@ namespace geodesuka {
 
 			class texture {
 			public:
-				
-				// How do I make a texture useful in a graphics pipeline.
 
 				friend class object::system_window;
 
-				// Holds most recent error code.
-				VkResult ErrorCode;
+				enum tiling {
+					OPTIMAL = 0,
+					LINEAR	= 1,
+				};
 
-				// Load raw data into texture.
-				//texture(device_context* aDeviceContext, )
+				enum usage {
+					TRANSFER_SRC_BIT				= 0x00000001,
+					TRANSFER_DST_BIT				= 0x00000002,
+					SAMPLED_BIT						= 0x00000004,
+					STORAGE_BIT						= 0x00000008,
+					COLOR_ATTACHMENT_BIT			= 0x00000010,
+					DEPTH_STENCIL_ATTACHMENT_BIT	= 0x00000020,
+					TRANSIENT_ATTACHMENT_BIT		= 0x00000040,
+					INPUT_ATTACHMENT_BIT			= 0x00000080
+				};
 
-				texture(context* aDeviceContext, io::file* aImage);
-				//texture(device_context* aDeviceContext, VkFormat aFormat, math::natural aGridSize);
-				//texture(device_context* aDeviceContext, VkFormat aFormat, math::natural2 aGridSize);
-				texture(context *aDeviceContext, VkFormat aFormat, math::natural3 aGridSize);
+
+				
+				//texture(gcl::context* aContext, VkFormat aFormat, uint32_t aWidth, uint32_t aHeight, uint32_t aDepth);
 				~texture();
+
+				VkImageView get_view();
 
 			private:
 
-				// Data Handles
-				object::system_window *ParentSW;
-				context* ParentDC;
-				VkImage Handle;
+				gcl::context* Context;
 
-				// Parameters of texture.
+
 				VkImageCreateInfo CreateInfo{};
+				VkImage Handle;
+				VkMemoryAllocateInfo AllocateInfo{};
+				VkDeviceMemory MemoryHandle;
 
-				// Used for window swap chain. (Should not be public API).
-				texture(object::system_window* aSystemWindow, context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo);
-
-				VkExtent3D convert_to_extent(math::natural aX, math::natural aY, math::natural aZ);
 
 			};
 

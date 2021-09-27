@@ -517,6 +517,9 @@
     <Image Include="res\github\sauce0.jpg">
       <Filter>res\github</Filter>
     </Image>
+    <Image Include="doc\renderpass.png">
+      <Filter>doc</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h">

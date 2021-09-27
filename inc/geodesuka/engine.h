@@ -157,6 +157,8 @@ namespace geodesuka {
 
 	private:
 
+		std::vector<const char*> RequiredExtension;
+
 		// Engine Mutex
 		std::mutex Mutex;
 

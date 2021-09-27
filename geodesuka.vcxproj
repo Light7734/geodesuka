@@ -299,6 +299,7 @@
     <Text Include="doc\Notes.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="doc\renderpass.png" />
     <Image Include="res\github\sauce.png" />
     <Image Include="res\github\sauce0.jpg" />
   </ItemGroup>

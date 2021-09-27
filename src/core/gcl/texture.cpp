@@ -20,57 +20,65 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			texture::texture(context* aDeviceContext, VkFormat aFormat, math::natural3 aGridSize) {
 
-				VkImageType lType = VkImageType::VK_IMAGE_TYPE_1D;
 
-				bool isValidFormat = false;
 
-				// Texture Options.
-				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-				this->CreateInfo.pNext						= NULL;
-				this->CreateInfo.flags						= VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
-				this->CreateInfo.imageType					= lType;
-				this->CreateInfo.format						= aFormat;
-				//this->CreateInfo.extent						= this->convert_to_extent(aGridSize);
-				this->CreateInfo.mipLevels					= 1;
-				this->CreateInfo.arrayLayers				= 1;
-				this->CreateInfo.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
-				this->CreateInfo.tiling						= VkImageTiling::VK_IMAGE_TILING_OPTIMAL;
-				this->CreateInfo.usage						= VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
-				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE; //Exclusive implies exclusive access per queue.
-				this->CreateInfo.queueFamilyIndexCount		= 0;
-				this->CreateInfo.pQueueFamilyIndices		= NULL;
-				this->CreateInfo.initialLayout				= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-				
-				this->ErrorCode = vkCreateImage(ParentDC->handle(), &this->CreateInfo, NULL, &this->Handle);
-			}
+			//// (Context, Format, Width, Height, Depth, 
+			//texture::texture(gcl::context *aContext, tiling aTiling, usage aUsage, VkFormat aFormat, uint32_t aWidth, uint32_t aHeight, uint32_t aDepth) {
+			//	VkResult ReturnCode = VK_SUCCESS;
+			//	
+			//	struct createinfo {
+			//		uint32_t MipLevels;
+			//		uint32_t ArrayLevels;
+			//		
+			//	};
 
-			// This call just simply stores the image handles for a system_window swap chain.
-			texture::texture(object::system_window* aSystemWindow, context* aDeviceContext, VkImage aImageHandle, VkImageCreateInfo aCreateInfo) {
-				this->ErrorCode = VkResult::VK_SUCCESS;
-				this->ParentSW = aSystemWindow;
-				this->ParentDC = aDeviceContext;
-				this->Handle = aImageHandle;
-				this->CreateInfo = aCreateInfo;
-			}
+			//	VkImageLayout;
+			//	//VkImageUsageFlagBits::
+			//	this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			//	this->CreateInfo.pNext						= NULL;
+			//	this->CreateInfo.flags						= 0; // Leave as zero for now, 
+			//	if ((aWidth > 1) && (aHeight <= 1) && (aDepth <= 1)) {
+			//		this->CreateInfo.imageType = VkImageType::VK_IMAGE_TYPE_1D;
+			//	}
+			//	else if ((aWidth > 1) && (aHeight > 1) && (aDepth <= 1)) {
+			//		this->CreateInfo.imageType = VkImageType::VK_IMAGE_TYPE_2D;
+			//	}
+			//	else if ((aWidth > 1) && (aHeight > 1) && (aDepth > 1))  {
+			//		this->CreateInfo.imageType = VkImageType::VK_IMAGE_TYPE_3D;
+			//	}
+			//	else {
+			//		// Error, invalid state.
+			//		this->CreateInfo.imageType = VkImageType::VK_IMAGE_TYPE_MAX_ENUM;
+			//	}
+			//	this->CreateInfo.imageType					; // Will be determined by width, height, and depth.
+			//	this->CreateInfo.format						= aFormat;
+			//	this->CreateInfo.extent						= { aWidth, aHeight, aDepth };
+			//	this->CreateInfo.mipLevels					= 1;
+			//	this->CreateInfo.arrayLayers				= 1;
+			//	this->CreateInfo.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
+			//	this->CreateInfo.tiling						= (VkImageTiling)aTiling;
+			//	this->CreateInfo.usage						= (VkImageUsageFlags)aUsage;
+			//	this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+			//	this->CreateInfo.queueFamilyIndexCount		= 0;
+			//	this->CreateInfo.pQueueFamilyIndices		= NULL;
+			//	this->CreateInfo.initialLayout				= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
 
-			//VkExtent3D texture::convert_to_extent(math::natural aX, math::natural aY, math::natural aZ) {
-			//	VkExtent3D temp;
+			//	vkCreateImage(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
 
-			//	return temp;
+			//	// Use staging buffer here to transfer pixel data
+			//	//buffer StagingBuffer;
+
+
 			//}
 
 			texture::~texture() {
-				if ((this->ParentSW == nullptr) && (this->Handle != VK_NULL_HANDLE)) {
-					vkDestroyImage(this->ParentDC->handle(), this->Handle, NULL);
-					this->Handle = VK_NULL_HANDLE;
-				}
-				this->ErrorCode = VkResult::VK_SUCCESS;
-				this->ParentSW = nullptr;
-				this->ParentDC = nullptr;
+				vkDestroyImage(this->Context->handle(), this->Handle, NULL);
+				this->Handle = VK_NULL_HANDLE;
+				// Clear Device Memory
+				vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+				this->MemoryHandle = VK_NULL_HANDLE;
 			}
-
 
 		}
 	}

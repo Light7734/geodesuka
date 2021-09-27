@@ -35,8 +35,7 @@ namespace geodesuka {
 					SHADER_DEVICE_ADDRESS_BIT	= 0x00020000,
 				};
 
-				buffer(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
-				buffer(context* aContext, int aFlags, int aUsage, int aCount, type aTypeSpecifier, const char* aIdentifier, void* aBufferData);
+				buffer(context* aContext, usage aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
 				
 				~buffer();
 
@@ -79,20 +78,16 @@ namespace geodesuka {
 
 				// Does not hold an host memory data unless explicity requested by API.
 
-				context* aParentDC;
+				context* Context;
 
-				VkBufferCreateInfo CreateInfo;
+				VkBufferCreateInfo CreateInfo{};
 				VkBuffer Handle;
+				VkMemoryAllocateInfo AllocateInfo{};
 				VkDeviceMemory MemoryHandle;
 
-				int Flags;
-				int Usage;
 				int Count;
 				variable MemoryLayout;
 
-				// Internal: reduce code error from redundancy.
-				bool init_all(context* aContext, int aFlags, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
-				bool clear_all();
 			};
 
 		}

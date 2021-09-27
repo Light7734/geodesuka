@@ -74,22 +74,31 @@ namespace geodesuka {
 			uint32_t OSExtensionCount = 0;
 			const char** OSExtensionList = glfwGetRequiredInstanceExtensions(&OSExtensionCount);
 
-			this->AppProp.sType = VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
-			this->AppProp.pNext = NULL;
-			this->AppProp.pApplicationName = "No Name";
-			this->AppProp.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
-			this->AppProp.pEngineName = "Geodesuka Engine";
-			this->AppProp.engineVersion = VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
-			this->AppProp.apiVersion = VK_MAKE_VERSION(1, 2, 0);
+			for (uint32_t i = 0; i < OSExtensionCount; i++) {
+				this->RequiredExtension.push_back(OSExtensionList[i]);
+			}
+			//this->RequiredExtension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);
 
-			this->InstProp.sType = VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-			this->InstProp.pNext = NULL;
-			this->InstProp.flags = 0;
-			this->InstProp.pApplicationInfo = &AppProp;
-			this->InstProp.enabledLayerCount = 0;
-			this->InstProp.ppEnabledLayerNames = NULL;
-			this->InstProp.enabledExtensionCount = OSExtensionCount;
-			this->InstProp.ppEnabledExtensionNames = OSExtensionList;
+			for (size_t i = 0; i < this->RequiredExtension.size(); i++) {
+				std::cout << this->RequiredExtension[i] << std::endl;
+			}
+
+			this->AppProp.sType							= VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			this->AppProp.pNext							= NULL;
+			this->AppProp.pApplicationName				= "No Name";
+			this->AppProp.applicationVersion			= VK_MAKE_VERSION(0, 0, 1);
+			this->AppProp.pEngineName					= "Geodesuka Engine";
+			this->AppProp.engineVersion					= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
+			this->AppProp.apiVersion					= VK_MAKE_VERSION(1, 2, 0);
+
+			this->InstProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			this->InstProp.pNext						= NULL;
+			this->InstProp.flags						= 0;
+			this->InstProp.pApplicationInfo				= &AppProp;
+			this->InstProp.enabledLayerCount			= 0;
+			this->InstProp.ppEnabledLayerNames			= NULL;
+			this->InstProp.enabledExtensionCount		= this->RequiredExtension.size();
+			this->InstProp.ppEnabledExtensionNames		= this->RequiredExtension.data();
 
 			VkResult Result = vkCreateInstance(&InstProp, NULL, &this->Instance);
 			if (Result == VK_SUCCESS) {
@@ -98,6 +107,7 @@ namespace geodesuka {
 			else {
 				this->isVulkanReady = false;
 			}
+
 		}
 
 		if (this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady) {
@@ -204,8 +214,9 @@ namespace geodesuka {
 		this->Mutex.lock();
 		this->Shutdown = true;
 		this->Mutex.unlock();
-
-		this->UpdateThread.join();
+		if (this->isReady) {
+			this->UpdateThread.join();
+		}
 
 		// Clears all objects from memory.
 		for (size_t i = 1; i <= this->Object.size(); i++) {
