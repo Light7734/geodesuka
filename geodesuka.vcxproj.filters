@@ -34,9 +34,6 @@
     <Filter Include="src\core">
       <UniqueIdentifier>{4d3072ee-92c2-4715-8b8d-b4c14b6c9bd1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep">
-      <UniqueIdentifier>{bec4e23b-dd7c-4d11-a102-b0705533c4e9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\core\gcl">
       <UniqueIdentifier>{749f7019-4e75-4e4c-be7a-030e9dabec62}</UniqueIdentifier>
     </Filter>
@@ -55,14 +52,8 @@
     <Filter Include="src\core\util">
       <UniqueIdentifier>{aafceda2-290d-4ad8-91f6-23eb3735ae97}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glfw">
-      <UniqueIdentifier>{4d9954e7-9b0d-4628-aba6-cb5c100ef931}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\geodesuka">
       <UniqueIdentifier>{ceb9d42a-12e1-44dd-bd28-e2ad9cbab734}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc\GLFW">
-      <UniqueIdentifier>{fec405bc-422e-42fa-aba2-3a5231de0a9d}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\geodesuka\core">
       <UniqueIdentifier>{8a54a22e-9933-4869-a77c-c83740dfbdcc}</UniqueIdentifier>
@@ -109,9 +100,6 @@
     <Filter Include="src\core\math\vectors">
       <UniqueIdentifier>{080d2137-0077-4d75-b60f-cfcafaa3a489}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\dep\glfw\src">
-      <UniqueIdentifier>{47578ef2-a6bf-41cc-b9d7-225699982818}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bld">
       <UniqueIdentifier>{951c5e19-b666-4dfb-83d1-7192e76b0b02}</UniqueIdentifier>
     </Filter>
@@ -120,42 +108,6 @@
     </Filter>
     <Filter Include="inc\geodesuka\core\sys">
       <UniqueIdentifier>{e67b6899-d7b8-47f3-b4f0-b3e8074af088}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang">
-      <UniqueIdentifier>{a404e792-8788-4695-bc91-2c495a0ee433}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang">
-      <UniqueIdentifier>{3a107a0e-7d5e-42b7-8fc2-ac04c9b43c40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\OGLCompilersDLL">
-      <UniqueIdentifier>{b4b1a700-95a9-42ca-8d37-ce6e153ff131}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\SPIRV">
-      <UniqueIdentifier>{82564eac-479c-4967-9dcf-d58bea3c9603}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\StandAlone">
-      <UniqueIdentifier>{87e78361-3bc4-40a5-a8a4-1852a0f31363}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\GenericCodeGen">
-      <UniqueIdentifier>{50be7166-4718-4ca6-8d2a-1231d928c943}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\Include">
-      <UniqueIdentifier>{ac0c05f1-31a5-46f8-a51f-a9bd69c5c587}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\MachineIndependent">
-      <UniqueIdentifier>{43da8b4d-e88c-4138-84bc-e53d94620290}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\OSDependent">
-      <UniqueIdentifier>{e0071b6b-6465-4f3b-a4c4-3b0b2a0b9a3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\Public">
-      <UniqueIdentifier>{a7a722ba-8b07-4419-9f5c-7e7d676df629}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\MachineIndependent\preprocessor">
-      <UniqueIdentifier>{db054ce6-0789-4b33-ac97-ecfd204ca186}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\dep\glslang\glslang\OSDependent\Windows">
-      <UniqueIdentifier>{6126a724-7885-4c5f-8c3a-3187322be2e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,185 +235,11 @@
     <ClCompile Include="src\core\util\text.cpp">
       <Filter>src\core\util</Filter>
     </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\egl_context.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_context.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_init.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_input.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_monitor.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_vulkan.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\glfw_window.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\osmesa_context.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\wgl_context.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_init.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_joystick.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_monitor.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_thread.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_time.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\win32_window.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glfw\src\xkb_unicode.c">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\core\gcl\device.cpp">
       <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\CodeGen.cpp">
-      <Filter>src\dep\glslang\glslang\GenericCodeGen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\Link.cpp">
-      <Filter>src\dep\glslang\glslang\GenericCodeGen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Versions.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ShaderLang.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Scan.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\RemoveTree.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\reflection.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\propagateNoContraction.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\PoolAlloc.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ParseHelper.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ParseContextBase.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\parseConst.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\linkValidate.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\limits.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\iomapper.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\IntermTraverse.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\intermOut.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Intermediate.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Initialize.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\InfoSink.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\glslang_tab.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Constant.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\attribute.cpp">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp">
-      <Filter>src\dep\glslang\glslang\OSDependent\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.cpp">
-      <Filter>src\dep\glslang\OGLCompilersDLL</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\disassemble.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\doc.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\GlslangToSpv.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\InReadableOrder.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\Logger.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvBuilder.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvPostProcess.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\SPVRemapper.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp">
-      <Filter>src\dep\glslang\StandAlone</Filter>
     </ClCompile>
     <ClCompile Include="src\core\io\dynalib.cpp">
       <Filter>src\core\io</Filter>
@@ -495,15 +273,6 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="Makefile" />
-    <None Include="src\dep\glslang\glslang\MachineIndependent\glslang.y">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </None>
-    <None Include="src\dep\glslang\glslang\MachineIndependent\glslang.m4">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </None>
-    <None Include="src\dep\glslang\glslang\updateGrammar">
-      <Filter>src\dep\glslang\glslang</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\Notes.txt">
@@ -660,206 +429,11 @@
     <ClInclude Include="inc\geodesuka\core\util\text.h">
       <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
-    <ClInclude Include="inc\GLFW\glfw3.h">
-      <Filter>inc\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\GLFW\glfw3native.h">
-      <Filter>inc\GLFW</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\egl_context.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\glfw_config.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\internal.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\mappings.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\osmesa_context.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\wgl_context.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\win32_joystick.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\win32_platform.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glfw\src\xkb_unicode.h">
-      <Filter>src\dep\glfw\src</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\engine.h">
       <Filter>inc\geodesuka</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\device.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\BaseTypes.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\Common.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\ConstantUnion.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\glslang_c_interface.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\glslang_c_shader_types.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\InfoSink.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\InitializeGlobals.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\intermediate.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\PoolAlloc.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\ResourceLimits.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\ShHandle.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\SpirvIntrinsics.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Include\Types.h">
-      <Filter>src\dep\glslang\glslang\Include</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpContext.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpTokens.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent\preprocessor</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Versions.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\ScanContext.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Scan.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\RemoveTree.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\reflection.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\propagateNoContraction.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\pch.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\parseVersions.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\ParseHelper.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\localintermediate.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\LiveTraverser.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\iomapper.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Initialize.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\glslang_tab.cpp.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\gl_types.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\attribute.h">
-      <Filter>src\dep\glslang\glslang\MachineIndependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\OSDependent\osinclude.h">
-      <Filter>src\dep\glslang\glslang\OSDependent</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h">
-      <Filter>src\dep\glslang\glslang\Public</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.h">
-      <Filter>src\dep\glslang\OGLCompilersDLL</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\bitutils.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\disassemble.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\doc.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.AMD.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.EXT.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.KHR.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.NV.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.std.450.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\GlslangToSpv.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\hex_float.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\Logger.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\NonSemanticDebugPrintf.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\spirv.hpp">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\SpvBuilder.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\spvIR.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\SPVRemapper.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h">
-      <Filter>src\dep\glslang\SPIRV</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h">
-      <Filter>src\dep\glslang\StandAlone</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\io\dynalib.h">
       <Filter>inc\geodesuka\core\io</Filter>
@@ -878,9 +452,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math.h">
       <Filter>inc\geodesuka\core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dep\glslang\build_info.h">
-      <Filter>src\dep\glslang</Filter>
     </ClInclude>
     <ClInclude Include="triangle.h" />
     <ClInclude Include="inc\geodesuka\core\object.h">
