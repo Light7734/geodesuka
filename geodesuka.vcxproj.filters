@@ -31,27 +31,6 @@
     <Filter Include="res\github">
       <UniqueIdentifier>{f85b908d-34d8-4926-a903-f7092e7e6192}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\core">
-      <UniqueIdentifier>{4d3072ee-92c2-4715-8b8d-b4c14b6c9bd1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\gcl">
-      <UniqueIdentifier>{749f7019-4e75-4e4c-be7a-030e9dabec62}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\hid">
-      <UniqueIdentifier>{99fb7f1e-cd83-4f1b-891a-8bb93dc1ecd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\io">
-      <UniqueIdentifier>{0a9c20c6-3738-4efc-82d9-389cf6afcd95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\math">
-      <UniqueIdentifier>{73db8332-05dd-412e-bed8-6dd55587760d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\object">
-      <UniqueIdentifier>{84dbee18-6e0b-431d-b640-aed7869a0932}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\util">
-      <UniqueIdentifier>{aafceda2-290d-4ad8-91f6-23eb3735ae97}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\geodesuka">
       <UniqueIdentifier>{ceb9d42a-12e1-44dd-bd28-e2ad9cbab734}</UniqueIdentifier>
     </Filter>
@@ -88,23 +67,8 @@
     <Filter Include="inc\geodesuka\core\math\vectors">
       <UniqueIdentifier>{7e2a8f69-eaee-4fab-9771-41f215f46aa2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\core\math\matrices">
-      <UniqueIdentifier>{335ffb76-4eb3-41cf-8270-bb79990e1c07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\math\numbers">
-      <UniqueIdentifier>{f0d7dc37-445c-436d-9375-655d26dbe823}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\math\util">
-      <UniqueIdentifier>{9bd1d473-2aa2-4561-ad80-bce32c984c93}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\math\vectors">
-      <UniqueIdentifier>{080d2137-0077-4d75-b60f-cfcafaa3a489}</UniqueIdentifier>
-    </Filter>
     <Filter Include="bld">
       <UniqueIdentifier>{951c5e19-b666-4dfb-83d1-7192e76b0b02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\sys">
-      <UniqueIdentifier>{49cd89bb-3771-43af-8acf-f128f104f3bd}</UniqueIdentifier>
     </Filter>
     <Filter Include="inc\geodesuka\core\sys">
       <UniqueIdentifier>{e67b6899-d7b8-47f3-b4f0-b3e8074af088}</UniqueIdentifier>
@@ -112,162 +76,168 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\core\gcl\buffer.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\shader.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\gcl\texture.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\hid\joystick.cpp">
-      <Filter>src\core\hid</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\hid\keyboard.cpp">
-      <Filter>src\core\hid</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\hid\mouse.cpp">
-      <Filter>src\core\hid</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\file.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real2x2.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real2x3.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real2x4.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real3x2.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real3x3.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real3x4.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real4x2.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real4x3.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\matrices\real4x4.cpp">
-      <Filter>src\core\math\matrices</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\numbers\complex.cpp">
-      <Filter>src\core\math\numbers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\numbers\constants.cpp">
-      <Filter>src\core\math\numbers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\numbers\quaternion.cpp">
-      <Filter>src\core\math\numbers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\numbers\real.cpp">
-      <Filter>src\core\math\numbers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\util\fsupport.cpp">
-      <Filter>src\core\math\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\util\isupport.cpp">
-      <Filter>src\core\math\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\util\matrix_multiply.cpp">
-      <Filter>src\core\math\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\integer2.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\integer3.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\integer4.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\natural2.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\natural3.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\natural4.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\real2.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\real3.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vectors\real4.cpp">
-      <Filter>src\core\math\vectors</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\camera.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\camera2d.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\camera3d.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\system_display.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\system_window.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\virtual_window.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\vtext.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\object\window.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\util\text.cpp">
-      <Filter>src\core\util</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\device.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\dynalib.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\font.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\image.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\script.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\io\socket_t.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
     <ClCompile Include="triangle.cpp" />
-    <ClCompile Include="src\core\object.cpp">
-      <Filter>src\core</Filter>
+    <ClCompile Include="src\asset.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\context.cpp">
-      <Filter>src\core\gcl</Filter>
+    <ClCompile Include="src\asset_manager.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\gcl\framebuffer.cpp">
-      <Filter>src\core\gcl</Filter>
+    <ClCompile Include="src\buffer.cpp">
+      <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\util\variable.cpp">
-      <Filter>src\core\util</Filter>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera2d.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera3d.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\complex.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\constants.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\context.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\device.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dynalib.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\file.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\font.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framebuffer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fsupport.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\integer2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\integer3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\integer4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\isupport.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\joystick.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\keyboard.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\matrix_multiply.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mouse.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natural2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natural3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\natural4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\object.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\quaternion.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real2x2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real2x3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real2x4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real3x2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real3x3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real3x4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real4x2.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real4x3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\real4x4.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\script.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\socket_t.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system_display.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system_window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\text.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\variable.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\virtual_window.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vtext.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
