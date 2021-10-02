@@ -90,7 +90,7 @@ namespace geodesuka::core::object {
 		};
 
 		// This is to discern what type of target is being drawn to, referenced by object.h
-		virtual void draw(object_t* aObject) = 0;
+		virtual void draw(object_t* aObject) {};
 
 		virtual void set_title(util::text aTitle);
 		virtual void set_size(math::real2 aSize);
@@ -108,7 +108,6 @@ namespace geodesuka::core::object {
 		math::real2 Size;				// [m]
 		math::natural2 Resolution;		// [pixels]
 		struct prop Property;
-		gcl::framebuffer FrameBuffer;
 
 	};
 

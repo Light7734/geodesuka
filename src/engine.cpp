@@ -298,12 +298,10 @@ namespace geodesuka {
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// glfw
-			//
 			// Update object list.
-			//for (size_t i = 0; i < this->Object.size(); i++) {
-			//	this->Object[i]->update(dt);
-			//}
+			for (size_t i = 0; i < this->Object.size(); i++) {
+				this->Object[i]->update(dt);
+			}
 			//std::cout << "Loop Time:\t" << dt << std::endl;
 
 			t2 = this->get_time();
@@ -323,8 +321,35 @@ namespace geodesuka {
 		//std::cout << "Update Thread has exited." << std::endl;
 	}
 
+	//
+	// thread that submits all draw calls to respective queues
+	//
 	void engine::trender() {
+		bool ExitCondition = false;
+		double t1, t2;
+		double wt, ht;
+		double t, dt;
+		double ts = 1.0 / 2.0;
+		dt = 0.0;
+		while (!ExitCondition) {
+			t1 = this->get_time();
 
+			// Issue all draw calls
+
+			t2 = this->get_time();
+			wt = t2 - t1;
+			if (wt < ts) {
+				ht = ts - wt;
+				this->tsleep(ht);
+			}
+			else {
+				ht = 0.0;
+			}
+			dt = wt + ht;
+			this->Mutex.lock();
+			ExitCondition = this->Shutdown;
+			this->Mutex.unlock();
+		}
 	}
 
 	void engine::taudio() {

@@ -156,7 +156,3 @@ using namespace gcl;
 //
 //	aEngine.create(this);
 //}
-
-triangle::triangle(geodesuka::engine& aEngine, geodesuka::core::gcl::context* aDeviceContext) : geodesuka::core::object_t(aEngine, aDeviceContext) {
-	std::cout << "Triangle Constructed!" << std::endl;
-}

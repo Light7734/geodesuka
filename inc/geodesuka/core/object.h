@@ -58,10 +58,8 @@ namespace geodesuka::core {
 
 		std::mutex Mutex;
 		//std::vector<gcl::command*> DrawCommand;
-
-		object_t(engine& aEngine, gcl::context* aContext);
-		~object_t();
-		//virtual ~object_t() = default;
+		
+		virtual ~object_t() = default;
 
 		/*
 		* If input stream is being forwarded to a particular instance of an object,
@@ -130,11 +128,8 @@ namespace geodesuka::core {
 
 	protected:
 
-		//gcl::context* RenderingContext;
-		//gcl::context* ComputeContext;
-
-		//std::vector<gcl::context*> Context;
-		//gcl::context* Context;
+		engine* ParentEngine;
+		gcl::context* ParentContext;
 
 		math::real3 InputVelocity;
 		math::real3 InputForce;

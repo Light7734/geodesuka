@@ -221,6 +221,7 @@
     <ClCompile Include="src\script.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\socket_t.cpp" />
+    <ClCompile Include="src\stage.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_window.cpp" />
     <ClCompile Include="src\text.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\stage.h" />
     <ClInclude Include="inc\geodesuka\core\util\log.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />

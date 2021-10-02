@@ -34,50 +34,21 @@ namespace geodesuka::core::object {
 	class camera : public object_t {
 	public:
 
-		math::real4x4 Translation;
-		math::real4x4 Rotation;
-		math::real4x4 Projection;
+		virtual void draw(object_t* aObject) = 0;
 
-		//mouse Mouse;
-		//keyboard Keyboard;
-		//joystick Joystick;
+	protected:
 
-		//math::real Time;
-		//math::real3 Position;
-		//math::real Mass;
-		//math::real3 Momentum;
-		//math::real3 Force;
-
-		math::real Theta, Phi;
-		math::real3 Right;
-		math::real3 Up;
-		math::real3 Forward;
-
+		// Generates the Perspective Projection Matrix.
 		math::real FieldOfView;
 		math::real AspectRatio;
 		math::real MinDistance;
 		math::real MaxDistance;
 
-		virtual void draw(object_t* aObject) = 0;
-
-	protected:
-
-		// WASD
-		enum action {
-			MOVE_FORWARD,
-			MOVE_LEFT,
-			MOVE_BACK,
-			MOVE_RIGHT,
-			MOVE_DOWN,
-			MOVE_UP
-		};
-
-		float AngularVelTheta;
-		float AngularVelPhi;
-
-		float RotationalVelocity;
-		float MovementVelocity;
-		bool MoveDirection[6];
+		// Camera Transforms for vertices.
+		math::real4x4 PRT;
+		math::real4x4 Projection;
+		math::real4x4 Rotation;
+		math::real4x4 Translation;
 
 	};
 

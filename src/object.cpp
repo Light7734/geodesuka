@@ -4,31 +4,6 @@
 
 namespace geodesuka::core {
 
-	object_t::object_t(engine& aEngine, gcl::context* aContext) {
-		//this->Mutex.lock();
-
-		this->InputForce = math::real3(0.0, 0.0, 0.0);
-		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
-
-		this->Mass = 1.0; // Mass is default one kilogram.
-		this->Time = aEngine.get_time();
-		this->Position = math::real3(0.0, 0.0, 0.0);
-		this->Momentum = math::real3(0.0, 0.0, 0.0);
-		this->Force = math::real3(0.0, 0.0, 0.0);
-		this->DirectionX = math::real3(1.0, 0.0, 0.0);
-		this->DirectionY = math::real3(0.0, 1.0, 0.0);
-		this->DirectionZ = math::real3(0.0, 0.0, 1.0);
-
-		//aEngine.Mutex.lock();
-		//aEngine.Object.push_back(this);
-		//aEngine.Mutex.unlock();
-		std::cout << "Object constructed" << std::endl;
-	}
-
-	object_t::~object_t() {
-
-	}
-
 	void object_t::input(const hid::keyboard& aKeyboard) {
 
 	}

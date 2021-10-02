@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	object_t *Triangle = new triangle(Engine, Context);
+	//object_t *Triangle = new triangle(Engine, Context);
 
 
 

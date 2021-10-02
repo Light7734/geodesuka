@@ -1,29 +1,15 @@
 #include <geodesuka/core/object/system_display.h>
 
 #include <geodesuka/core/object.h>
-#include <geodesuka/core/object/window.h>
-#include <geodesuka/core/object/system_display.h>
-#include <geodesuka/core/object/system_window.h>
-#include <geodesuka/core/object/virtual_window.h>
-#include <geodesuka/core/object/camera.h>
 
 namespace geodesuka::core::object {
 
-	system_display::system_display(GLFWmonitor* aMonitor) {
+	system_display::system_display(/*engine& aEngine, gcl::context* aDeviceContext,*/ GLFWmonitor* aMonitor) {
 		this->Property = window::prop();
 
 		this->Handle = aMonitor;
 
 		this->Name = glfwGetMonitorName(this->Handle);
-		//const char* aName = glfwGetMonitorName(this->Handle);
-		//if (aName != NULL) {
-		//	size_t NameSize = strlen(aName);
-		//	this->Name = (char*)malloc((NameSize + 1) * sizeof(char));
-		//	if (this->Name != NULL) {
-		//		memcpy(this->Name, aName, NameSize * sizeof(char));
-		//		this->Name[NameSize] = '\0';
-		//	}
-		//}
 		
 		glfwGetMonitorPos(this->Handle, &this->PositionSC.x, &this->PositionSC.y);
 		// Loads and converts to meters.

@@ -98,9 +98,7 @@ C26451
 // example for extending object.h
 //#include "core/object/cube.h"
 
-//#include "core/stage.h"
-
-//#include "core/scene.h"
+#include "core/stage.h"
 
 namespace geodesuka {
 
@@ -163,22 +161,23 @@ namespace geodesuka {
 		std::vector<core::object::system_display*> Display;
 		// Find a way to map devices to system_displays.
 
-
 		// Keeps track of important System and OS objects.
 		core::object::system_display* PrimaryDisplay;
-
-		// Abstract Window Type
-		//std::vector<core::object::window*> Window;
-		std::vector<core::object::system_window*> SystemWindow;			// Automatically managed by engine.
-		//std::vector<core::object::virtual_window*> VirtualWindow;		
-		//std::vector<core::object::camera*> Camera;
-
-		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
-		std::vector<core::object_t*> Object;
 
 		// Reduce redundant file loading by matching paths.
 		// If current working directory changes, 
 		std::vector<core::io::file*> File;
+
+		// All objects are managed by engine regardless of stage.
+		//
+		std::vector<core::object_t*> Object;
+
+
+		// Active stage represent a collection of objects
+		// sharing the same space, object interaction, rendering
+		//
+		std::vector<core::stage_t*> Stage;
+
 		
 		// ------------------------------ Back end runtime ------------------------------ //
 

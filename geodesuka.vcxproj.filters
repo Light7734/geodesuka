@@ -269,6 +269,9 @@
     <ClCompile Include="src\log.cpp">
       <Filter>src\core\util</Filter>
     </ClCompile>
+    <ClCompile Include="src\stage.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -468,6 +471,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\log.h">
       <Filter>inc\geodesuka\core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage.h">
+      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
