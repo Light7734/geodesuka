@@ -258,53 +258,8 @@ namespace geodesuka {
 		return this->DeviceList.data();
 	}
 
-	core::io::file* engine::open(const char* FilePath) {
-
-		return nullptr;
-	}
-
-	core::math::integer engine::close(core::io::file* FileHandle) {
-		return core::math::integer();
-	}
-
-	core::object_t* engine::create(core::object_t* aNewObject) {
-		// Checks for redundant elements.
-		for (size_t i = 0; i < Object.size(); i++) {
-			if (Object[i] == aNewObject) return aNewObject;
-		}
-		// Pushes onto list if not on list.
-		Object.push_back(aNewObject);
-		return aNewObject;
-	}
-
-	core::object_t* engine::create(core::object::system_window* aNewWindow) {
-		// Checks for redundant elements.
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aNewWindow) return aNewWindow;
-		}
-		size_t Offset = this->Display.size() + this->SystemWindow.size();
-		this->Object.insert(this->Object.begin() + Offset, aNewWindow);
-		this->SystemWindow.push_back(aNewWindow);
-		return aNewWindow;
-	}
-
-	core::math::integer engine::destroy(core::object_t* aDestroyObject) {
-		// Searches for object in list, then erases if it exists.
-		for (size_t i = 0; i < Object.size(); i++) {
-			if (Object[i] == aDestroyObject) {
-				Object.erase(Object.begin() + i);
-				return 0;
-			}
-		}
-		return -1;
-	}
-
 	bool engine::is_ready() {
 		return this->isReady;
-	}
-
-	engine::ecode engine::error_code() {
-		return this->ErrorCode;
 	}
 
 	engine::version engine::get_version() {
@@ -342,6 +297,7 @@ namespace geodesuka {
 		dt = 0.0;
 		while (!ExitCondition) {
 			t1 = this->get_time();
+
 			// glfw
 			//
 			// Update object list.

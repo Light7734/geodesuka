@@ -36,15 +36,8 @@ C26451
 
 /* --------------- Third Party Libraries --------------- */
 
-/* Vulkan API */
 #include <vulkan/vulkan.h>
-
-/* GLFW API */
-//#define VK_USE_PLATFORM_WIN32_KHR
-//#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-//#define GLFW_EXPOSE_NATIVE_WIN32
-//#include <GLFW/glfw3native.h>
 
 // ------------------------- Mathematics Library ------------------------- //
 #include "core/math.h"
@@ -105,20 +98,14 @@ C26451
 // example for extending object.h
 //#include "core/object/cube.h"
 
+//#include "core/stage.h"
+
+//#include "core/scene.h"
+
 namespace geodesuka {
 
-	/*
-	* Maybe run engine internals on secondary thread? If that is the
-	* case, the
-	* 
-	*/
 	class engine {
 	public:
-
-		enum ecode {
-			GE_SUCCESS = 0,
-			GE_ERROR_CODE_STARTUP_FAILURE = -1,
-		};
 
 		struct version {
 			int Major;
@@ -126,8 +113,11 @@ namespace geodesuka {
 			int Patch;
 		};
 
+		friend class core::object_t;
+
 		//friend class core::object::system_display;
 		friend class core::object::system_window;
+
 
 		engine(int argc, char* argv[]);
 		~engine();
@@ -137,20 +127,7 @@ namespace geodesuka {
 		core::object::system_display** get_display_list(size_t* ListSize);
 		core::gcl::device** get_device_list(size_t* ListSize);
 
-		// File management system.
-		core::io::file* open(const char* FilePath);
-		core::math::integer close(core::io::file* FileHandle);
-
-		// Intended to be used to create and register new objects. Can be used for debuging memory leaks
-		// and extending object.h for user choice.
-		// Example: "Engine, create a new sword.".
-		// Object* Sword = Engine.create(new sword());
-		core::object_t* create(core::object_t* aNewObject);
-		core::object_t* create(core::object::system_window* aNewSystemWindow);
-		core::math::integer destroy(core::object_t* aDestroyObject);
-
 		bool is_ready();
-		ecode error_code();
 		version get_version();
 		double get_time();
 		void tsleep(double Seconds);
@@ -164,8 +141,6 @@ namespace geodesuka {
 
 		// Maintain versioning system.
 		const version Version = { 0, 0, 13 };
-
-		ecode ErrorCode;
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;

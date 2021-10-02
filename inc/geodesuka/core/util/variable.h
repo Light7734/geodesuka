@@ -153,6 +153,8 @@ struct_declarator:
 //TODO: Add Location variable for shader_program.
 //TODO: If possible, make support for hollow copies.
 
+#define MODE_DEBUG
+
 #include <stdarg.h>
 
 #ifdef MODE_DEBUG

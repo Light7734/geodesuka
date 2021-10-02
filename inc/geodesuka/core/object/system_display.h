@@ -8,50 +8,27 @@
 
 #include "window.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace object {
+namespace geodesuka::core::object {
 
-			class system_display : public window {
-			public:
+	class system_display : public window {
+	public:
 
-				friend class system_window;
+		friend class system_window;
 
-				GLFWmonitor* Handle;
+		GLFWmonitor* Handle;
 
-				system_display(GLFWmonitor * aMonitor);
-				~system_display();
+		system_display(GLFWmonitor* aMonitor);
+		~system_display();
 
-				// Inherited fron object.h
-				// Should be called if input stream is directed to it
-				virtual math::integer input(const hid::keyboard& aKeyboard)				override;
-				virtual math::integer input(const hid::mouse& aMouse)					override;
+		virtual void draw(object_t* aObject) override;
 
-				// Update the object in time, requires implementation in child
-				virtual math::integer update(math::real aDeltaTime)						override;
+	private:
 
-				// Target specific methods for windows being drawn to.
-				virtual math::integer draw(system_display* aTargetSystemDisplay)		override;
-				virtual math::integer draw(system_window* aTargetSystemWindow)			override;
-				virtual math::integer draw(virtual_window* aTargetVirtualWindow)		override;
+		math::integer2 PositionSC;
+		//math::integer2 SizeSC;
 
-				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
-				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
+	};
 
-				// Mandatory implementation required by window.h
-				virtual math::integer draw(object_t* aObject)							override;
-
-			private:
-
-				math::integer2 PositionSC;
-				//math::integer2 SizeSC;
-
-
-
-			};
-
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H

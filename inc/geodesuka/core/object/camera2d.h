@@ -6,31 +6,13 @@
 
 #include "camera.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace object {
+namespace geodesuka::core::object {
 
-			class camera2d : public camera {
-			public:
+	class camera2d : public camera {
+	public:
 
-				virtual math::integer input(const hid::keyboard& aKeyboard)				override;
-				virtual math::integer input(const hid::mouse& aMouse)					override;
+	};
 
-				virtual math::integer update(math::real aDeltaTime)						override;
-
-				virtual math::integer draw(system_display* aTargetSystemDisplay)		override;
-				virtual math::integer draw(system_window* aTargetSystemWindow)			override;
-				virtual math::integer draw(virtual_window* aTargetVirtualWindow)		override;
-
-				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
-				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
-
-				virtual math::integer draw(object_t* aObject)							override;
-
-			};
-
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_CAMERA2D_H

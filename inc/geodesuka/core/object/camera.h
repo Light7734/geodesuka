@@ -29,61 +29,57 @@
 
 //#include "../graphical/frame_buffer.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace object {
+namespace geodesuka::core::object {
 
-			class camera : public object_t {
-			public:
+	class camera : public object_t {
+	public:
 
-				math::real4x4 Translation;
-				math::real4x4 Rotation;
-				math::real4x4 Projection;
+		math::real4x4 Translation;
+		math::real4x4 Rotation;
+		math::real4x4 Projection;
 
-				//mouse Mouse;
-				//keyboard Keyboard;
-				//joystick Joystick;
+		//mouse Mouse;
+		//keyboard Keyboard;
+		//joystick Joystick;
 
-				//math::real Time;
-				//math::real3 Position;
-				//math::real Mass;
-				//math::real3 Momentum;
-				//math::real3 Force;
+		//math::real Time;
+		//math::real3 Position;
+		//math::real Mass;
+		//math::real3 Momentum;
+		//math::real3 Force;
 
-				math::real Theta, Phi;
-				math::real3 Right;
-				math::real3 Up;
-				math::real3 Forward;
+		math::real Theta, Phi;
+		math::real3 Right;
+		math::real3 Up;
+		math::real3 Forward;
 
-				math::real FieldOfView;
-				math::real AspectRatio;
-				math::real MinDistance;
-				math::real MaxDistance;
+		math::real FieldOfView;
+		math::real AspectRatio;
+		math::real MinDistance;
+		math::real MaxDistance;
 
-				virtual math::integer draw(object_t* aObject) = 0;
+		virtual void draw(object_t* aObject) = 0;
 
-			protected:
+	protected:
 
-				// WASD
-				enum action {
-					MOVE_FORWARD,
-					MOVE_LEFT,
-					MOVE_BACK,
-					MOVE_RIGHT,
-					MOVE_DOWN,
-					MOVE_UP
-				};
+		// WASD
+		enum action {
+			MOVE_FORWARD,
+			MOVE_LEFT,
+			MOVE_BACK,
+			MOVE_RIGHT,
+			MOVE_DOWN,
+			MOVE_UP
+		};
 
-				float AngularVelTheta;
-				float AngularVelPhi;
+		float AngularVelTheta;
+		float AngularVelPhi;
 
-				float RotationalVelocity;
-				float MovementVelocity;
-				bool MoveDirection[6];
+		float RotationalVelocity;
+		float MovementVelocity;
+		bool MoveDirection[6];
 
-			};
+	};
 
-		}
-	}
 }
 #endif // !GEODESUKA_CORE_OBJECT_CAMERA_H

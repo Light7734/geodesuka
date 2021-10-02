@@ -8,25 +8,7 @@ class triangle : public geodesuka::core::object_t {
 public:
 
 	//triangle(geodesuka::engine* aEngine);
-	triangle(geodesuka::engine &aEngine, geodesuka::core::gcl::context* aDeviceContext);
-
-	// overriden fron object.h
-	// Should be called if input stream is directed to it
-	virtual geodesuka::core::math::integer input(const geodesuka::core::hid::keyboard& aKeyboard)					override;
-	virtual geodesuka::core::math::integer input(const geodesuka::core::hid::mouse& aMouse)							override;
-	//virtual math::integer process_input(const hid::joystick& Joystick)		override;
-
-	// Update the object in time, requires implementation in child
-	virtual geodesuka::core::math::integer update(geodesuka::core::math::real aDeltaTime)							override;
-
-	// Target specific methods for windows being drawn to.
-	virtual geodesuka::core::math::integer draw(geodesuka::core::object::system_display* aTargetSystemDisplay)		override;
-	virtual geodesuka::core::math::integer draw(geodesuka::core::object::system_window* aTargetSystemWindow)		override;
-	virtual geodesuka::core::math::integer draw(geodesuka::core::object::virtual_window* aTargetVirtualWindow)		override;
-
-	// Does Nothing
-	virtual geodesuka::core::math::integer draw(geodesuka::core::object::camera2d* aTargetCamera2D)					override;
-	virtual geodesuka::core::math::integer draw(geodesuka::core::object::camera3d* aTargetCamera3D)					override;
+	triangle(geodesuka::engine& aEngine, geodesuka::core::gcl::context* aDeviceContext);
 
 private:
 

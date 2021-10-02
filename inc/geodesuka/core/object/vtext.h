@@ -6,19 +6,15 @@
 
 #include "../object.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace object {
+namespace geodesuka::core::object {
 
-			class vtext : public util::text, public object_t {
-			public:
+	class vtext : public util::text, public object_t {
+	public:
 
-				// Is both a child of text.h and object.h. Used for
-				// direct text rendering to 
-			};
+		// Is both a child of text.h and object.h. Used for
+		// direct text rendering to 
+	};
 
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_VTEXT_H

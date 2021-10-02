@@ -17,13 +17,20 @@
 * how to stream line 
 */
 
+#include <mutex>
+
 #include "./math.h"
+
+#include "gcl/context.h"
 
 #include "hid/keyboard.h"
 #include "hid/mouse.h"
 #include "hid/joystick.h"
 
 namespace geodesuka {
+
+	class engine;
+
 	namespace core {
 		namespace object {
 			/*
@@ -38,126 +45,131 @@ namespace geodesuka {
 			class camera2d;
 			class camera3d;
 		}
-
-		class object_t {
-		public:
-
-			virtual ~object_t() = default;
-
-			/*
-			* If input stream is being forwarded to a particular instance of an object,
-			* this method will be called depending on input recieved by the engine. This
-			* method is effectively a forwarded callback stream for the particular instance
-			* of the object.
-			*/
-			virtual math::integer input(const hid::keyboard& aKeyboard) = 0;
-
-			/*
-			* Basically a call back as well, but uses mouse info instead.
-			*/
-			virtual math::integer input(const hid::mouse& aMouse) = 0;
-
-			/*
-			* Not sure how I plan on doing this, might discard later.
-			*/
-			//virtual math::integer process_input(const hid::joystick& aJoystick)		{ return 0; }
-
-			/*
-			* The implementation of this method will allow the object to internally time evolve
-			* itself with a provided time step. It will be the responsibility of the engine
-			* to insure that the time step remains stable.
-			*/
-			virtual math::integer update(math::real aDeltaTime) = 0;
-
-			/*
-			* To insure that how an object is rendered is left up to the implementation
-			* of the derivative class of object.h. These will be the primary draw methods
-			* for object.h which must be implemented by the derivative class.
-			*/
-
-			/*
-			* As of right now, there is no method for direct draw of object to
-			* a system_display, maybe in further updates this will be extended.
-			* Does nothing as of right now. The framebuffer provided will not
-			* be displayed anywhere.
-			*/
-			virtual math::integer draw(object::system_display* aTargetSystemDisplay) = 0;
-
-			/*
-			* This method implementation must specify how the object in question
-			* will be rendered to an operating system_window.h. This will be
-			* mostly be used for GUI stuff since direct window draw.
-			*/
-			virtual math::integer draw(object::system_window* aTargetSystemWindow) = 0;
-
-			/*
-			* An implementation of this method must define how the object in question
-			* will be drawn to a virtual_window.h, which may exist in its own right
-			* as an object in 3d space.
-			*/
-			virtual math::integer draw(object::virtual_window* aTargetVirtualWindow) = 0;
-
-			/*
-			* This method will be called when the an object has been requested to be
-			* drawn to a camera2d object.
-			*/
-			virtual math::integer draw(object::camera2d* aTargetCamera2D) = 0;
-
-			/*
-			* Same as above, but with a 3D camera, will provide internals of
-			* camera so extended object can decide how it will be drawn.
-			*/
-			virtual math::integer draw(object::camera3d* aTargetCamera3D) = 0;
-
-			// ------------------------- Utilities ------------------------- //
-
-			virtual math::integer set_position(math::real3 aPosition);
-			math::real3 get_position() const;
-
-		protected:
-
-			//gcl::context* RenderingContext;
-			//gcl::context* ComputeContext;
-
-			//std::vector<gcl::context*> Context;
-			//gcl::context* Context;
-
-			math::real3 InputVelocity;
-			math::real3 InputForce;
-
-			/*
-			* Do not forget, position is in reference to a particular space
-			* the object is in. This is up to the user to decide how to
-			* interpret and use an objects position.
-			*/
-
-			math::real Mass;			// Kilogram		[kg]
-			math::real Time;			// Second 		[s]
-			math::real3 Position;		// Meter		[m]
-			math::real3 Momentum;		//				[kg*m/s]
-			math::real3 Force;			// Newton		[kg*m^2/s^2]
-			math::real3 DirectionX;		// Right		[Normalized]
-			math::real3 DirectionY;		// Up			[Normalized]
-			math::real3 DirectionZ;		// Forward		[Normalized]
-
-			//integer WorldID;				// Which world is this object in?
-			//integer LevelID;				// Which Level is this object in?
-			//integer StageID;				// Which Stage is this object in?
-			//integer ID;						// 
-
-			//boolean isStationary;			// Is this object stationary, or is it allowed to move?
-			//boolean isDeterministic;		// Does this object have predefined motion?
-			//boolean isAnimate;				// Is this object a living creature?
-			//boolean isPickup;				// Can an entitiy pick up this object?
-
-			//boolean isCollisionActive;
-			//boolean isGraphicalActive;
-
-			void init_parent();
-
-		};
-
 	}
+}
+
+
+namespace geodesuka::core {
+
+	class object_t {
+	public:
+
+		//friend class engine;
+
+		std::mutex Mutex;
+		//std::vector<gcl::command*> DrawCommand;
+
+		object_t(engine& aEngine, gcl::context* aContext);
+		~object_t();
+		//virtual ~object_t() = default;
+
+		/*
+		* If input stream is being forwarded to a particular instance of an object,
+		* this method will be called depending on input recieved by the engine. This
+		* method is effectively a forwarded callback stream for the particular instance
+		* of the object.
+		*/
+		virtual void input(const hid::keyboard& aKeyboard);
+
+		/*
+		* Basically a call back as well, but uses mouse info instead.
+		*/
+		virtual void input(const hid::mouse& aMouse);
+
+		/*
+		* The implementation of this method will allow the object to internally time evolve
+		* itself with a provided time step. It will be the responsibility of the engine
+		* to insure that the time step remains stable.
+		*/
+		virtual void update(math::real aDeltaTime);
+
+		/*
+		* To insure that how an object is rendered is left up to the implementation
+		* of the derivative class of object.h. These will be the primary draw methods
+		* for object.h which must be implemented by the derivative class.
+		*/
+
+		/*
+		* As of right now, there is no method for direct draw of object to
+		* a system_display, maybe in further updates this will be extended.
+		* Does nothing as of right now. The framebuffer provided will not
+		* be displayed anywhere.
+		*/
+		virtual void draw(object::system_display* aTargetSystemDisplay);
+
+		/*
+		* This method implementation must specify how the object in question
+		* will be rendered to an operating system_window.h. This will be
+		* mostly be used for GUI stuff since direct window draw.
+		*/
+		virtual void draw(object::system_window* aTargetSystemWindow);
+
+		/*
+		* An implementation of this method must define how the object in question
+		* will be drawn to a virtual_window.h, which may exist in its own right
+		* as an object in 3d space.
+		*/
+		virtual void draw(object::virtual_window* aTargetVirtualWindow);
+
+		/*
+		* This method will be called when the an object has been requested to be
+		* drawn to a camera2d object.
+		*/
+		virtual void draw(object::camera2d* aTargetCamera2D);
+
+		/*
+		* Same as above, but with a 3D camera, will provide internals of
+		* camera so extended object can decide how it will be drawn.
+		*/
+		virtual void draw(object::camera3d* aTargetCamera3D);
+
+		// ------------------------- Utilities ------------------------- //
+
+		virtual void set_position(math::real3 aPosition);
+		math::real3 get_position() const;
+
+	protected:
+
+		//gcl::context* RenderingContext;
+		//gcl::context* ComputeContext;
+
+		//std::vector<gcl::context*> Context;
+		//gcl::context* Context;
+
+		math::real3 InputVelocity;
+		math::real3 InputForce;
+
+		/*
+		* Do not forget, position is in reference to a particular space
+		* the object is in. This is up to the user to decide how to
+		* interpret and use an objects position.
+		*/
+
+		math::real Mass;			// Kilogram		[kg]
+		math::real Time;			// Second 		[s]
+		math::real3 Position;		// Meter		[m]
+		math::real3 Momentum;		//				[kg*m/s]
+		math::real3 Force;			// Newton		[kg*m^2/s^2]
+		math::real3 DirectionX;		// Right		[Normalized]
+		math::real3 DirectionY;		// Up			[Normalized]
+		math::real3 DirectionZ;		// Forward		[Normalized]
+
+		//integer WorldID;				// Which world is this object in?
+		//integer LevelID;				// Which Level is this object in?
+		//integer StageID;				// Which Stage is this object in?
+		//integer ID;						// 
+
+		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
+		//boolean isDeterministic;		// Does this object have predefined motion?
+		//boolean isAnimate;				// Is this object a living creature?
+		//boolean isPickup;				// Can an entitiy pick up this object?
+
+		//boolean isCollisionActive;
+		//boolean isGraphicalActive;
+
+	};
+
+
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_H

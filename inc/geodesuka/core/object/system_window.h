@@ -39,181 +39,147 @@
 // send their contents to multiple targets, it would be wise to stream the contents rather
 // than direct the draw operations to the intended targets.
 
-namespace geodesuka {
-	namespace core {
-		namespace object {
+namespace geodesuka::core::object {
 
-			class system_window : public window {
-			public:
+	class system_window : public window {
+	public:
 
-				/*
-				
-				Member variables of system_window
+		/*
 
-				--- object_t.h ---
+		Member variables of system_window
 
-				--- window.h ---
+		--- object_t.h ---
 
-				util::text Name;
-				math::float2 Size;
-				math::uint2 Resolution;
+		--- window.h ---
+
+		util::text Name;
+		math::float2 Size;
+		math::uint2 Resolution;
 
 
-				util::text Name;
-				math::real2 Size;	
-				math::natural2 Resolution;
-				struct prop Property;
-				gcl::framebuffer FrameBuffer;
+		util::text Name;
+		math::real2 Size;
+		math::natural2 Resolution;
+		struct prop Property;
+		gcl::framebuffer FrameBuffer;
 
-				--- system_window.h ---
+		--- system_window.h ---
 
-				bool Resizable;
-				bool Decorated;
-				bool UserFocused;
-				bool AutoMinimize;
-				bool Floating;
-				bool Maximized;
-				bool Minimized;
-				bool Visible;
-				bool ScaleToMonitor;
-				bool CenterCursor;
-				bool FocusOnShow;
-				bool Hovered;
+		bool Resizable;
+		bool Decorated;
+		bool UserFocused;
+		bool AutoMinimize;
+		bool Floating;
+		bool Maximized;
+		bool Minimized;
+		bool Visible;
+		bool ScaleToMonitor;
+		bool CenterCursor;
+		bool FocusOnShow;
+		bool Hovered;
 
-				int RefreshRate;
+		int RefreshRate;
 
-				*/
+		*/
 
-				enum present_mode {
-					IMMEDIATE	,
-					FIFO		,
-					MAILBOX
-				};
+		enum present_mode {
+			IMMEDIATE,
+			FIFO,
+			MAILBOX
+		};
 
-				struct create_info {
-					system_display* ParentDisplay;
-					gcl::framebuffer::prop FramebufferProp;
-					prop WindowProp;
-					math::real3 Position;
-					math::real2 Size;
-					util::text Title;
-				};
+		struct create_info {
+			system_display* ParentDisplay;
+			gcl::framebuffer::prop FramebufferProp;
+			prop WindowProp;
+			math::real3 Position;
+			math::real2 Size;
+			util::text Title;
+		};
 
-				// Required Extensions for the class
-				static const std::vector<const char*> RequiredExtension;
+		// Required Extensions for the class
+		static const std::vector<const char*> RequiredExtension;
 
-				VkResult ErrorCode;
+		VkResult ErrorCode;
 
-				//friend class system_display;
+		//friend class system_display;
 
-				math::boolean CloseMe;
+		math::boolean CloseMe;
 
-				system_window(gcl::context *aContext);
+		// Clears entire window out.
+		~system_window();
 
-				//// Provide a device_context to create an associated rendering context with it.
-				//system_window(gcl::context* aDeviceContext, system_display* aDisplay, gcl::frame_buffer::prop aFrameBufferProp, prop aWindowProp,
-				//	math::real3 aPosition, math::real2 aSize, util::text aTitle);
+		// Mandatory implementation required by window.h
+		virtual void draw(object_t* aObject) override;
 
-				// Opens window
-				system_window(const system_window* aWindow);
-
-				// Converts virtual window into a system window.
-				system_window(const virtual_window* aWindow);
-
-				// Clears entire window out.
-				~system_window();
-
-				// overriden fron object.h
-				// Should be called if input stream is directed to it
-				virtual math::integer input(const hid::keyboard& aKeyboard)				override;
-				virtual math::integer input(const hid::mouse& aMouse)					override;
-				//virtual math::integer process_input(const hid::joystick& Joystick)		override;
-
-				// Update the object in time, requires implementation in child
-				virtual math::integer update(math::real aDeltaTime)						override;
-
-				// Target specific methods for windows being drawn to.
-				virtual math::integer draw(system_display* aTargetSystemDisplay)		override;
-				virtual math::integer draw(system_window* aTargetSystemWindow)			override;
-				virtual math::integer draw(virtual_window* aTargetVirtualWindow)		override;
-
-				// Does Nothing
-				virtual math::integer draw(camera2d* aTargetCamera2D)					override;
-				virtual math::integer draw(camera3d* aTargetCamera3D)					override;
-
-				// Mandatory implementation required by window.h
-				virtual math::integer draw(object_t* aObject)							override;
-
-				virtual math::integer set_position(math::real3 aPosition)				override;
-				virtual math::integer set_size(math::real2 aSize)						override; // Do not rapidly change size or lag will happen.
-				virtual math::integer set_resolution(math::natural2 aResolution)		override;
+		virtual void set_position(math::real3 aPosition) override;
+		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
+		virtual void set_resolution(math::natural2 aResolution) override;
 
 
 
-				math::integer set_parent_display(system_display* aParentDisplay);
-				//system_display* get_parent_display() { return this->ParentDisplay; }
-				math::integer set_input_stream_target(object_t* aTargetObject);
+		void set_parent_display(system_display* aParentDisplay);
+		//system_display* get_parent_display() { return this->ParentDisplay; }
+		void set_input_stream_target(object_t* aTargetObject);
 
-			private:
+	private:
 
 
-				// The target object where polled input will be streamed to.
-				object_t* InputStreamTarget;
+		// The target object where polled input will be streamed to.
+		object_t* InputStreamTarget;
 
-				math::integer2 PositionSC;
-				//math::integer2 SizeSC;
+		math::integer2 PositionSC;
+		//math::integer2 SizeSC;
 
-				system_display* ParentDisplay;			// Parent Display of this system_window.
-				gcl::context* Context;			// Parent Context of this window.
+		system_display* ParentDisplay;			// Parent Display of this system_window.
+		gcl::context* Context;			// Parent Context of this window.
 
-				VkSurfaceCapabilitiesKHR SurfaceCapabilities;
-				VkSwapchainCreateInfoKHR CreateInfo{};
+		VkSurfaceCapabilitiesKHR SurfaceCapabilities;
+		VkSwapchainCreateInfoKHR CreateInfo{};
 
-				math::boolean isValid;					// Is instance valid?
-				GLFWwindow* Handle;						// GLFW OS window handle abstraction.
-				VkSurfaceKHR Surface;					// Vulkan window handle.
-				VkSwapchainKHR Swapchain;				// Actual swapchain handle
-				std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
+		math::boolean isValid;					// Is instance valid?
+		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
+		VkSurfaceKHR Surface;					// Vulkan window handle.
+		VkSwapchainKHR Swapchain;				// Actual swapchain handle
+		std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
 
-				//bool pmload_hints();
-				bool pmset_callbacks();
+		//bool pmload_hints();
+		bool pmset_callbacks();
 
-				// Internal Utils, Physical coordinates to Screen coordinates
-				math::integer2 phys2scrn(math::real2 R);
-				math::real2 scrn2phys(math::integer2 R);
+		// Internal Utils, Physical coordinates to Screen coordinates
+		math::integer2 phys2scrn(math::real2 R);
+		math::real2 scrn2phys(math::integer2 R);
 
-				// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
-				
-				// Window Callbacks
-				static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);
-				static void size_callback(GLFWwindow* ContextHandle, int SizeX, int SizeY);
-				static void close_callback(GLFWwindow* ContextHandle);
-				static void refresh_callback(GLFWwindow* ContextHandle);
-				static void focus_callback(GLFWwindow* ContextHandle, int Focused);
-				static void iconify_callback(GLFWwindow* ContextHandle, int Iconified);
-				static void maximize_callback(GLFWwindow* ContextHandle, int Maximized);
-				static void content_scale_callback(GLFWwindow* ContextHandle, float XScale, float YScale);
+		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 
-				// Framebuffer Callbacks
-				static void framebuffer_size_callback(GLFWwindow* ContextHandle, int FrameSizeX, int FrameSizeY);
+		// Window Callbacks
+		static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);
+		static void size_callback(GLFWwindow* ContextHandle, int SizeX, int SizeY);
+		static void close_callback(GLFWwindow* ContextHandle);
+		static void refresh_callback(GLFWwindow* ContextHandle);
+		static void focus_callback(GLFWwindow* ContextHandle, int Focused);
+		static void iconify_callback(GLFWwindow* ContextHandle, int Iconified);
+		static void maximize_callback(GLFWwindow* ContextHandle, int Maximized);
+		static void content_scale_callback(GLFWwindow* ContextHandle, float XScale, float YScale);
 
-				// Cursor Callback
-				static void mouse_button_callback(GLFWwindow* ContextHandle, int Button, int Action, int Mods);
-				static void cursor_position_callback(GLFWwindow* ContextHandle, double PosX, double PosY);
-				static void cursor_enter_callback(GLFWwindow* ContextHandle, int Entered);
-				static void scroll_callback(GLFWwindow* ContextHandle, double OffsetX, double OffsetY);
+		// Framebuffer Callbacks
+		static void framebuffer_size_callback(GLFWwindow* ContextHandle, int FrameSizeX, int FrameSizeY);
 
-				// Keyboard Callback
-				static void key_callback(GLFWwindow* ContextHandle, int Key, int Scancode, int Action, int Mods);
-				static void character_callback(GLFWwindow* ContextHandle, unsigned int Codepoint);
+		// Cursor Callback
+		static void mouse_button_callback(GLFWwindow* ContextHandle, int Button, int Action, int Mods);
+		static void cursor_position_callback(GLFWwindow* ContextHandle, double PosX, double PosY);
+		static void cursor_enter_callback(GLFWwindow* ContextHandle, int Entered);
+		static void scroll_callback(GLFWwindow* ContextHandle, double OffsetX, double OffsetY);
 
-				// File drop
-				static void file_drop_callback(GLFWwindow* ContextHandle, int PathCount, const char** Path);
+		// Keyboard Callback
+		static void key_callback(GLFWwindow* ContextHandle, int Key, int Scancode, int Action, int Mods);
+		static void character_callback(GLFWwindow* ContextHandle, unsigned int Codepoint);
 
-			};
+		// File drop
+		static void file_drop_callback(GLFWwindow* ContextHandle, int PathCount, const char** Path);
 
-		}
-	}
+	};
+
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H

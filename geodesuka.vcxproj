@@ -96,17 +96,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;glfw.lib;GenericCodeGen.lib;glslang.lib;HLSL.lib;MachineIndependent.lib;OGLCompiler.lib;OSDependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-link.lib;SPIRV-Tools-opt.lib;SPIRV-Tools-reduce.lib;SPIRV-Tools-shared.lib;SPVRemapper.lib;VkLayer_utils.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,9 +117,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -128,8 +128,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;glfw.lib;GenericCodeGen.lib;glslang.lib;HLSL.lib;MachineIndependent.lib;OGLCompiler.lib;OSDependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-link.lib;SPIRV-Tools-opt.lib;SPIRV-Tools-reduce.lib;SPIRV-Tools-shared.lib;SPVRemapper.lib;VkLayer_utils.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,17 +138,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;glfw.lib;GenericCodeGen.lib;glslang.lib;HLSL.lib;MachineIndependent.lib;OGLCompiler.lib;OSDependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-link.lib;SPIRV-Tools-opt.lib;SPIRV-Tools-reduce.lib;SPIRV-Tools-shared.lib;SPVRemapper.lib;VkLayer_utils.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,9 +159,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -170,14 +170,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;glfw.lib;GenericCodeGen.lib;glslang.lib;HLSL.lib;MachineIndependent.lib;OGLCompiler.lib;OSDependent.lib;SPIRV.lib;SPIRV-Tools.lib;SPIRV-Tools-link.lib;SPIRV-Tools-opt.lib;SPIRV-Tools-reduce.lib;SPIRV-Tools-shared.lib;SPVRemapper.lib;VkLayer_utils.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\asset.cpp" />
-    <ClCompile Include="src\asset_manager.cpp" />
     <ClCompile Include="src\buffer.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\camera2d.cpp" />
@@ -199,6 +197,7 @@
     <ClCompile Include="src\isupport.cpp" />
     <ClCompile Include="src\joystick.cpp" />
     <ClCompile Include="src\keyboard.cpp" />
+    <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\matrix_multiply.cpp" />
     <ClCompile Include="src\mouse.cpp" />
     <ClCompile Include="src\natural2.cpp" />
@@ -300,6 +299,7 @@
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\util\log.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />

@@ -1382,7 +1382,7 @@ namespace geodesuka {
 			//	return 0;
 			//}
 
-#ifdef MODE_DEBUG
+#ifndef MODE_DEBUG
 			void unit_test_variable() {
 
 				type particle(type::id::STRUCT, "particle");

@@ -10,7 +10,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(context* aContext, usage aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+			buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
 				VkResult Result = VK_SUCCESS;
 
 				this->Context = aContext;
@@ -19,33 +19,60 @@ namespace geodesuka {
 				this->CreateInfo.pNext						= NULL;
 				this->CreateInfo.flags						= 0; // Ignore.
 				this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
-				this->CreateInfo.usage						= aUsage;
+				this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
 				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 				this->CreateInfo.queueFamilyIndexCount		= 0;
 				this->CreateInfo.pQueueFamilyIndices		= NULL;
 
-				this->Handle			= VK_NULL_HANDLE;
-				this->MemoryHandle		= VK_NULL_HANDLE;
+				this->Handle								= VK_NULL_HANDLE;
+				this->MemoryHandle							= VK_NULL_HANDLE;
 
-				this->Count				= aCount;
-				this->MemoryLayout		= aMemoryLayout;
+				this->Count									= aCount;
+				this->MemoryLayout							= aMemoryLayout;
 
 				// Create Device Buffer Object.
 				Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 
+				// Allocates Memory Handle
+				if (Result == VkResult::VK_SUCCESS) {
+					// Gathers memory requirements of the created buffer.
+					VkMemoryRequirements MemReq;
+					vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
 
-				this->AllocateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				this->AllocateInfo.pNext				= NULL;
-				this->AllocateInfo.allocationSize		;
-				this->AllocateInfo.memoryTypeIndex		;
+					// Gathers memory properties of the device.
+					VkPhysicalDeviceMemoryProperties MemProp;
+					vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
 
-				// Allocate Device Memory.
-				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+					this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+					this->AllocateInfo.pNext = NULL;
+					this->AllocateInfo.allocationSize = MemReq.size;
+					for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
+						if ((MemReq.memoryTypeBits & (1 << i) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
+							this->AllocateInfo.memoryTypeIndex = i;
+							break;
+						}
+					}
 
+					// Allocate Device Memory.
+					Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+				}
+
+				// Bind memory to buffer
+				if (Result == VkResult::VK_SUCCESS) {
+					Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+				}
+
+				// Object now complete
+				if (Result == VkResult::VK_SUCCESS) {
+
+				}
 			}
 
 			buffer::~buffer() {
-				
+				vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+				this->Handle = VK_NULL_HANDLE;
+				vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+				this->MemoryHandle = VK_NULL_HANDLE;
 			}
 
 		}

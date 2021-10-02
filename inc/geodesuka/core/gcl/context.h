@@ -6,56 +6,49 @@
 
 #include "device.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace gcl {
+namespace geodesuka::core::gcl {
 
-			//class buffer;
-			//class shader;
-			//class texture;
-			//class renderpass;
-			//class framebuffer;
-			//class pipeline;
+	//class buffer;
+	//class shader;
+	//class texture;
+	//class renderpass;
+	//class framebuffer;
+	//class pipeline;
 
-			class context {
-			public:
+	class context {
+	public:
 
 
-				context(device* aDevice, uint32_t aExtensionCount, const char **aExtensionList);
-				~context();
+		context(device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
+		~context();
 
-				
 
-				// ----- Query ----- //
 
-				//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
+		// ----- Query ----- //
 
-				// ----- Handles ----- //
+		//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
 
-				VkInstance inst();
-				device* parent();
-				VkDevice handle();
+		// ----- Handles ----- //
 
-				// Parse error into string.
-				static const char* get_er_str(VkResult Res);
+		VkInstance inst();
+		device* parent();
+		VkDevice handle();
 
-			private:
+	private:
 
-				uint32_t QueueCreateInfoCount;
-				VkDeviceQueueCreateInfo* QueueCreateInfo;
-				float** QueueFamilyPriority;
-				VkPhysicalDeviceFeatures EnabledFeatures{};
+		uint32_t QueueCreateInfoCount;
+		VkDeviceQueueCreateInfo* QueueCreateInfo;
+		float** QueueFamilyPriority;
+		VkPhysicalDeviceFeatures EnabledFeatures{};
 
-				// Stores queues and stuff.
-				VkDeviceCreateInfo CreationInfo{};
+		// Stores queues and stuff.
+		VkDeviceCreateInfo CreationInfo{};
 
-				device* ParentDevice;
-				VkDevice Handle;
+		device* ParentDevice;
+		VkDevice Handle;
 
-			};
+	};
 
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_GCL_CONTEXT_H
