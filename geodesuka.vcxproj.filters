@@ -109,9 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\engine.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="src\buffer.cpp">
       <Filter>src\core\gcl</Filter>
@@ -271,6 +268,9 @@
     </ClCompile>
     <ClCompile Include="src\stage.cpp">
       <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

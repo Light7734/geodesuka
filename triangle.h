@@ -8,7 +8,7 @@ class triangle : public geodesuka::core::object_t {
 public:
 
 	//triangle(geodesuka::engine* aEngine);
-	triangle(geodesuka::engine& aEngine, geodesuka::core::gcl::context* aContext);
+	triangle(geodesuka::engine *aEngine, geodesuka::core::gcl::context* aContext);
 
 private:
 

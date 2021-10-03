@@ -163,7 +163,7 @@ namespace geodesuka::core {
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
 
-		object_t(engine &aEngine, gcl::context *aContext);
+		object_t(engine *aEngine, gcl::context *aContext);
 
 	};
 

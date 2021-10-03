@@ -109,6 +109,8 @@ namespace geodesuka::core::object {
 		// Clears entire window out.
 		~system_window();
 
+		
+
 		// Mandatory implementation required by window.h
 		virtual void draw(object_t* aObject) override;
 

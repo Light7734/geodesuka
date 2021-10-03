@@ -47,7 +47,7 @@ namespace geodesuka::core::object {
 		return false;
 	}
 
-	window::window(engine& aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
+	window::window(engine *aEngine, gcl::context *aContext) : object_t(aEngine, aContext) {
 
 	}
 

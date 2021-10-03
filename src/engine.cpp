@@ -115,7 +115,7 @@ namespace geodesuka {
 			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
 				// Get System displays.
-				core::object::system_display* tmpDisplay = new core::object::system_display(*this, nullptr, glfwGetPrimaryMonitor());
+				core::object::system_display* tmpDisplay = new core::object::system_display(this, nullptr, glfwGetPrimaryMonitor());
 				this->PrimaryDisplay = tmpDisplay;
 				this->Display.push_back(tmpDisplay);
 				this->Object.push_back(tmpDisplay);
@@ -124,7 +124,7 @@ namespace geodesuka {
 				for (int i = 0; i < lCount; i++) {
 					if (PrimaryDisplay->Handle != lMon[i]) {
 						// Excludes already cached primary monitor.
-						tmpDisplay = new core::object::system_display(*this, nullptr, lMon[i]);
+						tmpDisplay = new core::object::system_display(this, nullptr, lMon[i]);
 						this->Display.push_back(tmpDisplay);
 						this->Object.push_back(tmpDisplay);
 					}
@@ -202,6 +202,7 @@ namespace geodesuka {
 		//	}
 		//	std::cout << std::endl;
 		//}
+
 		this->State = state::ENGINE_ACTIVE_STATE;
 	}
 

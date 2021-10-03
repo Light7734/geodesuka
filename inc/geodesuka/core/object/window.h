@@ -108,7 +108,7 @@ namespace geodesuka::core::object {
 		math::natural2 Resolution;		// [pixels]
 		struct prop Property;
 
-		window(engine& aEngine, gcl::context* aContext);
+		window(engine *aEngine, gcl::context* aContext);
 
 	};
 

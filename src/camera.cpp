@@ -19,6 +19,19 @@ using namespace geodesuka::core::math;
 namespace geodesuka {
 	namespace core {
 		namespace object {
+
+			camera::~camera() {
+
+			}
+
+			void camera::draw(object_t* aObject) {
+
+			}
+
+			camera::camera(engine* aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
+
+			}
+
 			/*
 			camera::camera() {
 

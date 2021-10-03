@@ -6,7 +6,7 @@
 
 namespace geodesuka::core::object {
 
-	system_display::system_display(engine& aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
+	system_display::system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
 		this->Property = window::prop();
 
 		this->Handle = aMonitor;

@@ -174,7 +174,6 @@ namespace geodesuka {
 		std::vector<core::io::file*> File;
 
 		// All objects are managed by engine regardless of stage.
-		//
 		std::vector<core::object_t*> Object;
 
 
