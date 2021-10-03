@@ -290,7 +290,6 @@
     <ClInclude Include="inc\geodesuka\core\math\vectors\real2.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h" />
-    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h" />
     <ClInclude Include="inc\geodesuka\core\object.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
