@@ -99,15 +99,16 @@ namespace geodesuka::core::object {
 
 		// Will forward input stream to target object. Can be set to null if
 		// no forwarding is chosen.
-		//virtual math::integer forward_input_stream_to(object* aObject);
+		// virtual math::integer forward_input_stream_to(object* aObject);
 
-		// Uncomment when done debugging.
 	protected:
 
 		util::text Name;
 		math::real2 Size;				// [m]
 		math::natural2 Resolution;		// [pixels]
 		struct prop Property;
+
+		window(engine& aEngine, gcl::context* aContext);
 
 	};
 

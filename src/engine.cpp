@@ -40,7 +40,7 @@ namespace geodesuka {
 	* and loaded assets.
 	*/
 	engine::engine(int argc, char* argv[]) {
-
+		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
 		this->isGLFWReady = false;
 		this->isVulkanReady = false;
@@ -115,7 +115,7 @@ namespace geodesuka {
 			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
 				// Get System displays.
-				core::object::system_display* tmpDisplay = new core::object::system_display(glfwGetPrimaryMonitor());
+				core::object::system_display* tmpDisplay = new core::object::system_display(*this, nullptr, glfwGetPrimaryMonitor());
 				this->PrimaryDisplay = tmpDisplay;
 				this->Display.push_back(tmpDisplay);
 				this->Object.push_back(tmpDisplay);
@@ -124,7 +124,7 @@ namespace geodesuka {
 				for (int i = 0; i < lCount; i++) {
 					if (PrimaryDisplay->Handle != lMon[i]) {
 						// Excludes already cached primary monitor.
-						tmpDisplay = new core::object::system_display(lMon[i]);
+						tmpDisplay = new core::object::system_display(*this, nullptr, lMon[i]);
 						this->Display.push_back(tmpDisplay);
 						this->Object.push_back(tmpDisplay);
 					}
@@ -202,7 +202,7 @@ namespace geodesuka {
 		//	}
 		//	std::cout << std::endl;
 		//}
-
+		this->State = state::ENGINE_ACTIVE_STATE;
 	}
 
 	/*
@@ -210,6 +210,7 @@ namespace geodesuka {
 	* Also must shut down backend API. 
 	*/
 	engine::~engine() {
+		this->State = state::ENGINE_DESTRUCTION_STATE;
 		// Begin termination, stop threads.
 		this->Mutex.lock();
 		this->Shutdown = true;
@@ -327,25 +328,14 @@ namespace geodesuka {
 	void engine::trender() {
 		bool ExitCondition = false;
 		double t1, t2;
-		double wt, ht;
-		double t, dt;
-		double ts = 1.0 / 2.0;
-		dt = 0.0;
+		double dt;
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// Issue all draw calls
+			// Issue all draw calls			
 
 			t2 = this->get_time();
-			wt = t2 - t1;
-			if (wt < ts) {
-				ht = ts - wt;
-				this->tsleep(ht);
-			}
-			else {
-				ht = 0.0;
-			}
-			dt = wt + ht;
+			dt = t2 - t1;
 			this->Mutex.lock();
 			ExitCondition = this->Shutdown;
 			this->Mutex.unlock();

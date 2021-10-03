@@ -105,17 +105,20 @@ namespace geodesuka {
 	class engine {
 	public:
 
+		enum state {
+			ENGINE_CREATION_STATE,			// Engine instance is being constructed.
+			ENGINE_ACTIVE_STATE,			// Engine instance is active, and ready to be used.
+			ENGINE_DESTRUCTION_STATE		// Engine is currently in destruction phase.
+		};
+
 		struct version {
 			int Major;
 			int Minor;
 			int Patch;
 		};
 
+		// Objects can interect with engine internals.
 		friend class core::object_t;
-
-		//friend class core::object::system_display;
-		friend class core::object::system_window;
-
 
 		engine(int argc, char* argv[]);
 		~engine();
@@ -132,13 +135,15 @@ namespace geodesuka {
 
 	private:
 
+		state State;
+
 		std::vector<const char*> RequiredExtension;
 
 		// Engine Mutex
 		std::mutex Mutex;
 
 		// Maintain versioning system.
-		const version Version = { 0, 0, 13 };
+		const version Version = { 0, 0, 14 };
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;

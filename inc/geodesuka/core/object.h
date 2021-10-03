@@ -59,7 +59,8 @@ namespace geodesuka::core {
 		std::mutex Mutex;
 		//std::vector<gcl::command*> DrawCommand;
 		
-		virtual ~object_t() = default;
+		~object_t();
+		//virtual ~object_t() = default;
 
 		/*
 		* If input stream is being forwarded to a particular instance of an object,
@@ -161,6 +162,8 @@ namespace geodesuka::core {
 
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
+
+		object_t(engine &aEngine, gcl::context *aContext);
 
 	};
 

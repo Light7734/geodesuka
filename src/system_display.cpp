@@ -2,9 +2,11 @@
 
 #include <geodesuka/core/object.h>
 
+//#include <geodesuka/engine.h>
+
 namespace geodesuka::core::object {
 
-	system_display::system_display(/*engine& aEngine, gcl::context* aDeviceContext,*/ GLFWmonitor* aMonitor) {
+	system_display::system_display(engine& aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
 		this->Property = window::prop();
 
 		this->Handle = aMonitor;

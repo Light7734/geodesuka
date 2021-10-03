@@ -4,6 +4,19 @@
 
 namespace geodesuka::core {
 
+	object_t::~object_t() {
+		// Clear everything, then remove.
+
+		// If parent engine exists and is not in desctruction state, clear from engine.
+		if ((this->ParentEngine != nullptr) && (this->ParentEngine->State != engine::state::ENGINE_DESTRUCTION_STATE)) {
+			for (size_t i = 0; i < this->ParentEngine->Object.size(); i++) {
+				if (this == this->ParentEngine->Object[i]) {
+					this->ParentEngine->Object.erase(this->ParentEngine->Object.begin() + i);
+				}
+			}
+		}
+	}
+
 	void object_t::input(const hid::keyboard& aKeyboard) {
 
 	}
@@ -50,6 +63,10 @@ namespace geodesuka::core {
 
 	math::real3 object_t::get_position() const {
 		return this->Position;
+	}
+
+	object_t::object_t(engine& aEngine, gcl::context* aContext) {
+
 	}
 
 }
