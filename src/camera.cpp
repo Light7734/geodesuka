@@ -24,9 +24,7 @@ namespace geodesuka {
 
 			}
 
-			void camera::draw(object_t* aObject) {
-
-			}
+			//void camera::draw(object_t* aObject) {}
 
 			camera::camera(engine* aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
 

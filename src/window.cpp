@@ -15,19 +15,19 @@
 namespace geodesuka::core::object {
 
 	window::prop::prop() {
-		this->Resizable = GLFW_TRUE;
-		this->Decorated = GLFW_TRUE;
-		this->UserFocused = GLFW_TRUE;
-		this->AutoMinimize = GLFW_TRUE;
-		this->Floating = GLFW_FALSE;
-		this->Maximized = GLFW_FALSE;
-		this->Minimized = GLFW_FALSE;
-		this->Visible = GLFW_TRUE;
-		this->ScaleToMonitor = GLFW_FALSE;
-		this->CenterCursor = GLFW_TRUE;
-		this->FocusOnShow = GLFW_TRUE;
-		this->Hovered = GLFW_TRUE;
-		this->RefreshRate = GLFW_DONT_CARE;
+		this->Resizable			= GLFW_TRUE;
+		this->Decorated			= GLFW_TRUE;
+		this->UserFocused		= GLFW_TRUE;
+		this->AutoMinimize		= GLFW_TRUE;
+		this->Floating			= GLFW_FALSE;
+		this->Maximized			= GLFW_FALSE;
+		this->Minimized			= GLFW_FALSE;
+		this->Visible			= GLFW_TRUE;
+		this->ScaleToMonitor	= GLFW_FALSE;
+		this->CenterCursor		= GLFW_TRUE;
+		this->FocusOnShow		= GLFW_TRUE;
+		this->Hovered			= GLFW_TRUE;
+		this->RefreshRate		= GLFW_DONT_CARE;
 	}
 
 	void window::set_title(util::text aTitle) {
