@@ -11,7 +11,7 @@ namespace geodesuka::core::object {
 
 		this->Handle = aMonitor;
 
-		this->Name = glfwGetMonitorName(this->Handle);
+		this->Title = glfwGetMonitorName(this->Handle);
 		
 		glfwGetMonitorPos(this->Handle, &this->PositionSC.x, &this->PositionSC.y);
 		// Loads and converts to meters.

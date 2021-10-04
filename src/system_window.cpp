@@ -22,16 +22,41 @@ namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+	system_window::system_window(engine *aEngine, gcl::context* aContext) : window(aEngine, aContext) {
+		std::cout << "System Window Created" << std::endl;
+
+		//this->SizeSC = this->phys2scrn(this->Size);
+		this->Handle = glfwCreateWindow(640, 480, "", NULL, NULL);
+	}
+
 	system_window::~system_window() {
 		// Destroys 
 		if (this->isValid) {
 			// Destroys swapchain.
-			vkDestroySwapchainKHR(this->Context->handle(), this->Swapchain, NULL);
+			vkDestroySwapchainKHR(this->ParentContext->handle(), this->Swapchain, NULL);
 			// Destroys suface.
-			vkDestroySurfaceKHR(this->Context->inst(), this->Surface, NULL);
+			vkDestroySurfaceKHR(this->ParentContext->inst(), this->Surface, NULL);
 			// Destroys window handle.
 			glfwDestroyWindow(this->Handle);
 		}
+		std::cout << "System Window Destroyed" << std::endl;
+	}
+
+	void system_window::update(double aDeltaTime) {
+		this->Mutex.lock();
+		this->Time += aDeltaTime;
+
+		this->Mutex.unlock();
+	}
+
+	void system_window::draw(system_display* aTargetDisplay) {
+		// This method is responsible for rendering window to display.
+		this->Mutex.lock();
+
+		if (this->Property.RefreshRate) {
+
+		}
+		this->Mutex.unlock();
 	}
 
 	void system_window::draw(object_t* aObject) {
@@ -190,7 +215,7 @@ namespace geodesuka::core::object {
 
 	void system_window::close_callback(GLFWwindow* ContextHandle) {
 		system_window* Win = (system_window*)glfwGetWindowUserPointer(ContextHandle);
-		std::cout << Win->Name.str() << " wants to fucking close" << std::endl;
+		std::cout << Win->Title.str() << " wants to fucking close" << std::endl;
 		Win->CloseMe = true;
 	}
 

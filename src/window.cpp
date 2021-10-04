@@ -30,6 +30,11 @@ namespace geodesuka::core::object {
 		this->RefreshRate		= GLFW_DONT_CARE;
 	}
 
+	window::~window() {
+
+		std::cout << "Window Destroyed" << std::endl;
+	}
+
 	void window::set_title(util::text aTitle) {
 
 	}
@@ -48,7 +53,13 @@ namespace geodesuka::core::object {
 	}
 
 	window::window(engine *aEngine, gcl::context *aContext) : object_t(aEngine, aContext) {
+		// Perhaps setup backend frame.
+		this->Title = "";
+		//this->Resolution = math::natural2(0.0, 0.0);
+		this->Size = math::real2(0.0, 0.0);
+		this->Property = prop();
 
+		std::cout << "Window Created" << std::endl;
 	}
 
 }

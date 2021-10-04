@@ -298,8 +298,8 @@ namespace geodesuka {
 		double ts = 1.0 / 2.0;
 		dt = 0.0;
 		while (!ExitCondition) {
+			this->Mutex.lock();
 			t1 = this->get_time();
-
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
@@ -307,6 +307,7 @@ namespace geodesuka {
 			//std::cout << "Loop Time:\t" << dt << std::endl;
 
 			t2 = this->get_time();
+			this->Mutex.unlock();
 			wt = t2 - t1;
 			if (wt < ts) {
 				ht = ts - wt;
@@ -333,7 +334,7 @@ namespace geodesuka {
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// Issue all draw calls			
+			// Issue all draw calls
 
 			t2 = this->get_time();
 			dt = t2 - t1;

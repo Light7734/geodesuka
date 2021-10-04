@@ -89,6 +89,8 @@ namespace geodesuka::core::object {
 			prop();
 		};
 
+		~window();
+
 		// This is to discern what type of target is being drawn to, referenced by object.h
 		virtual void draw(object_t* aObject) {};
 
@@ -103,7 +105,7 @@ namespace geodesuka::core::object {
 
 	protected:
 
-		util::text Name;
+		util::text Title;
 		math::real2 Size;				// [m]
 		math::natural2 Resolution;		// [pixels]
 		struct prop Property;

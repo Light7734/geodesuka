@@ -40,11 +40,13 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//object_t *Triangle = new triangle(Engine, Context);
+	object_t *ObjectList[3];
+	ObjectList[0] = new system_window(&Engine, Context);
+	ObjectList[1] = new system_window(&Engine, Context);
+	ObjectList[2] = new system_window(&Engine, Context);
 
+	delete ObjectList[1];
 
-
-	//delete Triangle;
 	delete Context;
 	return 0;
 }

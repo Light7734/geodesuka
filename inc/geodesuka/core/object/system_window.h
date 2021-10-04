@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
+#include <vector>
+
 #include "../math.h"
 
 #include "../gcl/device.h"
@@ -44,44 +46,6 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
-		/*
-
-		Member variables of system_window
-
-		--- object_t.h ---
-
-		--- window.h ---
-
-		util::text Name;
-		math::float2 Size;
-		math::uint2 Resolution;
-
-
-		util::text Name;
-		math::real2 Size;
-		math::natural2 Resolution;
-		struct prop Property;
-		gcl::framebuffer FrameBuffer;
-
-		--- system_window.h ---
-
-		bool Resizable;
-		bool Decorated;
-		bool UserFocused;
-		bool AutoMinimize;
-		bool Floating;
-		bool Maximized;
-		bool Minimized;
-		bool Visible;
-		bool ScaleToMonitor;
-		bool CenterCursor;
-		bool FocusOnShow;
-		bool Hovered;
-
-		int RefreshRate;
-
-		*/
-
 		enum present_mode {
 			IMMEDIATE,
 			FIFO,
@@ -106,10 +70,16 @@ namespace geodesuka::core::object {
 
 		math::boolean CloseMe;
 
+
+		system_window(engine *aEngine, gcl::context* aContext);
+
 		// Clears entire window out.
 		~system_window();
 
+
+		virtual void update(double aDeltaTime);
 		
+		virtual void draw(system_display* aTargetDisplay) override;
 
 		// Mandatory implementation required by window.h
 		virtual void draw(object_t* aObject) override;
@@ -126,7 +96,6 @@ namespace geodesuka::core::object {
 
 	private:
 
-
 		// The target object where polled input will be streamed to.
 		object_t* InputStreamTarget;
 
@@ -134,9 +103,8 @@ namespace geodesuka::core::object {
 		//math::integer2 SizeSC;
 
 		system_display* ParentDisplay;			// Parent Display of this system_window.
-		gcl::context* Context;			// Parent Context of this window.
 
-		VkSurfaceCapabilitiesKHR SurfaceCapabilities;
+		VkSurfaceCapabilitiesKHR SurfaceCapabilities{};
 		VkSwapchainCreateInfoKHR CreateInfo{};
 
 		math::boolean isValid;					// Is instance valid?

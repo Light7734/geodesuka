@@ -19,6 +19,7 @@ namespace geodesuka::core {
 			}
 			this->ParentEngine->Mutex.unlock();
 		}
+		std::cout << "Object Destroyed" << std::endl;
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {
@@ -29,7 +30,7 @@ namespace geodesuka::core {
 
 	}
 
-	void object_t::update(math::real aDt) {
+	void object_t::update(double aDt) {
 		//tex:
 		// Update equations for generic object type with applied forces.
 		// $$ d\vec{p} = \big( \vec{F}_{\text{applied}} + \vec{F}_{user} \big) dt $$ 
@@ -92,6 +93,14 @@ namespace geodesuka::core {
 		this->DirectionX = math::real3(0.0, 0.0, 0.0);
 		this->DirectionY = math::real3(0.0, 0.0, 0.0);
 		this->DirectionZ = math::real3(0.0, 0.0, 0.0);
+
+		std::cout << "Object Created" << std::endl;
+	}
+
+	void object_t::ensubmit() {
+		this->ParentEngine->Mutex.lock();
+		this->ParentEngine->Object.push_back(this);
+		this->ParentEngine->Mutex.unlock();
 	}
 
 }
