@@ -39,6 +39,7 @@ namespace geodesuka {
 	* needed for context creation. Will manage all created objects
 	* and loaded assets.
 	*/
+
 	engine::engine(int argc, char* argv[]) {
 		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
@@ -258,6 +259,10 @@ namespace geodesuka {
 	core::gcl::device** engine::get_device_list(size_t* ListSize) {
 		*ListSize = this->DeviceList.size();
 		return this->DeviceList.data();
+	}
+
+	VkInstance engine::handle() {
+		return this->Instance;
 	}
 
 	bool engine::is_ready() {

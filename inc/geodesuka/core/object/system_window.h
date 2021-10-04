@@ -46,19 +46,32 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
-		enum present_mode {
+		enum mode {
 			IMMEDIATE,
+			MAILBOX,
 			FIFO,
-			MAILBOX
+			FIFO_RELAXED
 		};
 
 		struct create_info {
-			system_display* ParentDisplay;
-			gcl::framebuffer::prop FramebufferProp;
+			// Parent Display
+			system_display* Display;
+
+			// Window properties
 			prop WindowProp;
 			math::real3 Position;
 			math::real2 Size;
 			util::text Title;
+
+			// Framebuffer
+			int ImageCount;
+			int Format;
+			int ColorSpace;
+			int Usage;
+
+			int CompositeAlpha;
+			int PresentationMode;
+			bool Clipped;
 		};
 
 		// Required Extensions for the class
@@ -71,7 +84,7 @@ namespace geodesuka::core::object {
 		math::boolean CloseMe;
 
 
-		system_window(engine *aEngine, gcl::context* aContext);
+		system_window(engine *aEngine, gcl::context* aContext, create_info *aCreateInfo);
 
 		// Clears entire window out.
 		~system_window();
@@ -104,17 +117,12 @@ namespace geodesuka::core::object {
 
 		system_display* ParentDisplay;			// Parent Display of this system_window.
 
-		VkSurfaceCapabilitiesKHR SurfaceCapabilities{};
-		VkSwapchainCreateInfoKHR CreateInfo{};
+		VkSwapchainCreateInfoKHR SurfaceCreateInfo{};
 
-		math::boolean isValid;					// Is instance valid?
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 		VkSwapchainKHR Swapchain;				// Actual swapchain handle
 		std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
-
-		//bool pmload_hints();
-		bool pmset_callbacks();
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		math::integer2 phys2scrn(math::real2 R);
