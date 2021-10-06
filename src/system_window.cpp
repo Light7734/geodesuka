@@ -72,61 +72,61 @@ namespace geodesuka::core::object {
 		VkResult Result = VkResult::VK_SUCCESS;
 		Result = glfwCreateWindowSurface(aEngine->handle(), this->Handle, NULL, &this->Surface);
 
-		if (Result == VkResult::VK_SUCCESS) {
+		//if (Result == VkResult::VK_SUCCESS) {
 
-			// Queries Surface Capabilities.
-			VkSurfaceCapabilitiesKHR SurfaceCapabilities{};
-			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(aContext->parent()->handle(), this->Surface, &SurfaceCapabilities);
+		//	// Queries Surface Capabilities.
+		//	VkSurfaceCapabilitiesKHR SurfaceCapabilities{};
+		//	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(aContext->parent()->handle(), this->Surface, &SurfaceCapabilities);
 
-			// Queries Available formats.
-			uint32_t FormatCount;
-			vkGetPhysicalDeviceSurfaceFormatsKHR(aContext->parent()->handle(), this->Surface, &FormatCount, NULL);
-			std::vector<VkSurfaceFormatKHR> Format(FormatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(aContext->parent()->handle(), this->Surface, &FormatCount, Format.data());
+		//	// Queries Available formats.
+		//	uint32_t FormatCount;
+		//	vkGetPhysicalDeviceSurfaceFormatsKHR(aContext->parent()->handle(), this->Surface, &FormatCount, NULL);
+		//	std::vector<VkSurfaceFormatKHR> Format(FormatCount);
+		//	vkGetPhysicalDeviceSurfaceFormatsKHR(aContext->parent()->handle(), this->Surface, &FormatCount, Format.data());
 
-			// Queries presentation modes.
-			uint32_t PresentModeCount;
-			vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), this->Surface, &PresentModeCount, NULL);
-			std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
+		//	// Queries presentation modes.
+		//	uint32_t PresentModeCount;
+		//	vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), this->Surface, &PresentModeCount, NULL);
+		//	std::vector<VkPresentModeKHR> PresentMode(PresentModeCount);
+		//	vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), this->Surface, &PresentModeCount, PresentMode.data());
 
-			bool isFormatSupported = false;
-			bool isPresentationModeSupported = false;
+		//	bool isFormatSupported = false;
+		//	bool isPresentationModeSupported = false;
 
 
-			//
-			// Format
-			// ColorSpace
-			// 
-			//			
+		//	//
+		//	// Format
+		//	// ColorSpace
+		//	// 
+		//	//			
 
-			this->SurfaceCreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;;
-			this->SurfaceCreateInfo.pNext						= NULL;
-			this->SurfaceCreateInfo.flags						= 0;
-			this->SurfaceCreateInfo.surface						= this->Surface;
-			this->SurfaceCreateInfo.minImageCount				= std::clamp((uint32_t)aCreateInfo->ImageCount, SurfaceCapabilities.minImageCount, SurfaceCapabilities.maxImageCount);
-			this->SurfaceCreateInfo.imageFormat;
-			this->SurfaceCreateInfo.imageColorSpace;
-			this->SurfaceCreateInfo.imageExtent					= { this->Resolution.x, this->Resolution.y };
-			this->SurfaceCreateInfo.imageArrayLayers			= 1;
-			this->SurfaceCreateInfo.imageUsage;
-			this->SurfaceCreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-			this->SurfaceCreateInfo.queueFamilyIndexCount		= 0;
-			this->SurfaceCreateInfo.pQueueFamilyIndices			= NULL;
-			this->SurfaceCreateInfo.preTransform				= VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
-			this->SurfaceCreateInfo.compositeAlpha;
-			this->SurfaceCreateInfo.presentMode;
-			this->SurfaceCreateInfo.clipped;
-			this->SurfaceCreateInfo.oldSwapchain				= VK_NULL_HANDLE;
+		//	this->SurfaceCreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;;
+		//	this->SurfaceCreateInfo.pNext						= NULL;
+		//	this->SurfaceCreateInfo.flags						= 0;
+		//	this->SurfaceCreateInfo.surface						= this->Surface;
+		//	this->SurfaceCreateInfo.minImageCount				= std::clamp((uint32_t)aCreateInfo->ImageCount, SurfaceCapabilities.minImageCount, SurfaceCapabilities.maxImageCount);
+		//	this->SurfaceCreateInfo.imageFormat;
+		//	this->SurfaceCreateInfo.imageColorSpace;
+		//	this->SurfaceCreateInfo.imageExtent					= { this->Resolution.x, this->Resolution.y };
+		//	this->SurfaceCreateInfo.imageArrayLayers			= 1;
+		//	this->SurfaceCreateInfo.imageUsage;
+		//	this->SurfaceCreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+		//	this->SurfaceCreateInfo.queueFamilyIndexCount		= 0;
+		//	this->SurfaceCreateInfo.pQueueFamilyIndices			= NULL;
+		//	this->SurfaceCreateInfo.preTransform				= VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		//	this->SurfaceCreateInfo.compositeAlpha;
+		//	this->SurfaceCreateInfo.presentMode;
+		//	this->SurfaceCreateInfo.clipped;
+		//	this->SurfaceCreateInfo.oldSwapchain				= VK_NULL_HANDLE;
 
-			Result = vkCreateSwapchainKHR(aContext->handle(), &this->SurfaceCreateInfo, NULL, &this->Swapchain);
-		}
+		//	Result = vkCreateSwapchainKHR(aContext->handle(), &this->SurfaceCreateInfo, NULL, &this->Swapchain);
+		//}
 
 	}
 
 	system_window::~system_window() {
 		// Destroys swapchain.
-		vkDestroySwapchainKHR(this->ParentContext->handle(), this->Swapchain, NULL);
+		delete Swapchain;
 		// Destroys suface.
 		vkDestroySurfaceKHR(this->ParentEngine->handle(), this->Surface, NULL);
 		// Destroys window handle.

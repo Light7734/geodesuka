@@ -272,6 +272,9 @@
     <ClCompile Include="src\engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\swapchain.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -471,6 +474,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage.h">
       <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

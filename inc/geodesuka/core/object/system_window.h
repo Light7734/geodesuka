@@ -13,6 +13,8 @@
 
 #include "../gcl/framebuffer.h"
 
+#include "../gcl/swapchain.h"
+
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
@@ -46,32 +48,13 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
-		enum mode {
-			IMMEDIATE,
-			MAILBOX,
-			FIFO,
-			FIFO_RELAXED
-		};
-
 		struct create_info {
-			// Parent Display
 			system_display* Display;
-
-			// Window properties
-			prop WindowProp;
+			window::prop WindowProperty;
+			gcl::swapchain::prop SwapchainProperty;
 			math::real3 Position;
 			math::real2 Size;
 			util::text Title;
-
-			// Framebuffer
-			int ImageCount;
-			int Format;
-			int ColorSpace;
-			int Usage;
-
-			int CompositeAlpha;
-			int PresentationMode;
-			bool Clipped;
 		};
 
 		// Required Extensions for the class
@@ -117,12 +100,10 @@ namespace geodesuka::core::object {
 
 		system_display* ParentDisplay;			// Parent Display of this system_window.
 
-		VkSwapchainCreateInfoKHR SurfaceCreateInfo{};
-
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
-		VkSwapchainKHR Swapchain;				// Actual swapchain handle
-		std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
+
+		gcl::swapchain* Swapchain;
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		math::integer2 phys2scrn(math::real2 R);

@@ -43,11 +43,12 @@ int main(int argc, char *argv[]) {
 
 	system_window::create_info CreateInfo;
 
-	CreateInfo.Display		= Engine.get_primary_display();
-	CreateInfo.WindowProp	= window::prop();
-	CreateInfo.Position		= math::real3(0.0, 0.0, 0.0);
-	CreateInfo.Size			= math::real2(0.02, 0.02);
-	CreateInfo.Title		= "Cock";
+	CreateInfo.Display				= Engine.get_primary_display();
+	CreateInfo.WindowProperty		= window::prop();
+	//CreateInfo.SwapchainProperty	= swapchain::prop();
+	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
+	CreateInfo.Size					= math::real2(0.02, 0.02);
+	CreateInfo.Title				= "Cock";
 
 	object_t *ObjectList[3];
 	ObjectList[0] = new system_window(&Engine, Context, &CreateInfo);

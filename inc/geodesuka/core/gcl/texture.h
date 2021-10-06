@@ -23,33 +23,62 @@ namespace geodesuka::core::gcl {
 
 		friend class object::system_window;
 
+		enum format {
+
+		};
+
+		enum sample {
+			COUNT_1		= 0x00000001,
+			COUNT_2		= 0x00000002,
+			COUNT_4		= 0x00000004,
+			COUNT_8		= 0x00000008,
+			COUNT_16	= 0x00000010,
+			COUNT_32	= 0x00000020,
+			COUNT_64	= 0x00000040
+		};
+
 		enum tiling {
-			OPTIMAL = 0,
-			LINEAR = 1,
+			OPTIMAL		= 0,
+			LINEAR		= 1,
 		};
 
 		enum usage {
-			TRANSFER_SRC_BIT				= 0x00000001,
-			TRANSFER_DST_BIT				= 0x00000002,
-			SAMPLED_BIT						= 0x00000004,
-			STORAGE_BIT						= 0x00000008,
-			COLOR_ATTACHMENT_BIT			= 0x00000010,
-			DEPTH_STENCIL_ATTACHMENT_BIT	= 0x00000020,
-			TRANSIENT_ATTACHMENT_BIT		= 0x00000040,
-			INPUT_ATTACHMENT_BIT			= 0x00000080
+			TRANSFER_SRC				= 0x00000001,
+			TRANSFER_DST				= 0x00000002,
+			SAMPLED 					= 0x00000004,
+			STORAGE						= 0x00000008,
+			COLOR_ATTACHMENT			= 0x00000010,
+			DEPTH_STENCIL_ATTACHMENT	= 0x00000020,
+			TRANSIENT_ATTACHMENT		= 0x00000040,
+			INPUT_ATTACHMENT			= 0x00000080
+		};
+
+		enum layout {
+
+		};
+
+		struct prop {
+			//int Format;
+			//int Resolution[3];
+			int MipLevels;
+			int LayerCount;
+			int Sampling;
+			int Tiling;
+			int Usage;
+			int Layout;
+
+			//prop();
 		};
 
 
-
-		//texture(gcl::context* aContext, VkFormat aFormat, uint32_t aWidth, uint32_t aHeight, uint32_t aDepth);
+		texture(context *aCtx, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth);
 		~texture();
 
 		VkImageView get_view();
 
 	private:
 
-		gcl::context* Context;
-
+		context* Context;
 
 		VkImageCreateInfo CreateInfo{};
 		VkImage Handle;
