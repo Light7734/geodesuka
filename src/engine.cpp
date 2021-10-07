@@ -310,6 +310,10 @@ namespace geodesuka {
 				this->Object[i]->update(dt);
 			}
 			//std::cout << "Loop Time:\t" << dt << std::endl;
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				//this->Stage[i].upate();
+			}
+
 
 			t2 = this->get_time();
 			this->Mutex.unlock();
@@ -340,6 +344,12 @@ namespace geodesuka {
 			t1 = this->get_time();
 
 			// Issue all draw calls
+
+			VkSubmitInfo;
+
+			//vkQueueSubmit();
+			//vkQueuePresentKHR();
+
 
 			t2 = this->get_time();
 			dt = t2 - t1;

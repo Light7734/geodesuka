@@ -13,6 +13,13 @@ namespace geodesuka::core::gcl {
 	class swapchain {
 	public:
 
+		enum composite {
+			ALPHA_OPAQUE			= 0x00000001,
+			ALPHA_PRE_MULTIPLIED	= 0x00000002,
+			ALPHA_POST_MULTIPLIED	= 0x00000004,
+			ALPHA_INHERIT			= 0x00000008,
+		};
+
 		enum mode {
 			IMMEDIATE		= 0,
 			MAILBOX			= 1,
@@ -30,12 +37,16 @@ namespace geodesuka::core::gcl {
 			int CompositeAlpha;
 			int PresentMode;
 			bool Clipped;
+
+			prop();
 		};
 
 		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, swapchain* aOldSwapchain);
 		~swapchain();
 
 	private:
+
+		context* Context;
 
 		std::vector<gcl::texture*> Texture;
 

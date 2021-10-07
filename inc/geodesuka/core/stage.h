@@ -28,8 +28,10 @@ namespace geodesuka::core {
 
 		std::mutex Mutex;
 		
+		~stage_t();
 
-
+		virtual void update(double aDeltaTime);
+		virtual void render();
 
 	protected:
 

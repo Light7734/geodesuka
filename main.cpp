@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 
 	CreateInfo.Display				= Engine.get_primary_display();
 	CreateInfo.WindowProperty		= window::prop();
-	//CreateInfo.SwapchainProperty	= swapchain::prop();
+	CreateInfo.SwapchainProperty	= swapchain::prop();
 	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
 	CreateInfo.Size					= math::real2(0.02, 0.02);
 	CreateInfo.Title				= "Cock";
