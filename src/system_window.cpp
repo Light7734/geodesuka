@@ -2,36 +2,106 @@
 
 #include <algorithm>
 
-#include <geodesuka/core/math.h>
-
-//#include "../hid/mouse.h"
-//#include "../hid/keyboard.h"
-//#include "../hid/joystick.h"
-
-#include <geodesuka/core/object.h>
-#include <geodesuka/core/object/window.h>
-#include <geodesuka/core/object/system_display.h>
-#include <geodesuka/core/object/system_window.h>
-#include <geodesuka/core/object/virtual_window.h>
-
-#include <geodesuka/core/object/camera.h>
-#include <geodesuka/core/object/camera2d.h>
-#include <geodesuka/core/object/camera3d.h>
+#include <geodesuka/engine.h>
 
 namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	system_window::~system_window() {
-		// Destroys 
-		if (this->isValid) {
-			// Destroys swapchain.
-			vkDestroySwapchainKHR(this->Context->handle(), this->Swapchain, NULL);
-			// Destroys suface.
-			vkDestroySurfaceKHR(this->Context->inst(), this->Surface, NULL);
-			// Destroys window handle.
-			glfwDestroyWindow(this->Handle);
+	system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo) : window(aEngine, aContext) {
+		std::cout << "System Window Created" << std::endl;
+
+		// ------------------------- System Window Creation ------------------------- //
+
+		this->Property = prop();
+		glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
+		glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
+		glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
+		glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
+		glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
+		glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
+		glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
+		glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
+		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
+		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+		glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate);
+
+		//this->SizeSC = this->phys2scrn(this->Size);
+		this->Handle = glfwCreateWindow(640, 480, "", NULL, NULL);
+
+		// Post Creation Options
+
+		if (this->Handle != NULL) {
+			// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
+
+			// User pointer to forward input stream.
+			glfwSetWindowUserPointer(this->Handle, (void*)this);
+
+			// system_window callbacks
+			glfwSetWindowPosCallback(this->Handle,			system_window::position_callback);
+			glfwSetWindowSizeCallback(this->Handle,			system_window::size_callback);
+			glfwSetWindowCloseCallback(this->Handle,		system_window::close_callback);
+			glfwSetWindowRefreshCallback(this->Handle,		system_window::refresh_callback);
+			glfwSetWindowFocusCallback(this->Handle,		system_window::focus_callback);
+			glfwSetWindowIconifyCallback(this->Handle,		system_window::iconify_callback);
+			glfwSetWindowMaximizeCallback(this->Handle,		system_window::maximize_callback);
+			glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+
+			// framebuffer callbacks
+			glfwSetFramebufferSizeCallback(this->Handle,	system_window::framebuffer_size_callback);
+
+			// Mouse callbacks
+			glfwSetMouseButtonCallback(this->Handle,		system_window::mouse_button_callback);
+			glfwSetCursorPosCallback(this->Handle,			system_window::cursor_position_callback);
+			glfwSetCursorEnterCallback(this->Handle,		system_window::cursor_enter_callback);
+			glfwSetScrollCallback(this->Handle,				system_window::scroll_callback);
+
+			// Keyboard callbacks
+			glfwSetKeyCallback(this->Handle,				system_window::key_callback);
+			glfwSetCharCallback(this->Handle,				system_window::character_callback);
+
+			// File drop
+			glfwSetDropCallback(this->Handle,				system_window::file_drop_callback);
+
+			//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
+
 		}
+
+		// ------------------------- Surface Creation ------------------------- //
+		VkResult Result = VkResult::VK_SUCCESS;
+		Result = glfwCreateWindowSurface(aEngine->handle(), this->Handle, NULL, &this->Surface);
+
+		this->Swapchain = new gcl::swapchain(aContext, this->Surface, aCreateInfo->SwapchainProperty, nullptr);
+
+	}
+
+	system_window::~system_window() {
+		// Destroys swapchain.
+		delete Swapchain;
+		// Destroys suface.
+		vkDestroySurfaceKHR(this->ParentEngine->handle(), this->Surface, NULL);
+		// Destroys window handle.
+		glfwDestroyWindow(this->Handle);
+
+		std::cout << "System Window Destroyed" << std::endl;
+	}
+
+	void system_window::update(double aDeltaTime) {
+		this->Mutex.lock();
+		this->Time += aDeltaTime;
+
+		this->Mutex.unlock();
+	}
+
+	void system_window::draw(system_display* aTargetDisplay) {
+		// This method is responsible for rendering window to display.
+		this->Mutex.lock();
+
+		if (this->Property.RefreshRate) {
+
+		}
+		this->Mutex.unlock();
 	}
 
 	void system_window::draw(object_t* aObject) {
@@ -86,49 +156,6 @@ namespace geodesuka::core::object {
 		this->InputStreamTarget = aTargetObject;
 	}
 
-	// --------------- These are the system_window callbacks --------------- //
-
-	// system_window callbacks
-
-	bool system_window::pmset_callbacks() {
-		if (this->Handle != NULL) {
-			// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
-
-			// User pointer to forward input stream.
-			glfwSetWindowUserPointer(this->Handle, (void*)this);
-
-			// system_window callbacks
-			glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
-			glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
-			glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
-			glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
-			glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
-			glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
-			glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
-			glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
-
-			// framebuffer callbacks
-			glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
-
-			// Mouse callbacks
-			glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
-			glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
-			glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
-			glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
-
-			// Keyboard callbacks
-			glfwSetKeyCallback(this->Handle, system_window::key_callback);
-			glfwSetCharCallback(this->Handle, system_window::character_callback);
-
-			// File drop
-			glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
-
-			//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
-
-		}
-		return false;
-	}
-
 	math::integer2 system_window::phys2scrn(math::real2 R) {
 		math::integer2 temp;
 
@@ -153,6 +180,8 @@ namespace geodesuka::core::object {
 		math::real2 temp;
 		return temp;
 	}
+
+	// --------------- These are the system_window callbacks --------------- //
 
 	void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
 		//tex:
@@ -190,7 +219,7 @@ namespace geodesuka::core::object {
 
 	void system_window::close_callback(GLFWwindow* ContextHandle) {
 		system_window* Win = (system_window*)glfwGetWindowUserPointer(ContextHandle);
-		std::cout << Win->Name.str() << " wants to fucking close" << std::endl;
+		std::cout << Win->Title.str() << " wants to fucking close" << std::endl;
 		Win->CloseMe = true;
 	}
 

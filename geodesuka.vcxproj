@@ -222,6 +222,7 @@
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\socket_t.cpp" />
     <ClCompile Include="src\stage.cpp" />
+    <ClCompile Include="src\swapchain.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_window.cpp" />
     <ClCompile Include="src\text.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
@@ -290,7 +292,6 @@
     <ClInclude Include="inc\geodesuka\core\math\vectors\real2.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h" />
-    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h" />
     <ClInclude Include="inc\geodesuka\core\object.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />

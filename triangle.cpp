@@ -8,7 +8,7 @@ using namespace hid;
 using namespace math;
 using namespace gcl;
 
-triangle::triangle(geodesuka::engine& aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
+triangle::triangle(geodesuka::engine *aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
 	
 }
 

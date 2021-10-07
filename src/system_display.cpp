@@ -6,12 +6,12 @@
 
 namespace geodesuka::core::object {
 
-	system_display::system_display(engine& aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
+	system_display::system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
 		this->Property = window::prop();
 
 		this->Handle = aMonitor;
 
-		this->Name = glfwGetMonitorName(this->Handle);
+		this->Title = glfwGetMonitorName(this->Handle);
 		
 		glfwGetMonitorPos(this->Handle, &this->PositionSC.x, &this->PositionSC.y);
 		// Loads and converts to meters.

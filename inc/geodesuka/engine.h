@@ -128,6 +128,7 @@ namespace geodesuka {
 		core::object::system_display** get_display_list(size_t* ListSize);
 		core::gcl::device** get_device_list(size_t* ListSize);
 
+		VkInstance handle();
 		bool is_ready();
 		version get_version();
 		double get_time();
@@ -174,7 +175,6 @@ namespace geodesuka {
 		std::vector<core::io::file*> File;
 
 		// All objects are managed by engine regardless of stage.
-		//
 		std::vector<core::object_t*> Object;
 
 

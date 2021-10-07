@@ -17,7 +17,7 @@ namespace geodesuka::core::object {
 
 		GLFWmonitor* Handle;
 
-		system_display(engine& aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
+		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
 
 		virtual void draw(object_t* aObject) override;

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 
 #include <geodesuka/engine.h>
 
@@ -40,11 +41,22 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//object_t *Triangle = new triangle(Engine, Context);
+	system_window::create_info CreateInfo;
 
+	CreateInfo.Display				= Engine.get_primary_display();
+	CreateInfo.WindowProperty		= window::prop();
+	CreateInfo.SwapchainProperty	= swapchain::prop();
+	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
+	CreateInfo.Size					= math::real2(0.02, 0.02);
+	CreateInfo.Title				= "Cock";
 
+	object_t *ObjectList[3];
+	ObjectList[0] = new system_window(&Engine, Context, &CreateInfo);
+	ObjectList[1] = new system_window(&Engine, Context, &CreateInfo);
+	ObjectList[2] = new system_window(&Engine, Context, &CreateInfo);
 
-	//delete Triangle;
+	delete ObjectList[1];
+
 	delete Context;
 	return 0;
 }

@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
+#include <vector>
+
 #include "../math.h"
 
 #include "../gcl/device.h"
@@ -10,6 +12,8 @@
 #include "../gcl/texture.h"
 
 #include "../gcl/framebuffer.h"
+
+#include "../gcl/swapchain.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
@@ -44,54 +48,10 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
-		/*
-
-		Member variables of system_window
-
-		--- object_t.h ---
-
-		--- window.h ---
-
-		util::text Name;
-		math::float2 Size;
-		math::uint2 Resolution;
-
-
-		util::text Name;
-		math::real2 Size;
-		math::natural2 Resolution;
-		struct prop Property;
-		gcl::framebuffer FrameBuffer;
-
-		--- system_window.h ---
-
-		bool Resizable;
-		bool Decorated;
-		bool UserFocused;
-		bool AutoMinimize;
-		bool Floating;
-		bool Maximized;
-		bool Minimized;
-		bool Visible;
-		bool ScaleToMonitor;
-		bool CenterCursor;
-		bool FocusOnShow;
-		bool Hovered;
-
-		int RefreshRate;
-
-		*/
-
-		enum present_mode {
-			IMMEDIATE,
-			FIFO,
-			MAILBOX
-		};
-
 		struct create_info {
-			system_display* ParentDisplay;
-			gcl::framebuffer::prop FramebufferProp;
-			prop WindowProp;
+			system_display* Display;
+			window::prop WindowProperty;
+			gcl::swapchain::prop SwapchainProperty;
 			math::real3 Position;
 			math::real2 Size;
 			util::text Title;
@@ -106,8 +66,16 @@ namespace geodesuka::core::object {
 
 		math::boolean CloseMe;
 
+
+		system_window(engine *aEngine, gcl::context* aContext, create_info *aCreateInfo);
+
 		// Clears entire window out.
 		~system_window();
+
+
+		virtual void update(double aDeltaTime);
+		
+		virtual void draw(system_display* aTargetDisplay) override;
 
 		// Mandatory implementation required by window.h
 		virtual void draw(object_t* aObject) override;
@@ -124,7 +92,6 @@ namespace geodesuka::core::object {
 
 	private:
 
-
 		// The target object where polled input will be streamed to.
 		object_t* InputStreamTarget;
 
@@ -132,19 +99,11 @@ namespace geodesuka::core::object {
 		//math::integer2 SizeSC;
 
 		system_display* ParentDisplay;			// Parent Display of this system_window.
-		gcl::context* Context;			// Parent Context of this window.
 
-		VkSurfaceCapabilitiesKHR SurfaceCapabilities;
-		VkSwapchainCreateInfoKHR CreateInfo{};
-
-		math::boolean isValid;					// Is instance valid?
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
-		VkSwapchainKHR Swapchain;				// Actual swapchain handle
-		std::vector<gcl::texture> Texture;		// Textures of the Swap Chain
 
-		//bool pmload_hints();
-		bool pmset_callbacks();
+		gcl::swapchain* Swapchain;
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		math::integer2 phys2scrn(math::real2 R);

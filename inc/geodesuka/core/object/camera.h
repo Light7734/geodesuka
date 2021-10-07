@@ -34,6 +34,8 @@ namespace geodesuka::core::object {
 	class camera : public object_t {
 	public:
 
+		~camera();
+
 		virtual void draw(object_t* aObject) = 0;
 
 	protected:
@@ -49,6 +51,8 @@ namespace geodesuka::core::object {
 		math::real4x4 Projection;
 		math::real4x4 Rotation;
 		math::real4x4 Translation;
+
+		camera(engine* aEngine, gcl::context* aContext);
 
 	};
 

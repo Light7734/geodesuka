@@ -109,9 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\engine.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="triangle.cpp" />
     <ClCompile Include="src\buffer.cpp">
       <Filter>src\core\gcl</Filter>
@@ -272,6 +269,12 @@
     <ClCompile Include="src\stage.cpp">
       <Filter>src\core</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\swapchain.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -402,9 +405,6 @@
     <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h">
       <Filter>inc\geodesuka\core\math\vectors</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h">
-      <Filter>inc\geodesuka\core\math\vectors</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\camera.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
@@ -474,6 +474,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage.h">
       <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

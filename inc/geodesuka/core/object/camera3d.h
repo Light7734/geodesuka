@@ -10,6 +10,9 @@ namespace geodesuka::core::object {
 	class camera3d : public camera {
 	public:
 
+		//camera3d(engine *aEngine, gcl::context *aContext);
+		//~camera3d();
+
 		virtual void draw(object_t* aObject) override;
 
 	};

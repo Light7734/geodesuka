@@ -80,7 +80,7 @@ namespace geodesuka::core {
 		* itself with a provided time step. It will be the responsibility of the engine
 		* to insure that the time step remains stable.
 		*/
-		virtual void update(math::real aDeltaTime);
+		virtual void update(double aDeltaTime);
 
 		/*
 		* To insure that how an object is rendered is left up to the implementation
@@ -163,7 +163,10 @@ namespace geodesuka::core {
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
 
-		object_t(engine &aEngine, gcl::context *aContext);
+		object_t(engine *aEngine, gcl::context *aContext);
+
+		// Submits object to 
+		virtual void ensubmit();
 
 	};
 
