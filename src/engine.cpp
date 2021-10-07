@@ -39,6 +39,7 @@ namespace geodesuka {
 	* needed for context creation. Will manage all created objects
 	* and loaded assets.
 	*/
+
 	engine::engine(int argc, char* argv[]) {
 		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
@@ -115,7 +116,7 @@ namespace geodesuka {
 			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
 				// Get System displays.
-				core::object::system_display* tmpDisplay = new core::object::system_display(*this, nullptr, glfwGetPrimaryMonitor());
+				core::object::system_display* tmpDisplay = new core::object::system_display(this, nullptr, glfwGetPrimaryMonitor());
 				this->PrimaryDisplay = tmpDisplay;
 				this->Display.push_back(tmpDisplay);
 				this->Object.push_back(tmpDisplay);
@@ -124,7 +125,7 @@ namespace geodesuka {
 				for (int i = 0; i < lCount; i++) {
 					if (PrimaryDisplay->Handle != lMon[i]) {
 						// Excludes already cached primary monitor.
-						tmpDisplay = new core::object::system_display(*this, nullptr, lMon[i]);
+						tmpDisplay = new core::object::system_display(this, nullptr, lMon[i]);
 						this->Display.push_back(tmpDisplay);
 						this->Object.push_back(tmpDisplay);
 					}
@@ -202,6 +203,7 @@ namespace geodesuka {
 		//	}
 		//	std::cout << std::endl;
 		//}
+
 		this->State = state::ENGINE_ACTIVE_STATE;
 	}
 
@@ -259,6 +261,10 @@ namespace geodesuka {
 		return this->DeviceList.data();
 	}
 
+	VkInstance engine::handle() {
+		return this->Instance;
+	}
+
 	bool engine::is_ready() {
 		return this->isReady;
 	}
@@ -297,15 +303,20 @@ namespace geodesuka {
 		double ts = 1.0 / 2.0;
 		dt = 0.0;
 		while (!ExitCondition) {
+			this->Mutex.lock();
 			t1 = this->get_time();
-
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
 			}
 			//std::cout << "Loop Time:\t" << dt << std::endl;
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				//this->Stage[i].upate();
+			}
+
 
 			t2 = this->get_time();
+			this->Mutex.unlock();
 			wt = t2 - t1;
 			if (wt < ts) {
 				ht = ts - wt;
@@ -332,7 +343,13 @@ namespace geodesuka {
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// Issue all draw calls			
+			// Issue all draw calls
+
+			VkSubmitInfo;
+
+			//vkQueueSubmit();
+			//vkQueuePresentKHR();
+
 
 			t2 = this->get_time();
 			dt = t2 - t1;
