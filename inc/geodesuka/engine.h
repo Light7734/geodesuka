@@ -117,16 +117,35 @@ namespace geodesuka {
 			int Patch;
 		};
 
+		friend class core::gcl::context;
+
 		// Objects can interect with engine internals.
 		friend class core::object_t;
 
 		engine(int argc, char* argv[]);
 		~engine();
 
-		// Query functions
+		// Gets current primary display.
 		core::object::system_display* get_primary_display();
+
+		// Gets list of all currently available displays.
 		core::object::system_display** get_display_list(size_t* ListSize);
+
+		// Gets list of all currently available gpus.
 		core::gcl::device** get_device_list(size_t* ListSize);
+
+		// When an engine instance is passed into an object
+		// constructor, it uses these methods to load required
+		// assets.
+		core::io::file* open(const char* FilePath);		// Opens file using provided path string.
+		void close(core::io::file* aFile);				// Closes previously loaded file held by engine.
+
+
+
+		// These calls are neccesary for time scheduled update of all active
+		// objects in existence.
+		void submit(core::object_t* aObject);		// Submit created object to engine.
+		void remove(core::object_t* aObject);		// Remove object from engine.
 
 		VkInstance handle();
 		bool is_ready();
@@ -159,10 +178,9 @@ namespace geodesuka {
 		VkApplicationInfo AppProp{};
 		VkInstanceCreateInfo InstProp{};
 		VkInstance Instance;
-		
 
-
-		// It is the job of the engine to query for physical devices and displays.
+		// It is the job of the engine to query for physical devices
+		// and display from the system.
 		std::vector<core::gcl::device*> DeviceList;
 		std::vector<core::object::system_display*> Display;
 		// Find a way to map devices to system_displays.
@@ -174,13 +192,15 @@ namespace geodesuka {
 		// If current working directory changes, 
 		std::vector<core::io::file*> File;
 
+		// All created device contexts are held by engine. Needed for graphics/compute.
+		std::vector<core::gcl::context*> Context;
+
 		// All objects are managed by engine regardless of stage.
 		std::vector<core::object_t*> Object;
 
 
 		// Active stage represent a collection of objects
 		// sharing the same space, object interaction, rendering
-		//
 		std::vector<core::stage_t*> Stage;
 
 		

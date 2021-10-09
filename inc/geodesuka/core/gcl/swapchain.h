@@ -31,7 +31,7 @@ namespace geodesuka::core::gcl {
 			int Count;
 			int Format;
 			int ColorSpace;
-			VkExtent2D Resolution;
+			//VkExtent2D Resolution;
 			//int Layers;
 			int Usage;
 			int CompositeAlpha;
@@ -41,7 +41,7 @@ namespace geodesuka::core::gcl {
 			prop();
 		};
 
-		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, swapchain* aOldSwapchain);
+		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, uint32_t aWidth, uint32_t aHeight, swapchain* aOldSwapchain);
 		~swapchain();
 
 	private:

@@ -11,7 +11,7 @@ namespace geodesuka::core::gcl {
 		this->Count				= 1;
 		this->Format			= VkFormat::VK_FORMAT_B8G8R8A8_SRGB;
 		this->ColorSpace		= VkColorSpaceKHR::VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-		this->Resolution		= { 640, 480 };
+		//this->Resolution		= { 640, 480 };
 		this->Usage				= texture::usage::COLOR_ATTACHMENT;
 		this->CompositeAlpha	= swapchain::composite::ALPHA_OPAQUE;
 		this->PresentMode		= swapchain::mode::FIFO;
@@ -19,7 +19,7 @@ namespace geodesuka::core::gcl {
 	}
 
 
-	swapchain::swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, swapchain* aOldSwapchain) {
+	swapchain::swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, uint32_t aWidth, uint32_t aHeight, swapchain* aOldSwapchain) {
 
 		// Queries Available formats.
 		uint32_t lFormatCount;
@@ -86,8 +86,8 @@ namespace geodesuka::core::gcl {
 		if (Success) {
 
 			VkExtent2D lExtent2D;
-			lExtent2D.width = std::clamp((uint32_t)aProperty.Resolution.width, lSurfaceCapabilities.minImageExtent.width, lSurfaceCapabilities.maxImageExtent.width);
-			lExtent2D.height = std::clamp((uint32_t)aProperty.Resolution.height, lSurfaceCapabilities.minImageExtent.height, lSurfaceCapabilities.maxImageExtent.height);
+			lExtent2D.width = std::clamp((uint32_t)aWidth, lSurfaceCapabilities.minImageExtent.width, lSurfaceCapabilities.maxImageExtent.width);
+			lExtent2D.height = std::clamp((uint32_t)aHeight, lSurfaceCapabilities.minImageExtent.height, lSurfaceCapabilities.maxImageExtent.height);
 			// After properties have been validated above.
 
 			this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -97,7 +97,7 @@ namespace geodesuka::core::gcl {
 			this->CreateInfo.minImageCount				= std::clamp((uint32_t)aProperty.Count, lSurfaceCapabilities.minImageCount, lSurfaceCapabilities.maxImageCount);
 			this->CreateInfo.imageFormat				= (VkFormat)aProperty.Format;
 			this->CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aProperty.ColorSpace;
-			this->CreateInfo.imageExtent				= aProperty.Resolution;
+			this->CreateInfo.imageExtent				= lExtent2D;
 			this->CreateInfo.imageArrayLayers			= 1; // Maybe support later.
 			this->CreateInfo.imageUsage					= (VkImageUsageFlags)aProperty.Usage;
 			this->CreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;

@@ -221,6 +221,15 @@ namespace geodesuka {
 			this->UpdateThread.join();
 		}
 
+		// Destroys all active stages.
+		for (size_t i = 1; i <= this->Stage.size(); i++) {
+			size_t Index = this->Stage.size() - i;
+			if (this->Stage[Index] != nullptr) {
+				delete this->Stage[Index];
+				this->Stage[Index] = nullptr;
+			}
+		}
+
 		// Clears all objects from memory.
 		for (size_t i = 1; i <= this->Object.size(); i++) {
 			size_t Index = this->Object.size() - i;
@@ -230,6 +239,16 @@ namespace geodesuka {
 			}
 		}
 		this->Object.clear();
+
+		// Destroys all device contexts.
+		for (size_t i = 1; i <= this->Context.size(); i++) {
+			size_t Index = this->Context.size() - i;
+			if (this->Context[i] != nullptr) {
+				delete this->Context[i];
+				this->Context[i] = nullptr;
+			}
+		}
+		this->Context.clear();
 
 		// Clears all loaded resources from memory.
 		for (size_t i = 0; i < this->File.size(); i++) {
@@ -311,7 +330,7 @@ namespace geodesuka {
 			}
 			//std::cout << "Loop Time:\t" << dt << std::endl;
 			for (size_t i = 0; i < this->Stage.size(); i++) {
-				//this->Stage[i].upate();
+				//this->Stage[i].update();
 			}
 
 

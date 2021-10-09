@@ -53,22 +53,18 @@ namespace geodesuka::core::object {
 			window::prop WindowProperty;
 			gcl::swapchain::prop SwapchainProperty;
 			math::real3 Position;
-			math::real2 Size;
-			util::text Title;
 		};
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
 
-		VkResult ErrorCode;
-
 		//friend class system_display;
 
-		math::boolean CloseMe;
+		//math::boolean CloseMe;
 
 
-		system_window(engine *aEngine, gcl::context* aContext, create_info *aCreateInfo);
-
+		system_window(engine *aEngine, gcl::context *aContext, create_info *aCreateInfo, int aWidth, int aHeight, const char* aTitle);
+		//system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, float aSizeX, int aSizeY, const char* aTitle);
 		// Clears entire window out.
 		~system_window();
 
@@ -84,16 +80,7 @@ namespace geodesuka::core::object {
 		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(math::natural2 aResolution) override;
 
-
-
-		void set_parent_display(system_display* aParentDisplay);
-		//system_display* get_parent_display() { return this->ParentDisplay; }
-		void set_input_stream_target(object_t* aTargetObject);
-
 	private:
-
-		// The target object where polled input will be streamed to.
-		object_t* InputStreamTarget;
 
 		math::integer2 PositionSC;
 		//math::integer2 SizeSC;

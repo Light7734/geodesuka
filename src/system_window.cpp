@@ -8,8 +8,11 @@ namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo) : window(aEngine, aContext) {
-		std::cout << "System Window Created" << std::endl;
+	system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
+
+		this->ParentEngine = aEngine;
+		this->ParentDisplay = aCreateInfo->Display;
+		this->ParentContext = aContext;
 
 		// ------------------------- System Window Creation ------------------------- //
 
@@ -72,9 +75,10 @@ namespace geodesuka::core::object {
 		VkResult Result = VkResult::VK_SUCCESS;
 		Result = glfwCreateWindowSurface(aEngine->handle(), this->Handle, NULL, &this->Surface);
 
-		this->Swapchain = new gcl::swapchain(aContext, this->Surface, aCreateInfo->SwapchainProperty, nullptr);
-
+		this->Swapchain = new gcl::swapchain(aContext, this->Surface, aCreateInfo->SwapchainProperty, aWidth, aHeight, nullptr);
 	}
+
+	//system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, float aSizeX, int aSizeY, const char* aTitle) : window(aEngine, aContext) {}
 
 	system_window::~system_window() {
 		// Destroys swapchain.
@@ -148,14 +152,6 @@ namespace geodesuka::core::object {
 		this->set_position(this->Position);
 	}
 
-	void system_window::set_parent_display(system_display* aParentDisplay) {
-		this->ParentDisplay = aParentDisplay;
-	}
-
-	void system_window::set_input_stream_target(object_t* aTargetObject) {
-		this->InputStreamTarget = aTargetObject;
-	}
-
 	math::integer2 system_window::phys2scrn(math::real2 R) {
 		math::integer2 temp;
 
@@ -220,7 +216,7 @@ namespace geodesuka::core::object {
 	void system_window::close_callback(GLFWwindow* ContextHandle) {
 		system_window* Win = (system_window*)glfwGetWindowUserPointer(ContextHandle);
 		std::cout << Win->Title.str() << " wants to fucking close" << std::endl;
-		Win->CloseMe = true;
+		//Win->CloseMe = true;
 	}
 
 	void system_window::refresh_callback(GLFWwindow* ContextHandle) {
