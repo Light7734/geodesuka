@@ -38,7 +38,7 @@ namespace geodesuka::core::gcl {
 			SHADER_DEVICE_ADDRESS	= 0x00020000
 		};
 
-		buffer(context* aContext, int aMemType, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData);
+		buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
 
 		~buffer();
 
@@ -89,7 +89,7 @@ namespace geodesuka::core::gcl {
 		VkDeviceMemory MemoryHandle;
 
 		int Count;
-		variable MemoryLayout;
+		util::variable MemoryLayout;
 
 		uint32_t memfilter(VkMemoryPropertyFlags MemPropFlags);
 

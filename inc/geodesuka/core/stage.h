@@ -30,8 +30,8 @@ namespace geodesuka::core {
 		
 		~stage_t();
 
-		virtual void update(double aDeltaTime);
-		virtual void render();
+		//virtual void update(double aDeltaTime);
+		//virtual void render();
 
 	protected:
 

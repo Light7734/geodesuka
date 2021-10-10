@@ -10,7 +10,7 @@ namespace geodesuka {
 	namespace core {
 		namespace gcl {
 
-			buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, variable aMemoryLayout, void* aBufferData) {
+			buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
 				VkResult Result = VK_SUCCESS;
 
 				this->Context = aContext;

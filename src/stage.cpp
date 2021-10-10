@@ -4,4 +4,8 @@ namespace geodesuka::core {
 
 
 
+    stage_t::~stage_t() {
+
+    }
+
 }
