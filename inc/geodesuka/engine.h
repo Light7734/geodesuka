@@ -99,6 +99,8 @@ C26451
 //#include "core/object/cube.h"
 
 #include "core/stage.h"
+#include "core/stage/canvas.h"
+#include "core/stage/scene2d.h"
 
 namespace geodesuka {
 
@@ -129,15 +131,15 @@ namespace geodesuka {
 		core::object::system_display* get_primary_display();
 
 		// Gets list of all currently available displays.
-		core::object::system_display** get_display_list(size_t* ListSize);
+		core::object::system_display** get_display_list(size_t* aListSize);
 
 		// Gets list of all currently available gpus.
-		core::gcl::device** get_device_list(size_t* ListSize);
+		core::gcl::device** get_device_list(size_t* aListSize);
 
 		// When an engine instance is passed into an object
 		// constructor, it uses these methods to load required
 		// assets.
-		core::io::file* open(const char* FilePath);		// Opens file using provided path string.
+		core::io::file* open(const char* aFilePath);		// Opens file using provided path string.
 		void close(core::io::file* aFile);				// Closes previously loaded file held by engine.
 
 
@@ -151,7 +153,7 @@ namespace geodesuka {
 		bool is_ready();
 		version get_version();
 		double get_time();
-		void tsleep(double Seconds);
+		void tsleep(double aSeconds);
 
 	private:
 
@@ -183,6 +185,7 @@ namespace geodesuka {
 		// and display from the system.
 		std::vector<core::gcl::device*> DeviceList;
 		std::vector<core::object::system_display*> Display;
+		std::vector<core::object::system_window*> SystemWindow;
 		// Find a way to map devices to system_displays.
 
 		// Keeps track of important System and OS objects.

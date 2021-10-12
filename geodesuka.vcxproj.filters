@@ -106,6 +106,12 @@
     <Filter Include="src\core\util">
       <UniqueIdentifier>{b38920d2-825d-43eb-ae66-e41ea70b0176}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\geodesuka\core\stage">
+      <UniqueIdentifier>{3e436671-098d-4dc0-ba84-d62f01f1fef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\stage">
+      <UniqueIdentifier>{994aaec8-c058-46a5-8208-727732ffdb86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -274,6 +280,15 @@
     </ClCompile>
     <ClCompile Include="src\swapchain.cpp">
       <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\canvas.cpp">
+      <Filter>src\core\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene2d.cpp">
+      <Filter>src\core\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scene3d.cpp">
+      <Filter>src\core\stage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -477,6 +492,15 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage\canvas.h">
+      <Filter>inc\geodesuka\core\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage\scene2d.h">
+      <Filter>inc\geodesuka\core\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage\scene3d.h">
+      <Filter>inc\geodesuka\core\stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

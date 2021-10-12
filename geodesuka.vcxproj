@@ -180,6 +180,7 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\camera2d.cpp" />
     <ClCompile Include="src\camera3d.cpp" />
+    <ClCompile Include="src\canvas.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\constants.cpp" />
     <ClCompile Include="src\context.cpp" />
@@ -218,6 +219,8 @@
     <ClCompile Include="src\real4x2.cpp" />
     <ClCompile Include="src\real4x3.cpp" />
     <ClCompile Include="src\real4x4.cpp" />
+    <ClCompile Include="src\scene2d.cpp" />
+    <ClCompile Include="src\scene3d.cpp" />
     <ClCompile Include="src\script.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\socket_t.cpp" />
@@ -302,6 +305,9 @@
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\scene2d.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\scene3d.h" />
     <ClInclude Include="inc\geodesuka\core\util\log.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />

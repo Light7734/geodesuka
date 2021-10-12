@@ -8,6 +8,13 @@
 #include <fstream>
 #include <sstream>
 
+// Used for generic file loading.
+#include <geodesuka/core/io/dynalib.h>
+#include <geodesuka/core/io/image.h>
+#include <geodesuka/core/io/font.h>
+//#include <geodesuka/core/io/model.h>
+
+
 // Image Loading
 //#define FREEIMAGE_LIB
 //#include <FreeImage.h>
@@ -25,105 +32,124 @@
 //#include "lua.hpp"
 //#include "printstack.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace io {
+namespace geodesuka::core::io {
 
-			// This is just a lookup table for file type extensions.
-			// Extension ID, Extension String, Category
-			file::built_in_type file::BuiltInTypes[] = {
-				{ file::extension::EXT_DYN,		{"dll", "so", "dylib"}		},
-				{ file::extension::EXT_VSH,		{"vsh"}						},
-				{ file::extension::EXT_TCSH,	{"tcsh"}					},
-				{ file::extension::EXT_TESH,	{"tesh"}					},
-				{ file::extension::EXT_GSH,		{"gsh"}						},
-				{ file::extension::EXT_PSH,		{"psh", "fsh"}				},
-				{ file::extension::EXT_GLSL,	{"glsl"}					},
-				{ file::extension::EXT_SPV,		{"spv"}						},
-			};
+	// This is just a lookup table for file type extensions.
+	// Extension ID, Extension String, Category
+	file::built_in_type file::BuiltInTypes[] = {
+		{ file::extension::DYN,		{"dll", "so", "dylib"}		},
+		{ file::extension::VSH,		{"vsh"}						},
+		{ file::extension::TCSH,	{"tcsh"}					},
+		{ file::extension::TESH,	{"tesh"}					},
+		{ file::extension::GSH,		{"gsh"}						},
+		{ file::extension::PSH,		{"psh", "fsh"}				},
+		{ file::extension::GLSL,	{"glsl"}					},
+		{ file::extension::SPV,		{"spv"}						},
+	};
 
-			file::extension file::str2type(util::text aString) {
-				extension temp = EXT_UNK;
-				for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
-					for (size_t j = 0; j < BuiltInTypes[i].Extension.size(); j++)
-					if (BuiltInTypes[i].Extension[j] == aString) {
-						return BuiltInTypes[i].Type;
-					}
+	file::extension file::str2type(util::text aString) {
+		extension temp = UNK;
+		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
+			for (size_t j = 0; j < BuiltInTypes[i].Extension.size(); j++)
+				if (BuiltInTypes[i].Extension[j] == aString) {
+					return BuiltInTypes[i].Type;
 				}
-				return temp;
-			}
-
-			util::text file::type2str(extension aType) {
-				const char* temp = "";
-				for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
-					if (BuiltInTypes[i].Type == aType) {
-						return BuiltInTypes[i].Extension[0].str();
-					}
-				}
-				return temp;
-			}
-
-			file::file() {
-				this->Path = "";
-				this->Dir = "";
-				this->Name = "";
-				this->Ext = "";
-				this->ID = EXT_UNK;
-				this->Data = NULL;
-				this->DataSize = 0;
-			}
-
-			file::file(const char* aFilePath) {
-				this->mset_path(aFilePath);
-			}
-
-			file::file(util::text& aFilePath) {
-				this->mset_path(aFilePath);
-			}
-
-			file::~file() {
-				free(this->Data);
-				this->Data = NULL;
-				this->DataSize = 0;
-			}
-
-			util::text file::get_path() {
-				return this->Path;
-			}
-
-			util::text file::get_dir() {
-				return this->Dir;
-			}
-
-			util::text file::get_name() {
-				return this->Name;
-			}
-
-			util::text file::get_ext() {
-				return this->Ext;
-			}
-
-			void* file::get_data(size_t& ReturnSize) {
-				ReturnSize = this->DataSize;
-				return this->Data;
-			}
-
-			bool file::mset_path(util::text aFilePath) {
-				this->Path = aFilePath;
-				util::text temp = aFilePath;
-				temp.reverse();
-				this->Ext = temp.split_at('.');
-				this->Ext.reverse();
-				this->Name = temp.split_at('\/');
-				this->Name.reverse();
-				this->Dir = temp;
-				this->Dir.reverse();
-				this->ID = str2type(this->Ext);
-				return false;
-			}
-
 		}
+		return temp;
 	}
+
+	util::text file::type2str(extension aType) {
+		const char* temp = "";
+		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
+			if (BuiltInTypes[i].Type == aType) {
+				return BuiltInTypes[i].Extension[0].str();
+			}
+		}
+		return temp;
+	}
+
+	file* file::open(const char* aFilePath) {
+		util::text temp = aFilePath;
+		temp.reverse();
+		util::text Extension = temp.split_at('.');
+		Extension.reverse();
+		extension ExtID = str2type(Extension);
+
+		switch (ExtID) {
+		default:
+			break;
+			/*
+			
+
+			*/
+		}
+
+		return nullptr;
+	}
+
+	void file::close(file* aFile) {
+
+	}
+
+	file::~file() {
+		free(this->Data);
+		this->Data = NULL;
+		this->DataSize = 0;
+	}
+
+	util::text file::get_path() {
+		return this->Path;
+	}
+
+	util::text file::get_dir() {
+		return this->Dir;
+	}
+
+	util::text file::get_name() {
+		return this->Name;
+	}
+
+	util::text file::get_ext() {
+		return this->Ext;
+	}
+
+	void* file::get_data(size_t& ReturnSize) {
+		ReturnSize = this->DataSize;
+		return this->Data;
+	}
+
+	file::file() {
+		this->Path = "";
+		this->Dir = "";
+		this->Name = "";
+		this->Ext = "";
+		this->ID = UNK;
+		this->Data = NULL;
+		this->DataSize = 0;
+	}
+
+	file::file(const char* aFilePath) {
+		this->mset_path(aFilePath);
+	}
+
+	file::file(util::text& aFilePath) {
+		this->mset_path(aFilePath);
+	}
+
+	bool file::mset_path(util::text aFilePath) {
+		this->Path = aFilePath;
+		util::text temp = aFilePath;
+		temp.reverse();
+		this->Ext = temp.split_at('.');
+		this->Ext.reverse();
+		this->Name = temp.split_at('\/');
+		this->Name.reverse();
+		this->Dir = temp;
+		this->Dir.reverse();
+		this->ID = str2type(this->Ext);
+		return false;
+	}
+
 }
 
 

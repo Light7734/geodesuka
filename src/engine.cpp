@@ -229,6 +229,7 @@ namespace geodesuka {
 				this->Stage[Index] = nullptr;
 			}
 		}
+		this->Stage.clear();
 
 		// Clears all objects from memory.
 		for (size_t i = 1; i <= this->Object.size(); i++) {
@@ -270,14 +271,28 @@ namespace geodesuka {
 		return this->PrimaryDisplay;
 	}
 
-	core::object::system_display** engine::get_display_list(size_t* ListSize) {
-		*ListSize = this->Display.size();
+	core::object::system_display** engine::get_display_list(size_t* aListSize) {
+		*aListSize = this->Display.size();
 		return this->Display.data();
 	}
 
-	core::gcl::device** engine::get_device_list(size_t* ListSize) {
-		*ListSize = this->DeviceList.size();
+	core::gcl::device** engine::get_device_list(size_t* aListSize) {
+		*aListSize = this->DeviceList.size();
 		return this->DeviceList.data();
+	}
+
+	core::io::file* engine::open(const char* aFilePath) {
+		// utilizes singleton.
+		core::io::file* lFileHandle = core::io::file::open(aFilePath);
+		if (lFileHandle != nullptr) {
+			
+		}
+
+		return nullptr;
+	}
+
+	void engine::close(core::io::file* aFile) {
+
 	}
 
 	VkInstance engine::handle() {
@@ -296,8 +311,8 @@ namespace geodesuka {
 		return glfwGetTime();
 	}
 
-	void engine::tsleep(double Seconds) {
-		double Microseconds = 1000.0 * Seconds;
+	void engine::tsleep(double aSeconds) {
+		double Microseconds = 1000.0 * aSeconds;
 #if defined(_WIN32) || defined(_WIN64)
 		DWORD Duration = (DWORD)std::floor(Microseconds);
 		Sleep(Duration);
@@ -324,13 +339,27 @@ namespace geodesuka {
 		while (!ExitCondition) {
 			this->Mutex.lock();
 			t1 = this->get_time();
+
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
 			}
-			//std::cout << "Loop Time:\t" << dt << std::endl;
+
+			// Update stage logic.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
-				//this->Stage[i].update();
+				this->Stage[i]->update(dt);
+			}
+
+			// Wait for render operations to complete before transfer.
+			
+			// Execute all host to device transfer operations.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				//vkQueueSubmit(this->Context[i]->Transfer, )
+			}
+
+			// Execute all device compute operations.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				//vkQueueSubmit(this->Context[i]->Compute, ...);
 			}
 
 
@@ -362,13 +391,24 @@ namespace geodesuka {
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// Issue all draw calls
+			// Generate draw commands from stage instances.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				this->Stage[i]->render();
+			}
 
-			VkSubmitInfo;
+			// Collect all submissions from render targets.
 
-			//vkQueueSubmit();
-			//vkQueuePresentKHR();
+			// Wait for compute operations to complete.
 
+			// Execute all draw commands per device.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				//vkQueueSubmit(this->Context[i]->Transfer, )
+			}
+
+			// Wait for render operations to complete for presentation.
+			for (size_t i = 0; i < this->SystemWindow.size(); i++) {
+				//VkPresentInfoKHR()
+			}
 
 			t2 = this->get_time();
 			dt = t2 - t1;

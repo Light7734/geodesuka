@@ -18,6 +18,10 @@ namespace geodesuka::core::gcl {
 	class context {
 	public:
 
+		//std::mutex Mutex;
+		VkQueue Transfer;
+		VkQueue Compute;
+		VkQueue Graphics;
 
 		context(device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
