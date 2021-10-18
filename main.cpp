@@ -41,17 +41,25 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	system_window::create_info CreateInfo;
+	{
 
-	CreateInfo.Display				= Engine.get_primary_display();
-	CreateInfo.WindowProperty		= window::prop();
-	CreateInfo.SwapchainProperty	= swapchain::prop();
-	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
+		system_window::create_info CreateInfo;
 
-	object_t *ObjectList[3];
-	ObjectList[0] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
-	ObjectList[1] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
-	ObjectList[2] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+		CreateInfo.Display = Engine.get_primary_display();
+		CreateInfo.WindowProperty = window::prop();
+		CreateInfo.SwapchainProperty = swapchain::prop();
+		CreateInfo.Position = math::real3(0.0, 0.0, 0.0);
+
+		object_t* ObjectList[3];
+		ObjectList[0] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+		ObjectList[1] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+		ObjectList[2] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+
+		object_t *Triangle = new triangle(&Engine, Context);
+
+	}
+
+
 
 	delete Context;
 	return 0;

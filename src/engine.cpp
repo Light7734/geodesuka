@@ -295,6 +295,22 @@ namespace geodesuka {
 
 	}
 
+	void engine::submit(core::object_t* aObject) {
+		this->ObjectMutex.lock();
+		this->Object.push_back(aObject);
+		this->ObjectMutex.unlock();
+	}
+
+	void engine::remove(core::object_t* aObject) {
+		this->ObjectMutex.lock();
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			if (this->Object[i] == aObject) {
+				this->Object.erase(this->Object.begin() + i);
+			}
+		}
+		this->ObjectMutex.unlock();
+	}
+
 	VkInstance engine::handle() {
 		return this->Instance;
 	}

@@ -6,77 +6,99 @@
 
 #include <geodesuka/core/util/variable.h>
 
-namespace geodesuka {
-	namespace core {
-		namespace gcl {
+namespace geodesuka::core::gcl {
 
-			buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
-				VkResult Result = VK_SUCCESS;
+	buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
+		VkResult Result = VK_SUCCESS;
 
-				this->Context = aContext;
+		this->Context = aContext;
 
-				this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				this->CreateInfo.pNext						= NULL;
-				this->CreateInfo.flags						= 0; // Ignore.
-				this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
-				this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
-				this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-				this->CreateInfo.queueFamilyIndexCount		= 0;
-				this->CreateInfo.pQueueFamilyIndices		= NULL;
+		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		this->CreateInfo.pNext						= NULL;
+		this->CreateInfo.flags						= 0; // Ignore.
+		this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
+		this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
+		this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+		this->CreateInfo.queueFamilyIndexCount		= 0;
+		this->CreateInfo.pQueueFamilyIndices		= NULL;
 
-				this->Handle								= VK_NULL_HANDLE;
-				this->MemoryHandle							= VK_NULL_HANDLE;
+		this->Handle								= VK_NULL_HANDLE;
+		this->MemoryHandle							= VK_NULL_HANDLE;
 
-				this->Count									= aCount;
-				this->MemoryLayout							= aMemoryLayout;
+		this->Count									= aCount;
+		this->MemoryLayout							= aMemoryLayout;
 
-				// Create Device Buffer Object.
-				Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
+		// Create Device Buffer Object.
+		Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 
-				// Allocates Memory Handle
-				if (Result == VkResult::VK_SUCCESS) {
-					// Gathers memory requirements of the created buffer.
-					VkMemoryRequirements MemReq;
-					vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
+		// Allocates Memory Handle
+		if (Result == VkResult::VK_SUCCESS) {
+			// Gathers memory requirements of the created buffer.
+			VkMemoryRequirements MemReq;
+			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
 
-					// Gathers memory properties of the device.
-					VkPhysicalDeviceMemoryProperties MemProp;
-					vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
+			// Gathers memory properties of the device.
+			VkPhysicalDeviceMemoryProperties MemProp;
+			vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
 
-					this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-					this->AllocateInfo.pNext = NULL;
-					this->AllocateInfo.allocationSize = MemReq.size;
-					for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
-						if ((MemReq.memoryTypeBits & (1 << i) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
-							this->AllocateInfo.memoryTypeIndex = i;
-							break;
-						}
-					}
-
-					// Allocate Device Memory.
-					Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
-				}
-
-				// Bind memory to buffer
-				if (Result == VkResult::VK_SUCCESS) {
-					Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
-				}
-
-				// Object now complete
-				if (Result == VkResult::VK_SUCCESS) {
-
+			this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			this->AllocateInfo.pNext = NULL;
+			this->AllocateInfo.allocationSize = MemReq.size;
+			// Currently index selection chooses indice based on proposed aMemType,
+			// and can possibly include extra features rather than exactly demanded.
+			// Maybe change to exactly only chosen features later on.
+			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
+				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
+				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
+					this->AllocateInfo.memoryTypeIndex = i;
+					break;
 				}
 			}
+			
+			// Allocate Device Memory.
+			Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+		}
 
-			buffer::~buffer() {
-				vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-				this->Handle = VK_NULL_HANDLE;
-				vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-				this->MemoryHandle = VK_NULL_HANDLE;
-			}
+		// Bind memory to buffer
+		if (Result == VkResult::VK_SUCCESS) {
+			Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+		}
 
+		if (Result == VkResult::VK_SUCCESS) {
+			this->write(0, aCount * aMemoryLayout.Type.Size, aBufferData);
 		}
 	}
+
+	buffer::~buffer() {
+		vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+		this->Handle = VK_NULL_HANDLE;
+		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+		this->MemoryHandle = VK_NULL_HANDLE;
+	}
+
+	void buffer::write(size_t aMemOffset, size_t aMemSize, void* aData) {
+		// Gathers memory properties of parent device.
+		VkPhysicalDeviceMemoryProperties Property;
+		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
+
+		/*
+		Figure out how to schedule transfer operations.
+		*/
+
+		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
+			// If memory buffer is host visible, use direct write operation.
+
+
+		}
+		else {
+			// If memory buffer is not host visible, use staging buffer.
+		}
+	}
+
+	void buffer::read(size_t aMemOffset, size_t aMemSize, void* aData) {
+
+	}
+
 }
 
 //buffer::buffer() {

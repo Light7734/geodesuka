@@ -47,6 +47,9 @@ namespace geodesuka::core::gcl {
 		//buffer& operator=(const buffer& Rhs);																		// Copy Assign
 		//buffer& operator=(buffer&& Rhs);																			// Move Assign
 
+		void write(size_t aMemOffset, size_t aMemSize, void* aData);
+		void read(size_t aMemOffset, size_t aMemSize, void* aData);
+
 
 		// Grabs sub buffers from memory layout memory layout
 		//buffer operator[](const char* Str);
@@ -90,6 +93,8 @@ namespace geodesuka::core::gcl {
 
 		int Count;
 		util::variable MemoryLayout;
+
+		buffer* StagingBuffer;
 
 		uint32_t memfilter(VkMemoryPropertyFlags MemPropFlags);
 
