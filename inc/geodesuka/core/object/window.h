@@ -59,13 +59,14 @@ PS = Physical Screen Coordinates
 #include "../gcl/framebuffer.h"
 
 #include "../object.h"
+#include "render_target.h"
 
 namespace geodesuka::core::object {
 
 	// A window is a general type object that can be drawn to, which also has the properties
 	// of every object, which it too can be drawn. Each window has a canvas, which is what is actually drawn
 	// to. A full window is Canvas + Frame.
-	class window : public object_t {
+	class window : public render_target {
 	public:
 
 		//
@@ -92,7 +93,7 @@ namespace geodesuka::core::object {
 		~window();
 
 		// This is to discern what type of target is being drawn to, referenced by object.h
-		virtual void draw(object_t* aObject) {};
+		//virtual void draw(object_t* aObject) = 0;
 
 		virtual void set_title(util::text aTitle);
 		virtual void set_size(math::real2 aSize);

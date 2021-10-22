@@ -418,7 +418,7 @@ namespace geodesuka {
 
 			// Execute all draw commands per device.
 			for (size_t i = 0; i < this->Context.size(); i++) {
-				//vkQueueSubmit(this->Context[i]->Transfer, )
+				//vkQueueSubmit(this->Context[i]->Graphics, );
 			}
 
 			// Wait for render operations to complete for presentation.

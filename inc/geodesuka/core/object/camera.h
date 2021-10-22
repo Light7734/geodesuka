@@ -25,18 +25,19 @@
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
 
-#include "../object.h"
-
 //#include "../graphical/frame_buffer.h"
+
+#include "../object.h"
+#include "render_target.h"
 
 namespace geodesuka::core::object {
 
-	class camera : public object_t {
+	class camera : public render_target {
 	public:
 
 		~camera();
 
-		virtual void draw(object_t* aObject) = 0;
+		//virtual void draw(object_t* aObject) = 0;
 
 	protected:
 

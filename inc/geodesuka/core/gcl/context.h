@@ -6,14 +6,11 @@
 
 #include "device.h"
 
-namespace geodesuka::core::gcl {
+namespace geodesuka {
+	class engine;
+}
 
-	//class buffer;
-	//class shader;
-	//class texture;
-	//class renderpass;
-	//class framebuffer;
-	//class pipeline;
+namespace geodesuka::core::gcl {
 
 	class context {
 	public:
@@ -23,6 +20,7 @@ namespace geodesuka::core::gcl {
 		VkQueue Compute;
 		VkQueue Graphics;
 
+		//TODO: Include dependency of engine instance.
 		context(device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 

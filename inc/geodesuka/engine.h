@@ -78,7 +78,7 @@ C26451
 */
 #include "core/object.h"
 
-//#include "core/object/render_target.h"
+#include "core/object/render_target.h"
 
 #include "core/object/window.h"
 #include "core/object/system_display.h"

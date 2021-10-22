@@ -29,8 +29,6 @@
 
 namespace geodesuka {
 
-	class engine;
-
 	namespace core {
 		namespace object {
 			/*
