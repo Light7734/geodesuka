@@ -1,16 +1,12 @@
 # Geodesuka Engine
 
-86 156 214
-78 201 176
-78 201 176
-
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/08/07
+Branch Birth Date: 2021/09/27
 
 Branch Pull Date: ????/??/??
 
-Version: 0.0.13
+Version: 0.0.14
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 

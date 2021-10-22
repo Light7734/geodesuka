@@ -16,6 +16,11 @@ namespace geodesuka::core::gcl {
 		// 2: Queue Create Info.
 		// 3: Create Logical Device.
 
+		this->Transfer	= VK_NULL_HANDLE;
+		this->Compute	= VK_NULL_HANDLE;
+		this->Graphics	= VK_NULL_HANDLE;
+		this->Present	= VK_NULL_HANDLE;
+
 		this->QueueCreateInfoCount = 0;
 		this->QueueCreateInfo = NULL;
 		this->QueueFamilyPriority = NULL;

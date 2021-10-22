@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_GCL_CONTEXT_H
 #define GEODESUKA_CORE_GCL_CONTEXT_H
 
+#include <mutex>
+
 #include <vulkan/vulkan.h>
 
 #include "device.h"
@@ -15,10 +17,12 @@ namespace geodesuka::core::gcl {
 	class context {
 	public:
 
-		//std::mutex Mutex;
+		std::mutex Mutex;
+
 		VkQueue Transfer;
 		VkQueue Compute;
 		VkQueue Graphics;
+		VkQueue Present;
 
 		//TODO: Include dependency of engine instance.
 		context(device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);

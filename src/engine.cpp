@@ -413,6 +413,9 @@ namespace geodesuka {
 			}
 
 			// Collect all submissions from render targets.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+
+			}
 
 			// Wait for compute operations to complete.
 
@@ -423,7 +426,7 @@ namespace geodesuka {
 
 			// Wait for render operations to complete for presentation.
 			for (size_t i = 0; i < this->SystemWindow.size(); i++) {
-				//VkPresentInfoKHR()
+				//vkQueuePresentKHR();
 			}
 
 			t2 = this->get_time();

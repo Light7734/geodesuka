@@ -16,12 +16,12 @@ namespace geodesuka::core::object {
 	class render_target : public object_t {
 	public:
 
-		std::vector<VkSubmitInfo> Submission;
 		std::vector<gcl::texture*> Texture;
 		
 		~render_target();
 
 		virtual void draw(object_t* aObject) = 0;
+		void enqueue(uint32_t aDrawCommandCount, VkCommandBuffer* aDrawCommand);
 
 	protected:
 
