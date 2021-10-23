@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 	if (!Engine.is_ready()) return -1;
 	std::cout << "Geodesuka Engine";
 	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
-	std::cout << " - Date: 20210911" << std::endl;
+	std::cout << " - Date: 20211023" << std::endl;
 
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);

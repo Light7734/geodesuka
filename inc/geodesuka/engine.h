@@ -163,7 +163,7 @@ namespace geodesuka {
 		std::mutex Mutex;
 
 		// Maintain versioning system.
-		const version Version = { 0, 0, 14 };
+		const version Version = { 0, 0, 15 };
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;

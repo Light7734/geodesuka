@@ -2,11 +2,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/09/27
+Branch Birth Date: 2021/10/23
 
-Branch Pull Date: 2021/10/23
+Branch Pull Date: ????/??/??
 
-Version: 0.0.14
+Version: 0.0.15
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
