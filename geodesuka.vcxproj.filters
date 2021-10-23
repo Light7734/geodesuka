@@ -297,6 +297,7 @@
   <ItemGroup>
     <None Include="README.md" />
     <None Include="Makefile" />
+    <None Include="LICENSE" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\Notes.txt">

@@ -28,7 +28,7 @@ namespace geodesuka::core::object {
 		glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
 		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
 		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate);
+		glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
 		//this->SizeSC = this->phys2scrn(this->Size);
 		this->Handle = glfwCreateWindow(640, 480, "", NULL, NULL);

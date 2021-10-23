@@ -14,11 +14,14 @@
 // which gives meaning to their position vector. Secondly, since they share
 // the same space, they can be interpreted to interact with one and another.
 //
+// It is a assumed that stages and the context they create share the same
+// rendering and compute context.
 
 #include <vector>
 
 #include <mutex>
 
+#include "gcl/context.h"
 #include "object.h"
 
 namespace geodesuka::core {
@@ -27,13 +30,20 @@ namespace geodesuka::core {
 	public:
 
 		std::mutex Mutex;
-		
+		std::vector<VkSubmitInfo> Submission;
+
 		~stage_t();
 
 		virtual void update(double aDeltaTime);
 		virtual void render() = 0;
 
+		gcl::context* parent_context();
+
 	protected:
+
+		// These are just for reference when creating
+		engine* Engine;
+		gcl::context* Context;
 
 		std::vector<object_t*> Object;
 

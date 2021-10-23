@@ -3,9 +3,13 @@
 namespace geodesuka::core {
 
     stage_t::~stage_t() {
-        
+
     }
 
     void stage_t::update(double aDeltaTime) {}
+
+    gcl::context* stage_t::parent_context() {
+        return this->Context;
+    }
 
 }

@@ -238,6 +238,7 @@
     <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="Makefile" />
     <None Include="README.md" />
   </ItemGroup>

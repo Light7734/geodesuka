@@ -208,6 +208,7 @@ namespace geodesuka {
 		
 		// ------------------------------ Back end runtime ------------------------------ //
 
+		// TODO: Maybe make update thread use multiple threads for fast processing?
 		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;

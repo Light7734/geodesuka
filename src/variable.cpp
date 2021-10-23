@@ -198,7 +198,6 @@ namespace geodesuka::core::util {
 	}
 
 	type& type::operator=(type&& Rhs) {
-		// TODO: insert return statement here
 		this->ID = Rhs.ID;
 		this->Size = Rhs.Size;
 		this->MemberCount = Rhs.MemberCount;

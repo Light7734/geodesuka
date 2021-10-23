@@ -404,24 +404,43 @@ namespace geodesuka {
 		bool ExitCondition = false;
 		double t1, t2;
 		double dt;
+
+
+		// Represents gathered submissions per context.
+		// Insure that all render operations to system_window
+		// images wait for Acquire semaphore to be signalled.
+		std::vector<std::vector<VkSubmitInfo>> Submission;
+
 		while (!ExitCondition) {
 			t1 = this->get_time();
 
-			// Generate draw commands from stage instances.
+			// Generates Submissions per stage.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
 				this->Stage[i]->render();
 			}
 
-			// Collect all submissions from render targets.
-			for (size_t i = 0; i < this->Stage.size(); i++) {
+			// Alter submission size to match number of contexts.
+			Submission.resize(this->Context.size());
 
+
+			// Gather all submissions by stages.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				for (size_t j = 0; j < this->Context.size(); j++) {
+					if (this->Stage[i]->parent_context() == this->Context[j]) {
+						// When matching context is found, extract all submissions.
+						for (size_t k = 0; k < this->Stage[i]->Submission.size(); k++) {
+							Submission[j].push_back(this->Stage[i]->Submission[k]);
+						}
+					}
+				}
 			}
 
 			// Wait for compute operations to complete.
-
+			//vkWaitForFences()
+			
 			// Execute all draw commands per device.
 			for (size_t i = 0; i < this->Context.size(); i++) {
-				//vkQueueSubmit(this->Context[i]->Graphics, );
+				vkQueueSubmit(this->Context[i]->Graphics, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
 			}
 
 			// Wait for render operations to complete for presentation.
