@@ -36,15 +36,8 @@ C26451
 
 /* --------------- Third Party Libraries --------------- */
 
-/* Vulkan API */
 #include <vulkan/vulkan.h>
-
-/* GLFW API */
-//#define VK_USE_PLATFORM_WIN32_KHR
-//#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
-//#define GLFW_EXPOSE_NATIVE_WIN32
-//#include <GLFW/glfw3native.h>
 
 // ------------------------- Mathematics Library ------------------------- //
 #include "core/math.h"
@@ -85,7 +78,7 @@ C26451
 */
 #include "core/object.h"
 
-//#include "core/object/render_target.h"
+#include "core/object/render_target.h"
 
 #include "core/object/window.h"
 #include "core/object/system_display.h"
@@ -105,19 +98,19 @@ C26451
 // example for extending object.h
 //#include "core/object/cube.h"
 
+#include "core/stage.h"
+#include "core/stage/canvas.h"
+#include "core/stage/scene2d.h"
+
 namespace geodesuka {
 
-	/*
-	* Maybe run engine internals on secondary thread? If that is the
-	* case, the
-	* 
-	*/
 	class engine {
 	public:
 
-		enum ecode {
-			GE_SUCCESS = 0,
-			GE_ERROR_CODE_STARTUP_FAILURE = -1,
+		enum state {
+			ENGINE_CREATION_STATE,			// Engine instance is being constructed.
+			ENGINE_ACTIVE_STATE,			// Engine instance is active, and ready to be used.
+			ENGINE_DESTRUCTION_STATE		// Engine is currently in destruction phase.
 		};
 
 		struct version {
@@ -126,36 +119,43 @@ namespace geodesuka {
 			int Patch;
 		};
 
-		//friend class core::object::system_display;
-		friend class core::object::system_window;
+		friend class core::gcl::context;
+
+		// Objects can interect with engine internals.
+		friend class core::object_t;
 
 		engine(int argc, char* argv[]);
 		~engine();
 
-		// Query functions
+		// Gets current primary display.
 		core::object::system_display* get_primary_display();
-		core::object::system_display** get_display_list(size_t* ListSize);
-		core::gcl::device** get_device_list(size_t* ListSize);
 
-		// File management system.
-		core::io::file* open(const char* FilePath);
-		core::math::integer close(core::io::file* FileHandle);
+		// Gets list of all currently available displays.
+		core::object::system_display** get_display_list(size_t* aListSize);
 
-		// Intended to be used to create and register new objects. Can be used for debuging memory leaks
-		// and extending object.h for user choice.
-		// Example: "Engine, create a new sword.".
-		// Object* Sword = Engine.create(new sword());
-		core::object_t* create(core::object_t* aNewObject);
-		core::object_t* create(core::object::system_window* aNewSystemWindow);
-		core::math::integer destroy(core::object_t* aDestroyObject);
+		// Gets list of all currently available gpus.
+		core::gcl::device** get_device_list(size_t* aListSize);
 
+		// When an engine instance is passed into an object
+		// constructor, it uses these methods to load required
+		// assets.
+		core::io::file* open(const char* aFilePath);		// Opens file using provided path string.
+		void close(core::io::file* aFile);				// Closes previously loaded file held by engine.
+
+		// These calls are neccesary for time scheduled update of all active
+		// objects in existence.
+		void submit(core::object_t* aObject);		// Submit created object to engine.
+		void remove(core::object_t* aObject);		// Remove object from engine.
+
+		VkInstance handle();
 		bool is_ready();
-		ecode error_code();
 		version get_version();
 		double get_time();
-		void tsleep(double Seconds);
+		void tsleep(double aSeconds);
 
 	private:
+
+		state State;
 
 		std::vector<const char*> RequiredExtension;
 
@@ -163,9 +163,7 @@ namespace geodesuka {
 		std::mutex Mutex;
 
 		// Maintain versioning system.
-		const version Version = { 0, 0, 13 };
-
-		ecode ErrorCode;
+		const version Version = { 0, 0, 14 };
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;
@@ -180,33 +178,37 @@ namespace geodesuka {
 		VkApplicationInfo AppProp{};
 		VkInstanceCreateInfo InstProp{};
 		VkInstance Instance;
-		
 
-
-		// It is the job of the engine to query for physical devices and displays.
+		// It is the job of the engine to query for physical devices
+		// and display from the system.
 		std::vector<core::gcl::device*> DeviceList;
 		std::vector<core::object::system_display*> Display;
+		std::vector<core::object::system_window*> SystemWindow;
 		// Find a way to map devices to system_displays.
-
 
 		// Keeps track of important System and OS objects.
 		core::object::system_display* PrimaryDisplay;
 
-		// Abstract Window Type
-		//std::vector<core::object::window*> Window;
-		std::vector<core::object::system_window*> SystemWindow;			// Automatically managed by engine.
-		//std::vector<core::object::virtual_window*> VirtualWindow;		
-		//std::vector<core::object::camera*> Camera;
-
-		// These are gameplay objects. Cannot be created/destroyed until everything is initialized.
-		std::vector<core::object_t*> Object;
-
 		// Reduce redundant file loading by matching paths.
 		// If current working directory changes, 
 		std::vector<core::io::file*> File;
+
+		// All created device contexts are held by engine. Needed for graphics/compute.
+		std::vector<core::gcl::context*> Context;
+
+		// All objects are managed by engine regardless of stage.
+		std::mutex ObjectMutex;
+		std::vector<core::object_t*> Object;
+
+
+		// Active stage represent a collection of objects
+		// sharing the same space, object interaction, rendering
+		std::vector<core::stage_t*> Stage;
+
 		
 		// ------------------------------ Back end runtime ------------------------------ //
 
+		// TODO: Maybe make update thread use multiple threads for fast processing?
 		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;

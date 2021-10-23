@@ -1,15 +1,9 @@
 #include <iostream>
+#include <algorithm>
 
 #include <geodesuka/engine.h>
 
 #include "triangle.h"
-
-//#include "src/dep/glslang/glslang/Public/ShaderLang.h"
-//#include "src/dep/glslang/StandAlone/ResourceLimits.h"
-//
-//#include "src/dep/glslang/SPIRV/GlslangToSpv.h"
-//
-//#include <Windows.h>
 
 using namespace geodesuka::core;
 using namespace gcl;
@@ -30,26 +24,12 @@ using namespace object;
 */
 // Creates a window on every display
 
-#include <Windows.h>
-
 int main(int argc, char *argv[]) {
 	geodesuka::engine Engine(argc, argv);
 	if (!Engine.is_ready()) return -1;
 	std::cout << "Geodesuka Engine";
 	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
 	std::cout << " - Date: 20210911" << std::endl;
-
-	//int RunTime = 0;
-	//while (true) {
-	//	Sleep(1000);
-	//	if (RunTime > 3 * 1000) {
-	//		break;
-	//	}
-	//	else {
-	//		RunTime += 1000;
-	//	}
-	//}
-
 
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
@@ -61,43 +41,25 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	//{
 
+	//	system_window::create_info CreateInfo;
 
-	uint32_t BindingCount = 10;
-	VkDescriptorSetLayoutBinding* BindingList = NULL;
-	BindingList = new VkDescriptorSetLayoutBinding[BindingCount]{};
+	//	CreateInfo.Display = Engine.get_primary_display();
+	//	CreateInfo.WindowProperty = window::prop();
+	//	CreateInfo.SwapchainProperty = swapchain::prop();
+	//	CreateInfo.Position = math::real3(0.0, 0.0, 0.0);
 
-	BindingList[0].binding = 0;
+	//	object_t* ObjectList[3];
+	//	ObjectList[0] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+	//	ObjectList[1] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
+	//	ObjectList[2] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
 
-	VkDescriptorSetLayoutCreateInfo DSLCI{};
-	VkDescriptorSetLayout DSL;
+	//	object_t *Triangle = new triangle(&Engine, Context);
 
-	DSLCI.sType = VkStructureType::VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	DSLCI.pNext = NULL;
-	DSLCI.flags = 0;
-	DSLCI.bindingCount = BindingCount;
-	DSLCI.pBindings = BindingList;
-	vkCreateDescriptorSetLayout(Context->handle(), &DSLCI, NULL, &DSL);
+	//}
 
-
-
-	///*
-	//// Window properties constructor.
-	//window::prop WindowProperties = window::prop();
-	//frame_buffer::prop FramebufferProperties = frame_buffer::prop();
-	//
-	//WindowProperties.Decorated			= GLFW_TRUE;
-	//WindowProperties.PresentationMode	= VK_PRESENT_MODE_FIFO_KHR;
-
-	//FramebufferProperties.Count			= 2;
-	//FramebufferProperties.Format		= VK_FORMAT_R8G8B8A8_SRGB;
-	//FramebufferProperties.ColorSpace	= VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-	//
-	//system_display* PrimaryDisplay = Engine.get_primary_display();
-	//window* Window = (window*)Engine.create(new system_window(Context, PrimaryDisplay, FramebufferProperties, WindowProperties,
-	//	math::real3(0.0, 0.0, 0.0), math::real2(0.1, 0.1), util::text("I hate OpenGL")));
-	//object_t* Triangle = Engine.create(new triangle(Engine, Context));
-	//*/
+	
 
 	delete Context;
 	return 0;

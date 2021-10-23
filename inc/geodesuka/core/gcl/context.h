@@ -2,60 +2,70 @@
 #ifndef GEODESUKA_CORE_GCL_CONTEXT_H
 #define GEODESUKA_CORE_GCL_CONTEXT_H
 
+#include <mutex>
+
 #include <vulkan/vulkan.h>
 
 #include "device.h"
 
 namespace geodesuka {
-	namespace core {
-		namespace gcl {
+	class engine;
+}
 
-			//class buffer;
-			//class shader;
-			//class texture;
-			//class renderpass;
-			//class framebuffer;
-			//class pipeline;
+namespace geodesuka::core::gcl {
 
-			class context {
-			public:
+	class context {
+	public:
+
+		std::mutex Mutex;
+
+		//\\ ------------------------------ Queues ------------------------------ //\\
+		// Available queues for specific operations. Names are self explanatory.
+		// These members will be VK_NULL_HANDLE if not available. Sometimes they
+		// may be the same queue, but treat them differently even if they are
+		// the same opaque handle.
+		
+		VkQueue Transfer;
+		VkQueue Compute;
+		VkQueue Graphics;
+
+		// Will be VK_NULL_HANDLE if VK_KHR_surface is not enabled.
+		VkQueue Present;
+
+		//TODO: Include dependency of engine instance.
+		context(/*engine *aEngine,*/device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
+		~context();
 
 
-				context(device* aDevice, uint32_t aExtensionCount, const char **aExtensionList);
-				~context();
 
-				
+		// ----- Query ----- //
 
-				// ----- Query ----- //
+		//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
 
-				//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
+		// ----- Handles ----- //
 
-				// ----- Handles ----- //
+		VkInstance inst();
+		// TODO: Change to device()?
+		device* parent();
+		VkDevice handle();
 
-				VkInstance inst();
-				device* parent();
-				VkDevice handle();
+	private:
 
-				// Parse error into string.
-				static const char* get_er_str(VkResult Res);
+		// Parent physical device.
+		device* Device;
 
-			private:
+		float** QueueFamilyPriority;
 
-				uint32_t QueueCreateInfoCount;
-				VkDeviceQueueCreateInfo* QueueCreateInfo;
-				float** QueueFamilyPriority;
-				VkPhysicalDeviceFeatures EnabledFeatures{};
+		uint32_t QueueCreateInfoCount;
+		VkDeviceQueueCreateInfo* QueueCreateInfo;
+		VkPhysicalDeviceFeatures EnabledFeatures{};
 
-				// Stores queues and stuff.
-				VkDeviceCreateInfo CreationInfo{};
+		// Stores queues and stuff.
+		VkDeviceCreateInfo CreateInfo{};
+		VkDevice Handle;
 
-				device* ParentDevice;
-				VkDevice Handle;
+	};
 
-			};
-
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_GCL_CONTEXT_H

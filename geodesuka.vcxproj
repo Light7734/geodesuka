@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -105,8 +105,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;$(ProjectDir)../glfw/bin/StaticLibrary/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -128,8 +128,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -147,8 +147,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -170,130 +170,77 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;OpenCL.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(INTELOCLSDKROOT)lib\$(PlatformShortName);$(ProjectDir)lib;$(ProjectDir)..\glfw\lib\StaticLibrary\$(Configuration)\$(PlatformShortName)\;$(ProjectDir)..\glslang\lib\$(Configuration)\$(PlatformShortName)\;$(VK_SDK_PATH)\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>vulkan-1.lib;slglfw.lib;slglslang.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\core\gcl\buffer.cpp" />
-    <ClCompile Include="src\core\gcl\context.cpp" />
-    <ClCompile Include="src\core\gcl\device.cpp" />
-    <ClCompile Include="src\core\gcl\framebuffer.cpp" />
-    <ClCompile Include="src\core\gcl\shader.cpp" />
-    <ClCompile Include="src\core\gcl\texture.cpp" />
-    <ClCompile Include="src\core\hid\joystick.cpp" />
-    <ClCompile Include="src\core\hid\keyboard.cpp" />
-    <ClCompile Include="src\core\hid\mouse.cpp" />
-    <ClCompile Include="src\core\io\dynalib.cpp" />
-    <ClCompile Include="src\core\io\file.cpp" />
-    <ClCompile Include="src\core\io\font.cpp" />
-    <ClCompile Include="src\core\io\image.cpp" />
-    <ClCompile Include="src\core\io\script.cpp" />
-    <ClCompile Include="src\core\io\socket_t.cpp" />
-    <ClCompile Include="src\core\math\matrices\real2x2.cpp" />
-    <ClCompile Include="src\core\math\matrices\real2x3.cpp" />
-    <ClCompile Include="src\core\math\matrices\real2x4.cpp" />
-    <ClCompile Include="src\core\math\matrices\real3x2.cpp" />
-    <ClCompile Include="src\core\math\matrices\real3x3.cpp" />
-    <ClCompile Include="src\core\math\matrices\real3x4.cpp" />
-    <ClCompile Include="src\core\math\matrices\real4x2.cpp" />
-    <ClCompile Include="src\core\math\matrices\real4x3.cpp" />
-    <ClCompile Include="src\core\math\matrices\real4x4.cpp" />
-    <ClCompile Include="src\core\math\numbers\complex.cpp" />
-    <ClCompile Include="src\core\math\numbers\constants.cpp" />
-    <ClCompile Include="src\core\math\numbers\quaternion.cpp" />
-    <ClCompile Include="src\core\math\numbers\real.cpp" />
-    <ClCompile Include="src\core\math\util\fsupport.cpp" />
-    <ClCompile Include="src\core\math\util\isupport.cpp" />
-    <ClCompile Include="src\core\math\util\matrix_multiply.cpp" />
-    <ClCompile Include="src\core\math\vectors\integer2.cpp" />
-    <ClCompile Include="src\core\math\vectors\integer3.cpp" />
-    <ClCompile Include="src\core\math\vectors\integer4.cpp" />
-    <ClCompile Include="src\core\math\vectors\natural2.cpp" />
-    <ClCompile Include="src\core\math\vectors\natural3.cpp" />
-    <ClCompile Include="src\core\math\vectors\natural4.cpp" />
-    <ClCompile Include="src\core\math\vectors\real2.cpp" />
-    <ClCompile Include="src\core\math\vectors\real3.cpp" />
-    <ClCompile Include="src\core\math\vectors\real4.cpp" />
-    <ClCompile Include="src\core\object.cpp" />
-    <ClCompile Include="src\core\object\camera.cpp" />
-    <ClCompile Include="src\core\object\camera2d.cpp" />
-    <ClCompile Include="src\core\object\camera3d.cpp" />
-    <ClCompile Include="src\core\object\system_display.cpp" />
-    <ClCompile Include="src\core\object\system_window.cpp" />
-    <ClCompile Include="src\core\object\virtual_window.cpp" />
-    <ClCompile Include="src\core\object\vtext.cpp" />
-    <ClCompile Include="src\core\object\window.cpp" />
-    <ClCompile Include="src\core\util\text.cpp" />
-    <ClCompile Include="src\core\util\variable.cpp" />
-    <ClCompile Include="src\dep\glfw\src\egl_context.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_context.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_init.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_input.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_monitor.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_vulkan.c" />
-    <ClCompile Include="src\dep\glfw\src\glfw_window.c" />
-    <ClCompile Include="src\dep\glfw\src\osmesa_context.c" />
-    <ClCompile Include="src\dep\glfw\src\wgl_context.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_init.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_joystick.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_monitor.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_thread.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_time.c" />
-    <ClCompile Include="src\dep\glfw\src\win32_window.c" />
-    <ClCompile Include="src\dep\glfw\src\xkb_unicode.c" />
-    <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\CodeGen.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\GenericCodeGen\Link.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\attribute.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Constant.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\glslang_tab.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\InfoSink.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Initialize.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Intermediate.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\intermOut.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\IntermTraverse.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\iomapper.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\limits.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\linkValidate.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\parseConst.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ParseContextBase.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ParseHelper.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\PoolAlloc.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\Pp.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpAtom.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpContext.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpScanner.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpTokens.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\propagateNoContraction.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\reflection.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\RemoveTree.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Scan.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\ShaderLang.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SpirvIntrinsics.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\MachineIndependent\Versions.cpp" />
-    <ClCompile Include="src\dep\glslang\glslang\OSDependent\Windows\ossource.cpp" />
-    <ClCompile Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\disassemble.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\doc.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\GlslangToSpv.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\InReadableOrder.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\Logger.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvBuilder.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvPostProcess.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\SPVRemapper.cpp" />
-    <ClCompile Include="src\dep\glslang\SPIRV\SpvTools.cpp" />
-    <ClCompile Include="src\dep\glslang\StandAlone\ResourceLimits.cpp" />
+    <ClCompile Include="src\buffer.cpp" />
+    <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\camera2d.cpp" />
+    <ClCompile Include="src\camera3d.cpp" />
+    <ClCompile Include="src\canvas.cpp" />
+    <ClCompile Include="src\complex.cpp" />
+    <ClCompile Include="src\constants.cpp" />
+    <ClCompile Include="src\context.cpp" />
+    <ClCompile Include="src\device.cpp" />
+    <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="src\file.cpp" />
+    <ClCompile Include="src\font.cpp" />
+    <ClCompile Include="src\framebuffer.cpp" />
+    <ClCompile Include="src\fsupport.cpp" />
+    <ClCompile Include="src\image.cpp" />
+    <ClCompile Include="src\integer2.cpp" />
+    <ClCompile Include="src\integer3.cpp" />
+    <ClCompile Include="src\integer4.cpp" />
+    <ClCompile Include="src\isupport.cpp" />
+    <ClCompile Include="src\joystick.cpp" />
+    <ClCompile Include="src\keyboard.cpp" />
+    <ClCompile Include="src\log.cpp" />
+    <ClCompile Include="src\matrix_multiply.cpp" />
+    <ClCompile Include="src\mouse.cpp" />
+    <ClCompile Include="src\natural2.cpp" />
+    <ClCompile Include="src\natural3.cpp" />
+    <ClCompile Include="src\natural4.cpp" />
+    <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\quaternion.cpp" />
+    <ClCompile Include="src\real.cpp" />
+    <ClCompile Include="src\real2.cpp" />
+    <ClCompile Include="src\real2x2.cpp" />
+    <ClCompile Include="src\real2x3.cpp" />
+    <ClCompile Include="src\real2x4.cpp" />
+    <ClCompile Include="src\real3.cpp" />
+    <ClCompile Include="src\real3x2.cpp" />
+    <ClCompile Include="src\real3x3.cpp" />
+    <ClCompile Include="src\real3x4.cpp" />
+    <ClCompile Include="src\real4.cpp" />
+    <ClCompile Include="src\real4x2.cpp" />
+    <ClCompile Include="src\real4x3.cpp" />
+    <ClCompile Include="src\real4x4.cpp" />
+    <ClCompile Include="src\render_target.cpp" />
+    <ClCompile Include="src\scene2d.cpp" />
+    <ClCompile Include="src\scene3d.cpp" />
+    <ClCompile Include="src\script.cpp" />
+    <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\socket_t.cpp" />
+    <ClCompile Include="src\stage.cpp" />
+    <ClCompile Include="src\swapchain.cpp" />
+    <ClCompile Include="src\system_display.cpp" />
+    <ClCompile Include="src\system_window.cpp" />
+    <ClCompile Include="src\text.cpp" />
+    <ClCompile Include="src\texture.cpp" />
+    <ClCompile Include="src\variable.cpp" />
+    <ClCompile Include="src\virtual_window.cpp" />
+    <ClCompile Include="src\vtext.cpp" />
+    <ClCompile Include="src\window.cpp" />
     <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="Makefile" />
     <None Include="README.md" />
-    <None Include="src\dep\glslang\glslang\MachineIndependent\glslang.m4" />
-    <None Include="src\dep\glslang\glslang\MachineIndependent\glslang.y" />
-    <None Include="src\dep\glslang\glslang\updateGrammar" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\Notes.txt" />
@@ -309,6 +256,7 @@
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
@@ -349,85 +297,24 @@
     <ClInclude Include="inc\geodesuka\core\math\vectors\real2.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real3.h" />
     <ClInclude Include="inc\geodesuka\core\math\vectors\real4.h" />
-    <ClInclude Include="inc\geodesuka\core\math\vectors\realn.h" />
     <ClInclude Include="inc\geodesuka\core\object.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
+    <ClInclude Include="inc\geodesuka\core\object\render_target.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\stage.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\scene2d.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\scene3d.h" />
+    <ClInclude Include="inc\geodesuka\core\util\log.h" />
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />
-    <ClInclude Include="inc\GLFW\glfw3.h" />
-    <ClInclude Include="inc\GLFW\glfw3native.h" />
-    <ClInclude Include="src\dep\glfw\src\egl_context.h" />
-    <ClInclude Include="src\dep\glfw\src\glfw_config.h" />
-    <ClInclude Include="src\dep\glfw\src\internal.h" />
-    <ClInclude Include="src\dep\glfw\src\mappings.h" />
-    <ClInclude Include="src\dep\glfw\src\osmesa_context.h" />
-    <ClInclude Include="src\dep\glfw\src\wgl_context.h" />
-    <ClInclude Include="src\dep\glfw\src\win32_joystick.h" />
-    <ClInclude Include="src\dep\glfw\src\win32_platform.h" />
-    <ClInclude Include="src\dep\glfw\src\xkb_unicode.h" />
-    <ClInclude Include="src\dep\glslang\build_info.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\arrays.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\BaseTypes.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\Common.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\ConstantUnion.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\glslang_c_interface.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\glslang_c_shader_types.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\InfoSink.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\InitializeGlobals.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\intermediate.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\PoolAlloc.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\ResourceLimits.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\ShHandle.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\SpirvIntrinsics.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Include\Types.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\attribute.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\glslang_tab.cpp.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\gl_types.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Initialize.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\iomapper.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\LiveTraverser.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\localintermediate.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\ParseHelper.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\parseVersions.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\pch.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpContext.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\preprocessor\PpTokens.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\propagateNoContraction.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\reflection.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\RemoveTree.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Scan.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\ScanContext.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\SymbolTable.h" />
-    <ClInclude Include="src\dep\glslang\glslang\MachineIndependent\Versions.h" />
-    <ClInclude Include="src\dep\glslang\glslang\OSDependent\osinclude.h" />
-    <ClInclude Include="src\dep\glslang\glslang\Public\ShaderLang.h" />
-    <ClInclude Include="src\dep\glslang\OGLCompilersDLL\InitializeDll.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\bitutils.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\disassemble.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\doc.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.AMD.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.EXT.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.KHR.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.ext.NV.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GLSL.std.450.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\GlslangToSpv.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\hex_float.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\Logger.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\NonSemanticDebugPrintf.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\spirv.hpp" />
-    <ClInclude Include="src\dep\glslang\SPIRV\SpvBuilder.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\spvIR.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\SPVRemapper.h" />
-    <ClInclude Include="src\dep\glslang\SPIRV\SpvTools.h" />
-    <ClInclude Include="src\dep\glslang\StandAlone\ResourceLimits.h" />
     <ClInclude Include="triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

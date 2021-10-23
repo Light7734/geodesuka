@@ -39,8 +39,9 @@ namespace geodesuka {
 	* needed for context creation. Will manage all created objects
 	* and loaded assets.
 	*/
-	engine::engine(int argc, char* argv[]) {
 
+	engine::engine(int argc, char* argv[]) {
+		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
 		this->isGLFWReady = false;
 		this->isVulkanReady = false;
@@ -115,7 +116,7 @@ namespace geodesuka {
 			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
 				// Get System displays.
-				core::object::system_display* tmpDisplay = new core::object::system_display(glfwGetPrimaryMonitor());
+				core::object::system_display* tmpDisplay = new core::object::system_display(this, nullptr, glfwGetPrimaryMonitor());
 				this->PrimaryDisplay = tmpDisplay;
 				this->Display.push_back(tmpDisplay);
 				this->Object.push_back(tmpDisplay);
@@ -124,7 +125,7 @@ namespace geodesuka {
 				for (int i = 0; i < lCount; i++) {
 					if (PrimaryDisplay->Handle != lMon[i]) {
 						// Excludes already cached primary monitor.
-						tmpDisplay = new core::object::system_display(lMon[i]);
+						tmpDisplay = new core::object::system_display(this, nullptr, lMon[i]);
 						this->Display.push_back(tmpDisplay);
 						this->Object.push_back(tmpDisplay);
 					}
@@ -203,6 +204,7 @@ namespace geodesuka {
 		//	std::cout << std::endl;
 		//}
 
+		this->State = state::ENGINE_ACTIVE_STATE;
 	}
 
 	/*
@@ -210,6 +212,7 @@ namespace geodesuka {
 	* Also must shut down backend API. 
 	*/
 	engine::~engine() {
+		this->State = state::ENGINE_DESTRUCTION_STATE;
 		// Begin termination, stop threads.
 		this->Mutex.lock();
 		this->Shutdown = true;
@@ -217,6 +220,16 @@ namespace geodesuka {
 		if (this->isReady) {
 			this->UpdateThread.join();
 		}
+
+		// Destroys all active stages.
+		for (size_t i = 1; i <= this->Stage.size(); i++) {
+			size_t Index = this->Stage.size() - i;
+			if (this->Stage[Index] != nullptr) {
+				delete this->Stage[Index];
+				this->Stage[Index] = nullptr;
+			}
+		}
+		this->Stage.clear();
 
 		// Clears all objects from memory.
 		for (size_t i = 1; i <= this->Object.size(); i++) {
@@ -227,6 +240,16 @@ namespace geodesuka {
 			}
 		}
 		this->Object.clear();
+
+		// Destroys all device contexts.
+		for (size_t i = 1; i <= this->Context.size(); i++) {
+			size_t Index = this->Context.size() - i;
+			if (this->Context[i] != nullptr) {
+				delete this->Context[i];
+				this->Context[i] = nullptr;
+			}
+		}
+		this->Context.clear();
 
 		// Clears all loaded resources from memory.
 		for (size_t i = 0; i < this->File.size(); i++) {
@@ -248,63 +271,52 @@ namespace geodesuka {
 		return this->PrimaryDisplay;
 	}
 
-	core::object::system_display** engine::get_display_list(size_t* ListSize) {
-		*ListSize = this->Display.size();
+	core::object::system_display** engine::get_display_list(size_t* aListSize) {
+		*aListSize = this->Display.size();
 		return this->Display.data();
 	}
 
-	core::gcl::device** engine::get_device_list(size_t* ListSize) {
-		*ListSize = this->DeviceList.size();
+	core::gcl::device** engine::get_device_list(size_t* aListSize) {
+		*aListSize = this->DeviceList.size();
 		return this->DeviceList.data();
 	}
 
-	core::io::file* engine::open(const char* FilePath) {
+	core::io::file* engine::open(const char* aFilePath) {
+		// utilizes singleton.
+		core::io::file* lFileHandle = core::io::file::open(aFilePath);
+		if (lFileHandle != nullptr) {
+			
+		}
 
 		return nullptr;
 	}
 
-	core::math::integer engine::close(core::io::file* FileHandle) {
-		return core::math::integer();
+	void engine::close(core::io::file* aFile) {
+
 	}
 
-	core::object_t* engine::create(core::object_t* aNewObject) {
-		// Checks for redundant elements.
-		for (size_t i = 0; i < Object.size(); i++) {
-			if (Object[i] == aNewObject) return aNewObject;
-		}
-		// Pushes onto list if not on list.
-		Object.push_back(aNewObject);
-		return aNewObject;
+	void engine::submit(core::object_t* aObject) {
+		this->ObjectMutex.lock();
+		this->Object.push_back(aObject);
+		this->ObjectMutex.unlock();
 	}
 
-	core::object_t* engine::create(core::object::system_window* aNewWindow) {
-		// Checks for redundant elements.
+	void engine::remove(core::object_t* aObject) {
+		this->ObjectMutex.lock();
 		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aNewWindow) return aNewWindow;
-		}
-		size_t Offset = this->Display.size() + this->SystemWindow.size();
-		this->Object.insert(this->Object.begin() + Offset, aNewWindow);
-		this->SystemWindow.push_back(aNewWindow);
-		return aNewWindow;
-	}
-
-	core::math::integer engine::destroy(core::object_t* aDestroyObject) {
-		// Searches for object in list, then erases if it exists.
-		for (size_t i = 0; i < Object.size(); i++) {
-			if (Object[i] == aDestroyObject) {
-				Object.erase(Object.begin() + i);
-				return 0;
+			if (this->Object[i] == aObject) {
+				this->Object.erase(this->Object.begin() + i);
 			}
 		}
-		return -1;
+		this->ObjectMutex.unlock();
+	}
+
+	VkInstance engine::handle() {
+		return this->Instance;
 	}
 
 	bool engine::is_ready() {
 		return this->isReady;
-	}
-
-	engine::ecode engine::error_code() {
-		return this->ErrorCode;
 	}
 
 	engine::version engine::get_version() {
@@ -315,8 +327,8 @@ namespace geodesuka {
 		return glfwGetTime();
 	}
 
-	void engine::tsleep(double Seconds) {
-		double Microseconds = 1000.0 * Seconds;
+	void engine::tsleep(double aSeconds) {
+		double Microseconds = 1000.0 * aSeconds;
 #if defined(_WIN32) || defined(_WIN64)
 		DWORD Duration = (DWORD)std::floor(Microseconds);
 		Sleep(Duration);
@@ -341,16 +353,34 @@ namespace geodesuka {
 		double ts = 1.0 / 2.0;
 		dt = 0.0;
 		while (!ExitCondition) {
+			this->Mutex.lock();
 			t1 = this->get_time();
-			// glfw
-			//
+
 			// Update object list.
-			//for (size_t i = 0; i < this->Object.size(); i++) {
-			//	this->Object[i]->update(dt);
-			//}
-			//std::cout << "Loop Time:\t" << dt << std::endl;
+			for (size_t i = 0; i < this->Object.size(); i++) {
+				this->Object[i]->update(dt);
+			}
+
+			// Update stage logic.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				this->Stage[i]->update(dt);
+			}
+
+			// Wait for render operations to complete before transfer.
+			
+			// Execute all host to device transfer operations.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				//vkQueueSubmit(this->Context[i]->Transfer, )
+			}
+
+			// Execute all device compute operations.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				//vkQueueSubmit(this->Context[i]->Compute, ...);
+			}
+
 
 			t2 = this->get_time();
+			this->Mutex.unlock();
 			wt = t2 - t1;
 			if (wt < ts) {
 				ht = ts - wt;
@@ -367,8 +397,63 @@ namespace geodesuka {
 		//std::cout << "Update Thread has exited." << std::endl;
 	}
 
+	//
+	// thread that submits all draw calls to respective queues
+	//
 	void engine::trender() {
+		bool ExitCondition = false;
+		double t1, t2;
+		double dt;
 
+
+		// Represents gathered submissions per context.
+		// Insure that all render operations to system_window
+		// images wait for Acquire semaphore to be signalled.
+		std::vector<std::vector<VkSubmitInfo>> Submission;
+
+		while (!ExitCondition) {
+			t1 = this->get_time();
+
+			// Generates Submissions per stage.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				this->Stage[i]->render();
+			}
+
+			// Alter submission size to match number of contexts.
+			Submission.resize(this->Context.size());
+
+
+			// Gather all submissions by stages.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				for (size_t j = 0; j < this->Context.size(); j++) {
+					if (this->Stage[i]->parent_context() == this->Context[j]) {
+						// When matching context is found, extract all submissions.
+						for (size_t k = 0; k < this->Stage[i]->Submission.size(); k++) {
+							Submission[j].push_back(this->Stage[i]->Submission[k]);
+						}
+					}
+				}
+			}
+
+			// Wait for compute operations to complete.
+			//vkWaitForFences()
+			
+			// Execute all draw commands per device.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				vkQueueSubmit(this->Context[i]->Graphics, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
+			}
+
+			// Wait for render operations to complete for presentation.
+			for (size_t i = 0; i < this->SystemWindow.size(); i++) {
+				//vkQueuePresentKHR();
+			}
+
+			t2 = this->get_time();
+			dt = t2 - t1;
+			this->Mutex.lock();
+			ExitCondition = this->Shutdown;
+			this->Mutex.unlock();
+		}
 	}
 
 	void engine::taudio() {

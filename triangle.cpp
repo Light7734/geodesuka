@@ -7,8 +7,9 @@ using namespace object;
 using namespace hid;
 using namespace math;
 using namespace gcl;
+using namespace util;
 
-triangle::triangle(geodesuka::engine &aEngine, gcl::context* aDeviceContext) {
+triangle::triangle(geodesuka::engine *aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {	
 
 	// Hard coded vertices
 	float Vertices[] = {
@@ -16,6 +17,16 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::context* aDeviceContext) {
 		0.0, 1.0, 0.0, 1.0, 0.0,
 		1.0, 0.0, 0.0, 0.0, 1.0
 	};
+
+
+	type VLType(type::id::STRUCT, NULL);
+	VLType.push(type::id::REAL3, "Position");
+	VLType.push(type::id::REAL3, "Color");
+	variable MemLayout(VLType, "Vertex");
+
+	std::cout << MemLayout.get_str() << std::endl;
+
+	buffer VertexBuffer(aContext, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, 3, MemLayout, Vertices);
 
 	// Shader Sources hard coded into triangle. 
 	const char* VertexShaderSource =
@@ -43,8 +54,8 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::context* aDeviceContext) {
 		}";
 
 	// Does everything above but in two lines.
-	shader VertexShader(aDeviceContext, shader::VERTEX, VertexShaderSource);
-	shader FragmentShader(aDeviceContext, shader::FRAGMENT, FragmentShaderSource);
+	shader VertexShader(aContext, shader::VERTEX, VertexShaderSource);
+	shader FragmentShader(aContext, shader::FRAGMENT, FragmentShaderSource);
 
 	//std::cout << "Vertex Shader Compile Status: " << aEngine.get_er_str(VertexShader.ErrorCode) << std::endl;
 	//std::cout << "Fragment Shader Compile Status: " << aEngine.get_er_str(FragmentShader.ErrorCode) << std::endl;
@@ -142,39 +153,9 @@ triangle::triangle(geodesuka::engine &aEngine, gcl::context* aDeviceContext) {
 	this->CreateInfo.pDynamicState			= NULL;// &DynamicState;
 	//this->CreateInfo.layout  = 
 
-	vkCreateGraphicsPipelines(aDeviceContext->handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
+	vkCreateGraphicsPipelines(aContext->handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
 
-}
-
-integer triangle::input(const keyboard& aKeyboard) {
-	return 0;
-}
-
-integer triangle::input(const mouse& aMouse) {
-	return 0;
-}
-
-integer triangle::update(real aDeltaTime) {
-	return 0;
-}
-
-integer triangle::draw(system_display* aTargetSystemDisplay) {
-	return 0;
-}
-
-integer triangle::draw(system_window* aTargetSystemWindow) {
-	return 0;
-}
-
-integer triangle::draw(virtual_window* aTargetVirtualWindow) {
-	return 0;
-}
-
-integer triangle::draw(camera2d* aTargetCamera2D) {
-	return 0;
-}
-
-integer triangle::draw(camera3d* aTargetCamera3D) {
-	return 0;
+	// Submit to engine. Needed for update and render operations. 
+	aEngine->submit(this);
 }
 

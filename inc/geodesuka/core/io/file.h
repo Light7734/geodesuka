@@ -19,154 +19,153 @@ throughout its life.
 * may be specifically.
 */
 
-namespace geodesuka {
-	namespace core {
-		namespace io {
+namespace geodesuka::core::io {
 
-			/*
-			* This can be seen as a simple file handle type, it will be the responsibility
-			* of the game engine to insure that identical files are not loaded in twice.
-			*/
+	/*
+	* This can be seen as a simple file handle type, it will be the responsibility
+	* of the game engine to insure that identical files are not loaded in twice.
+	*/
 
-			class file {
-			public:
+	class file {
+	public:
 
-				enum extension {
-					EXT_UNK = -1,
-					// --------------- Dynamic Libraries --------------- //
-					EXT_DYN,
-					// --------------- Image Files --------------- //
-					EXT_BMP,
-					EXT_ICO,
-					EXT_JPEG,
-					EXT_JNG,
-					EXT_KOALA,
-					EXT_LBM,
-					//EXT_IFF		= EXT_LBM,
-					EXT_MNG,
-					EXT_PBM,
-					EXT_PBMRAW,
-					EXT_PCD,
-					EXT_PCX,
-					EXT_PGM,
-					EXT_PGMRAW,
-					EXT_PNG,
-					EXT_PPM,
-					EXT_PPMRAW,
-					EXT_RAS,
-					EXT_TARGA,
-					EXT_TIFF,
-					EXT_WBMP,
-					EXT_PSD,
-					EXT_CUT,
-					EXT_XBM,
-					EXT_XPM,
-					EXT_DDS,
-					EXT_GIF,
-					EXT_HDR,
-					EXT_FAXG3,
-					EXT_SGI,
-					EXT_EXR,
-					EXT_J2K,
-					EXT_JP2,
-					//EXT_PFM			,
-					EXT_PICT,
-					EXT_RAW,
-					EXT_WEBP,
-					EXT_JXR,
-					// --------------- Model Files --------------- //
-					// --------------- Type Face Files --------------- //
-					EXT_TTF,
-					EXT_TTC,
-					EXT_OTF,
-					EXT_PFM,
-					// --------------- Shader Files --------------- //
-					EXT_VSH,		// (Per) Vertex Shaders
-					EXT_TCSH,		// Tesselation Control Shaders
-					EXT_TESH,		// Tesselation Evaluation Shaders
-					EXT_GSH,		// (Per Primitive) Geometry Shaders
-					EXT_PSH,		// (Per Pixel) Fragment Shaders
-					EXT_CSH,		// Compute Shaders
-					EXT_GLSL,		// Include Shader Function Files
-					EXT_SPV,		// SPIR-V Compiled Shaders
-					// OpenCL Kernel
-					EXT_CL,
-					// Lua Script
-					EXT_LUA
-				};
+		enum extension {
+			UNK = -1,
+			// --------------- Dynamic Libraries --------------- //
+			DYN,
+			// --------------- Image Files --------------- //
+			BMP,
+			ICO,
+			JPEG,
+			JNG,
+			KOALA,
+			LBM,
+			//IFF		= LBM,
+			MNG,
+			PBM,
+			PBMRAW,
+			PCD,
+			PCX,
+			PGM,
+			PGMRAW,
+			PNG,
+			PPM,
+			PPMRAW,
+			RAS,
+			TARGA,
+			TIFF,
+			WBMP,
+			PSD,
+			CUT,
+			XBM,
+			XPM,
+			DDS,
+			GIF,
+			HDR,
+			FAXG3,
+			SGI,
+			EXR,
+			J2K,
+			JP2,
+			//PFM			,
+			PICT,
+			RAW,
+			WEBP,
+			JXR,
+			// --------------- Model Files --------------- //
+			// --------------- Type Face Files --------------- //
+			TTF,
+			TTC,
+			OTF,
+			PFM,
+			// --------------- Shader Files --------------- //
+			VSH,		// (Per) Vertex Shaders
+			TCSH,		// Tesselation Control Shaders
+			TESH,		// Tesselation Evaluation Shaders
+			GSH,		// (Per Primitive) Geometry Shaders
+			PSH,		// (Per Pixel) Fragment Shaders
+			CSH,		// Compute Shaders
+			GLSL,		// Include Shader Function Files
+			SPV,		// SPIR-V Compiled Shaders
+			// OpenCL Kernel
+			OCL,
+			// Lua Script
+			LUA
+		};
 
-				enum class category {
+		enum class category {
 
-					PLAIN_TEXT,
-					BYTE_CODE,
-					IMAGE,
-					AUDIO,
-					MODEL
+			PLAIN_TEXT,
+			BYTE_CODE,
+			IMAGE,
+			AUDIO,
+			MODEL
 
-				};
+		};
 
-				// A more general version grouping.
-				enum type {
-					DYNALIB,
-					IMAGE,
-					TYPEFACE,
-					SHADER,
-					KERNEL,
-					SCRIPT,
-				};
+		// A more general version grouping.
+		enum type {
+			DYNALIB,
+			IMAGE,
+			TYPEFACE,
+			SHADER,
+			KERNEL,
+			SCRIPT,
+		};
 
+		static struct built_in_type {
+			extension Type;
+			std::vector<util::text> Extension;
+		} BuiltInTypes[];
 
-				static struct built_in_type {
-					extension Type;
-					std::vector<util::text> Extension;
-				} BuiltInTypes[];
+		static extension str2type(util::text aString);
+		static util::text type2str(extension aType);
 
-				static extension str2type(util::text aString);
-				static util::text type2str(extension aType);
+		static file* open(const char* aFilePath);
+		static void close(file* aFile);
 
-				file();
-				file(const char* aFilePath);
-				file(util::text& aFilePath);
-				~file();
+		~file();
 
-				util::text get_path();
-				util::text get_dir();
-				util::text get_name();
-				util::text get_ext();
-				void* get_data(size_t& ReturnSize);
+		util::text get_path();
+		util::text get_dir();
+		util::text get_name();
+		util::text get_ext();
+		void* get_data(size_t& ReturnSize);
 
-			protected:
+	protected:
 
-				bool mset_path(util::text aFilePath);
+		file();
+		file(const char* aFilePath);
+		file(util::text& aFilePath);
 
-			private:
+		bool mset_path(util::text aFilePath);
 
-				/*
-				* The path of a file is the path of the object,
-				* can either be relative, or full path. A full path
-				* starts from the system root and describs the exact
-				* path on the system, while relative will be relative
-				* to process working directory.
-				* Path = Dir + '/' + Name + '.' + Ext
-				*/
+	private:
 
-				util::text Path;
-				util::text Dir;
-				util::text Name;
-				util::text Ext;
-				extension ID;
+		/*
+		* The path of a file is the path of the object,
+		* can either be relative, or full path. A full path
+		* starts from the system root and describs the exact
+		* path on the system, while relative will be relative
+		* to process working directory.
+		* Path = Dir + '/' + Name + '.' + Ext
+		*/
 
-				/*
-				* This will be the raw data loaded, maybe even possibly
-				* just partial loading to save memory usage.
-				*/
-				size_t DataSize;
-				void* Data;
+		util::text Path;
+		util::text Dir;
+		util::text Name;
+		util::text Ext;
+		extension ID;
 
-			};
+		/*
+		* This will be the raw data loaded, maybe even possibly
+		* just partial loading to save memory usage.
+		*/
+		size_t DataSize;
+		void* Data;
 
-		}
-	}
+	};
+
 }
 
 #endif // GEODESUKA_CORE_IO_FILE_H
