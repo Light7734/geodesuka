@@ -25,33 +25,34 @@ namespace geodesuka::core::gcl {
 		// may be the same queue, but treat them differently even if they are
 		// the same opaque handle.
 		
-		VkQueue Transfer;
-		VkQueue Compute;
-		VkQueue Graphics;
-
-		// Will be VK_NULL_HANDLE if VK_KHR_surface is not enabled.
-		VkQueue Present;
+		enum qid {
+			TRANSFER	= 0,
+			COMPUTE		= 1,
+			GRAPHICS	= 2,
+			PRESENT		= 3
+		};
 
 		//TODO: Include dependency of engine instance.
-		context(/*engine *aEngine,*/device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
+		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
+		// Queries is queue exists with context.
+		bool available(qid aQID);
 
+		// Submission for TRANSFER, COMPUTE, GRAPHICS. Must be multithread capable.
+		void submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
-		// ----- Query ----- //
-
-		//VkQueue get_queue(uint32_t FamilyIndex, uint32_t Index);
-
-		// ----- Handles ----- //
+		// Simply presents images corresponding to indices.
+		void present(VkPresentInfoKHR* aPresentation);
 
 		VkInstance inst();
-		// TODO: Change to device()?
 		device* parent();
 		VkDevice handle();
 
 	private:
 
 		// Parent physical device.
+		engine* Engine;
 		device* Device;
 
 		float** QueueFamilyPriority;
@@ -63,6 +64,31 @@ namespace geodesuka::core::gcl {
 		// Stores queues and stuff.
 		VkDeviceCreateInfo CreateInfo{};
 		VkDevice Handle;
+
+		struct qindex {
+			uint32_t FamilyIndex;
+			uint32_t Index;
+		};
+
+		struct queue {
+			qindex QIndex;				// Family Index & Sub Index
+			//bool inUse;					// In use by another thread.
+			// Supported Operations
+			VkQueueFlags Flags;
+			bool isTransferSupported;
+			bool isComputeSupported;
+			bool isGraphicsSupported;
+			bool isPresentSupported;
+
+			std::mutex Mutex;			// Use mutex wait if no other queues are available.
+			VkQueue Handle;				// vkQueueSubmit() must be done by one thread at a time.
+
+			queue();
+		};
+
+		// Linearized Queue Array.
+		size_t QueueCount;
+		queue *Queue;
 
 	};
 

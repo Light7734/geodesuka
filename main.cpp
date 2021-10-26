@@ -37,10 +37,15 @@ int main(int argc, char *argv[]) {
 	for (size_t i = 0; i < DeviceCount; i++) {
 		if (Device[i]->get_properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			// Provide required extensions to allow context to create system windows.
-			Context = new context(Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
+			Context = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 		}
 	}
 
+	while (true) {
+
+	}
+
+	//Context->submit(context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
 	//{
 
 	//	system_window::create_info CreateInfo;
@@ -59,8 +64,5 @@ int main(int argc, char *argv[]) {
 
 	//}
 
-	
-
-	delete Context;
 	return 0;
 }

@@ -142,6 +142,9 @@ namespace geodesuka {
 		core::io::file* open(const char* aFilePath);		// Opens file using provided path string.
 		void close(core::io::file* aFile);				// Closes previously loaded file held by engine.
 
+		void submit(core::gcl::context* aContext);
+		void remove(core::gcl::context* aContext);
+
 		// These calls are neccesary for time scheduled update of all active
 		// objects in existence.
 		void submit(core::object_t* aObject);		// Submit created object to engine.
@@ -194,10 +197,11 @@ namespace geodesuka {
 		std::vector<core::io::file*> File;
 
 		// All created device contexts are held by engine. Needed for graphics/compute.
+		std::mutex CtxMtx;
 		std::vector<core::gcl::context*> Context;
 
 		// All objects are managed by engine regardless of stage.
-		std::mutex ObjectMutex;
+		std::mutex ObjMtx;
 		std::vector<core::object_t*> Object;
 
 
