@@ -337,7 +337,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	void context::submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-
+		if ((aSubmissionCount == 0) || (aSubmission == NULL)) return;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
 		VkQueueFlags lFlag = 0;
