@@ -29,10 +29,11 @@ C26451
 
 /* --------------- Standard C++ Libraries --------------- */
 #include <vector>
-
 #include <chrono>
+
 #include <thread>
 #include <mutex>
+#include <atomic>
 
 /* --------------- Third Party Libraries --------------- */
 
@@ -44,14 +45,17 @@ C26451
 
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.
+#include "core/util/log.h"
 #include "core/util/text.h"
 #include "core/util/variable.h"
+#include "core/util/trap.h"
 
 // ------------------------- File System Manager ------------------------- //
 #include "core/io/file.h"
 #include "core/io/dynalib.h"
 //#include "core/io/image.h"
 //#include "core/io/font.h"
+
 // ------------------------- Graphics & Computation API ------------------------- //
 
 // Needed for all graphics/computation objects
@@ -158,6 +162,10 @@ namespace geodesuka {
 
 	private:
 
+		struct trap {
+
+		};
+		
 		state State;
 
 		std::vector<const char*> RequiredExtension;
@@ -176,7 +184,7 @@ namespace geodesuka {
 		bool isGCDeviceAvailable;
 
 		bool isReady;
-		bool Shutdown;
+		std::atomic<bool> Shutdown;
 
 		VkApplicationInfo AppProp{};
 		VkInstanceCreateInfo InstProp{};
@@ -213,6 +221,7 @@ namespace geodesuka {
 		// ------------------------------ Back end runtime ------------------------------ //
 
 		// TODO: Maybe make update thread use multiple threads for fast processing?
+		core::util::trap ThreadTrap; // Used for stalling Update and Render Thread.
 		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;

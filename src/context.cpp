@@ -7,9 +7,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include <iostream>
-std::mutex IOMutex;
-
 namespace geodesuka::core::gcl {
 
 	context::context(engine* aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList) {
@@ -403,9 +400,6 @@ namespace geodesuka::core::gcl {
 		for (uint32_t i = 0; i < lFamilyIndex; i++) {
 			lFamilyOffset += lQueueFamily[i].queueCount;
 		}
-
-		//std::atomic<VkQueue> Queu;
-		//std::atomic<std::array<int, 10>> Array;
 		
 		// C++11
 		// Different elements in the same container can be modified concurrently by
@@ -418,21 +412,6 @@ namespace geodesuka::core::gcl {
 			lQIndex = lFamilyIndex + lFamilyOffset;
 			if (lQueue[lQIndex].Mutex.try_lock()) {
 				//vkQueueSubmit(lQueue[lQIndex].Handle, aSubmissionCount, aSubmission, aFence);
-				IOMutex.lock();
-				switch (aQID) {
-				default:
-					return;
-				case qid::TRANSFER:
-					std::cout << "Executing transfer operations!" << std::endl;
-					break;
-				case qid::COMPUTE:
-					std::cout << "Executing compute operations!" << std::endl;
-					break;
-				case qid::GRAPHICS:
-					std::cout << "Executing graphics operations!" << std::endl;
-					break;
-				}
-				IOMutex.unlock();
 				lQueue[lQIndex].Mutex.unlock();
 				break;
 			}

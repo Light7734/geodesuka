@@ -3,6 +3,9 @@
 /* --------------- Standard C Libraries --------------- */
 
 /* --------------- Standard C++ Libraries --------------- */
+#include <iostream>
+std::mutex IOMutex;
+
 #include <vector>
 #include <chrono>
 
@@ -21,17 +24,6 @@
 
 #include <glslang/Public/ShaderLang.h>
 
-/* --------------- Internal --------------- */
-
-//#include <geodesuka/core/object.h>
-//#include <geodesuka/core/object/window.h>
-//#include <geodesuka/core/object/system_display.h>
-//#include <geodesuka/core/object/system_window.h>
-//#include <geodesuka/core/object/virtual_window.h>
-//#include <geodesuka/core/object/camera.h>
-
-/* --------------- Internal Callback Methods (Input Handling) --------------- */
-
 namespace geodesuka {
 
 	/*
@@ -49,7 +41,7 @@ namespace geodesuka {
 		this->isGCDeviceAvailable = false;
 
 		this->isReady = false;
-		this->Shutdown = false;
+		this->Shutdown.store(false);
 
 		this->PrimaryDisplay = nullptr;
 
@@ -213,11 +205,9 @@ namespace geodesuka {
 	* Also must shut down backend API. 
 	*/
 	engine::~engine() {
+
 		this->State = state::ENGINE_DESTRUCTION_STATE;
-		// Begin termination, stop threads.
-		this->Mutex.lock();
-		this->Shutdown = true;
-		this->Mutex.unlock();
+		this->Shutdown.store(true);
 		if (this->isReady) {
 			this->UpdateThread.join();
 			this->RenderThread.join();
@@ -246,9 +236,9 @@ namespace geodesuka {
 		// Destroys all device contexts.
 		for (size_t i = 1; i <= this->Context.size(); i++) {
 			size_t Index = this->Context.size() - i;
-			if (this->Context[i] != nullptr) {
-				delete this->Context[i];
-				this->Context[i] = nullptr;
+			if (this->Context[Index] != nullptr) {
+				delete this->Context[Index];
+				this->Context[Index] = nullptr;
 			}
 		}
 		this->Context.clear();
@@ -298,22 +288,24 @@ namespace geodesuka {
 	}
 
 	void engine::submit(core::gcl::context* aContext) {
-		this->CtxMtx.lock();
+		this->ThreadTrap.set(true);
+		this->ThreadTrap.wait_until(2);
 		this->Context.push_back(aContext);
-		this->CtxMtx.unlock();
+		this->ThreadTrap.set(false);
 	}
 
 	void engine::remove(core::gcl::context* aContext) {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		this->CtxMtx.lock();
+		this->ThreadTrap.set(true);
+		this->ThreadTrap.wait_until(2);
 		for (size_t i = 0; i < this->Context.size(); i++) {
 			if (this->Context[i] == aContext) {
 				this->Context.erase(this->Context.begin() + i);
 			}
 		}
-		this->CtxMtx.unlock();
+		this->ThreadTrap.set(false);
 	}
 
 	void engine::submit(core::object_t* aObject) {
@@ -366,11 +358,10 @@ namespace geodesuka {
 #endif
 	}
 
-	// --------------- Update Loop --------------- //
+	// --------------- Render Thread --------------- //
 	// Updates all objects that have been created asynchronously.
-	// --------------- Update Loop --------------- //
+	// --------------- Render Thread --------------- //
 	void engine::tupdate() {
-		bool ExitCondition = false;
 		double t1, t2;
 		double wt, ht;
 		double t, dt;
@@ -384,7 +375,9 @@ namespace geodesuka {
 		//uint32_t TransferSubmissionCount = 0;
 		//VkSubmitInfo *TransferSubmission = NULL;
 
-		while (!ExitCondition) {
+		while (!this->Shutdown.load()) {
+			this->ThreadTrap.door();
+
 			t1 = this->get_time();
 
 			// Update object list.
@@ -425,18 +418,17 @@ namespace geodesuka {
 				ht = 0.0;
 			}
 			dt = wt + ht;
-			this->Mutex.lock();
-			ExitCondition = this->Shutdown;
-			this->Mutex.unlock();
 		}
 		//std::cout << "Update Thread has exited." << std::endl;
 	}
 
-	//
-	// thread that submits all draw calls to respective queues
-	//
+
+	// --------------- Render Thread --------------- //
+	// The job of the render thread is to honor and schedule draw
+	// calls of respective render targets stored in memory.
+	// --------------- Render Thread --------------- //
 	void engine::trender() {
-		bool ExitCondition = false;
+		//bool ExitCondition = false;
 		double t1, t2;
 		double dt;
 
@@ -451,7 +443,9 @@ namespace geodesuka {
 		// it would be wise to group presentation updates
 		std::vector<VkPresentInfoKHR> Presentation;
 
-		while (!ExitCondition) {
+		while (!this->Shutdown.load()) {
+			this->ThreadTrap.door();
+
 			t1 = this->get_time();
 
 			// Generates Submissions per stage.
@@ -498,9 +492,6 @@ namespace geodesuka {
 
 			t2 = this->get_time();
 			dt = t2 - t1;
-			this->Mutex.lock();
-			ExitCondition = this->Shutdown;
-			this->Mutex.unlock();
 			this->tsleep(0.6);
 		}
 	}

@@ -293,6 +293,9 @@
     <ClCompile Include="src\render_target.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\trap.cpp">
+      <Filter>src\core\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -508,6 +511,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\render_target.h">
       <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\util\trap.h">
+      <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

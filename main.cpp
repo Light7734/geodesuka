@@ -34,15 +34,18 @@ int main(int argc, char *argv[]) {
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
 	context* Context = nullptr;
+	context* Context2 = nullptr;
 	for (size_t i = 0; i < DeviceCount; i++) {
 		if (Device[i]->get_properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			// Provide required extensions to allow context to create system windows.
 			Context = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
+			Context2 = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 		}
 	}
 
 	while (true) {
-
+		char q = getc(stdin);
+		if (q == 'q') delete Context2;
 	}
 
 	//Context->submit(context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
