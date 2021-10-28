@@ -24,7 +24,6 @@ namespace geodesuka {
 			}
 
 			framebuffer::framebuffer() {
-				VkRenderPassCreateInfo;
 
 			}
 

@@ -112,6 +112,12 @@
     <Filter Include="src\core\stage">
       <UniqueIdentifier>{994aaec8-c058-46a5-8208-727732ffdb86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\core\logic">
+      <UniqueIdentifier>{2c04f716-d719-49d1-96ae-4947d682a48f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\logic">
+      <UniqueIdentifier>{40c92847-85b6-4608-afec-9f38f73b7cc4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

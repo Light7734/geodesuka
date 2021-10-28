@@ -48,8 +48,18 @@ still an ambitious goal for a single person, but it is still a fun project to wo
 
 # Updated List:
 
-Updated queue selection metrics for context.h, now various queue
-types are publicaly exposed to engine to schedule various gpu operations.
+- context.h now has a properly implemented method of queue selection
+at runtime, a simple method of queue selection for now, but it should
+minimize over submission to improper queues. Since some queues only
+exclusively support certain operations, when that operation is desired,
+context.h directs the submission to that, removing traffic from queues
+that have multiple types of support.
+
+- In engine.cpp, a simple mutex was not sufficient to temporarily suspend
+threads to add new contexts, objects, and stages. A simple trap.h class
+is just a thread trapper that traps threads in a loop while another thread
+can modify the state of the engine and continue running once this operation
+is complete.
 
 Added stage class to describe object sets that share the same physical space,
 render operations, and interaction methods. canvas.h is designed to be inherited
@@ -58,6 +68,14 @@ describes 2D and 3D spaces which objects share.
 
 # To Do List:
 
+- Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
+
+- Add system terminal class to engine.
+
+- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
+
+- Add lua support for runtime scripting.
+
 - Update headers guards to minimize probabilty of collision.
 
 - Add built in extension types for file.h to recognize file types
@@ -65,28 +83,23 @@ and forward to proper objects.
 
 - Add engine asset manager to prevent double loading.
 
-- Replace all char *str with text.h
-
 - Add layering system for window objects, for huds, system stats and so
-on. 
+on.
+
+- Change render_target to new name that makes more sense.
 
 # Back Burner:
+
+- Change Texture class to image class? The reasoning behind this change
+along with how vulkan does it, is that a texture describes the texture
+of a particular surface while an image is a generalized concept of a type
+of memory.
 
 - Set up compilation unit directories to prevent source name space over writing.
 
 - Add compile support for linux.
 
 - Add memory pool manager. 
-
-- maybe rename window.h to render_target.h?
-
-- Include lua.
-
-- Include freetype
-
-- Include FreeImage
-
-- Include Assimp
 
 # Third Party Libraries
 
