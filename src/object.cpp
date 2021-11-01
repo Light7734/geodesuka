@@ -19,7 +19,7 @@ namespace geodesuka::core {
 			}
 			this->ParentEngine->Mutex.unlock();
 		}
-		std::cout << "Object Destroyed" << std::endl;
+		//std::cout << "Object Destroyed" << std::endl;
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {
@@ -30,7 +30,7 @@ namespace geodesuka::core {
 
 	}
 
-	void object_t::update(double aDt) {
+	void object_t::update(double aDeltaTime) {
 		//tex:
 		// Update equations for generic object type with applied forces.
 		// $$ d\vec{p} = \big( \vec{F}_{\text{applied}} + \vec{F}_{user} \big) dt $$ 
@@ -38,37 +38,25 @@ namespace geodesuka::core {
 
 		this->Mutex.lock();
 
-		// Generic Free body object update equations.
-		this->Momentum += (this->Force + this->InputForce) * aDt;
-		this->Position += ((this->Momentum / this->Mass) + this->InputVelocity) * aDt;
+		// Generic Free body motion equations.
+		this->Momentum += (this->Force + this->InputForce) * aDeltaTime;
+		this->Position += ((this->Momentum / this->Mass) + this->InputVelocity) * aDeltaTime;
 
 
 		this->Mutex.unlock();
 	}
 
-	void object_t::draw(object::system_display* aTargetSystemDisplay) {
+	void object_t::draw(object::system_display* aTargetSystemDisplay) {}
 
-	}
+	void object_t::draw(object::system_window* aTargetSystemWindow) {}
 
-	void object_t::draw(object::system_window* aTargetSystemWindow) {
+	void object_t::draw(object::virtual_window* aTargetVirtualWindow) {}
 
-	}
+	void object_t::draw(object::camera2d* aTargetCamera2D) {}
 
-	void object_t::draw(object::virtual_window* aTargetVirtualWindow) {
+	void object_t::draw(object::camera3d* aTargetCamera3D) {}
 
-	}
-
-	void object_t::draw(object::camera2d* aTargetCamera2D) {
-
-	}
-
-	void object_t::draw(object::camera3d* aTargetCamera3D) {
-
-	}
-
-	void object_t::set_position(math::real3 aPosition) {
-
-	}
+	void object_t::set_position(math::real3 aPosition) {}
 
 	math::real3 object_t::get_position() const {
 		return this->Position;
@@ -94,7 +82,7 @@ namespace geodesuka::core {
 		this->DirectionY = math::real3(0.0, 0.0, 0.0);
 		this->DirectionZ = math::real3(0.0, 0.0, 0.0);
 
-		std::cout << "Object Created" << std::endl;
+		//std::cout << "Object Created" << std::endl;
 	}
 
 	void object_t::ensubmit() {

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GEODESUKA_CORE_UTIL_TRAP_H
-#define GEODESUKA_CORE_UTIL_TRAP_H
+#ifndef GEODESUKA_CORE_LOGIC_TRAP_H
+#define GEODESUKA_CORE_LOGIC_TRAP_H
 
 /*
 * This class is just a simple thread trap to
@@ -15,7 +15,7 @@
 #include <mutex>
 #include <atomic>
 
-namespace geodesuka::core::util {
+namespace geodesuka::core::logic {
 
 	class trap {
 	public:
@@ -44,4 +44,4 @@ namespace geodesuka::core::util {
 
 }
 
-#endif // !GEODESUKA_CORE_UTIL_TRAP_H
+#endif // !GEODESUKA_CORE_LOGIC_TRAP_H

@@ -48,7 +48,9 @@ C26451
 #include "core/util/log.h"
 #include "core/util/text.h"
 #include "core/util/variable.h"
-#include "core/util/trap.h"
+
+
+#include "core/logic/trap.h"
 
 // ------------------------- File System Manager ------------------------- //
 #include "core/io/file.h"
@@ -61,6 +63,7 @@ C26451
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
+#include "core/gcl/command_pool.h"
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
@@ -75,6 +78,9 @@ C26451
 #include "core/hid/mouse.h"
 #include "core/hid/joystick.h"
 
+// ------------------------- Component Classes ------------------------- //
+//#include "core/component/...h"
+
 // ------------------------- Objects ------------------------- //
 /*
 * The classes included here are built in objects for the core game engine.
@@ -82,12 +88,19 @@ C26451
 */
 #include "core/object.h"
 
+// Might change this later into something else.
 #include "core/object/render_target.h"
 
+// Includes window primitives which can be drawn to.
 #include "core/object/window.h"
 #include "core/object/system_display.h"
 #include "core/object/system_window.h"
 #include "core/object/virtual_window.h"
+
+// Used for issuing commands to the engine
+//#include "core/object/terminal.h"
+#include "core/object/system_terminal.h"
+//#include "core/object/virtual_terminal.h"
 
 // camera.h is the base class for extendable cameras
 // that will perform deferred rendering. 
@@ -193,6 +206,7 @@ namespace geodesuka {
 		// It is the job of the engine to query for physical devices
 		// and display from the system.
 		std::vector<core::gcl::device*> DeviceList;
+		core::object::system_terminal &SystemTerminal;
 		std::vector<core::object::system_display*> Display;
 		std::vector<core::object::system_window*> SystemWindow;
 		// Find a way to map devices to system_displays.
@@ -221,14 +235,17 @@ namespace geodesuka {
 		// ------------------------------ Back end runtime ------------------------------ //
 
 		// TODO: Maybe make update thread use multiple threads for fast processing?
-		core::util::trap ThreadTrap; // Used for stalling Update and Render Thread.
+		core::logic::trap ThreadTrap; // Used for stalling Update and Render Thread.
+
+		std::thread SystemTerminalThread;
 		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;
-
-		void tupdate();
-		void trender();
-		void taudio();
+		
+		//void tsterminal();		// Thread handles terminal input to the engine.
+		void tupdate();			// Thread manages updates on all objects and stages.
+		void trender();			// Thread honors frame rates of respective targets.
+		void taudio();			// Thread Handles audio streams.
 
 	};
 

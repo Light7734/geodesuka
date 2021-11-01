@@ -118,10 +118,30 @@
     <Filter Include="inc\geodesuka\core\logic">
       <UniqueIdentifier>{40c92847-85b6-4608-afec-9f38f73b7cc4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\geodesuka\core\sound">
+      <UniqueIdentifier>{7296c95e-2d27-455b-8455-e98a442d0839}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\builtin">
+      <UniqueIdentifier>{e67f0d43-112e-496d-8cda-490469ad873a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\builtin">
+      <UniqueIdentifier>{bb3a4d7f-15e0-43f6-bba0-e06f01889981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\builtin\object">
+      <UniqueIdentifier>{c2a3df93-7aa4-43cb-96cf-6e7fa2783e63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\builtin\stage">
+      <UniqueIdentifier>{61ac3da2-b304-44d5-8277-a05804063f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\builtin\object">
+      <UniqueIdentifier>{acde2619-2841-4abe-b396-218b8e700da2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\builtin\stage">
+      <UniqueIdentifier>{1a8d27a1-7d65-43fe-b543-767a8f99872e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="triangle.cpp" />
     <ClCompile Include="src\buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
@@ -299,8 +319,23 @@
     <ClCompile Include="src\render_target.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\triangle.cpp">
+      <Filter>src\builtin\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cube.cpp">
+      <Filter>src\builtin\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system_terminal.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command_pool.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
     <ClCompile Include="src\trap.cpp">
-      <Filter>src\core\util</Filter>
+      <Filter>src\core\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timer.cpp">
+      <Filter>src\core\logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -484,7 +519,6 @@
     <ClInclude Include="inc\geodesuka\core\math.h">
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
-    <ClInclude Include="triangle.h" />
     <ClInclude Include="inc\geodesuka\core\object.h">
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
@@ -518,8 +552,23 @@
     <ClInclude Include="inc\geodesuka\core\object\render_target.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\util\trap.h">
-      <Filter>inc\geodesuka\core\util</Filter>
+    <ClInclude Include="inc\geodesuka\builtin\object\triangle.h">
+      <Filter>inc\geodesuka\builtin\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\builtin\object\cube.h">
+      <Filter>inc\geodesuka\builtin\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\system_terminal.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\logic\trap.h">
+      <Filter>inc\geodesuka\core\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\logic\timer.h">
+      <Filter>inc\geodesuka\core\logic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

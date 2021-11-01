@@ -84,7 +84,9 @@ namespace geodesuka::core::gcl {
 		/*
 		Figure out how to schedule transfer operations.
 		*/
-
+		VkCommandPoolCreateInfo Temp;
+		//vkCreateCommandPool(this->Context->handle(), );
+		
 		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
 

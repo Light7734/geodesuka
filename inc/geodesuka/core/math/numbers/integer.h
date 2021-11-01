@@ -1,18 +1,14 @@
 #pragma once
-#ifndef INTEGER_H
-#define INTEGER_H
+#ifndef GEODESUKA_CORE_MATH_INTEGER_H
+#define GEODESUKA_CORE_MATH_INTEGER_H
 
 #include "../config.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
-			//typedef signed char sbyte;
-			//typedef signed short sshort;
-			typedef signed int integer;
-		}
-	}
+namespace geodesuka::core::math {
+	//typedef signed char sbyte;
+	//typedef signed short sshort;
+	typedef signed int integer;
 }
 
-#endif // !INTEGER_H
+#endif // !GEODESUKA_CORE_MATH_INTEGER_H
 

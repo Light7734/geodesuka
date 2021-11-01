@@ -88,13 +88,12 @@ namespace geodesuka::core::object {
 		// Destroys window handle.
 		glfwDestroyWindow(this->Handle);
 
-		std::cout << "System Window Destroyed" << std::endl;
+		//std::cout << "System Window Destroyed" << std::endl;
 	}
 
 	void system_window::update(double aDeltaTime) {
 		this->Mutex.lock();
 		this->Time += aDeltaTime;
-
 		this->Mutex.unlock();
 	}
 
@@ -215,7 +214,7 @@ namespace geodesuka::core::object {
 
 	void system_window::close_callback(GLFWwindow* ContextHandle) {
 		system_window* Win = (system_window*)glfwGetWindowUserPointer(ContextHandle);
-		std::cout << Win->Title.str() << " wants to fucking close" << std::endl;
+		//std::cout << Win->Title.str() << " wants to fucking close" << std::endl;
 		//Win->CloseMe = true;
 	}
 

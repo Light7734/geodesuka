@@ -32,7 +32,7 @@ namespace geodesuka {
 	* and loaded assets.
 	*/
 
-	engine::engine(int argc, char* argv[]) {
+	engine::engine(int argc, char* argv[]) : SystemTerminal(*(new core::object::system_terminal(this, nullptr))) {
 		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
 		this->isGLFWReady = false;
@@ -102,6 +102,9 @@ namespace geodesuka {
 			}
 
 		}
+
+		// First initialized object is the system terminal.
+		this->Object.push_back(&SystemTerminal);
 
 		if (this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady) {
 
@@ -313,7 +316,7 @@ namespace geodesuka {
 		this->Object.push_back(aObject);
 		this->ObjMtx.unlock();
 	}
-
+	// TODO: Fix these two methods.
 	void engine::remove(core::object_t* aObject) {
 		this->ObjMtx.lock();
 		for (size_t i = 0; i < this->Object.size(); i++) {
@@ -343,6 +346,7 @@ namespace geodesuka {
 		return temp;
 	}
 
+	// TODO: Maybe move to another section of core?
 	void engine::tsleep(double aSeconds) {
 		double Microseconds = 1000.0 * aSeconds;
 #if defined(_WIN32) || defined(_WIN64)
@@ -382,12 +386,12 @@ namespace geodesuka {
 
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
-				//this->Object[i]->update(dt);
+				this->Object[i]->update(dt);
 			}
 
 			// Update stage logic.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
-				//this->Stage[i]->update(dt);
+				this->Stage[i]->update(dt);
 			}
 
 			// Wait for render operations to complete before transfer.
@@ -482,8 +486,8 @@ namespace geodesuka {
 			// Wait for render operations to complete for system_window presentation.
 
 			// Present aggregated image indices.
-			for (size_t i = 0; i < this->SystemWindow.size(); i++) {
-				//this->Context[i]->present(&Presentation[i]);
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				this->Context[i]->present(/*&Presentation[i]*/NULL);
 
 				// After presentation has been called for system_windows, update
 				// image indices ready to be acquired.

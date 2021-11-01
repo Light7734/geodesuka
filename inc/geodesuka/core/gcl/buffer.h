@@ -94,6 +94,11 @@ namespace geodesuka::core::gcl {
 		int Count;
 		util::variable MemoryLayout;
 
+		// To keep a staging buffer, or not to keep?
+		// To keep a staging buffer means that twice the memory
+		// usage on both host and device memory, or not to keep a
+		// staging buffer would imply that every transfer operation
+		// will have a new allocation.
 		buffer* StagingBuffer;
 
 		uint32_t memfilter(VkMemoryPropertyFlags MemPropFlags);

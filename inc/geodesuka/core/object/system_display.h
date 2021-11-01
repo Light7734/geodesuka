@@ -13,10 +13,12 @@ namespace geodesuka::core::object {
 	class system_display : public window {
 	public:
 
+		friend class engine;
 		friend class system_window;
 
 		GLFWmonitor* Handle;
 
+		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
 

@@ -3,7 +3,11 @@
 
 #include <geodesuka/engine.h>
 
-#include "triangle.h"
+#include <geodesuka/builtin/object/triangle.h>
+
+/*
+* This main file is just used for debugging library.
+*/
 
 using namespace geodesuka::core;
 using namespace gcl;
@@ -24,6 +28,7 @@ using namespace object;
 */
 // Creates a window on every display
 
+// Updated buffer.h, testing 
 int main(int argc, char *argv[]) {
 	geodesuka::engine Engine(argc, argv);
 	if (!Engine.is_ready()) return -1;
@@ -43,10 +48,34 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	while (true) {
-		char q = getc(stdin);
-		if (q == 'q') delete Context2;
-	}
+	command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
+
+
+
+	// Hard coded vertices
+	float Vertices[] = {
+		-1.0, 0.0, 1.0, 0.0, 0.0,
+		 0.0, 1.0, 0.0, 1.0, 0.0,
+		 1.0, 0.0, 0.0, 0.0, 1.0
+	};
+
+	util::variable VML(util::type::id::STRUCT, "Vertex");
+	VML.Type.push(util::type::id::REAL3, "Position");
+	VML.Type.push(util::type::id::REAL3, "Color");
+	buffer* VertexBuffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_DST, 10, VML, Vertices);
+
+
+	Engine.tsleep(5);
+
+	//int a = 2;
+	//int& b = a;
+	//std::cout << "Address of a: " << &a << std::endl;
+	//std::cout << "Address of b: " << &b << std::endl;
+
+	//while (true) {
+	//	char q = getc(stdin);
+	//	if (q == 'q') delete Context2;
+	//}
 
 	//Context->submit(context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
 	//{

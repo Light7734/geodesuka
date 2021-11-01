@@ -26,24 +26,27 @@ namespace geodesuka::core::gcl {
 		// the same opaque handle.
 		
 		enum qid {
-			TRANSFER	= 0,
-			COMPUTE		= 1,
-			GRAPHICS	= 2,
-			PRESENT		= 3
+			TRANSFER	= 0x00000001,
+			COMPUTE		= 0x00000002,
+			GRAPHICS	= 0x00000004,
+			PRESENT		= 0x00000008
 		};
 
 		//TODO: Include dependency of engine instance.
 		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
-		// Queries is queue exists with context.
+		// Queries if queue exists with context.
 		bool available(qid aQID);
 
-		// Submission for TRANSFER, COMPUTE, GRAPHICS. Must be multithread capable.
+		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		void submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
 		// Simply presents images corresponding to indices.
 		void present(VkPresentInfoKHR* aPresentation);
+
+		// Will yield the queue family index with the least 
+		//int get_index(int aQID);
 
 		VkInstance inst();
 		device* parent();

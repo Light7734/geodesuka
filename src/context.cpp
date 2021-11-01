@@ -7,6 +7,9 @@
 
 #include <GLFW/glfw3.h>
 
+//#include <iostream>
+//std::mutex gsIOMutex;
+
 namespace geodesuka::core::gcl {
 
 	context::context(engine* aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList) {
@@ -264,12 +267,22 @@ namespace geodesuka::core::gcl {
 					// TODO: Make sure "VK_KHR_surface" is a loaded extension in Instance.
 					VkBool32 PresentSupport;
 					lResult = vkGetPhysicalDeviceSurfaceSupportKHR(this->Device->handle(), i, lDummySurface, &PresentSupport);
-					if (PresentSupport) {
+					if (PresentSupport == VK_TRUE) {
 						this->Queue[lIndex].isPresentSupported = true;
+					}
+					else {
+						this->Queue[lIndex].isPresentSupported = false;
 					}
 
 					this->Queue[lIndex].Handle = VK_NULL_HANDLE;
 					vkGetDeviceQueue(this->Handle, i, j, &this->Queue[lIndex].Handle);
+					//gsIOMutex.lock();
+					//std::cout << "Queue Family: " << i;
+					//std::cout << " T: " << this->Queue[lIndex].isTransferSupported;
+					//std::cout << " C: " << this->Queue[lIndex].isComputeSupported;
+					//std::cout << " G: " << this->Queue[lIndex].isGraphicsSupported;
+					//std::cout << " P: " << this->Queue[lIndex].isPresentSupported << std::endl;
+					//gsIOMutex.unlock();
 				}
 				Offset += lQueueFamily[i].queueCount;
 			}
@@ -337,7 +350,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	void context::submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-		if ((aSubmissionCount == 0) || (aSubmission == NULL)) return;
+		if ((aSubmissionCount < 1) || (aSubmission == NULL)) return;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
 		VkQueueFlags lFlag = 0;
@@ -411,7 +424,7 @@ namespace geodesuka::core::gcl {
 		while (true) {
 			lQIndex = lFamilyIndex + lFamilyOffset;
 			if (lQueue[lQIndex].Mutex.try_lock()) {
-				//vkQueueSubmit(lQueue[lQIndex].Handle, aSubmissionCount, aSubmission, aFence);
+				vkQueueSubmit(lQueue[lQIndex].Handle, aSubmissionCount, aSubmission, aFence);
 				lQueue[lQIndex].Mutex.unlock();
 				break;
 			}
@@ -427,9 +440,95 @@ namespace geodesuka::core::gcl {
 	}
 
 	void context::present(VkPresentInfoKHR* aPresentation) {
+		if (aPresentation == NULL) return;
+		//size_t StackQueueSize;
+		queue* lQueue = nullptr;
+		size_t lQIndex = 0;
+
+		size_t lFamilyOffset = 0;
+		size_t lFamilyCount = 0;
+		size_t lFamilyIndex = UINT_MAX;
+
+		// Select Queue Family based on least multiple support.
 		this->Mutex.lock();
+		uint32_t lQueueFamilyCount = 0;
+		const VkQueueFamilyProperties* lQueueFamily = this->Device->get_queue_families(&lQueueFamilyCount);
+		std::vector<uint32_t> lFamilySupportCount(lQueueFamilyCount);
+		lQueue = this->Queue;
+
+		//for (size_t i = 0; i < this->QueueCount; i++) {
+		//	gsIOMutex.lock();
+		//	std::cout << "Queue Family: " << i;
+		//	std::cout << " T: " << this->Queue[i].isTransferSupported;
+		//	std::cout << " C: " << this->Queue[i].isComputeSupported;
+		//	std::cout << " G: " << this->Queue[i].isGraphicsSupported;
+		//	std::cout << " P: " << this->Queue[i].isPresentSupported << std::endl;
+		//	gsIOMutex.unlock();
+		//}
 
 		this->Mutex.unlock();
+
+		// Query for support count.
+		for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
+			lQIndex = lFamilyOffset;
+			if (lQueue[lQIndex].isTransferSupported)
+				lFamilySupportCount[i] += 1;
+			if (lQueue[lQIndex].isComputeSupported)
+				lFamilySupportCount[i] += 1;
+			if (lQueue[lQIndex].isGraphicsSupported)
+				lFamilySupportCount[i] += 1;
+			if (lQueue[lQIndex].isPresentSupported)
+				lFamilySupportCount[i] += 1;
+			lFamilyOffset += lQueueFamily[i].queueCount;
+		}
+
+		uint32_t lMinSupport = 10;
+
+		// Find Min Present Support Index
+		lFamilyOffset = 0;
+		for (uint32_t i = 0; i < lFamilySupportCount.size(); i++) {
+			lQIndex = lFamilyOffset;
+			//gsIOMutex.lock();
+			//std::cout << "Queue Family: " << lQIndex;
+			//std::cout << " T: " << this->Queue[lQIndex].isTransferSupported;
+			//std::cout << " C: " << this->Queue[lQIndex].isComputeSupported;
+			//std::cout << " G: " << this->Queue[lQIndex].isGraphicsSupported;
+			//std::cout << " P: " << this->Queue[lQIndex].isPresentSupported << std::endl;
+			//gsIOMutex.unlock();
+			if ((lMinSupport > lFamilySupportCount[i]) && (lQueue[lQIndex].isPresentSupported)) {
+				lMinSupport = lFamilySupportCount[i];
+				lFamilyIndex = i;
+			}
+			lFamilyOffset += lQueueFamily[i].queueCount;
+		}
+
+		// Calculate offset
+		lFamilyOffset = 0;
+		for (uint32_t i = 0; i < lFamilyIndex; i++) {
+			lFamilyOffset += lQueueFamily[i].queueCount;
+		}
+
+		// C++11
+		// Different elements in the same container can be modified concurrently by
+		// different threads, except for the elements of std::vector< bool> (for example,
+		// a vector of std::future objects can be receiving values from multiple threads).
+
+		// Find an empty queue within the family to submit to.
+		lFamilyIndex = 0;
+		while (true) {
+			lQIndex = lFamilyIndex + lFamilyOffset;
+			if (lQueue[lQIndex].Mutex.try_lock()) {
+				vkQueuePresentKHR(lQueue[lQIndex].Handle, aPresentation);
+				lQueue[lQIndex].Mutex.unlock();
+				break;
+			}
+
+			// Cycle until available queue is found.
+			lFamilyIndex += 1;
+			if (lFamilyIndex == lFamilyCount) {
+				lFamilyIndex = 0;
+			}
+		}
 	}
 
 	//bool context::ext_supported(const char* aExtension) {

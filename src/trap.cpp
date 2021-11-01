@@ -1,6 +1,6 @@
-#include <geodesuka/core/util/trap.h>
+#include <geodesuka/core/logic/trap.h>
 
-namespace geodesuka::core::util {
+namespace geodesuka::core::logic {
 
 	trap::trap() {
 		this->Active.store(false);

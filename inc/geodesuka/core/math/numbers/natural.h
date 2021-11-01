@@ -1,15 +1,11 @@
 #pragma once
-#ifndef NATURAL_H
-#define NATURAL_H
+#ifndef GEODESUKA_CORE_MATH_NATURAL_H
+#define GEODESUKA_CORE_MATH_NATURAL_H
 
 #include "../config.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
-			typedef unsigned int natural;
-		}
-	}
+namespace geodesuka::core::math {
+	typedef unsigned int natural;
 }
 
-#endif // !NATURAL_H
+#endif // !GEODESUKA_CORE_MATH_NATURAL_H
