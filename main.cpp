@@ -43,26 +43,30 @@ int main(int argc, char *argv[]) {
 	for (size_t i = 0; i < DeviceCount; i++) {
 		if (Device[i]->get_properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			// Provide required extensions to allow context to create system windows.
+			std::cout << "Transfer Index: " << Device[i]->index(device::qsb::PRESENT);
 			Context = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 			Context2 = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 		}
 	}
 
-	command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
+
+
+	//// Creates a command pool, can generate command buffers of the designated type.
+	//command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
 
 
 
-	// Hard coded vertices
-	float Vertices[] = {
-		-1.0, 0.0, 1.0, 0.0, 0.0,
-		 0.0, 1.0, 0.0, 1.0, 0.0,
-		 1.0, 0.0, 0.0, 0.0, 1.0
-	};
+	//// Hard coded vertices
+	//float Vertices[] = {
+	//	-1.0, 0.0, 1.0, 0.0, 0.0,
+	//	 0.0, 1.0, 0.0, 1.0, 0.0,
+	//	 1.0, 0.0, 0.0, 0.0, 1.0
+	//};
 
-	util::variable VML(util::type::id::STRUCT, "Vertex");
-	VML.Type.push(util::type::id::REAL3, "Position");
-	VML.Type.push(util::type::id::REAL3, "Color");
-	buffer* VertexBuffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_DST, 10, VML, Vertices);
+	//util::variable VML(util::type::id::STRUCT, "Vertex");
+	//VML.Type.push(util::type::id::REAL3, "Position");
+	//VML.Type.push(util::type::id::REAL3, "Color");
+	//buffer* VertexBuffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_DST, 10, VML, Vertices);
 
 
 	Engine.tsleep(5);

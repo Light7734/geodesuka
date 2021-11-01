@@ -73,15 +73,28 @@ namespace geodesuka::core::gcl {
 			uint32_t Index;
 		};
 
-		struct queue {
-			qindex QIndex;				// Family Index & Sub Index
-			//bool inUse;					// In use by another thread.
+		struct family {
 			// Supported Operations
 			VkQueueFlags Flags;
 			bool isTransferSupported;
 			bool isComputeSupported;
 			bool isGraphicsSupported;
 			bool isPresentSupported;
+			unsigned int Support;
+		};
+
+		struct queue {
+			qindex QIndex;				// Family Index & Sub Index
+			//bool inUse;
+			
+
+			// Supported Operations
+			VkQueueFlags Flags;
+			bool isTransferSupported;
+			bool isComputeSupported;
+			bool isGraphicsSupported;
+			bool isPresentSupported;
+			unsigned int Support;
 
 			std::mutex Mutex;			// Use mutex wait if no other queues are available.
 			VkQueue Handle;				// vkQueueSubmit() must be done by one thread at a time.

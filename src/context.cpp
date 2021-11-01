@@ -237,7 +237,7 @@ namespace geodesuka::core::gcl {
 			// Reset hints to insure no lingering parameters.
 			glfwDefaultWindowHints();
 
-			// Now create dummy window surface.
+			// Since this code only relies on an instance, maybe query in device class?
 			VkSurfaceKHR lDummySurface = VK_NULL_HANDLE;
 			lResult = glfwCreateWindowSurface(this->Device->inst(), lDummyWindow, NULL, &lDummySurface);
 
@@ -344,7 +344,7 @@ namespace geodesuka::core::gcl {
 	bool context::available(qid aQID) {
 		bool DoesQueueExist = false;
 		this->Mutex.lock();
-		// Check for existence of queue.
+		// Check for existence of TRANSFER, COMPUTE, GRAPHICS, PRESENT.
 		this->Mutex.unlock();
 		return DoesQueueExist;
 	}

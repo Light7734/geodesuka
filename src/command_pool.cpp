@@ -10,7 +10,7 @@
 namespace geodesuka::core::gcl {
 
 	command_pool::command_pool(context* aContext, int aFlags, int aQID) {
-		if (aContext == nullptr) return;
+		if ((aContext == nullptr) /*|| (aContext->available(aQID))*/) return;
 		this->Context = aContext;
 
 		this->CreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
