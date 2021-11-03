@@ -9,6 +9,9 @@ namespace geodesuka::core::gcl {
 	class device {
 	public:
 
+
+		friend class context;
+
 		// Queue Support Bit
 		enum qsb {
 			TRANSFER	= 0x00000001,
@@ -69,13 +72,17 @@ namespace geodesuka::core::gcl {
 		VkInstance ParentInstance;
 		VkPhysicalDevice Handle;
 
-		uint32_t ExtensionCount;
-		VkExtensionProperties* Extension;
-
 		uint32_t QueueFamilyCount;
 		VkQueueFamilyProperties* QueueFamilyProperty;
 		queue_family_capability* QueueFamilyCapability;
 		uint32_t* QueueFamilySupportCount;
+
+		// Properties, Features, and Extensions Available.
+		uint32_t ExtensionCount;
+		VkExtensionProperties* Extension;
+		VkPhysicalDeviceProperties Properties;
+		VkPhysicalDeviceFeatures Features;
+
 	};
 
 }

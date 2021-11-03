@@ -36,7 +36,7 @@ namespace geodesuka::core::gcl {
 		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
-		// Queries if queue exists with context.
+		// Queries if queue type exists with context.
 		bool available(qid aQID);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
@@ -58,47 +58,34 @@ namespace geodesuka::core::gcl {
 		engine* Engine;
 		device* Device;
 
-		float** QueueFamilyPriority;
 
-		uint32_t QueueCreateInfoCount;
-		VkDeviceQueueCreateInfo* QueueCreateInfo;
-		VkPhysicalDeviceFeatures EnabledFeatures{};
 
 		// Stores queues and stuff.
 		VkDeviceCreateInfo CreateInfo{};
 		VkDevice Handle;
 
-		struct qindex {
-			uint32_t FamilyIndex;
-			uint32_t Index;
-		};
+		// Supported Queue Options.
+		unsigned int Support;
 
-		struct family {
-			// Supported Operations
-			VkQueueFlags Flags;
-			bool isTransferSupported;
-			bool isComputeSupported;
-			bool isGraphicsSupported;
-			bool isPresentSupported;
-			unsigned int Support;
-		};
+		// Queue Family Indices.
+		int QFI[4];
+
+		// Unique QFI.
+		int UQFICount; // Always <= 4.
+		int UQFI[4];
+
+		float** QueueFamilyPriority;
+		// Redundant.
+		uint32_t QueueCreateInfoCount;
+		VkDeviceQueueCreateInfo* QueueCreateInfo;
+		VkPhysicalDeviceFeatures EnabledFeatures{};
 
 		struct queue {
-			qindex QIndex;				// Family Index & Sub Index
-			//bool inUse;
-			
-
-			// Supported Operations
-			VkQueueFlags Flags;
-			bool isTransferSupported;
-			bool isComputeSupported;
-			bool isGraphicsSupported;
-			bool isPresentSupported;
-			unsigned int Support;
+			uint32_t i, j;		
+			device::queue_family_capability FC;
 
 			std::mutex Mutex;			// Use mutex wait if no other queues are available.
 			VkQueue Handle;				// vkQueueSubmit() must be done by one thread at a time.
-
 			queue();
 		};
 

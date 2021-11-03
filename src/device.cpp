@@ -34,6 +34,7 @@ namespace geodesuka::core::gcl {
 		// Allocate memory is extensions exist.
 		if (this->ExtensionCount > 0) {
 			this->Extension = (VkExtensionProperties*)malloc(this->ExtensionCount * sizeof(VkExtensionProperties));
+			if (this->Extension == NULL) return;
 		}
 		else {
 			this->Extension = NULL;
@@ -105,16 +106,20 @@ namespace geodesuka::core::gcl {
 		for (uint32_t i = 0; i < this->QueueFamilyCount; i++) {
 			this->QueueFamilySupportCount[i] = 0;
 
+			this->QueueFamilyCapability[i].Support = 0;
 			this->QueueFamilyCapability[i].Flags = this->QueueFamilyProperty[i].queueFlags;
 			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) == VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) {
+				this->QueueFamilyCapability[i].Support |= qsb::TRANSFER;
 				this->QueueFamilyCapability[i].isTransferSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
 			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) == VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) {
+				this->QueueFamilyCapability[i].Support |= qsb::COMPUTE;
 				this->QueueFamilyCapability[i].isComputeSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
 			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) == VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) {
+				this->QueueFamilyCapability[i].Support |= qsb::GRAPHICS;
 				this->QueueFamilyCapability[i].isGraphicsSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
@@ -123,6 +128,7 @@ namespace geodesuka::core::gcl {
 			VkBool32 PresentSupport;
 			Result = vkGetPhysicalDeviceSurfaceSupportKHR(aPhysicalDevice, i, lDummySurface, &PresentSupport);
 			if (PresentSupport == VK_TRUE) {
+				this->QueueFamilyCapability[i].Support |= qsb::PRESENT;
 				this->QueueFamilyCapability[i].isPresentSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
@@ -132,6 +138,9 @@ namespace geodesuka::core::gcl {
 
 		}
 
+		vkGetPhysicalDeviceProperties(this->Handle, &this->Properties);
+		vkGetPhysicalDeviceFeatures(this->Handle, &this->Features);
+
 		// Clear up Dummy stuff.
 		vkDestroySurfaceKHR(aInstance, lDummySurface, NULL);
 		lDummySurface = VK_NULL_HANDLE;
@@ -140,14 +149,14 @@ namespace geodesuka::core::gcl {
 	}
 
 	device::~device() {
-		free(this->Extension);
-		this->Extension = NULL;
 		free(this->QueueFamilyProperty);
 		this->QueueFamilyProperty = NULL;
 		free(this->QueueFamilyCapability);
 		this->QueueFamilyCapability = NULL;
 		free(this->QueueFamilySupportCount);
 		this->QueueFamilySupportCount = NULL;
+		free(this->Extension);
+		this->Extension = NULL;
 	}
 
 	bool device::is_extension_list_supported(uint32_t aExtensionCount, const char** aExtensionList) const {
