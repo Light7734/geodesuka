@@ -125,16 +125,14 @@ namespace geodesuka::core::gcl {
 
 		// Fail condition
 		if (!Allocated) {
-			delete[] this->Queue;
-			this->Queue = nullptr;
-			free(this->QueueCreateInfo);
-			this->QueueCreateInfo = NULL;
+			delete[] this->Queue; this->Queue = nullptr;
+			free(this->QueueCreateInfo); this->QueueCreateInfo = NULL;
 			if (this->QueueFamilyPriority != NULL) {
 				for (int i = 0; i < this->UQFICount; i++) {
-					free(this->QueueFamilyPriority[i]);
-					this->QueueFamilyPriority = NULL;
+					free(this->QueueFamilyPriority[i]); this->QueueFamilyPriority = NULL;
 				}
 			}
+			free(this->QueueFamilyPriority); this->QueueFamilyPriority = NULL;
 			return;
 		}
 
@@ -171,6 +169,8 @@ namespace geodesuka::core::gcl {
 
 		Result = vkCreateDevice(this->Device->handle(), &this->CreateInfo, NULL, &this->Handle);
 
+
+		// Now get queues from device.
 
 		/*
 		
@@ -471,11 +471,10 @@ namespace geodesuka::core::gcl {
 
 	context::~context() {
 		// lock so context can be safely removed from engine instance.
+		this->Mutex.lock();
 		this->Engine->remove(this);
 
 		vkDestroyDevice(this->Handle, NULL); this->Handle = VK_NULL_HANDLE;
-
-		this->Device = nullptr;
 
 		free(this->QueueCreateInfo); this->QueueCreateInfo = NULL;
 
@@ -487,10 +486,12 @@ namespace geodesuka::core::gcl {
 
 		free(this->QueueFamilyPriority); this->QueueFamilyPriority = NULL;
 
-		this->QueueCreateInfoCount = 0;
+		delete[] this->Queue; this->Queue = nullptr;
 
-		delete[] this->Queue;
-		this->Queue = nullptr;
+		this->Engine = nullptr;
+		this->Device = nullptr;
+
+		this->Mutex.unlock();
 	}
 
 	bool context::available(qid aQID) {
