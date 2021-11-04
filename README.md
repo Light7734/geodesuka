@@ -148,20 +148,22 @@ glslang: - https://github.com/KhronosGroup/glslang
     Is backend compiler to SPIRV in this project.
 
 # Contact Info:
-![](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white) 
+![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white) 
 ShaderKitty#1696 
 
-![](https://discord.gg/GuqfBzfHgt)
+<p align="center">
+   <a href="https://discord.gg/zdagtD3wqu">
+    <img src="https://img.shields.io/discord/806142446094385153?color=7489d5&logo=discord&logoColor=ffffff" />
+  </a>
+</p>
 
 Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
-I am mostly available when I am not at work, and if you have any    qws or suggestions feel free to reach out.
+I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
 
-# Donations
+# Donate
 
 Feel free to donate if you think this is something worth throwing money at.
 
 BTC: 1AA61gvL4ixzKxyw1vajrcR9qX5xubyiBW
 
 ETH: 0xA5373966219b12B0e51753F5735bb1815d5D7c88
-
-XMR: 42bFDxJ2FjtDN9h3ZS3kmUDs5tD2Zha74SNLEmycUH2CRY6b4bLKu95SpDmoWCysYoXSPNYBsVhfm9qdoNkd44tnQ1HThkc
