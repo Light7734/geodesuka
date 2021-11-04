@@ -151,5 +151,15 @@ glslang: - https://github.com/KhronosGroup/glslang
 ![](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white) 
 ShaderKitty#1696 
 
+![](https://discord.gg/GuqfBzfHgt)
+
 Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
 I am mostly available when I am not at work, and if you have any    qws or suggestions feel free to reach out.
+
+# Donations
+
+Feel free to donate if you think this is something worth throwing money at.
+
+BTC: 1AA61gvL4ixzKxyw1vajrcR9qX5xubyiBW
+ETH: 0xA5373966219b12B0e51753F5735bb1815d5D7c88
+XMR: 42bFDxJ2FjtDN9h3ZS3kmUDs5tD2Zha74SNLEmycUH2CRY6b4bLKu95SpDmoWCysYoXSPNYBsVhfm9qdoNkd44tnQ1HThkc
