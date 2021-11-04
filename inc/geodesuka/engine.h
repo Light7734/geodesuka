@@ -219,11 +219,11 @@ namespace geodesuka {
 		std::vector<core::io::file*> File;
 
 		// All created device contexts are held by engine. Needed for graphics/compute.
-		std::mutex CtxMtx;
+		//std::mutex CtxMtx;
 		std::vector<core::gcl::context*> Context;
 
 		// All objects are managed by engine regardless of stage.
-		std::mutex ObjMtx;
+		//std::mutex ObjMtx;
 		std::vector<core::object_t*> Object;
 
 
@@ -235,7 +235,7 @@ namespace geodesuka {
 		// ------------------------------ Back end runtime ------------------------------ //
 
 		// TODO: Maybe make update thread use multiple threads for fast processing?
-		core::logic::trap ThreadTrap; // Used for stalling Update and Render Thread.
+		core::logic::trap RenderUpdateTrap; // Used for stalling Update and Render Thread.
 
 		std::thread SystemTerminalThread;
 		std::thread UpdateThread;

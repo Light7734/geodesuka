@@ -49,8 +49,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-
-
+	//delete Context;
+	free(Context);
 	//// Creates a command pool, can generate command buffers of the designated type.
 	//command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
 

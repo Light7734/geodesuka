@@ -37,13 +37,13 @@ namespace geodesuka::core::gcl {
 		~context();
 
 		// Grabs the Queue Family Index associated with Queue Support Bit from context.
-		int qfi(device::qfs aQSB);
+		int qfi(device::qfs aQFS);
 
 		// Queries if queue type exists with context.
-		bool available(device::qfs aQID);
+		bool available(device::qfs aQFS);
 
 		// Will create a series of command buffer handles, and fill the respective arguments.
-		VkResult create(int aLevel, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		VkResult create(device::qfs aQueueFamilySupport, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Will search and clear allocated command buffers from instance.
 		void destroy(size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
@@ -78,14 +78,7 @@ namespace geodesuka::core::gcl {
 		int UQFI[4];
 
 		float** QueueFamilyPriority;
-		// Redundant.
-		//uint32_t QueueCreateInfoCount;
 		VkDeviceQueueCreateInfo* QueueCreateInfo;
-		//VkPhysicalDeviceFeatures EnabledFeatures{};
-
-		// In vulkan terms, this is called a logical device.
-		// VkPhysicalDevice --> VkDevice
-		// VkDevice --> VkDeviceContext;
 		VkDeviceCreateInfo CreateInfo{};
 		VkDevice Handle;
 

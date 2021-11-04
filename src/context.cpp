@@ -254,8 +254,8 @@ namespace geodesuka::core::gcl {
 		this->Mutex.unlock();
 	}
 
-	int context::qfi(device::qfs aQSB) {
-		switch (aQSB) {			
+	int context::qfi(device::qfs aQFS) {
+		switch (aQFS) {			
 		default						: return -1;
 		case device::qfs::TRANSFER	: return this->QFI[0];
 		case device::qfs::COMPUTE	: return this->QFI[1];
@@ -265,203 +265,84 @@ namespace geodesuka::core::gcl {
 		return 0;
 	}
 
-	bool context::available(device::qfs aQID) {
-		return (this->available(aQID) != -1);
+	bool context::available(device::qfs aQFS) {
+		return (this->available(aQFS) != -1);
 	}
 
-	void context::submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQID) == -1)) return;
+	VkResult context::create(device::qfs aQueueFamilySupport, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+
+		return VkResult();
+	}
+
+	void context::destroy(size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+
+	}
+
+	void context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
+		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
-		VkQueueFlags lFlag = 0;
-		switch (aQID) {
-		default:
-			return;
-		case device::qfs::TRANSFER:
-			lFlag |= VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT;
-			break;
-		case device::qfs::COMPUTE:
-			lFlag |= VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT;
-			break;
-		case device::qfs::GRAPHICS:
-			lFlag |= VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT;
-			break;
+
+		uint32_t QueueFamilyCount = 0;
+		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		int lQFI = this->qfi(aQFS);
+
+		int Offset = 0;
+		int lQueueCount = 0;
+		for (int i = 0; i < this->UQFICount; i++) {
+			if (this->UQFI[i] == lQFI) {
+				lQueueCount = QueueFamilyProperty[this->UQFI[i]].queueCount;
+				break;
+			}
+			Offset += QueueFamilyProperty[this->UQFI[i]].queueCount;
 		}
 
-		////size_t StackQueueSize;
-		//queue* lQueue = nullptr;
-		//size_t lQIndex = 0;
-
-		//size_t lFamilyOffset = 0;
-		//size_t lFamilyCount = 0;
-		//size_t lFamilyIndex = UINT_MAX;
-
-		//// Select Queue Family based on least multiple support.
-		//this->Mutex.lock();
-		//uint32_t lQueueFamilyCount = 0;
-		//const VkQueueFamilyProperties* lQueueFamily = this->Device->get_queue_families(&lQueueFamilyCount);
-		//std::vector<uint32_t> lFamilySupportCount(lQueueFamilyCount);
-		//lQueue = this->Queue;
-		//this->Mutex.unlock();
-
-		//// Query for support count.
-		//for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-		//	lQIndex = lFamilyOffset;
-		//	if (lQueue[lQIndex].isTransferSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isComputeSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isGraphicsSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isPresentSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	lFamilyOffset += lQueueFamily[i].queueCount;
-		//}
-
-		//uint32_t lMinSupport = 10;
-		//
-		//// Find Min Support Index
-		//for (size_t i = 0; i < lFamilySupportCount.size(); i++) {
-		//	if ((lMinSupport > lFamilySupportCount[i]) && ((lQueueFamily[i].queueFlags & lFlag) == lFlag)) {
-		//		lMinSupport = lFamilySupportCount[i];
-		//		lFamilyIndex = i;
-		//	}
-		//}
-
-		//// Calculate offset
-		//lFamilyOffset = 0;
-		//for (uint32_t i = 0; i < lFamilyIndex; i++) {
-		//	lFamilyOffset += lQueueFamily[i].queueCount;
-		//}
-		//
-		//// C++11
-		//// Different elements in the same container can be modified concurrently by
-		//// different threads, except for the elements of std::vector< bool> (for example,
-		//// a vector of std::future objects can be receiving values from multiple threads).
-		//
-		//// Find an empty queue within the family to execute payload.
-		//lFamilyIndex = 0;
-		//while (true) {
-		//	lQIndex = lFamilyIndex + lFamilyOffset;
-		//	if (lQueue[lQIndex].Mutex.try_lock()) {
-		//		vkQueueSubmit(lQueue[lQIndex].Handle, aSubmissionCount, aSubmission, aFence);
-		//		lQueue[lQIndex].Mutex.unlock();
-		//		break;
-		//	}
-
-		//	// Cycle until available queue is found.
-		//	lFamilyIndex += 1;
-		//	if (lFamilyIndex == lFamilyCount) {
-		//		lFamilyIndex = 0;
-		//	}
-		//}
+		int i = 0;
+		while (true) {
+			int Index = i + Offset;
+			if (this->Queue[Index].Mutex.try_lock()) {
+				vkQueueSubmit(this->Queue[Index].Handle, aSubmissionCount, aSubmission, aFence);
+				this->Queue[Index].Mutex.unlock();
+			}
+			i += 1;
+			if (i == lQueueCount) {
+				i = 0;
+			}
+		}
 
 	}
 
 	void context::present(VkPresentInfoKHR* aPresentation) {
-		if (aPresentation == NULL) return;
-		////size_t StackQueueSize;
-		//queue* lQueue = nullptr;
-		//size_t lQIndex = 0;
+		if ((aPresentation == NULL) || (this->qfi(device::qfs::PRESENT) == -1)) return;
 
-		//size_t lFamilyOffset = 0;
-		//size_t lFamilyCount = 0;
-		//size_t lFamilyIndex = UINT_MAX;
+		uint32_t QueueFamilyCount = 0;
+		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		int lQFI = this->qfi(device::qfs::PRESENT);
 
-		//// Select Queue Family based on least multiple support.
-		//this->Mutex.lock();
-		//uint32_t lQueueFamilyCount = 0;
-		//const VkQueueFamilyProperties* lQueueFamily = this->Device->get_queue_families(&lQueueFamilyCount);
-		//std::vector<uint32_t> lFamilySupportCount(lQueueFamilyCount);
-		//lQueue = this->Queue;
+		int Offset = 0;
+		int lQueueCount = 0;
+		for (int i = 0; i < this->UQFICount; i++) {
+			if (this->UQFI[i] == lQFI) {
+				lQueueCount = QueueFamilyProperty[this->UQFI[i]].queueCount;
+				break;
+			}
+			Offset += QueueFamilyProperty[this->UQFI[i]].queueCount;
+		}
 
-		////for (size_t i = 0; i < this->QueueCount; i++) {
-		////	gsIOMutex.lock();
-		////	std::cout << "Queue Family: " << i;
-		////	std::cout << " T: " << this->Queue[i].isTransferSupported;
-		////	std::cout << " C: " << this->Queue[i].isComputeSupported;
-		////	std::cout << " G: " << this->Queue[i].isGraphicsSupported;
-		////	std::cout << " P: " << this->Queue[i].isPresentSupported << std::endl;
-		////	gsIOMutex.unlock();
-		////}
+		int i = 0;
+		while (true) {
+			int Index = i + Offset;
+			if (this->Queue[Index].Mutex.try_lock()) {
+				vkQueuePresentKHR(this->Queue[Index].Handle, aPresentation);
+				this->Queue[Index].Mutex.unlock();
+			}
+			i += 1;
+			if (i == lQueueCount) {
+				i = 0;
+			}
+		}
 
-		//this->Mutex.unlock();
-
-		//// Query for support count.
-		//for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-		//	lQIndex = lFamilyOffset;
-		//	if (lQueue[lQIndex].isTransferSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isComputeSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isGraphicsSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	if (lQueue[lQIndex].isPresentSupported)
-		//		lFamilySupportCount[i] += 1;
-		//	lFamilyOffset += lQueueFamily[i].queueCount;
-		//}
-
-		//uint32_t lMinSupport = 10;
-
-		//// Find Min Present Support Index
-		//lFamilyOffset = 0;
-		//for (uint32_t i = 0; i < lFamilySupportCount.size(); i++) {
-		//	lQIndex = lFamilyOffset;
-		//	//gsIOMutex.lock();
-		//	//std::cout << "Queue Family: " << lQIndex;
-		//	//std::cout << " T: " << this->Queue[lQIndex].isTransferSupported;
-		//	//std::cout << " C: " << this->Queue[lQIndex].isComputeSupported;
-		//	//std::cout << " G: " << this->Queue[lQIndex].isGraphicsSupported;
-		//	//std::cout << " P: " << this->Queue[lQIndex].isPresentSupported << std::endl;
-		//	//gsIOMutex.unlock();
-		//	if ((lMinSupport > lFamilySupportCount[i]) && (lQueue[lQIndex].isPresentSupported)) {
-		//		lMinSupport = lFamilySupportCount[i];
-		//		lFamilyIndex = i;
-		//	}
-		//	lFamilyOffset += lQueueFamily[i].queueCount;
-		//}
-
-		//// Calculate offset
-		//lFamilyOffset = 0;
-		//for (uint32_t i = 0; i < lFamilyIndex; i++) {
-		//	lFamilyOffset += lQueueFamily[i].queueCount;
-		//}
-
-		//// C++11
-		//// Different elements in the same container can be modified concurrently by
-		//// different threads, except for the elements of std::vector< bool> (for example,
-		//// a vector of std::future objects can be receiving values from multiple threads).
-
-		//// Find an empty queue within the family to submit to.
-		//lFamilyIndex = 0;
-		//while (true) {
-		//	lQIndex = lFamilyIndex + lFamilyOffset;
-		//	if (lQueue[lQIndex].Mutex.try_lock()) {
-		//		vkQueuePresentKHR(lQueue[lQIndex].Handle, aPresentation);
-		//		lQueue[lQIndex].Mutex.unlock();
-		//		break;
-		//	}
-
-		//	// Cycle until available queue is found.
-		//	lFamilyIndex += 1;
-		//	if (lFamilyIndex == lFamilyCount) {
-		//		lFamilyIndex = 0;
-		//	}
-		//}
 	}
-
-	//bool context::ext_supported(const char* aExtension) {
-	//	// Make hash map.
-	//	for (size_t i = 0; i < ActiveExtension.size(); i++) {
-	//		if (strcmp(this->DesiredExtension[i], aExtension) == 0) {
-	//			return this->ActiveExtension[i];
-	//		}
-	//		else {
-	//			return false;
-	//		}
-	//	}
-	//	return false;
-	//}
 
 	VkInstance context::inst() {
 		return this->Device->inst();

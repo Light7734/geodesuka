@@ -291,40 +291,36 @@ namespace geodesuka {
 	}
 
 	void engine::submit(core::gcl::context* aContext) {
-		this->ThreadTrap.set(true);
-		this->ThreadTrap.wait_until(2);
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
 		this->Context.push_back(aContext);
-		this->ThreadTrap.set(false);
+		this->RenderUpdateTrap.set(false);
 	}
 
 	void engine::remove(core::gcl::context* aContext) {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		this->ThreadTrap.set(true);
-		this->ThreadTrap.wait_until(2);
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
 		for (size_t i = 0; i < this->Context.size(); i++) {
 			if (this->Context[i] == aContext) {
 				this->Context.erase(this->Context.begin() + i);
 			}
 		}
-		this->ThreadTrap.set(false);
+		this->RenderUpdateTrap.set(false);
 	}
 
 	void engine::submit(core::object_t* aObject) {
-		this->ObjMtx.lock();
-		this->Object.push_back(aObject);
-		this->ObjMtx.unlock();
+		//this->Object.push_back(aObject);
 	}
 	// TODO: Fix these two methods.
 	void engine::remove(core::object_t* aObject) {
-		this->ObjMtx.lock();
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aObject) {
-				this->Object.erase(this->Object.begin() + i);
-			}
-		}
-		this->ObjMtx.unlock();
+		//for (size_t i = 0; i < this->Object.size(); i++) {
+		//	if (this->Object[i] == aObject) {
+		//		this->Object.erase(this->Object.begin() + i);
+		//	}
+		//}
 	}
 
 	VkInstance engine::handle() {
@@ -380,7 +376,7 @@ namespace geodesuka {
 		//VkSubmitInfo *TransferSubmission = NULL;
 
 		while (!this->Shutdown.load()) {
-			this->ThreadTrap.door();
+			this->RenderUpdateTrap.door();
 
 			t1 = this->get_time();
 
@@ -398,19 +394,17 @@ namespace geodesuka {
 			//vkWaitForFences();
 
 			// Execute all host to device transfer operations.
-			this->CtxMtx.lock();
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//vkQueueSubmit(this->Context[i]->Transfer, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
 				//this->Context[i]->submit(core::gcl::context::qid::TRANSFER, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
-				//this->Context[i]->submit(core::gcl::context::qid::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+				this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
 			}
 
 			// Execute all device compute operations.
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//this->Context[i]->submit(core::gcl::context::qid::COMPUTE, ComputeSubmission[i].size(), ComputeSubmission[i].data(), VK_NULL_HANDLE);
-				//this->Context[i]->submit(core::gcl::context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+				this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
 			}
-			this->CtxMtx.unlock();
 
 			t2 = this->get_time();
 			wt = t2 - t1;
@@ -448,7 +442,7 @@ namespace geodesuka {
 		std::vector<VkPresentInfoKHR> Presentation;
 
 		while (!this->Shutdown.load()) {
-			this->ThreadTrap.door();
+			this->RenderUpdateTrap.door();
 
 			t1 = this->get_time();
 
@@ -480,11 +474,11 @@ namespace geodesuka {
 			// Execute all draw commands per context.
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
-				//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
+				this->Context[i]->submit(core::gcl::device::qfs::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
 			}
 
 			// Wait for render operations to complete for system_window presentation.
-
+			
 			// Present aggregated image indices.
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				this->Context[i]->present(/*&Presentation[i]*/NULL);
