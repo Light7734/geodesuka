@@ -176,8 +176,8 @@ namespace geodesuka::core::gcl {
 		}
 
 		for (int i = 0; i < 4; i++) {
-			this->PoolCreateInfo[1].sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-			this->PoolCreateInfo[1].pNext = NULL;
+			this->PoolCreateInfo[i].sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			this->PoolCreateInfo[i].pNext = NULL;
 		}
 
 		// VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
@@ -204,6 +204,8 @@ namespace geodesuka::core::gcl {
 				this->PoolCreateInfo[i].queueFamilyIndex = this->QFI[i];
 				Result = vkCreateCommandPool(this->Handle, &this->PoolCreateInfo[i], NULL, &this->Pool[i]);
 			}
+			this->CommandBufferCount[i] = 0;
+			this->CommandBuffer[i] = NULL;
 		}
 
 		this->Engine->submit(this);
@@ -269,13 +271,103 @@ namespace geodesuka::core::gcl {
 		return (this->available(aQFS) != -1);
 	}
 
-	VkResult context::create(device::qfs aQueueFamilySupport, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+	void context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
+		int i = -1;
+		switch (aCommandType) {
+		default: return;
+		case context::cmdtype::TRANSFER_OTS:	i = 0; break;
+		case context::cmdtype::TRANSFER_PER:	i = 1; break;
+		case context::cmdtype::COMPUTE:			i = 2; break;
+		case context::cmdtype::GRAPHICS:		i = 3; break;
+		}
 
-		return VkResult();
+		void* nptr = NULL;
+		if (this->CommandBuffer[i] == NULL) {
+			nptr = malloc(aCommandBufferCount * sizeof(VkCommandBuffer));
+		}
+		else {
+			nptr = realloc(this->CommandBuffer[i], (this->CommandBufferCount[i] + aCommandBufferCount) * sizeof(VkCommandBuffer));
+		}
+
+		// If new allocation failed, close out operation.
+		if (nptr == NULL) return;
+		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
+
+		VkCommandBufferAllocateInfo AllocateInfo;
+		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		AllocateInfo.pNext					= NULL;
+		AllocateInfo.commandPool			= this->Pool[i];
+		AllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		AllocateInfo.commandBufferCount		= aCommandBufferCount;
+
+		VkResult Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, &this->CommandBuffer[i][this->CommandBufferCount[i]]);
+		memcpy(aCommandBuffer, &this->CommandBuffer[i][this->CommandBufferCount[i]], aCommandBufferCount * sizeof(VkCommandBuffer));
+		this->CommandBufferCount[i] += aCommandBufferCount;
 	}
 
-	void context::destroy(size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+	void context::destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
+		int Index = -1;
+		switch (aCommandType) {
+		default: return;
+		case context::cmdtype::TRANSFER_OTS:	Index = 0; break;
+		case context::cmdtype::TRANSFER_PER:	Index = 1; break;
+		case context::cmdtype::COMPUTE:			Index = 2; break;
+		case context::cmdtype::GRAPHICS:		Index = 3; break;
+		}
+		// If no command buffers are allocated from this context
+		if (this->CommandBufferCount[Index] == 0) return;
 
+		// Search for total number of buffers to clear.
+		int TotalClearCount = 0;
+		VkCommandBuffer* TotalClearList = NULL;
+		for (int i = 0; i < aCommandBufferCount; i++) {
+			for (int j = 0; j < this->CommandBufferCount[Index]; j++) {
+				if (aCommandBuffer[i] == this->CommandBuffer[Index][j]) {
+					TotalClearCount += 1;
+				}
+			}
+		}
+
+		// If total clear count is equal to active command buffers, delete all.
+		if (TotalClearCount >= this->CommandBufferCount[Index]) {
+			vkFreeCommandBuffers(this->Handle, this->Pool[Index], TotalClearCount, TotalClearList);
+			free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = NULL;
+			this->CommandBufferCount[Index] = 0;
+			return;
+		}
+
+		if (TotalClearCount == 0) return;
+		TotalClearList = (VkCommandBuffer*)malloc(TotalClearCount * sizeof(VkCommandBuffer));
+		VkCommandBuffer *nptr = (VkCommandBuffer*)malloc((this->CommandBufferCount[Index] - TotalClearCount) * sizeof(VkCommandBuffer));
+		if (TotalClearList == NULL) return;
+
+		// Gather buffers to be cleared.
+		int k = 0;
+		for (int i = 0; i < aCommandBufferCount; i++) {
+			for (int j = 0; j < this->CommandBufferCount[Index]; j++) {
+				if (aCommandBuffer[i] == this->CommandBuffer[Index][j]) {
+					TotalClearList[k] = aCommandBuffer[j];
+					this->CommandBuffer[Index][j] = VK_NULL_HANDLE;
+					k += 1;
+				}
+			}
+		}
+
+		vkFreeCommandBuffers(this->Handle, this->Pool[Index], TotalClearCount, TotalClearList);
+		free(TotalClearList); TotalClearList = NULL;
+
+		// Move remaining command buffers to new array.
+		k = 0;
+		for (int i = 0; i < this->CommandBufferCount[Index]; i++) {
+			if (this->CommandBuffer[Index][i] != VK_NULL_HANDLE) {
+				nptr[k] = this->CommandBuffer[Index][i];
+				k += 1;
+			}
+		}
+		free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = nptr;
+		nptr = NULL;
 	}
 
 	void context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {

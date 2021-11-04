@@ -49,8 +49,14 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//delete Context;
-	free(Context);
+	VkCommandBuffer A[5] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+	VkCommandBuffer B[3] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+	Context->create(context::cmdtype::TRANSFER_OTS, 5, A);
+	Context->create(context::cmdtype::TRANSFER_OTS, 3, B);
+	Context->destroy(context::cmdtype::TRANSFER_OTS, 5, A);
+
+
+
 	//// Creates a command pool, can generate command buffers of the designated type.
 	//command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
 

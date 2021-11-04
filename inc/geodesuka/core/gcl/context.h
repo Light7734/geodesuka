@@ -32,6 +32,22 @@ namespace geodesuka::core::gcl {
 		//	PRESENT		= 0x00000008
 		//};
 
+		enum cmdtype {
+			// One time submit for transfer operations.
+			TRANSFER_OTS,
+			// Persistent transfer operations
+			TRANSFER_PER,
+			// Compute Operations
+			COMPUTE,
+			// Graphics Operations.
+			GRAPHICS
+		};
+
+		enum level {
+			PRIMARY		= 0,
+			SECONDARY	= 1
+		};
+
 		//TODO: Include dependency of engine instance.
 		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
@@ -43,19 +59,16 @@ namespace geodesuka::core::gcl {
 		bool available(device::qfs aQFS);
 
 		// Will create a series of command buffer handles, and fill the respective arguments.
-		VkResult create(device::qfs aQueueFamilySupport, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		void create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Will search and clear allocated command buffers from instance.
-		void destroy(size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		void submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
 		// Simply presents images corresponding to indices.
 		void present(VkPresentInfoKHR* aPresentation);
-
-		// Will yield the queue family index with the least 
-		//int get_index(int aQID);
 
 		VkInstance inst();
 		device* parent();
@@ -98,6 +111,7 @@ namespace geodesuka::core::gcl {
 		VkCommandPoolCreateInfo PoolCreateInfo[4];
 		VkCommandPool Pool[4];
 		uint32_t CommandBufferCount[4];
+		VkCommandBufferAllocateInfo *AllocateInfo[4];
 		VkCommandBuffer *CommandBuffer[4];
 
 	};
