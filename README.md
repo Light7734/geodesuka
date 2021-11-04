@@ -161,5 +161,7 @@ I am mostly available when I am not at work, and if you have any    qws or sugge
 Feel free to donate if you think this is something worth throwing money at.
 
 BTC: 1AA61gvL4ixzKxyw1vajrcR9qX5xubyiBW
+
 ETH: 0xA5373966219b12B0e51753F5735bb1815d5D7c88
+
 XMR: 42bFDxJ2FjtDN9h3ZS3kmUDs5tD2Zha74SNLEmycUH2CRY6b4bLKu95SpDmoWCysYoXSPNYBsVhfm9qdoNkd44tnQ1HThkc
