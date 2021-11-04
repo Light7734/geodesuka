@@ -56,55 +56,57 @@ int main(int argc, char *argv[]) {
 	//Context->destroy(context::cmdtype::TRANSFER_OTS, 5, A);
 
 
-	//math::real Vertices[] = {
-	//	-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
-	//	 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
-	//	 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0, 1.0
-	//};
+	//Context->create(context::cmdtype::TRANSFER_OTS)
 
-	//math::real VertexReturn[] = {
-	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
-	//};
+	math::real Vertices[] = {
+		-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
+		 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+		 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0, 1.0
+	};
+
+	math::real VertexReturn[] = {
+		 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+	};
+
+	util::variable Variable(util::type::id::STRUCT, "Vertex");
+	Variable.Type.push(util::type::id::REAL3, "Position");
+	Variable.Type.push(util::type::id::REAL2, "TexCoord");
+	Variable.Type.push(util::type::id::REAL3, "Color");
+
+	buffer* Buffer = new buffer(
+		Context, 
+		buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, 
+		buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+		3, 
+		Variable,
+		Vertices
+	);
+
+	Buffer->read(VK_NULL_HANDLE, 0, 24 * sizeof(math::real), VertexReturn);
+
+	//buffer* Buffer = new buffer(
+	//	Context,
+	//	buffer::memory::DEVICE_LOCAL,
+	//	buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+	//	3,
+	//	Variable,
+	//	Vertices
+	//);
 
 
-	//util::variable Variable(util::type::id::STRUCT, "Vertex");
-	//Variable.Type.push(util::type::id::REAL3, "Position");
-	//Variable.Type.push(util::type::id::REAL2, "TexCoord");
-	//Variable.Type.push(util::type::id::REAL3, "Color");
-
-	////buffer *Buffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX, 3, Variable, Vertices);
-
-	//if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
-	//	std::cout << "Date matches" << std::endl;
-	//}
-	//else {
-	//	std::cout << "Date doesn't match" << std::endl;
-	//}
+	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
+		std::cout << "Date matches" << std::endl;
+	}
+	else {
+		std::cout << "Date doesn't match" << std::endl;
+	}
 
 
 	// No longer in use.
 	//delete Buffer;
 
-
-
-	//// Creates a command pool, can generate command buffers of the designated type.
-	//command_pool* CommandPool = new command_pool(Context, command_pool::flag::RESET_COMMAND_BUFFER, context::qid::GRAPHICS);
-
-
-
-	//// Hard coded vertices
-	//float Vertices[] = {
-	//	-1.0, 0.0, 1.0, 0.0, 0.0,
-	//	 0.0, 1.0, 0.0, 1.0, 0.0,
-	//	 1.0, 0.0, 0.0, 0.0, 1.0
-	//};
-
-	//util::variable VML(util::type::id::STRUCT, "Vertex");
-	//VML.Type.push(util::type::id::REAL3, "Position");
-	//VML.Type.push(util::type::id::REAL3, "Color");
-	//buffer* VertexBuffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_DST, 10, VML, Vertices);
 
 
 	Engine.tsleep(1);

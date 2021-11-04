@@ -64,8 +64,10 @@ namespace geodesuka::core::gcl {
 			Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
 		}
 
+
+
 		if (Result == VkResult::VK_SUCCESS) {
-			this->write(0, aCount * aMemoryLayout.Type.Size, aBufferData);
+			//this->write(VK_NULL_HANDLE, 0, aCount * aMemoryLayout.Type.Size, aBufferData);
 		}
 	}
 
@@ -76,28 +78,64 @@ namespace geodesuka::core::gcl {
 		this->MemoryHandle = VK_NULL_HANDLE;
 	}
 
-	void buffer::write(size_t aMemOffset, size_t aMemSize, void* aData) {
+	void buffer::write(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData) {
 		// Gathers memory properties of parent device.
 		VkPhysicalDeviceMemoryProperties Property;
 		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
 
-		/*
-		Figure out how to schedule transfer operations.
-		*/
-		VkCommandPoolCreateInfo Temp;
-		//vkCreateCommandPool(this->Context->handle(), );
-		
 		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
-
-
+			void* temp = NULL;
+			vkMapMemory(this->Context->handle(), this->MemoryHandle, aMemOffset, aMemSize, 0, &temp);
+			if (temp != NULL) {
+				memcpy(aData, temp, aMemSize);
+			}
+			vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 		}
 		else {
 			// If memory buffer is not host visible, use staging buffer.
+			VkCommandBufferBeginInfo BeginInfo;
+			BeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			BeginInfo.pNext = NULL;
+			BeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			BeginInfo.pInheritanceInfo = NULL;
+
+			vkBeginCommandBuffer(aOperation, &BeginInfo);
+			//vkCmdCopyBuffer(aOperation, this->Handle, StagingBuffer )
+
+			vkEndCommandBuffer(aOperation);
+
 		}
 	}
 
-	void buffer::read(size_t aMemOffset, size_t aMemSize, void* aData) {
+	void buffer::read(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData) {
+		// Gathers memory properties of parent device.
+		VkPhysicalDeviceMemoryProperties Property;
+		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
+
+		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
+			// If memory buffer is host visible, use direct write operation.
+			void* temp = NULL;
+			vkMapMemory(this->Context->handle(), this->MemoryHandle, aMemOffset, aMemSize, 0, &temp);
+			if (temp != NULL) {
+				memcpy(aData, temp, aMemSize);
+			}
+			vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+		}
+		else {
+			// If memory buffer is not host visible, use staging buffer.
+			VkCommandBufferBeginInfo BeginInfo;
+			BeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			BeginInfo.pNext = NULL;
+			BeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			BeginInfo.pInheritanceInfo = NULL;
+
+			vkBeginCommandBuffer(aOperation, &BeginInfo);
+			//vkCmdCopyBuffer(aOperation, this->Handle, StagingBuffer )
+
+			vkEndCommandBuffer(aOperation);
+
+		}
 
 	}
 
