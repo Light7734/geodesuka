@@ -19,10 +19,6 @@ namespace geodesuka::core::gcl {
 		// 2: Queue Create Info.
 		// 3: Create Logical Device.
 
-		/*
-		* 
-		*/
-
 		this->Engine = aEngine;
 		this->Device = aDevice;
 		if ((this->Engine == nullptr) || (this->Device == nullptr)) return;
@@ -30,24 +26,24 @@ namespace geodesuka::core::gcl {
 		VkResult Result = VkResult::VK_SUCCESS;
 
 		// If -1, then the option is not supported by the device.
-		this->QFI[0] = this->Device->index(device::qsb::TRANSFER);
-		this->QFI[1] = this->Device->index(device::qsb::COMPUTE);
-		this->QFI[2] = this->Device->index(device::qsb::GRAPHICS);
-		this->QFI[3] = this->Device->index(device::qsb::PRESENT);
+		this->QFI[0] = this->Device->qfi(device::qfs::TRANSFER);
+		this->QFI[1] = this->Device->qfi(device::qfs::COMPUTE);
+		this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS);
+		this->QFI[3] = this->Device->qfi(device::qfs::PRESENT);
 
 		// Register this with context.h
 		this->Support = 0;
 		if (this->QFI[0] >= 0) {
-			this->Support |= device::qsb::TRANSFER;
+			this->Support |= device::qfs::TRANSFER;
 		}
 		if (this->QFI[1] >= 0) {
-			this->Support |= device::qsb::COMPUTE;
+			this->Support |= device::qfs::COMPUTE;
 		}
 		if (this->QFI[2] >= 0) {
-			this->Support |= device::qsb::GRAPHICS;
+			this->Support |= device::qfs::GRAPHICS;
 		}
 		if (this->QFI[3] >= 0) {
-			this->Support |= device::qsb::PRESENT;
+			this->Support |= device::qfs::PRESENT;
 		}
 
 		// UQFI set to -1, as default. Do not use.
@@ -146,13 +142,11 @@ namespace geodesuka::core::gcl {
 			this->QueueCreateInfo[i].pQueuePriorities	= this->QueueFamilyPriority[i];
 		}
 
-		// Change this later.
-		this->QueueCreateInfoCount = this->UQFICount;
-
+		// Load VkDevice Create Info.
 		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		this->CreateInfo.pNext						= NULL;
 		this->CreateInfo.flags						= 0;
-		this->CreateInfo.queueCreateInfoCount		= this->QueueCreateInfoCount;
+		this->CreateInfo.queueCreateInfoCount		= this->UQFICount;
 		this->CreateInfo.pQueueCreateInfos			= this->QueueCreateInfo;
 		this->CreateInfo.enabledLayerCount			= 0;
 		this->CreateInfo.ppEnabledLayerNames		= NULL;
@@ -169,324 +163,90 @@ namespace geodesuka::core::gcl {
 
 		Result = vkCreateDevice(this->Device->handle(), &this->CreateInfo, NULL, &this->Handle);
 
-
 		// Now get queues from device.
+		size_t QueueArrayOffset = 0;
+		for (int i = 0; i < this->UQFICount; i++) {
+			for (uint32_t j = 0; j < QueueFamilyProperty[this->UQFI[i]].queueCount; j++) {
+				size_t Index = j + QueueArrayOffset;
+				this->Queue[Index].i = this->UQFI[i];
+				this->Queue[Index].j = j;
+				vkGetDeviceQueue(this->Handle, this->UQFI[i], j, &this->Queue[Index].Handle);
+			}
+			QueueArrayOffset += QueueFamilyProperty[this->UQFI[i]].queueCount;
+		}
 
-		/*
+		for (int i = 0; i < 4; i++) {
+			this->PoolCreateInfo[1].sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			this->PoolCreateInfo[1].pNext = NULL;
+		}
+
+		// VK_COMMAND_POOL_CREATE_TRANSIENT_BIT
+		// Will be used for one time submits and short lived command buffers.
+		// This will be useful in object construction and uploading.
+
+		// VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
+		// Allows individual command buffers to be reset.
 		
-		this->QueueCreateInfoCount = 0;
-		this->QueueCreateInfo = NULL;
-		this->QueueFamilyPriority = NULL;
+		// One time submit pool
+		this->PoolCreateInfo[0].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
 
-		this->Device = aDevice;
-		this->Handle = VK_NULL_HANDLE;
+		// Persistent Transfer operations.
+		this->PoolCreateInfo[1].flags				= 0;
 
-		// Used for early termination conditions.
-		VkResult Result = VkResult::VK_SUCCESS;
+		// Compute operations.
+		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-		// TODO: For future reference with cross platform compatibility, insure
-		// that a check is done here with extension "VK_KHR_surface".
+		// Graphics operations.
+		this->PoolCreateInfo[3].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-		// This section is neccessary to create dummy surface
-		// to test for presentation support. This makes the assumption
-		// that presentation support does not depend on the parameters
-		// of the surface created.
-		glfwWindowHint(GLFW_RESIZABLE,			GLFW_TRUE);
-		glfwWindowHint(GLFW_DECORATED,			GLFW_TRUE);
-		glfwWindowHint(GLFW_FOCUSED,			GLFW_TRUE);
-		glfwWindowHint(GLFW_AUTO_ICONIFY,		GLFW_TRUE);
-		glfwWindowHint(GLFW_FLOATING,			GLFW_FALSE);
-		glfwWindowHint(GLFW_MAXIMIZED,			GLFW_FALSE);
-		glfwWindowHint(GLFW_VISIBLE,			GLFW_FALSE);
-		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	GLFW_FALSE);
-		glfwWindowHint(GLFW_CENTER_CURSOR,		GLFW_TRUE);
-		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		GLFW_TRUE);
-		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
-
-		// Create OS window handle.
-		GLFWwindow* DummyWindow = glfwCreateWindow(640, 480, "Dummy Window", NULL, NULL);
-
-		// Reset hints to insure no lingering parameters.
-		glfwDefaultWindowHints();
-
-		// Now create dummy window surface.
-		VkSurfaceKHR DummySurface = VK_NULL_HANDLE;
-		Result = glfwCreateWindowSurface(this->Device->inst(), DummyWindow, NULL, &DummySurface);
-
-		// Get the queue families associated with creation physical device.
-		uint32_t QueueFamilyCount = 0;
-		const VkQueueFamilyProperties* QueueFamily = aDevice->get_queue_families(&QueueFamilyCount);
-
-		// Ideally, I would like to seperate each of the queues for their own specific
-		// purposes, but if push comes to shove, they can all referece the exact same queue
-		// handle.
-
-		// Number of Queue Families with support.
-		// {T, C, G, P}
-		bool SupportExists[4] = { false, false, false, false };
-		uint32_t FamilySupportCount[4] = { 0, 0, 0, 0 };
-		uint32_t TotalSupportCount[4] = { 0, 0, 0, 0 };
-
-		// Iterate through queue family and check support.
-		for (uint32_t i = 0; i < QueueFamilyCount; i++) {
-			// Checks for Transfer, Compute, and Graphics.
-			if ((QueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) == VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) {
-				FamilySupportCount[0] += 1;
-				TotalSupportCount[0] += QueueFamily[i].queueCount;
-				SupportExists[0] = true;
-			}
-			if ((QueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) == VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) {
-				FamilySupportCount[1] += 1;
-				TotalSupportCount[1] += QueueFamily[i].queueCount;
-				SupportExists[1] = true;
-			}
-			if ((QueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) == VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) {
-				FamilySupportCount[2] += 1;
-				TotalSupportCount[2] += QueueFamily[i].queueCount;
-				SupportExists[2] = true;
-			}
-
-			// TODO: Make sure "VK_KHR_surface" is a loaded extension in Instance.
-			VkBool32 PresentSupport;
-			Result = vkGetPhysicalDeviceSurfaceSupportKHR(this->Device->handle(), i, DummySurface, &PresentSupport);
-			if (PresentSupport) {
-				FamilySupportCount[3] += 1;
-				TotalSupportCount[3] += QueueFamily[i].queueCount;
-				SupportExists[3] = true;
+		for (int i = 0; i < 4; i++) {
+			if (this->QFI[i] != -1) {
+				this->PoolCreateInfo[i].queueFamilyIndex = this->QFI[i];
+				Result = vkCreateCommandPool(this->Handle, &this->PoolCreateInfo[i], NULL, &this->Pool[i]);
 			}
 		}
 
-		// Queue create info selection metrics based on device...
-		
-		this->QueueCreateInfo[0].sType					= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		this->QueueCreateInfo[0].pNext					= NULL;
-		this->QueueCreateInfo[0].flags					= 0;
-		this->QueueCreateInfo[0].queueFamilyIndex;
-		this->QueueCreateInfo[0].queueCount;
-		this->QueueCreateInfo[0].pQueuePriorities		; // Set this to 1.0f
+		this->Engine->submit(this);
 
-		// TODO: Change this to reference device features from actual class.
-		this->EnabledFeatures = this->Device->get_features();
-
-		// Fill out logical device create info.
-		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		this->CreateInfo.pNext						= NULL;
-		this->CreateInfo.flags						= 0;
-		this->CreateInfo.queueCreateInfoCount		= this->QueueCreateInfoCount;
-		this->CreateInfo.pQueueCreateInfos			= this->QueueCreateInfo;
-		this->CreateInfo.enabledLayerCount			= 0;
-		this->CreateInfo.ppEnabledLayerNames		= NULL;
-		if (this->Device->is_extension_list_supported(aExtensionCount, aExtensionList)) {
-			// If extensions are supported, loaded into context creation.
-			this->CreateInfo.enabledExtensionCount		= aExtensionCount;
-			this->CreateInfo.ppEnabledExtensionNames	= aExtensionList;
-		}
-		else {
-			// TODO: Maybe change this to load only supported subset?
-			this->CreateInfo.enabledExtensionCount		= 0;
-			this->CreateInfo.ppEnabledExtensionNames	= NULL;
-		}
-		this->CreateInfo.pEnabledFeatures			= &this->EnabledFeatures;
-
-		// Create Device and check errors.
-		Result = vkCreateDevice(this->Device->handle(), &this->CreateInfo, NULL, &this->Handle);
-
-		//vkGetDeviceQueue(this->Handle, 0, 0, &Q);
-		
-
-		// -------------------- Context Creation -------------------- //		
-		
-		VkResult lResult = VK_SUCCESS;
-
-		this->Engine = aEngine;
-		this->Device = aDevice;
-		this->Handle = VK_NULL_HANDLE;
-
-		// Check Device validity.
-		// TODO: Prevent Race conditions on access of array?
-		uint32_t lQueueFamilyCount = 0;
-		const VkQueueFamilyProperties* lQueueFamily = this->Device->get_queue_families(&lQueueFamilyCount);
-
-		this->QueueCount = 0;
-		for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-			this->QueueCount += lQueueFamily[i].queueCount;
-		}
-
-		bool lAllocated = false;
-		this->QueueCreateInfoCount = lQueueFamilyCount;
-		this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(lQueueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
-		this->QueueFamilyPriority = (float**)malloc(lQueueFamilyCount * sizeof(float*));
-		this->Queue = new queue[this->QueueCount];
-		lAllocated = (this->QueueCreateInfo != NULL) && (this->QueueFamilyPriority != NULL) && (this->Queue != nullptr);
-		if (lAllocated) {
-			for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-				this->QueueFamilyPriority[i] = (float*)malloc(lQueueFamily[i].queueCount * sizeof(float));
-				lAllocated &= (this->QueueFamilyPriority[i] != NULL);
-			}
-		}
-
-		// Memory Allocated, fill out rest.
-		if (lAllocated) {
-
-			// Set priority values. (Adjust later)
-			for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-				for (uint32_t j = 0; j < lQueueFamily[i].queueCount; j++) {
-					this->QueueFamilyPriority[i][j] = 1.0f;
-				}
-			}
-
-			for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-				QueueCreateInfo[i].sType = VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-				QueueCreateInfo[i].pNext = NULL;
-				QueueCreateInfo[i].flags = 0;
-				QueueCreateInfo[i].queueFamilyIndex = i;
-				QueueCreateInfo[i].queueCount = lQueueFamily[i].queueCount;
-				QueueCreateInfo[i].pQueuePriorities = QueueFamilyPriority[i];
-			}
-
-			this->EnabledFeatures = this->Device->get_features();
-
-			this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			this->CreateInfo.pNext						= NULL;
-			this->CreateInfo.flags						= 0;
-			this->CreateInfo.queueCreateInfoCount		= this->QueueCreateInfoCount;
-			this->CreateInfo.pQueueCreateInfos			= this->QueueCreateInfo;
-			this->CreateInfo.enabledLayerCount			= 0;
-			this->CreateInfo.ppEnabledLayerNames		= NULL;
-			if (this->Device->is_extension_list_supported(aExtensionCount, aExtensionList)) {
-				this->CreateInfo.enabledExtensionCount		= aExtensionCount;
-				this->CreateInfo.ppEnabledExtensionNames	= aExtensionList;
-			}
-			else {
-				this->CreateInfo.enabledExtensionCount		= 0;
-				this->CreateInfo.ppEnabledExtensionNames	= NULL;
-			}
-			this->CreateInfo.pEnabledFeatures			= &this->EnabledFeatures;
-
-			lResult = vkCreateDevice(this->Device->handle(), &this->CreateInfo, NULL, &this->Handle);
-
-			// This section is neccessary to create dummy surface
-			// to test for presentation support. This makes the assumption
-			// that presentation support does not depend on the parameters
-			// of the surface created.
-			glfwWindowHint(GLFW_RESIZABLE,			GLFW_TRUE);
-			glfwWindowHint(GLFW_DECORATED,			GLFW_TRUE);
-			glfwWindowHint(GLFW_FOCUSED,			GLFW_TRUE);
-			glfwWindowHint(GLFW_AUTO_ICONIFY,		GLFW_TRUE);
-			glfwWindowHint(GLFW_FLOATING,			GLFW_FALSE);
-			glfwWindowHint(GLFW_MAXIMIZED,			GLFW_FALSE);
-			glfwWindowHint(GLFW_VISIBLE,			GLFW_FALSE);
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	GLFW_FALSE);
-			glfwWindowHint(GLFW_CENTER_CURSOR,		GLFW_TRUE);
-			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		GLFW_TRUE);
-			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
-
-			// Create OS window handle.
-			GLFWwindow* lDummyWindow = glfwCreateWindow(640, 480, "Dummy Window", NULL, NULL);
-
-			// Reset hints to insure no lingering parameters.
-			glfwDefaultWindowHints();
-
-			// Since this code only relies on an instance, maybe query in device class?
-			VkSurfaceKHR lDummySurface = VK_NULL_HANDLE;
-			lResult = glfwCreateWindowSurface(this->Device->inst(), lDummyWindow, NULL, &lDummySurface);
-
-			// Now make linearized array of queues. This is so lazy.
-			// But I have no idea to make a search for best case atm.
-			// I will change this whole block later. This method
-			// currently loads all queues and blocks 
-
-			size_t Offset = 0;
-			for (uint32_t i = 0; i < lQueueFamilyCount; i++) {
-				for (uint32_t j = 0; j < lQueueFamily[i].queueCount; j++) {
-					size_t lIndex = j + Offset;
-					this->Queue[lIndex].QIndex = { i, j };
-
-					//this->Queue[lIndex].inUse = false;
-					this->Queue[lIndex].Flags = lQueueFamily[i].queueFlags;
-					if ((lQueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) == VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) {
-						this->Queue[lIndex].isTransferSupported = true;
-					}
-					if ((lQueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) == VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) {
-						this->Queue[lIndex].isComputeSupported = true;
-					}
-					if ((lQueueFamily[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) == VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) {
-						this->Queue[lIndex].isGraphicsSupported = true;
-					}
-
-					// TODO: Make sure "VK_KHR_surface" is a loaded extension in Instance.
-					VkBool32 PresentSupport;
-					lResult = vkGetPhysicalDeviceSurfaceSupportKHR(this->Device->handle(), i, lDummySurface, &PresentSupport);
-					if (PresentSupport == VK_TRUE) {
-						this->Queue[lIndex].isPresentSupported = true;
-					}
-					else {
-						this->Queue[lIndex].isPresentSupported = false;
-					}
-
-					this->Queue[lIndex].Handle = VK_NULL_HANDLE;
-					vkGetDeviceQueue(this->Handle, i, j, &this->Queue[lIndex].Handle);
-					//gsIOMutex.lock();
-					//std::cout << "Queue Family: " << i;
-					//std::cout << " T: " << this->Queue[lIndex].isTransferSupported;
-					//std::cout << " C: " << this->Queue[lIndex].isComputeSupported;
-					//std::cout << " G: " << this->Queue[lIndex].isGraphicsSupported;
-					//std::cout << " P: " << this->Queue[lIndex].isPresentSupported << std::endl;
-					//gsIOMutex.unlock();
-				}
-				Offset += lQueueFamily[i].queueCount;
-			}
-
-			vkDestroySurfaceKHR(this->Device->inst(), lDummySurface, NULL);
-			lDummySurface = VK_NULL_HANDLE;
-			glfwDestroyWindow(lDummyWindow);
-			lDummyWindow = NULL;
-
-			this->Engine->submit(this);
-		}
-		else {
-			if (this->QueueCreateInfo != NULL) {
-				free(this->QueueCreateInfo);
-				this->QueueCreateInfo = NULL;
-			}
-			if (this->QueueFamilyPriority != NULL) {
-				for (uint32_t i = 0; i < this->QueueCreateInfoCount; i++) {
-					if (this->QueueFamilyPriority[i] != NULL) {
-						free(this->QueueFamilyPriority[i]);
-						this->QueueFamilyPriority[i] = NULL;
-					}
-				}
-				free(this->QueueFamilyPriority);
-				this->QueueFamilyPriority = NULL;
-			}
-			this->QueueCreateInfoCount = 0;
-
-			this->Device = nullptr;
-			this->Handle = VK_NULL_HANDLE;
-		}
-		//*/
 	}
 
 	context::~context() {
 		// lock so context can be safely removed from engine instance.
 		this->Mutex.lock();
+
 		this->Engine->remove(this);
+
+		// Clear all command buffers and pools.
+		for (int i = 0; i < 4; i++) {
+			vkFreeCommandBuffers(this->Handle, this->Pool[i], this->CommandBufferCount[i], this->CommandBuffer[i]);
+			free(this->CommandBuffer[i]); this->CommandBuffer[i] = NULL;
+			this->CommandBufferCount[i] = 0;
+			vkDestroyCommandPool(this->Handle, this->Pool[i], NULL);
+			this->Pool[i] = VK_NULL_HANDLE;
+		}
+
+		delete[] this->Queue; this->Queue = nullptr;
+		this->QueueCount = 0;
 
 		vkDestroyDevice(this->Handle, NULL); this->Handle = VK_NULL_HANDLE;
 
 		free(this->QueueCreateInfo); this->QueueCreateInfo = NULL;
 
 		if (this->QueueFamilyPriority != NULL) {
-			for (uint32_t i = 0; i < this->QueueCreateInfoCount; i++) {
+			for (int i = 0; i < this->UQFICount; i++) {
 				free(this->QueueFamilyPriority[i]); this->QueueFamilyPriority[i] = NULL;
 			}
 		}
 
 		free(this->QueueFamilyPriority); this->QueueFamilyPriority = NULL;
 
-		delete[] this->Queue; this->Queue = nullptr;
+		for (int i = 0; i < 4; i++) {
+			this->QFI[i] = -1;
+			this->UQFI[i] = -1;
+		}
+		this->UQFICount = 0;
+
+		this->Support = 0;
 
 		this->Engine = nullptr;
 		this->Device = nullptr;
@@ -494,29 +254,36 @@ namespace geodesuka::core::gcl {
 		this->Mutex.unlock();
 	}
 
-	bool context::available(qid aQID) {
-		bool DoesQueueExist = false;
-		this->Mutex.lock();
-		// Check for existence of TRANSFER, COMPUTE, GRAPHICS, PRESENT.
-		this->Mutex.unlock();
-		return DoesQueueExist;
+	int context::qfi(device::qfs aQSB) {
+		switch (aQSB) {			
+		default						: return -1;
+		case device::qfs::TRANSFER	: return this->QFI[0];
+		case device::qfs::COMPUTE	: return this->QFI[1];
+		case device::qfs::GRAPHICS	: return this->QFI[2];
+		case device::qfs::PRESENT	: return this->QFI[3];
+		}
+		return 0;
 	}
 
-	void context::submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-		if ((aSubmissionCount < 1) || (aSubmission == NULL)) return;
+	bool context::available(device::qfs aQID) {
+		return (this->available(aQID) != -1);
+	}
+
+	void context::submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
+		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQID) == -1)) return;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
 		VkQueueFlags lFlag = 0;
 		switch (aQID) {
 		default:
 			return;
-		case qid::TRANSFER:
+		case device::qfs::TRANSFER:
 			lFlag |= VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT;
 			break;
-		case qid::COMPUTE:
+		case device::qfs::COMPUTE:
 			lFlag |= VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT;
 			break;
-		case qid::GRAPHICS:
+		case device::qfs::GRAPHICS:
 			lFlag |= VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT;
 			break;
 		}
@@ -711,12 +478,12 @@ namespace geodesuka::core::gcl {
 	context::queue::queue() {
 		this->i = 0;
 		this->j = 0;
-		this->FC.Flags = 0;
-		this->FC.isTransferSupported = false;
-		this->FC.isComputeSupported = false;
-		this->FC.isGraphicsSupported = false;
-		this->FC.isPresentSupported = false;
-		this->FC.Support = 0;
+		//this->Capability.Flags = 0;
+		//this->Capability.isTransferSupported = false;
+		//this->Capability.isComputeSupported = false;
+		//this->Capability.isGraphicsSupported = false;
+		//this->Capability.isPresentSupported = false;
+		//this->Capability.Support = 0;
 		this->Handle = VK_NULL_HANDLE;
 	}
 

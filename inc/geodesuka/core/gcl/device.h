@@ -12,8 +12,8 @@ namespace geodesuka::core::gcl {
 
 		friend class context;
 
-		// Queue Support Bit
-		enum qsb {
+		// Queue Family Support Options
+		enum qfs {
 			TRANSFER	= 0x00000001,
 			COMPUTE		= 0x00000002,
 			GRAPHICS	= 0x00000004,
@@ -53,7 +53,7 @@ namespace geodesuka::core::gcl {
 		bool available(unsigned int aQSB) const;
 
 		// Grabs family index with desired support bits. Will return -1 if doesn't exist.
-		int index(unsigned int aQSB) const;
+		int qfi(unsigned int aQSB) const;
 
 		// ----- Handles ----- //
 

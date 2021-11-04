@@ -402,13 +402,13 @@ namespace geodesuka {
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//vkQueueSubmit(this->Context[i]->Transfer, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
 				//this->Context[i]->submit(core::gcl::context::qid::TRANSFER, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::context::qid::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+				//this->Context[i]->submit(core::gcl::context::qid::TRANSFER, 0, NULL, VK_NULL_HANDLE);
 			}
 
 			// Execute all device compute operations.
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//this->Context[i]->submit(core::gcl::context::qid::COMPUTE, ComputeSubmission[i].size(), ComputeSubmission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+				//this->Context[i]->submit(core::gcl::context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
 			}
 			this->CtxMtx.unlock();
 
@@ -480,7 +480,7 @@ namespace geodesuka {
 			// Execute all draw commands per context.
 			for (size_t i = 0; i < this->Context.size(); i++) {
 				//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
+				//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
 			}
 
 			// Wait for render operations to complete for system_window presentation.

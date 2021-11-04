@@ -25,22 +25,31 @@ namespace geodesuka::core::gcl {
 		// may be the same queue, but treat them differently even if they are
 		// the same opaque handle.
 		
-		enum qid {
-			TRANSFER	= 0x00000001,
-			COMPUTE		= 0x00000002,
-			GRAPHICS	= 0x00000004,
-			PRESENT		= 0x00000008
-		};
+		//enum qid {
+		//	TRANSFER	= 0x00000001,
+		//	COMPUTE		= 0x00000002,
+		//	GRAPHICS	= 0x00000004,
+		//	PRESENT		= 0x00000008
+		//};
 
 		//TODO: Include dependency of engine instance.
 		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
+		// Grabs the Queue Family Index associated with Queue Support Bit from context.
+		int qfi(device::qfs aQSB);
+
 		// Queries if queue type exists with context.
-		bool available(qid aQID);
+		bool available(device::qfs aQID);
+
+		// Will create a series of command buffer handles, and fill the respective arguments.
+		VkResult create(int aLevel, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+
+		// Will search and clear allocated command buffers from instance.
+		void destroy(size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
-		void submit(qid aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
+		void submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
 		// Simply presents images corresponding to indices.
 		void present(VkPresentInfoKHR* aPresentation);
@@ -58,12 +67,6 @@ namespace geodesuka::core::gcl {
 		engine* Engine;
 		device* Device;
 
-
-
-		// Stores queues and stuff.
-		VkDeviceCreateInfo CreateInfo{};
-		VkDevice Handle;
-
 		// Supported Queue Options.
 		unsigned int Support;
 
@@ -76,14 +79,19 @@ namespace geodesuka::core::gcl {
 
 		float** QueueFamilyPriority;
 		// Redundant.
-		uint32_t QueueCreateInfoCount;
+		//uint32_t QueueCreateInfoCount;
 		VkDeviceQueueCreateInfo* QueueCreateInfo;
-		VkPhysicalDeviceFeatures EnabledFeatures{};
+		//VkPhysicalDeviceFeatures EnabledFeatures{};
+
+		// In vulkan terms, this is called a logical device.
+		// VkPhysicalDevice --> VkDevice
+		// VkDevice --> VkDeviceContext;
+		VkDeviceCreateInfo CreateInfo{};
+		VkDevice Handle;
 
 		struct queue {
 			uint32_t i, j;		
-			device::queue_family_capability FC;
-
+			//device::queue_family_capability Capability;
 			std::mutex Mutex;			// Use mutex wait if no other queues are available.
 			VkQueue Handle;				// vkQueueSubmit() must be done by one thread at a time.
 			queue();
@@ -92,6 +100,12 @@ namespace geodesuka::core::gcl {
 		// Linearized Queue Array.
 		size_t QueueCount;
 		queue *Queue;
+
+		// Builtin command pools.
+		VkCommandPoolCreateInfo PoolCreateInfo[4];
+		VkCommandPool Pool[4];
+		uint32_t CommandBufferCount[4];
+		VkCommandBuffer *CommandBuffer[4];
 
 	};
 

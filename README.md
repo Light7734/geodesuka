@@ -1,5 +1,10 @@
 # Geodesuka Engine
 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/no-ragrets.svg)](https://forthebadge.com)
+
 Project Start: 2021/06/01
 
 Branch Birth Date: 2021/10/23

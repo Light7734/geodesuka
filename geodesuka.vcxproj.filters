@@ -259,9 +259,6 @@
     <ClCompile Include="src\mouse.cpp">
       <Filter>src\core\hid</Filter>
     </ClCompile>
-    <ClCompile Include="src\socket_t.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
     <ClCompile Include="src\text.cpp">
       <Filter>src\core\util</Filter>
     </ClCompile>
@@ -511,9 +508,6 @@
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\io\script.h">
-      <Filter>inc\geodesuka\core\io</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\io\socket_t.h">
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math.h">
