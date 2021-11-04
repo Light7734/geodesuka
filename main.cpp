@@ -49,11 +49,43 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	VkCommandBuffer A[5] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
-	VkCommandBuffer B[3] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
-	Context->create(context::cmdtype::TRANSFER_OTS, 5, A);
-	Context->create(context::cmdtype::TRANSFER_OTS, 3, B);
-	Context->destroy(context::cmdtype::TRANSFER_OTS, 5, A);
+	//VkCommandBuffer A[5] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+	//VkCommandBuffer B[3] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+	//Context->create(context::cmdtype::TRANSFER_OTS, 5, A);
+	//Context->create(context::cmdtype::TRANSFER_OTS, 3, B);
+	//Context->destroy(context::cmdtype::TRANSFER_OTS, 5, A);
+
+
+	//math::real Vertices[] = {
+	//	-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
+	//	 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+	//	 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0, 1.0
+	//};
+
+	//math::real VertexReturn[] = {
+	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+	//	 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+	//};
+
+
+	//util::variable Variable(util::type::id::STRUCT, "Vertex");
+	//Variable.Type.push(util::type::id::REAL3, "Position");
+	//Variable.Type.push(util::type::id::REAL2, "TexCoord");
+	//Variable.Type.push(util::type::id::REAL3, "Color");
+
+	////buffer *Buffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX, 3, Variable, Vertices);
+
+	//if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
+	//	std::cout << "Date matches" << std::endl;
+	//}
+	//else {
+	//	std::cout << "Date doesn't match" << std::endl;
+	//}
+
+
+	// No longer in use.
+	//delete Buffer;
 
 
 
@@ -75,7 +107,7 @@ int main(int argc, char *argv[]) {
 	//buffer* VertexBuffer = new buffer(Context, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_DST, 10, VML, Vertices);
 
 
-	Engine.tsleep(5);
+	Engine.tsleep(1);
 
 	//int a = 2;
 	//int& b = a;

@@ -96,7 +96,7 @@ namespace geodesuka::core::gcl {
 			this->QueueCount += QueueFamilyProperty[this->UQFI[i]].queueCount;
 		}
 
-		this->QueueFamilyPriority = (float**)malloc(this->UQFICount * sizeof(float));
+		this->QueueFamilyPriority = (float**)malloc(this->UQFICount * sizeof(float*));
 		if (this->QueueFamilyPriority != NULL) {
 			for (int i = 0; i < this->UQFICount; i++) {
 				this->QueueFamilyPriority[i] = (float*)malloc(QueueFamilyProperty[this->UQFI[i]].queueCount * sizeof(float));
