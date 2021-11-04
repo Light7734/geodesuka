@@ -242,7 +242,7 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LICENSE" />
+    <None Include="LICENSE.md" />
     <None Include="Makefile" />
     <None Include="README.md" />
   </ItemGroup>
