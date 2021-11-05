@@ -13,6 +13,8 @@ using namespace geodesuka::core;
 using namespace gcl;
 using namespace object;
 
+using namespace geodesuka::builtin::object;
+
 /*
 * setProcessDPIAwarenessContext()
 * dpichagned
@@ -49,15 +51,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//VkCommandBuffer A[5] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
-	//VkCommandBuffer B[3] = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
-	//Context->create(context::cmdtype::TRANSFER_OTS, 5, A);
-	//Context->create(context::cmdtype::TRANSFER_OTS, 3, B);
-	//Context->destroy(context::cmdtype::TRANSFER_OTS, 5, A);
-
-
-	//Context->create(context::cmdtype::TRANSFER_OTS)
-
+	/*
 	math::real Vertices[] = {
 		-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
 		 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
@@ -80,7 +74,7 @@ int main(int argc, char *argv[]) {
 	//buffer* Buffer = new buffer(
 	//	Context, 
 	//	buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, 
-	//	buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+	//	buffer::usage::VERTEX,
 	//	3, 
 	//	Variable,
 	//	Vertices
@@ -89,23 +83,13 @@ int main(int argc, char *argv[]) {
 	buffer* Buffer = new buffer(
 		Context,
 		buffer::memory::DEVICE_LOCAL,
-		buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+		buffer::usage::VERTEX,
 		3,
 		Variable,
 		Vertices
 	);
 
 	Buffer->read(0, 24 * sizeof(math::real), VertexReturn);
-
-	//buffer* Buffer = new buffer(
-	//	Context,
-	//	buffer::memory::DEVICE_LOCAL,
-	//	buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
-	//	3,
-	//	Variable,
-	//	Vertices
-	//);
-
 
 	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
 		std::cout << "Data matches" << std::endl;
@@ -114,42 +98,27 @@ int main(int argc, char *argv[]) {
 		std::cout << "Data doesn't match" << std::endl;
 	}
 
-
 	// No longer in use.
 	delete Buffer;
-
-
+	//*/
 
 	Engine.tsleep(1);
 
-	//int a = 2;
-	//int& b = a;
-	//std::cout << "Address of a: " << &a << std::endl;
-	//std::cout << "Address of b: " << &b << std::endl;
+	system_window::create_info CreateInfo;
+	CreateInfo.Display				= Engine.get_primary_display();
+	CreateInfo.WindowProperty		= window::prop();
+	CreateInfo.SwapchainProperty	= swapchain::prop();
+	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
 
-	//while (true) {
-	//	char q = getc(stdin);
-	//	if (q == 'q') delete Context2;
-	//}
+	system_window* SystemWindow = new system_window(&Engine, Context, &CreateInfo, 480, 640, "cock");
+	triangle* Triangle = new triangle(&Engine, Context);
 
-	//Context->submit(context::qid::COMPUTE, 0, NULL, VK_NULL_HANDLE);
-	//{
+	while (true) {
 
-	//	system_window::create_info CreateInfo;
+		Triangle->draw(SystemWindow);
 
-	//	CreateInfo.Display = Engine.get_primary_display();
-	//	CreateInfo.WindowProperty = window::prop();
-	//	CreateInfo.SwapchainProperty = swapchain::prop();
-	//	CreateInfo.Position = math::real3(0.0, 0.0, 0.0);
-
-	//	object_t* ObjectList[3];
-	//	ObjectList[0] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
-	//	ObjectList[1] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
-	//	ObjectList[2] = new system_window(&Engine, Context, &CreateInfo, 640, 480, "cock");
-
-	//	object_t *Triangle = new triangle(&Engine, Context);
-
-	//}
+		Engine.tsleep(0.02);
+	}
 
 	return 0;
 }

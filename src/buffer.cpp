@@ -17,7 +17,7 @@ namespace geodesuka::core::gcl {
 		this->CreateInfo.pNext						= NULL;
 		this->CreateInfo.flags						= 0; // Ignore.
 		this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
-		this->CreateInfo.usage						= (VkBufferUsageFlags)aUsage;
+		this->CreateInfo.usage						= (VkBufferUsageFlags)(aUsage | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST);
 		this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 		this->CreateInfo.queueFamilyIndexCount		= 0;
 		this->CreateInfo.pQueueFamilyIndices		= NULL;
@@ -48,7 +48,9 @@ namespace geodesuka::core::gcl {
 			// and can possibly include extra features rather than exactly demanded.
 			// Maybe change to exactly only chosen features later on.
 			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
+				// Searches for exact memory properties.
 				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
+				// Searches for approximate memory properties, with additional props.
 				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
 					this->MemoryProperty = MemProp.memoryTypes[i].propertyFlags;
 					this->AllocateInfo.memoryTypeIndex = i;
@@ -85,7 +87,7 @@ namespace geodesuka::core::gcl {
 			//}
 
 			// Copy from stage buffer to device.
-						// Execute transfer commands
+			// Execute transfer commands
 			VkCommandBuffer Transfer = NULL;
 			this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
 

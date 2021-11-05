@@ -20,7 +20,7 @@ namespace geodesuka::builtin::object {
 
 		//// Specifies how cube will be drawn to these respective targets
 		//virtual void draw(core::object::system_display* aTargetSystemDisplay)		override;
-		//virtual void draw(core::object::system_window* aTargetSystemWindow)			override;
+		virtual void draw(core::object::system_window* aTargetSystemWindow)			override;
 		//virtual void draw(core::object::virtual_window* aTargetVirtualWindow)		override;
 
 		//virtual void draw(core::object::camera2d* aTargetCamera2D)					override;

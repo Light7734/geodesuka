@@ -393,18 +393,15 @@ namespace geodesuka {
 			// Wait for render operations to complete before transfer.
 			//vkWaitForFences();
 
-			// Execute all host to device transfer operations.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				//vkQueueSubmit(this->Context[i]->Transfer, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
-				//this->Context[i]->submit(core::gcl::context::qid::TRANSFER, TransferSubmission[i].size(), TransferSubmission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
-			}
-
-			// Execute all device compute operations.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				//this->Context[i]->submit(core::gcl::context::qid::COMPUTE, ComputeSubmission[i].size(), ComputeSubmission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
-			}
+			//// Execute all host to device transfer operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+			//}
+			//
+			//// Execute all device compute operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+			//}
 
 			t2 = this->get_time();
 			wt = t2 - t1;
@@ -471,22 +468,22 @@ namespace geodesuka {
 			// Wait for transfer and compute operations to complete.
 			//vkWaitForFences()
 			
-			// Execute all draw commands per context.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
-				this->Context[i]->submit(core::gcl::device::qfs::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
-			}
-
-			// Wait for render operations to complete for system_window presentation.
-			
-			// Present aggregated image indices.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				this->Context[i]->present(/*&Presentation[i]*/NULL);
-
-				// After presentation has been called for system_windows, update
-				// image indices ready to be acquired.
-				//vkAcquireNextImageKHR()
-			}
+			//// Execute all draw commands per context.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
+			//	this->Context[i]->submit(core::gcl::device::qfs::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
+			//}
+			//
+			//// Wait for render operations to complete for system_window presentation.
+			//
+			//// Present aggregated image indices.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->present(/*&Presentation[i]*/NULL);
+			//
+			//	// After presentation has been called for system_windows, update
+			//	// image indices ready to be acquired.
+			//	//vkAcquireNextImageKHR()
+			//}
 
 			t2 = this->get_time();
 			dt = t2 - t1;

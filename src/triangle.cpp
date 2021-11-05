@@ -14,25 +14,31 @@ namespace geodesuka::builtin::object {
 	triangle::triangle(engine* aEngine, core::gcl::context* aContext) : object_t(aEngine, aContext) {
 
 		// Hard coded vertices
-		float Vertices[] = {
-			-1.0, 0.0, 1.0, 0.0, 0.0,
-			0.0, 1.0, 0.0, 1.0, 0.0,
-			1.0, 0.0, 0.0, 0.0, 1.0
+		math::real Vertices[] = {
+			-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
+			 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
+			 1.0, 0.0, 0.5, 1.0, 0.0, 0.0, 0.0, 1.0
 		};
 
 
-		type VLType(type::id::STRUCT, NULL);
-		VLType.push(type::id::REAL3, "Position");
-		VLType.push(type::id::REAL3, "Color");
-		variable MemLayout(VLType, "Vertex");
+		util::variable Variable(util::type::id::STRUCT, "Vertex");
+		Variable.Type.push(util::type::id::REAL3, "Position");
+		Variable.Type.push(util::type::id::REAL2, "TexCoord");
+		Variable.Type.push(util::type::id::REAL3, "Color");
 
 		//std::cout << MemLayout.get_str() << std::endl;
 
-		buffer VertexBuffer(aContext, buffer::memory::DEVICE_LOCAL, buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, 3, MemLayout, Vertices);
+		buffer *VertexBuffer = new buffer(
+			aContext, 
+			buffer::memory::DEVICE_LOCAL, 
+			buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+			3, 
+			Variable, 
+			Vertices);
 
 		// Shader Sources hard coded into triangle. 
 		const char* VertexShaderSource =
-			"#version 450\n\
+		"#version 450\n\
 		\n\
 		layout (location = 0) in vec2 VertexPosition; \n\
 		layout (location = 1) in vec3 VertexColor; \n\
@@ -45,7 +51,7 @@ namespace geodesuka::builtin::object {
 		}";
 
 		const char* FragmentShaderSource =
-			"#version 450\n\
+		"#version 450\n\
 		\n\
 		layout(location = 0) in vec3 InterpColor;\n\
 		\n\
@@ -138,30 +144,36 @@ namespace geodesuka::builtin::object {
 		this->Viewport.pNext = NULL;
 		//this->Viewport
 
+
+
 		// Full pipeline create info
-		this->CreateInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		this->CreateInfo.pNext = NULL;
-		this->CreateInfo.flags = 0;
-		this->CreateInfo.stageCount = (uint32_t)this->ShaderStage.size();
-		this->CreateInfo.pStages = this->ShaderStage.data();
-		this->CreateInfo.pVertexInputState = &this->VertexInput;
-		this->CreateInfo.pInputAssemblyState = &this->InputAssembly;
-		this->CreateInfo.pTessellationState = NULL;
-		this->CreateInfo.pViewportState = &this->Viewport;
-		this->CreateInfo.pRasterizationState = &this->Rasterizer;
-		this->CreateInfo.pMultisampleState = &this->Multisample;
-		this->CreateInfo.pDepthStencilState = NULL;// &DepthStencil;
-		this->CreateInfo.pColorBlendState = &this->ColorBlend;
-		this->CreateInfo.pDynamicState = NULL;// &DynamicState;
+		this->CreateInfo.sType					= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		this->CreateInfo.pNext					= NULL;
+		this->CreateInfo.flags					= 0;
+		this->CreateInfo.stageCount				= (uint32_t)this->ShaderStage.size();
+		this->CreateInfo.pStages				= this->ShaderStage.data();
+		this->CreateInfo.pVertexInputState		= &this->VertexInput;
+		this->CreateInfo.pInputAssemblyState	= &this->InputAssembly;
+		this->CreateInfo.pTessellationState		= NULL;
+		this->CreateInfo.pViewportState			= &this->Viewport;
+		this->CreateInfo.pRasterizationState	= &this->Rasterizer;
+		this->CreateInfo.pMultisampleState		= &this->Multisample;
+		this->CreateInfo.pDepthStencilState		= NULL;// &DepthStencil;
+		this->CreateInfo.pColorBlendState		= &this->ColorBlend;
+		this->CreateInfo.pDynamicState			= NULL;// &DynamicState;
 		//this->CreateInfo.layout  = 
 
-		vkCreateGraphicsPipelines(aContext->handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
+		VkResult Result = vkCreateGraphicsPipelines(aContext->handle(), VK_NULL_HANDLE, 1, &this->CreateInfo, NULL, &this->GraphicsPipeline);
 
 		// Submit to engine. Needed for update and render operations. 
 		aEngine->submit(this);
 	}
 
 	triangle::~triangle() {
+
+	}
+
+	void triangle::draw(core::object::system_window* aTargetSystemWindow) {
 
 	}
 
