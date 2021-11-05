@@ -47,9 +47,11 @@ namespace geodesuka::core::gcl {
 		//buffer& operator=(const buffer& Rhs);																		// Copy Assign
 		//buffer& operator=(buffer&& Rhs);																			// Move Assign
 
-		void write(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData);
-		void read(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData);
 
+		void write(size_t aMemOffset, size_t aMemSize, void* aData);
+		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
+		void read(size_t aMemOffset, size_t aMemSize, void* aData);
+		void read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData);
 
 		// Grabs sub buffers from memory layout memory layout
 		//buffer operator[](const char* Str);
@@ -82,9 +84,6 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		VkCommandBuffer Send2Device;
-		VkCommandBuffer Pull2Host;
-
 		// Does not hold an host memory data unless explicity requested by API.
 
 		context* Context;
@@ -93,6 +92,8 @@ namespace geodesuka::core::gcl {
 		VkBuffer Handle;
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
+		int MemoryProperty;
+		//int MemoryType;
 
 		int Count;
 		util::variable MemoryLayout;
@@ -102,7 +103,7 @@ namespace geodesuka::core::gcl {
 		// usage on both host and device memory, or not to keep a
 		// staging buffer would imply that every transfer operation
 		// will have a new allocation.
-		//buffer* StagingBuffer;
+		buffer* StagingBuffer;
 
 	};
 

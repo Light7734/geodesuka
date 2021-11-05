@@ -44,7 +44,7 @@ namespace geodesuka::core::gcl {
 
 		VkPhysicalDeviceProperties get_properties() const;
 		VkPhysicalDeviceFeatures get_features() const;
-		//VkPhysicalDeviceMemoryProperties get_memory_properties() const;
+		VkPhysicalDeviceMemoryProperties get_memory_properties() const;
 		const VkExtensionProperties* get_extensions(uint32_t* aExtensionCount) const;
 
 		const VkQueueFamilyProperties* get_queue_families(uint32_t* aQueueFamilyCount) const;

@@ -70,21 +70,32 @@ int main(int argc, char *argv[]) {
 		 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 	};
 
+	memset(VertexReturn, 0xAA, 24 * sizeof(float));
+
 	util::variable Variable(util::type::id::STRUCT, "Vertex");
 	Variable.Type.push(util::type::id::REAL3, "Position");
 	Variable.Type.push(util::type::id::REAL2, "TexCoord");
 	Variable.Type.push(util::type::id::REAL3, "Color");
 
+	//buffer* Buffer = new buffer(
+	//	Context, 
+	//	buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, 
+	//	buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
+	//	3, 
+	//	Variable,
+	//	Vertices
+	//);
+
 	buffer* Buffer = new buffer(
-		Context, 
-		buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, 
+		Context,
+		buffer::memory::DEVICE_LOCAL,
 		buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
-		3, 
+		3,
 		Variable,
 		Vertices
 	);
 
-	Buffer->read(VK_NULL_HANDLE, 0, 24 * sizeof(math::real), VertexReturn);
+	Buffer->read(0, 24 * sizeof(math::real), VertexReturn);
 
 	//buffer* Buffer = new buffer(
 	//	Context,
@@ -97,15 +108,15 @@ int main(int argc, char *argv[]) {
 
 
 	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
-		std::cout << "Date matches" << std::endl;
+		std::cout << "Data matches" << std::endl;
 	}
 	else {
-		std::cout << "Date doesn't match" << std::endl;
+		std::cout << "Data doesn't match" << std::endl;
 	}
 
 
 	// No longer in use.
-	//delete Buffer;
+	delete Buffer;
 
 
 

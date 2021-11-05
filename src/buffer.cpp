@@ -50,6 +50,7 @@ namespace geodesuka::core::gcl {
 			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
 				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
 				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
+					this->MemoryProperty = MemProp.memoryTypes[i].propertyFlags;
 					this->AllocateInfo.memoryTypeIndex = i;
 					break;
 				}
@@ -64,11 +65,73 @@ namespace geodesuka::core::gcl {
 			Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
 		}
 
-
-
-		if (Result == VkResult::VK_SUCCESS) {
-			//this->write(VK_NULL_HANDLE, 0, aCount * aMemoryLayout.Type.Size, aBufferData);
+		// Create staging buffer if not host visible.
+		if ((this->MemoryProperty & (buffer::memory::HOST_VISIBLE)) == buffer::memory::HOST_VISIBLE) {
+			this->StagingBuffer = nullptr;
+			void* nptr = NULL;
+			vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
+			if (nptr != NULL) {
+				memcpy(nptr, aBufferData, this->CreateInfo.size);
+				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+			}
 		}
+		else {
+			this->StagingBuffer = new buffer(Context, buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, aCount, aMemoryLayout, aBufferData);
+			//void* nptr = NULL;
+			//Result = vkMapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
+			//if (nptr != NULL) {
+			//	memcpy(nptr, aBufferData, this->CreateInfo.size);
+			//	vkUnmapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle);
+			//}
+
+			// Copy from stage buffer to device.
+						// Execute transfer commands
+			VkCommandBuffer Transfer = NULL;
+			this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
+
+			VkCommandBufferBeginInfo BeginInfo;
+			BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			BeginInfo.pNext						= NULL;
+			BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			BeginInfo.pInheritanceInfo			= NULL;
+
+			VkBufferCopy Region;
+			Region.srcOffset				= 0;
+			Region.dstOffset				= 0;
+			Region.size						= this->CreateInfo.size;
+
+			// Fill out command buffer.
+			Result = vkBeginCommandBuffer(Transfer, &BeginInfo);
+			vkCmdCopyBuffer(Transfer, this->StagingBuffer->Handle, this->Handle, 1, &Region);
+			Result = vkEndCommandBuffer(Transfer);
+
+			// Create fence
+			VkFence Fence;
+			VkFenceCreateInfo FenceCreateInfo;
+			FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			FenceCreateInfo.pNext				= NULL;
+			FenceCreateInfo.flags				= 0;
+			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+
+			VkSubmitInfo Submission;
+			Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			Submission.pNext					= NULL;
+			Submission.waitSemaphoreCount		= 0;
+			Submission.pWaitSemaphores			= NULL;
+			Submission.pWaitDstStageMask		= 0;
+			Submission.commandBufferCount		= 1;
+			Submission.pCommandBuffers			= &Transfer;
+			Submission.signalSemaphoreCount		= 0;
+			Submission.pSignalSemaphores		= NULL;
+
+			this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+			Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+			vkDestroyFence(this->Context->handle(), Fence, NULL);
+			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
+		}
+
+		// Transfer data over.
+		
 	}
 
 	buffer::~buffer() {
@@ -76,67 +139,175 @@ namespace geodesuka::core::gcl {
 		this->Handle = VK_NULL_HANDLE;
 		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
 		this->MemoryHandle = VK_NULL_HANDLE;
+		delete this->StagingBuffer; 
+		this->StagingBuffer = nullptr;
 	}
 
-	void buffer::write(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData) {
+	void buffer::write(size_t aMemOffset, size_t aMemSize, void* aData) {
+		VkBufferCopy Region;
+		Region.srcOffset = 0;
+		Region.dstOffset = aMemOffset;
+		Region.size = aMemSize;
+		this->write(1, &Region, aData);
+	}
+
+	void buffer::write(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData) {
+		if ((aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
+
 		// Gathers memory properties of parent device.
 		VkPhysicalDeviceMemoryProperties Property;
 		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
 
+		VkResult Result = VkResult::VK_SUCCESS;
 		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
-			void* temp = NULL;
-			vkMapMemory(this->Context->handle(), this->MemoryHandle, aMemOffset, aMemSize, 0, &temp);
-			if (temp != NULL) {
-				memcpy(aData, temp, aMemSize);
+
+			void* nptr = NULL;
+			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+			if (nptr != NULL) {
+				for (uint32_t i = 0; i < aRegionCount; i++) {
+					memcpy((void *)((uintptr_t)nptr + (uintptr_t)aRegion[i].dstOffset), (void *)((uintptr_t)aData + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+				}
+				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 			}
-			vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+
 		}
 		else {
-			// If memory buffer is not host visible, use staging buffer.
+
+			// Load into staging buffer.
+			void* nptr = NULL;
+			Result = vkMapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+			if (nptr != NULL) {
+				for (uint32_t i = 0; i < aRegionCount; i++) {
+					memcpy((void*)((uintptr_t)nptr + (uintptr_t)aRegion[i].dstOffset), (void*)((uintptr_t)aData + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+				}
+				vkUnmapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle);
+			}
+
+			// Execute transfer commands
+			VkCommandBuffer Transfer = NULL;
+			this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
+
 			VkCommandBufferBeginInfo BeginInfo;
-			BeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			BeginInfo.pNext = NULL;
-			BeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			BeginInfo.pInheritanceInfo = NULL;
+			BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			BeginInfo.pNext						= NULL;
+			BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			BeginInfo.pInheritanceInfo			= NULL;
 
-			vkBeginCommandBuffer(aOperation, &BeginInfo);
-			//vkCmdCopyBuffer(aOperation, this->Handle, StagingBuffer )
+			// Fill out command buffer.
+			Result = vkBeginCommandBuffer(Transfer, &BeginInfo);
+			vkCmdCopyBuffer(Transfer, this->StagingBuffer->Handle, this->Handle, aRegionCount, aRegion);
+			Result = vkEndCommandBuffer(Transfer);
 
-			vkEndCommandBuffer(aOperation);
+			// Create fence
+			VkFence Fence;
+			VkFenceCreateInfo FenceCreateInfo;
+			FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			FenceCreateInfo.pNext				= NULL;
+			FenceCreateInfo.flags				= 0;
+			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+
+			VkSubmitInfo Submission;
+			Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			Submission.pNext					= NULL;
+			Submission.waitSemaphoreCount		= 0;
+			Submission.pWaitSemaphores			= NULL;
+			Submission.pWaitDstStageMask		= 0;
+			Submission.commandBufferCount		= 1;
+			Submission.pCommandBuffers			= &Transfer;
+			Submission.signalSemaphoreCount		= 0;
+			Submission.pSignalSemaphores		= NULL;
+
+			this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+			Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+			vkDestroyFence(this->Context->handle(), Fence, NULL);
+			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
 
 		}
+
 	}
 
-	void buffer::read(VkCommandBuffer aOperation, size_t aMemOffset, size_t aMemSize, void* aData) {
+	void buffer::read(size_t aMemOffset, size_t aMemSize, void* aData) {
+		VkBufferCopy Region;
+		Region.srcOffset = aMemOffset;
+		Region.dstOffset = 0;
+		Region.size = aMemSize;
+		this->read(1, &Region, aData);
+	}
+
+	void buffer::read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData) {
+		if ((aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
+
 		// Gathers memory properties of parent device.
 		VkPhysicalDeviceMemoryProperties Property;
 		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
 
+		VkResult Result = VkResult::VK_SUCCESS;
 		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
-			void* temp = NULL;
-			vkMapMemory(this->Context->handle(), this->MemoryHandle, aMemOffset, aMemSize, 0, &temp);
-			if (temp != NULL) {
-				memcpy(aData, temp, aMemSize);
+
+			void* nptr = NULL;
+			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+			if (nptr != NULL) {
+				for (uint32_t i = 0; i < aRegionCount; i++) {
+					memcpy((void *)((uintptr_t)aData + (uintptr_t)aRegion[i].dstOffset), (void *)((uintptr_t)nptr + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+				}
+				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 			}
-			vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+
 		}
 		else {
-			// If memory buffer is not host visible, use staging buffer.
+
+			// Execute transfer commands
+			VkCommandBuffer Transfer = NULL;
+			this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
+
 			VkCommandBufferBeginInfo BeginInfo;
-			BeginInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			BeginInfo.pNext = NULL;
-			BeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			BeginInfo.pInheritanceInfo = NULL;
+			BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+			BeginInfo.pNext						= NULL;
+			BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+			BeginInfo.pInheritanceInfo			= NULL;
 
-			vkBeginCommandBuffer(aOperation, &BeginInfo);
-			//vkCmdCopyBuffer(aOperation, this->Handle, StagingBuffer )
+			// Fill out command buffer.
+			Result = vkBeginCommandBuffer(Transfer, &BeginInfo);
+			vkCmdCopyBuffer(Transfer, this->StagingBuffer->Handle, this->Handle, aRegionCount, aRegion);
+			Result = vkEndCommandBuffer(Transfer);
 
-			vkEndCommandBuffer(aOperation);
+			// Create fence
+			VkFence Fence;
+			VkFenceCreateInfo FenceCreateInfo;
+			FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			FenceCreateInfo.pNext				= NULL;
+			FenceCreateInfo.flags				= 0;
+			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+
+			VkSubmitInfo Submission;
+			Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+			Submission.pNext					= NULL;
+			Submission.waitSemaphoreCount		= 0;
+			Submission.pWaitSemaphores			= NULL;
+			Submission.pWaitDstStageMask		= 0;
+			Submission.commandBufferCount		= 1;
+			Submission.pCommandBuffers			= &Transfer;
+			Submission.signalSemaphoreCount		= 0;
+			Submission.pSignalSemaphores		= NULL;
+
+			this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+			Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+			vkDestroyFence(this->Context->handle(), Fence, NULL);
+			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
+
+			// Load into staging buffer.
+			void* nptr = NULL;
+			Result = vkMapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+			if (nptr != NULL) {
+				for (uint32_t i = 0; i < aRegionCount; i++) {
+					memcpy((void*)((uintptr_t)aData + (uintptr_t)aRegion[i].dstOffset), (void*)((uintptr_t)nptr + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+				}
+				vkUnmapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle);
+			}
 
 		}
-
 	}
 
 }

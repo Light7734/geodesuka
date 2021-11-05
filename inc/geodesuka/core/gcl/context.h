@@ -36,7 +36,7 @@ namespace geodesuka::core::gcl {
 			// One time submit for transfer operations.
 			TRANSFER_OTS,
 			// Persistent transfer operations
-			TRANSFER_PER,
+			TRANSFER_OAD,
 			// Compute Operations
 			COMPUTE,
 			// Graphics Operations.

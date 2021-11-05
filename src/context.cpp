@@ -277,7 +277,7 @@ namespace geodesuka::core::gcl {
 		switch (aCommandType) {
 		default: return;
 		case context::cmdtype::TRANSFER_OTS:	i = 0; break;
-		case context::cmdtype::TRANSFER_PER:	i = 1; break;
+		case context::cmdtype::TRANSFER_OAD:	i = 1; break;
 		case context::cmdtype::COMPUTE:			i = 2; break;
 		case context::cmdtype::GRAPHICS:		i = 3; break;
 		}
@@ -312,7 +312,7 @@ namespace geodesuka::core::gcl {
 		switch (aCommandType) {
 		default: return;
 		case context::cmdtype::TRANSFER_OTS:	Index = 0; break;
-		case context::cmdtype::TRANSFER_PER:	Index = 1; break;
+		case context::cmdtype::TRANSFER_OAD:	Index = 1; break;
 		case context::cmdtype::COMPUTE:			Index = 2; break;
 		case context::cmdtype::GRAPHICS:		Index = 3; break;
 		}
@@ -332,7 +332,7 @@ namespace geodesuka::core::gcl {
 
 		// If total clear count is equal to active command buffers, delete all.
 		if (TotalClearCount >= this->CommandBufferCount[Index]) {
-			vkFreeCommandBuffers(this->Handle, this->Pool[Index], TotalClearCount, TotalClearList);
+			vkFreeCommandBuffers(this->Handle, this->Pool[Index], this->CommandBufferCount[Index], this->CommandBuffer[Index]);
 			free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = NULL;
 			this->CommandBufferCount[Index] = 0;
 			return;
@@ -395,6 +395,7 @@ namespace geodesuka::core::gcl {
 			if (this->Queue[Index].Mutex.try_lock()) {
 				vkQueueSubmit(this->Queue[Index].Handle, aSubmissionCount, aSubmission, aFence);
 				this->Queue[Index].Mutex.unlock();
+				break;
 			}
 			i += 1;
 			if (i == lQueueCount) {
@@ -427,6 +428,7 @@ namespace geodesuka::core::gcl {
 			if (this->Queue[Index].Mutex.try_lock()) {
 				vkQueuePresentKHR(this->Queue[Index].Handle, aPresentation);
 				this->Queue[Index].Mutex.unlock();
+				break;
 			}
 			i += 1;
 			if (i == lQueueCount) {

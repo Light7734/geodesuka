@@ -198,6 +198,12 @@ namespace geodesuka::core::gcl {
 		return temp;
 	}
 
+	VkPhysicalDeviceMemoryProperties device::get_memory_properties() const {
+		VkPhysicalDeviceMemoryProperties temp;
+		vkGetPhysicalDeviceMemoryProperties(this->Handle, &temp);
+		return temp;
+	}
+
 	const VkExtensionProperties* device::get_extensions(uint32_t* aExtensionCount) const {
 		*aExtensionCount = this->ExtensionCount;
 		return this->Extension;
