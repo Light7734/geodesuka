@@ -7,7 +7,7 @@ Project Start: 2021/06/01
 
 Branch Birth Date: 2021/10/23
 
-Branch Pull Date: ????/??/??
+Branch Pull Date: 2021/11/04
 
 Version: 0.0.15
 
@@ -65,32 +65,34 @@ is just a thread trapper that traps threads in a loop while another thread
 can modify the state of the engine and continue running once this operation
 is complete.
 
-Added stage class to describe object sets that share the same physical space,
+- Finished buffer.h, now ready for memory transfers. As of right now it correctly
+transfers data from host memory to device memory successfully. In the future,
+transfers need to be done through update look, because as of right now it does it
+through wasteful one time submits.
+
+- Added stage class to describe object sets that share the same physical space,
 render operations, and interaction methods. canvas.h is designed to be inherited
 to describe stages where 2d objects are drawn to window frames directly. scenexd
 describes 2D and 3D spaces which objects share.
 
-Added system_terminal.h class to engine, handles input from terminal that started
+- Added system_terminal.h class to engine, handles input from terminal that started
 the engine. Will be used for future debugging efforts and modifying engine at 
 runtime. Will most likely be supressed in release.
 
-The directory builtin/ is some basic built in primitives that can be used to 
+- The directory builtin/ is some basic built in primitives that can be used to 
 debug graphics problems and be taken as an example of extended object_t and 
 stage_t.
 
-Updated math library namespaces and macro defs. Needed to be done to minimize
+- Updated math library namespaces and macro defs. Needed to be done to minimize
 macro def collision and interference.
 
-Added timer class.
+- Added timer class.
 
 # To Do List:
 
-
-- Figure out how to deal with command pools efficiently.
-
 - Add proper constructors to natural vectors.
 
-- Finish buffer.h and texture.h staging buffer backend now that
+- Finish texture.h staging buffer backend now that
 context.h is complete for command buffer submission.
 
 - Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
@@ -99,21 +101,19 @@ context.h is complete for command buffer submission.
 
 - Add lua support for runtime scripting.
 
-- Update headers guards to minimize probabilty of collision.
-
 - Add built in extension types for file.h to recognize file types
 and forward to proper objects.
 
 - Add engine asset manager to prevent double loading.
 
 - Add layering system for window objects, for huds, system stats and so
-on.
+on. (Will be done with canvas class, and window as target.)
 
-- Change render_target to new name that makes more sense.
+# Back Burner:
 
 - Add Dynamic Library compilation options.
 
-# Back Burner:
+- Change render_target to new name that makes more sense.
 
 - Change Texture class to image class? The reasoning behind this change
 along with how vulkan does it, is that a texture describes the texture
@@ -129,6 +129,8 @@ of memory.
 # Third Party Libraries
 
 This engine uses the following third party libraries.
+
+Vulkan - Used for graphics.
 
 OpenCL - https://software.intel.com/content/www/us/en/develop/tools/opencl-sdk.html
     The OpenCL SDK Developed by intel is used in this project. Must be installed before usage.
