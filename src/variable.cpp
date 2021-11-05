@@ -1,6 +1,7 @@
 #include <geodesuka/core/util/variable.h>
 
 #include <stdio.h>
+#include <string.h>
 
 #ifdef MODE_DEBUG
 #include <iostream>
@@ -1379,7 +1380,7 @@ namespace geodesuka::core::util {
 	//	return 0;
 	//}
 
-#ifndef MODE_DEBUG
+#ifdef MODE_DEBUG
 	void unit_test_variable() {
 
 		type particle(type::id::STRUCT, "particle");

@@ -1,13 +1,12 @@
 #pragma once
-#ifndef BOOLEAN_H
-#define BOOLEAN_H
+#ifndef GEODESUKA_CORE_MATH_BOOLEAN_H
+#define GEODESUKA_CORE_MATH_BOOLEAN_H
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
-			typedef bool boolean;
-		}
-	}
+/*
+* This is the most retarded type. Discard later.
+*/
+namespace geodesuka::core::math {
+	typedef bool boolean;
 }
 
-#endif // !BOOLEAN_H
+#endif // !GEODESUKA_CORE_MATH_BOOLEAN_H

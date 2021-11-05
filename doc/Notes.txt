@@ -4,3 +4,5 @@ should be in the assets directory, purely for reference and static use. The appd
 serve as the folder where saves and so on will go. The "mods" folder will serve as the place where
 dynamic library modding will be supported. Extending object functionality without exposing the main
 game source code.
+
+https://forthebadge.com/

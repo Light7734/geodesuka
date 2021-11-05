@@ -11,59 +11,55 @@
 #include "context.h"
 // Holds no data, only references.
 
-namespace geodesuka {
-	namespace core {
-		namespace gcl {
+namespace geodesuka::core::gcl {
 
-			class framebuffer {
-			public:
+	class framebuffer {
+	public:
 
-				// Enums go here
+		// Enums go here
 
-				struct prop {
-					int ColorBits[4];
-					int DepthBits;
-					int StencilBits;
-					int AccumColorBits[4];
-					int AuxBuffers;
-					int Stereo;
-					int DoubleBuffer;
-					int Transparent;
-					int Samples;
-					int sRGBCapable;
+		struct prop {
+			int ColorBits[4];
+			int DepthBits;
+			int StencilBits;
+			int AccumColorBits[4];
+			int AuxBuffers;
+			int Stereo;
+			int DoubleBuffer;
+			int Transparent;
+			int Samples;
+			int sRGBCapable;
 
-					uint32_t Count;
-					VkFormat Format;
-					VkColorSpaceKHR ColorSpace;
-					VkExtent2D Extent2D;
-					VkImageUsageFlags Usage;
-					//uint32_t Layers; // Per Image
+			uint32_t Count;
+			VkFormat Format;
+			VkColorSpaceKHR ColorSpace;
+			VkExtent2D Extent2D;
+			VkImageUsageFlags Usage;
+			//uint32_t Layers; // Per Image
 
-					// Default Contstructor
-					prop();
-				};
+			// Default Contstructor
+			prop();
+		};
 
-				math::natural2 Resolution;
+		math::natural2 Resolution;
 
-				context* Context;
-				struct prop Property;
+		context* Context;
+		struct prop Property;
 
-				framebuffer();
-				framebuffer(context* aDeviceContext);
+		framebuffer();
+		framebuffer(context* aDeviceContext);
 
-				~framebuffer();
+		~framebuffer();
 
-				//int set_output(const variable& Target, const texture& Variable);
+		//int set_output(const variable& Target, const texture& Variable);
 
-			private:
+	private:
 
-				VkFramebufferCreateInfo CreateInfo;
-				VkFramebuffer Handle;
+		VkFramebufferCreateInfo CreateInfo;
+		VkFramebuffer Handle;
 
-			};
+	};
 
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_GCL_FRAMEBUFFER_H

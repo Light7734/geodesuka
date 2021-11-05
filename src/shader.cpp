@@ -7,104 +7,100 @@
 #include <SPIRV/GlslangToSpv.h>
 
 
-namespace geodesuka {
-	namespace core {
-		namespace gcl {
+namespace geodesuka::core::gcl {
 
-			shader::shader(context* aDeviceContext, stage aStage, const char* aSource) {
-				this->ErrorCode = VkResult::VK_SUCCESS;
+	shader::shader(context* aDeviceContext, stage aStage, const char* aSource) {
+		this->ErrorCode = VkResult::VK_SUCCESS;
 
-				this->FileHandle = nullptr;
-				this->ParentDC = aDeviceContext;
+		this->FileHandle = nullptr;
+		this->ParentDC = aDeviceContext;
 
-				this->Stage = aStage;
+		this->Stage = aStage;
 
 
-				this->isValid = true;
-				this->Stage = aStage;
-				EShLanguage lShaderStage;
-				switch (this->Stage) {
-				default:
-					this->Stage = UNKNOWN;
-					this->VkStage = (VkShaderStageFlagBits)0;
-					this->isValid = false;
-					break;
-				case VERTEX:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_VERTEX_BIT;
-					lShaderStage = EShLanguage::EShLangVertex;
-					break;
-				case TESSELLATION_CONTROL:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
-					lShaderStage = EShLanguage::EShLangTessControl;
-					break;
-				case TESSELLATION_EVALUATION:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
-					lShaderStage = EShLanguage::EShLangTessEvaluation;
-					break;
-				case GEOMETRY:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_GEOMETRY_BIT;
-					lShaderStage = EShLanguage::EShLangGeometry;
-					break;
-				case FRAGMENT:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_FRAGMENT_BIT;
-					lShaderStage = EShLanguage::EShLangFragment;
-					break;
-				case COMPUTE:
-					this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_COMPUTE_BIT;
-					lShaderStage = EShLanguage::EShLangCompute;
-					break;
-				}
+		this->isValid = true;
+		this->Stage = aStage;
+		EShLanguage lShaderStage;
+		switch (this->Stage) {
+		default:
+			this->Stage = UNKNOWN;
+			this->VkStage = (VkShaderStageFlagBits)0;
+			this->isValid = false;
+			break;
+		case VERTEX:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_VERTEX_BIT;
+			lShaderStage = EShLanguage::EShLangVertex;
+			break;
+		case TESSELLATION_CONTROL:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT;
+			lShaderStage = EShLanguage::EShLangTessControl;
+			break;
+		case TESSELLATION_EVALUATION:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT;
+			lShaderStage = EShLanguage::EShLangTessEvaluation;
+			break;
+		case GEOMETRY:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_GEOMETRY_BIT;
+			lShaderStage = EShLanguage::EShLangGeometry;
+			break;
+		case FRAGMENT:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_FRAGMENT_BIT;
+			lShaderStage = EShLanguage::EShLangFragment;
+			break;
+		case COMPUTE:
+			this->VkStage = VkShaderStageFlagBits::VK_SHADER_STAGE_COMPUTE_BIT;
+			lShaderStage = EShLanguage::EShLangCompute;
+			break;
+		}
 
-				if (this->isValid) {
-					glslang::TShader lShader(lShaderStage);
+		if (this->isValid) {
+			glslang::TShader lShader(lShaderStage);
 
-					// Clean me up later
-					lShader.setStrings(&aSource, 1);
-					lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
-					lShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-					lShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
-					lShader.setEntryPoint("main");
+			// Clean me up later
+			lShader.setStrings(&aSource, 1);
+			lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+			lShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
+			lShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+			lShader.setEntryPoint("main");
 
-					EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
-					this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
-					if (this->isValid) {
-						// returns Binary data after compiling from AST.
-						glslang::GlslangToSpv(*lShader.getIntermediate(), this->Binary);
-					}
-				}
-
-				if (this->isValid) {
-					this->CreateInfo.sType			= VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-					this->CreateInfo.pNext			= NULL;
-					this->CreateInfo.flags			= 0; // Reserved for future use. (Ignored)
-					this->CreateInfo.codeSize		= this->Binary.size()*sizeof(uint32_t);
-					this->CreateInfo.pCode			= reinterpret_cast<const uint32_t*>(this->Binary.data());
-
-					this->ErrorCode = vkCreateShaderModule(this->ParentDC->handle(), &this->CreateInfo, NULL, &this->Handle);
-					if (this->ErrorCode != VkResult::VK_SUCCESS) this->isValid = false;
-				}
+			EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
+			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+			if (this->isValid) {
+				// AST to SPIRV
+				glslang::GlslangToSpv(*lShader.getIntermediate(), this->Binary);
 			}
+		}
 
-			shader::~shader() {
-				//this->FileHandle	= nullptr;
-				//this->ParentDC		= nullptr;
-				//this->Stage			= UNKNOWN;
-				//this->VkStage		= (VkShaderStageFlagBits)0;
-				//this->isValid		= false;
-				this->Binary.clear();
-				vkDestroyShaderModule(this->ParentDC->handle(), this->Handle, NULL);
-			}
+		if (this->isValid) {
+			this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+			this->CreateInfo.pNext = NULL;
+			this->CreateInfo.flags = 0; // Reserved for future use. (Ignored)
+			this->CreateInfo.codeSize = this->Binary.size() * sizeof(uint32_t);
+			this->CreateInfo.pCode = reinterpret_cast<const uint32_t*>(this->Binary.data());
 
-			VkShaderStageFlagBits shader::get_stage() {
-				return this->VkStage;
-			}
-
-			VkShaderModule shader::get_handle() {
-				return this->Handle;
-			}
-
+			this->ErrorCode = vkCreateShaderModule(this->ParentDC->handle(), &this->CreateInfo, NULL, &this->Handle);
+			if (this->ErrorCode != VkResult::VK_SUCCESS) this->isValid = false;
 		}
 	}
+
+	shader::~shader() {
+		//this->FileHandle	= nullptr;
+		//this->ParentDC		= nullptr;
+		//this->Stage			= UNKNOWN;
+		//this->VkStage		= (VkShaderStageFlagBits)0;
+		//this->isValid		= false;
+		this->Binary.clear();
+		vkDestroyShaderModule(this->ParentDC->handle(), this->Handle, NULL);
+	}
+
+	VkShaderStageFlagBits shader::get_stage() {
+		return this->VkStage;
+	}
+
+	VkShaderModule shader::get_handle() {
+		return this->Handle;
+	}
+
 }
 
 

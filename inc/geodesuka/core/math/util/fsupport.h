@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GCLM_FRONT_UTIL_H
-#define GCLM_FRONT_UTIL_H
+#ifndef GEODESUKA_CORE_MATH_GCLM_FRONT_UTIL_H
+#define GEODESUKA_CORE_MATH_GCLM_FRONT_UTIL_H
 
 #include <cmath>
 
@@ -71,16 +71,12 @@
 * This library was created to be useful for graphics programming.
 */
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
+namespace geodesuka::core::math {
 
-			// This function generates a perspective matrix. Transforms to clip coordinates.
-			real4x4 perspective(real FOV, real AspectRatio, real Near, real Far);
-			real4x4 rotation(real Angle, real3 V);
+	// This function generates a perspective matrix. Transforms to clip coordinates.
+	real4x4 perspective(real FOV, real AspectRatio, real Near, real Far);
+	real4x4 rotation(real Angle, real3 V);
 
-		}
-	}
 }
 
-#endif // !GCLM_FRONT_UTIL_H
+#endif // !GEODESUKA_CORE_MATH_GCLM_FRONT_UTIL_H

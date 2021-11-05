@@ -3,6 +3,9 @@
 /* --------------- Standard C Libraries --------------- */
 
 /* --------------- Standard C++ Libraries --------------- */
+#include <iostream>
+std::mutex IOMutex;
+
 #include <vector>
 #include <chrono>
 
@@ -21,17 +24,6 @@
 
 #include <glslang/Public/ShaderLang.h>
 
-/* --------------- Internal --------------- */
-
-//#include <geodesuka/core/object.h>
-//#include <geodesuka/core/object/window.h>
-//#include <geodesuka/core/object/system_display.h>
-//#include <geodesuka/core/object/system_window.h>
-//#include <geodesuka/core/object/virtual_window.h>
-//#include <geodesuka/core/object/camera.h>
-
-/* --------------- Internal Callback Methods (Input Handling) --------------- */
-
 namespace geodesuka {
 
 	/*
@@ -40,7 +32,7 @@ namespace geodesuka {
 	* and loaded assets.
 	*/
 
-	engine::engine(int argc, char* argv[]) {
+	engine::engine(int argc, char* argv[]) : SystemTerminal(*(new core::object::system_terminal(this, nullptr))) {
 		this->State = state::ENGINE_CREATION_STATE;
 		this->isGLSLANGReady = false;
 		this->isGLFWReady = false;
@@ -49,7 +41,7 @@ namespace geodesuka {
 		this->isGCDeviceAvailable = false;
 
 		this->isReady = false;
-		this->Shutdown = false;
+		this->Shutdown.store(false);
 
 		this->PrimaryDisplay = nullptr;
 
@@ -111,6 +103,9 @@ namespace geodesuka {
 
 		}
 
+		// First initialized object is the system terminal.
+		this->Object.push_back(&SystemTerminal);
+
 		if (this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady) {
 
 			// Queries for monitors.
@@ -154,6 +149,7 @@ namespace geodesuka {
 
 			// Initialize update thread for all objects.
 			this->UpdateThread = std::thread(&engine::tupdate, this);
+			this->RenderThread = std::thread(&engine::trender, this);
 
 		}
 
@@ -212,13 +208,12 @@ namespace geodesuka {
 	* Also must shut down backend API. 
 	*/
 	engine::~engine() {
+
 		this->State = state::ENGINE_DESTRUCTION_STATE;
-		// Begin termination, stop threads.
-		this->Mutex.lock();
-		this->Shutdown = true;
-		this->Mutex.unlock();
+		this->Shutdown.store(true);
 		if (this->isReady) {
 			this->UpdateThread.join();
+			this->RenderThread.join();
 		}
 
 		// Destroys all active stages.
@@ -244,9 +239,9 @@ namespace geodesuka {
 		// Destroys all device contexts.
 		for (size_t i = 1; i <= this->Context.size(); i++) {
 			size_t Index = this->Context.size() - i;
-			if (this->Context[i] != nullptr) {
-				delete this->Context[i];
-				this->Context[i] = nullptr;
+			if (this->Context[Index] != nullptr) {
+				delete this->Context[Index];
+				this->Context[Index] = nullptr;
 			}
 		}
 		this->Context.clear();
@@ -295,20 +290,37 @@ namespace geodesuka {
 
 	}
 
-	void engine::submit(core::object_t* aObject) {
-		this->ObjectMutex.lock();
-		this->Object.push_back(aObject);
-		this->ObjectMutex.unlock();
+	void engine::submit(core::gcl::context* aContext) {
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
+		this->Context.push_back(aContext);
+		this->RenderUpdateTrap.set(false);
 	}
 
-	void engine::remove(core::object_t* aObject) {
-		this->ObjectMutex.lock();
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aObject) {
-				this->Object.erase(this->Object.begin() + i);
+	void engine::remove(core::gcl::context* aContext) {
+		// Should be fine?
+		if (this->State != ENGINE_ACTIVE_STATE) return;
+
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
+		for (size_t i = 0; i < this->Context.size(); i++) {
+			if (this->Context[i] == aContext) {
+				this->Context.erase(this->Context.begin() + i);
 			}
 		}
-		this->ObjectMutex.unlock();
+		this->RenderUpdateTrap.set(false);
+	}
+
+	void engine::submit(core::object_t* aObject) {
+		//this->Object.push_back(aObject);
+	}
+	// TODO: Fix these two methods.
+	void engine::remove(core::object_t* aObject) {
+		//for (size_t i = 0; i < this->Object.size(); i++) {
+		//	if (this->Object[i] == aObject) {
+		//		this->Object.erase(this->Object.begin() + i);
+		//	}
+		//}
 	}
 
 	VkInstance engine::handle() {
@@ -324,9 +336,13 @@ namespace geodesuka {
 	}
 
 	double engine::get_time() {
-		return glfwGetTime();
+		this->Mutex.lock();
+		double temp = glfwGetTime();
+		this->Mutex.unlock();
+		return temp;
 	}
 
+	// TODO: Maybe move to another section of core?
 	void engine::tsleep(double aSeconds) {
 		double Microseconds = 1000.0 * aSeconds;
 #if defined(_WIN32) || defined(_WIN64)
@@ -342,18 +358,26 @@ namespace geodesuka {
 #endif
 	}
 
-	// --------------- Update Loop --------------- //
+	// --------------- Render Thread --------------- //
 	// Updates all objects that have been created asynchronously.
-	// --------------- Update Loop --------------- //
+	// --------------- Render Thread --------------- //
 	void engine::tupdate() {
-		bool ExitCondition = false;
 		double t1, t2;
 		double wt, ht;
 		double t, dt;
 		double ts = 1.0 / 2.0;
 		dt = 0.0;
-		while (!ExitCondition) {
-			this->Mutex.lock();
+		
+
+		std::vector<std::vector<VkSubmitInfo>> TransferSubmission;
+		std::vector<std::vector<VkSubmitInfo>> ComputeSubmission;
+
+		//uint32_t TransferSubmissionCount = 0;
+		//VkSubmitInfo *TransferSubmission = NULL;
+
+		while (!this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
 			t1 = this->get_time();
 
 			// Update object list.
@@ -367,20 +391,19 @@ namespace geodesuka {
 			}
 
 			// Wait for render operations to complete before transfer.
-			
-			// Execute all host to device transfer operations.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				//vkQueueSubmit(this->Context[i]->Transfer, )
-			}
+			//vkWaitForFences();
 
-			// Execute all device compute operations.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				//vkQueueSubmit(this->Context[i]->Compute, ...);
-			}
-
+			//// Execute all host to device transfer operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+			//}
+			//
+			//// Execute all device compute operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+			//}
 
 			t2 = this->get_time();
-			this->Mutex.unlock();
 			wt = t2 - t1;
 			if (wt < ts) {
 				ht = ts - wt;
@@ -390,18 +413,17 @@ namespace geodesuka {
 				ht = 0.0;
 			}
 			dt = wt + ht;
-			this->Mutex.lock();
-			ExitCondition = this->Shutdown;
-			this->Mutex.unlock();
 		}
 		//std::cout << "Update Thread has exited." << std::endl;
 	}
 
-	//
-	// thread that submits all draw calls to respective queues
-	//
+
+	// --------------- Render Thread --------------- //
+	// The job of the render thread is to honor and schedule draw
+	// calls of respective render targets stored in memory.
+	// --------------- Render Thread --------------- //
 	void engine::trender() {
-		bool ExitCondition = false;
+		//bool ExitCondition = false;
 		double t1, t2;
 		double dt;
 
@@ -411,48 +433,61 @@ namespace geodesuka {
 		// images wait for Acquire semaphore to be signalled.
 		std::vector<std::vector<VkSubmitInfo>> Submission;
 
-		while (!ExitCondition) {
+		// A context can create multiple windows, and since
+		// the present queue belongs to a specific context,
+		// it would be wise to group presentation updates
+		std::vector<VkPresentInfoKHR> Presentation;
+
+		while (!this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
 			t1 = this->get_time();
 
 			// Generates Submissions per stage.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
-				this->Stage[i]->render();
+				//this->Stage[i]->render();
 			}
 
 			// Alter submission size to match number of contexts.
 			Submission.resize(this->Context.size());
 
 
+			// Reverse order of aggregation.
 			// Gather all submissions by stages.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
 				for (size_t j = 0; j < this->Context.size(); j++) {
 					if (this->Stage[i]->parent_context() == this->Context[j]) {
 						// When matching context is found, extract all submissions.
 						for (size_t k = 0; k < this->Stage[i]->Submission.size(); k++) {
-							Submission[j].push_back(this->Stage[i]->Submission[k]);
+							//Submission[j].push_back(this->Stage[i]->Submission[k]);
 						}
 					}
 				}
 			}
 
-			// Wait for compute operations to complete.
+			// Wait for transfer and compute operations to complete.
 			//vkWaitForFences()
 			
-			// Execute all draw commands per device.
-			for (size_t i = 0; i < this->Context.size(); i++) {
-				vkQueueSubmit(this->Context[i]->Graphics, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
-			}
-
-			// Wait for render operations to complete for presentation.
-			for (size_t i = 0; i < this->SystemWindow.size(); i++) {
-				//vkQueuePresentKHR();
-			}
+			//// Execute all draw commands per context.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
+			//	this->Context[i]->submit(core::gcl::device::qfs::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
+			//}
+			//
+			//// Wait for render operations to complete for system_window presentation.
+			//
+			//// Present aggregated image indices.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->present(/*&Presentation[i]*/NULL);
+			//
+			//	// After presentation has been called for system_windows, update
+			//	// image indices ready to be acquired.
+			//	//vkAcquireNextImageKHR()
+			//}
 
 			t2 = this->get_time();
 			dt = t2 - t1;
-			this->Mutex.lock();
-			ExitCondition = this->Shutdown;
-			this->Mutex.unlock();
+			this->tsleep(0.6);
 		}
 	}
 

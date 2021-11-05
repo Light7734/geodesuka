@@ -1,12 +1,15 @@
 # Geodesuka Engine
 
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
+[![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
+
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/09/27
+Branch Birth Date: 2021/10/23
 
-Branch Pull Date: 2021/10/23
+Branch Pull Date: 2021/11/04
 
-Version: 0.0.14
+Version: 0.0.15
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
@@ -48,29 +51,74 @@ still an ambitious goal for a single person, but it is still a fun project to wo
 
 # Updated List:
 
-Updated queue selection metrics for context.h, now various queue
-types are publicaly exposed to engine to schedule various gpu operations.
+- context.h now has a properly implemented method of queue selection
+at runtime, a simple method of queue selection for now, but it should
+minimize over submission to improper queues. Since some queues only
+exclusively support certain operations, when that operation is desired,
+context.h directs the submission to that, removing traffic from queues
+that have multiple types of support. Logically these methods work, but
+they need to be tested with actual work loads.
 
-Added stage class to describe object sets that share the same physical space,
+- In engine.cpp, a simple mutex was not sufficient to temporarily suspend
+threads to add new contexts, objects, and stages. A simple trap.h class
+is just a thread trapper that traps threads in a loop while another thread
+can modify the state of the engine and continue running once this operation
+is complete.
+
+- Finished buffer.h, now ready for memory transfers. As of right now it correctly
+transfers data from host memory to device memory successfully. In the future,
+transfers need to be done through update look, because as of right now it does it
+through wasteful one time submits.
+
+- Added stage class to describe object sets that share the same physical space,
 render operations, and interaction methods. canvas.h is designed to be inherited
 to describe stages where 2d objects are drawn to window frames directly. scenexd
 describes 2D and 3D spaces which objects share.
 
+- Added system_terminal.h class to engine, handles input from terminal that started
+the engine. Will be used for future debugging efforts and modifying engine at 
+runtime. Will most likely be supressed in release.
+
+- The directory builtin/ is some basic built in primitives that can be used to 
+debug graphics problems and be taken as an example of extended object_t and 
+stage_t.
+
+- Updated math library namespaces and macro defs. Needed to be done to minimize
+macro def collision and interference.
+
+- Added timer class.
+
 # To Do List:
 
-- Update headers guards to minimize probabilty of collision.
+- Add proper constructors to natural vectors.
+
+- Finish texture.h staging buffer backend now that
+context.h is complete for command buffer submission.
+
+- Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
+
+- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
+
+- Add lua support for runtime scripting.
 
 - Add built in extension types for file.h to recognize file types
 and forward to proper objects.
 
 - Add engine asset manager to prevent double loading.
 
-- Replace all char *str with text.h
-
 - Add layering system for window objects, for huds, system stats and so
-on. 
+on. (Will be done with canvas class, and window as target.)
 
 # Back Burner:
+
+- Add Dynamic Library compilation options.
+
+- Change render_target to new name that makes more sense.
+
+- Change Texture class to image class? The reasoning behind this change
+along with how vulkan does it, is that a texture describes the texture
+of a particular surface while an image is a generalized concept of a type
+of memory.
 
 - Set up compilation unit directories to prevent source name space over writing.
 
@@ -78,19 +126,11 @@ on.
 
 - Add memory pool manager. 
 
-- maybe rename window.h to render_target.h?
-
-- Include lua.
-
-- Include freetype
-
-- Include FreeImage
-
-- Include Assimp
-
 # Third Party Libraries
 
 This engine uses the following third party libraries.
+
+Vulkan - Used for graphics.
 
 OpenCL - https://software.intel.com/content/www/us/en/develop/tools/opencl-sdk.html
     The OpenCL SDK Developed by intel is used in this project. Must be installed before usage.
@@ -109,14 +149,12 @@ glslang: - https://github.com/KhronosGroup/glslang
 ShaderKitty#1696 
 
 Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
-I am mostly available when I am not at work, and if you have any    qws or suggestions feel free to reach out.
+I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
 
-# License
-The MIT License (MIT)
-Copyright © 2021 ShaderKitty
+# Donate
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+Feel free to donate if you think this is something worth throwing money at.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+BTC: 1AA61gvL4ixzKxyw1vajrcR9qX5xubyiBW
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ETH: 0xA5373966219b12B0e51753F5735bb1815d5D7c88

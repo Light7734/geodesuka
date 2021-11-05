@@ -1,6 +1,6 @@
 #pragma once
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#ifndef GEODESUKA_CORE_MATH_QUATERNION_H
+#define GEODESUKA_CORE_MATH_QUATERNION_H
 
 #include "../config.h"
 
@@ -13,98 +13,94 @@
 #include "../numbers/real.h"
 #include "../numbers/complex.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
+namespace geodesuka::core::math {
 
-			union quaternion {
-				// Unit Versors
-				static const quaternion i;
-				static const quaternion j;
-				static const quaternion k;
+	union quaternion {
+		// Unit Versors
+		static const quaternion i;
+		static const quaternion j;
+		static const quaternion k;
 
-				struct {
-					real b, c, d, a;
-				};
-				struct {
-					real x, y, z, t;
-				};
-				real ptr[4];
+		struct {
+			real b, c, d, a;
+		};
+		struct {
+			real x, y, z, t;
+		};
+		real ptr[4];
 
-				quaternion();
-				~quaternion();
+		quaternion();
+		~quaternion();
 
-				quaternion(real Val);
-				quaternion(real VReal, real VImag);
-				quaternion(const complex& Val);
-				quaternion(real ValA, real ValB, real ValC, real ValD);
-				quaternion(const quaternion& Val);
+		quaternion(real Val);
+		quaternion(real VReal, real VImag);
+		quaternion(const complex& Val);
+		quaternion(real ValA, real ValB, real ValC, real ValD);
+		quaternion(const quaternion& Val);
 
-				quaternion& operator=(real Rhs);
-				quaternion& operator=(const complex& Rhs);
-				quaternion& operator=(const quaternion& Rhs);
+		quaternion& operator=(real Rhs);
+		quaternion& operator=(const complex& Rhs);
+		quaternion& operator=(const quaternion& Rhs);
 
-				real& operator[](integer Index);
+		real& operator[](integer Index);
 
-				quaternion operator-() const;
-				quaternion operator~() const;
+		quaternion operator-() const;
+		quaternion operator~() const;
 
-				quaternion operator+(const quaternion& Rhs) const;
-				quaternion operator-(const quaternion& Rhs) const;
-				quaternion operator*(const quaternion& Rhs) const;
-				quaternion operator/(const quaternion& Rhs) const;
+		quaternion operator+(const quaternion& Rhs) const;
+		quaternion operator-(const quaternion& Rhs) const;
+		quaternion operator*(const quaternion& Rhs) const;
+		quaternion operator/(const quaternion& Rhs) const;
 
-				quaternion& operator+=(const quaternion& Rhs);
-				quaternion& operator-=(const quaternion& Rhs);
-				quaternion& operator*=(const quaternion& Rhs);
-				quaternion& operator/=(const quaternion& Rhs);
+		quaternion& operator+=(const quaternion& Rhs);
+		quaternion& operator-=(const quaternion& Rhs);
+		quaternion& operator*=(const quaternion& Rhs);
+		quaternion& operator/=(const quaternion& Rhs);
 
-				quaternion operator+(const complex& Rhs) const;
-				quaternion operator-(const complex& Rhs) const;
-				quaternion operator*(const complex& Rhs) const;
-				quaternion operator/(const complex& Rhs) const;
+		quaternion operator+(const complex& Rhs) const;
+		quaternion operator-(const complex& Rhs) const;
+		quaternion operator*(const complex& Rhs) const;
+		quaternion operator/(const complex& Rhs) const;
 
-				quaternion& operator+=(const complex& Rhs);
-				quaternion& operator-=(const complex& Rhs);
-				quaternion& operator*=(const complex& Rhs);
-				quaternion& operator/=(const complex& Rhs);
+		quaternion& operator+=(const complex& Rhs);
+		quaternion& operator-=(const complex& Rhs);
+		quaternion& operator*=(const complex& Rhs);
+		quaternion& operator/=(const complex& Rhs);
 
-				quaternion operator+(real Rhs) const;
-				quaternion operator-(real Rhs) const;
-				quaternion operator*(real Rhs) const;
-				quaternion operator/(real Rhs) const;
+		quaternion operator+(real Rhs) const;
+		quaternion operator-(real Rhs) const;
+		quaternion operator*(real Rhs) const;
+		quaternion operator/(real Rhs) const;
 
-				quaternion& operator+=(real Rhs);
-				quaternion& operator-=(real Rhs);
-				quaternion& operator*=(real Rhs);
-				quaternion& operator/=(real Rhs);
+		quaternion& operator+=(real Rhs);
+		quaternion& operator-=(real Rhs);
+		quaternion& operator*=(real Rhs);
+		quaternion& operator/=(real Rhs);
 
-			};
+	};
 
-			quaternion operator+(const complex& Lhs, const quaternion& Rhs);
-			quaternion operator-(const complex& Lhs, const quaternion& Rhs);
-			quaternion operator*(const complex& Lhs, const quaternion& Rhs);
-			quaternion operator/(const complex& Lhs, const quaternion& Rhs);
+	quaternion operator+(const complex& Lhs, const quaternion& Rhs);
+	quaternion operator-(const complex& Lhs, const quaternion& Rhs);
+	quaternion operator*(const complex& Lhs, const quaternion& Rhs);
+	quaternion operator/(const complex& Lhs, const quaternion& Rhs);
 
-			quaternion operator+(real Lhs, const quaternion& Rhs);
-			quaternion operator-(real Lhs, const quaternion& Rhs);
-			quaternion operator*(real Lhs, const quaternion& Rhs);
-			quaternion operator/(real Lhs, const quaternion& Rhs);
+	quaternion operator+(real Lhs, const quaternion& Rhs);
+	quaternion operator-(real Lhs, const quaternion& Rhs);
+	quaternion operator*(real Lhs, const quaternion& Rhs);
+	quaternion operator/(real Lhs, const quaternion& Rhs);
 
-			real abs2(const quaternion& Arg);
-			real abs(const quaternion& Arg);
+	real abs2(const quaternion& Arg);
+	real abs(const quaternion& Arg);
 
-			quaternion exp(const quaternion& Arg);
-			quaternion ln(const quaternion& Arg);
+	quaternion exp(const quaternion& Arg);
+	quaternion ln(const quaternion& Arg);
 
-			quaternion pow(const quaternion& Base, const quaternion& Exponent);
+	quaternion pow(const quaternion& Base, const quaternion& Exponent);
 
 #ifdef MATH_ENABLE_IO
-			std::ostream& operator<<(std::ostream& os, const quaternion& q);
+	std::ostream& operator<<(std::ostream& os, const quaternion& q);
 #endif // MATH_ENABLE_IO
 
-		}
-	}
 }
 
-#endif // !QUATERNION_H
+#endif // !GEODESUKA_CORE_MATH_QUATERNION_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CONSTANTS_H
-#define CONSTANTS_H
+#ifndef GEODESUKA_CORE_MATH_CONSTANTS_H
+#define GEODESUKA_CORE_MATH_CONSTANTS_H
 
 #include "../config.h"
 
@@ -8,15 +8,13 @@
 #include "../numbers/natural.h"
 #include "../numbers/real.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace math {
-			namespace constant {
-				extern const real pi;
-				extern const real e;
-			}
-		}
+//TODO: Maybe change constants -> constant because of namespace?
+
+namespace geodesuka::core::math {
+	namespace constant {
+		extern const real pi;
+		extern const real e;
 	}
 }
 
-#endif // !CONSTANTS_H
+#endif // !GEODESUKA_CORE_MATH_CONSTANTS_H

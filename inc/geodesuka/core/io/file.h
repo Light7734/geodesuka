@@ -103,9 +103,18 @@ namespace geodesuka::core::io {
 
 		};
 
+		/*
+		* Usage Table
+		* image		-> texture
+		* plaintext -> script
+		* plaintext -> shader
+		*/
+
 		// A more general version grouping.
 		enum type {
 			DYNALIB,
+			PLAINTEXT,
+			BYTECODE,
 			IMAGE,
 			TYPEFACE,
 			SHADER,

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MCONFIG_H
-#define MCONFIG_H
+#ifndef GEODESUKA_CORE_MATH_CONFIG_H
+#define GEODESUKA_CORE_MATH_CONFIG_H
 
 /* Enable Common CS Math Notation */
 //#define CS_PLEB_NOTATION
@@ -41,6 +41,6 @@
 //real A[2][3] = { {0,1,2}, {3,4,5} };
 
 /* Enable Output Debugging */
-#define MATH_ENABLE_IO
+//#define MATH_ENABLE_IO
 
-#endif // !MCONFIG_H
+#endif // !GEODESUKA_CORE_MATH_CONFIG_H

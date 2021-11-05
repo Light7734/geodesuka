@@ -4,19 +4,16 @@
 
 #include "file.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace io {
+namespace geodesuka::core::io {
 
-			/*
-			* This is a host memory loaded image file, ready to be used as a texture
-			* in other operations.
-			*/
-			class image : public file {
+	/*
+	* This is a host memory loaded image file, ready to be used as a texture
+	* in other operations.
+	*/
+	class image : public file {
 
-			};
+	};
 
-		}
-	}
 }
+
 #endif // !GEODESUKA_CORE_IO_IMAGE_H

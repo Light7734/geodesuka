@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INTEGER2_H
-#define INTEGER2_H
+#ifndef GEODESUKA_CORE_MATH_INTEGER2_H
+#define GEODESUKA_CORE_MATH_INTEGER2_H
 
 #include "../config.h"
 
@@ -70,4 +70,4 @@ namespace geodesuka::core::math {
 
 }
 
-#endif // !INTEGER2_H
+#endif // !GEODESUKA_CORE_MATH_INTEGER2_H

@@ -181,9 +181,11 @@
     <ClCompile Include="src\camera2d.cpp" />
     <ClCompile Include="src\camera3d.cpp" />
     <ClCompile Include="src\canvas.cpp" />
+    <ClCompile Include="src\command_pool.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\constants.cpp" />
     <ClCompile Include="src\context.cpp" />
+    <ClCompile Include="src\cube.cpp" />
     <ClCompile Include="src\device.cpp" />
     <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
@@ -224,21 +226,23 @@
     <ClCompile Include="src\scene3d.cpp" />
     <ClCompile Include="src\script.cpp" />
     <ClCompile Include="src\shader.cpp" />
-    <ClCompile Include="src\socket_t.cpp" />
     <ClCompile Include="src\stage.cpp" />
     <ClCompile Include="src\swapchain.cpp" />
     <ClCompile Include="src\system_display.cpp" />
+    <ClCompile Include="src\system_terminal.cpp" />
     <ClCompile Include="src\system_window.cpp" />
     <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\texture.cpp" />
+    <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\trap.cpp" />
+    <ClCompile Include="src\triangle.cpp" />
     <ClCompile Include="src\variable.cpp" />
     <ClCompile Include="src\virtual_window.cpp" />
     <ClCompile Include="src\vtext.cpp" />
     <ClCompile Include="src\window.cpp" />
-    <ClCompile Include="triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="LICENSE" />
+    <None Include="LICENSE.md" />
     <None Include="Makefile" />
     <None Include="README.md" />
   </ItemGroup>
@@ -251,7 +255,10 @@
     <Image Include="res\github\sauce0.jpg" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\geodesuka\builtin\object\cube.h" />
+    <ClInclude Include="inc\geodesuka\builtin\object\triangle.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
@@ -266,7 +273,8 @@
     <ClInclude Include="inc\geodesuka\core\io\font.h" />
     <ClInclude Include="inc\geodesuka\core\io\image.h" />
     <ClInclude Include="inc\geodesuka\core\io\script.h" />
-    <ClInclude Include="inc\geodesuka\core\io\socket_t.h" />
+    <ClInclude Include="inc\geodesuka\core\logic\timer.h" />
+    <ClInclude Include="inc\geodesuka\core\logic\trap.h" />
     <ClInclude Include="inc\geodesuka\core\math.h" />
     <ClInclude Include="inc\geodesuka\core\math\config.h" />
     <ClInclude Include="inc\geodesuka\core\math\matrices\real2x2.h" />
@@ -303,6 +311,7 @@
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
     <ClInclude Include="inc\geodesuka\core\object\render_target.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
+    <ClInclude Include="inc\geodesuka\core\object\system_terminal.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
@@ -315,7 +324,6 @@
     <ClInclude Include="inc\geodesuka\core\util\text.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />
-    <ClInclude Include="triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

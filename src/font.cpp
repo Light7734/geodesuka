@@ -3,14 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-namespace geodesuka {
-	namespace core {
-		namespace io {
+namespace geodesuka::core::io {
 
 
 
-		}
-	}
 }
 
 // This Stuff WORKS, do NOT LOSE IT.

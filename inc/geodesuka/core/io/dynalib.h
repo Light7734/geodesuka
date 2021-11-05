@@ -13,30 +13,26 @@
 
 #include "file.h"
 
-namespace geodesuka {
-	namespace core {
-		namespace io {
+namespace geodesuka::core::io {
 
-			class dynalib : public file {
-			public:
+	class dynalib : public file {
+	public:
 
-				dynalib(const char* aLibraryPath);
+		dynalib(const char* aLibraryPath);
 
-				~dynalib();
+		~dynalib();
 
-				void* get_pfn(const char* aName);
+		void* get_pfn(const char* aName);
 
-			//private:
+		//private:
 
-				void* Handle;
+		void* Handle;
 
-				bool mloadlib(const char* aLibraryPath);
-				//bool mfreelib(void* aLibraryHandle);
+		bool mloadlib(const char* aLibraryPath);
+		//bool mfreelib(void* aLibraryHandle);
 
-			};
+	};
 
-		}
-	}
 }
 
 #endif // !GEODESUKA_CORE_IO_DYNALIB_H

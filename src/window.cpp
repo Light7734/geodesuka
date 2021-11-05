@@ -31,8 +31,6 @@ namespace geodesuka::core::object {
 	}
 
 	window::~window() {
-
-		std::cout << "Window Destroyed" << std::endl;
 	}
 
 	void window::set_title(util::text aTitle) {
@@ -59,7 +57,7 @@ namespace geodesuka::core::object {
 		this->Size = math::real2(0.0, 0.0);
 		this->Property = prop();
 
-		std::cout << "Window Created" << std::endl;
+		//std::cout << "Window Created" << std::endl;
 	}
 
 }
