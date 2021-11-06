@@ -174,10 +174,6 @@ namespace geodesuka {
 		void tsleep(double aSeconds);
 
 	private:
-
-		struct trap {
-
-		};
 		
 		state State;
 
@@ -187,7 +183,8 @@ namespace geodesuka {
 		std::mutex Mutex;
 
 		// Maintain versioning system.
-		const version Version = { 0, 0, 15 };
+		const version Version = { 0, 0, 16 };
+		const int Date = 20211104;
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;

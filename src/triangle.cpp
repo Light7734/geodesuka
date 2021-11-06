@@ -30,11 +30,12 @@ namespace geodesuka::builtin::object {
 
 		buffer *VertexBuffer = new buffer(
 			aContext, 
-			buffer::memory::DEVICE_LOCAL, 
+			device::memory::DEVICE_LOCAL, 
 			buffer::usage::VERTEX | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST,
 			3, 
 			Variable, 
-			Vertices);
+			Vertices
+		);
 
 		// Shader Sources hard coded into triangle. 
 		const char* VertexShaderSource =

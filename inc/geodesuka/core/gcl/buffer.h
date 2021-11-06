@@ -22,15 +22,6 @@ namespace geodesuka::core::gcl {
 	class buffer {
 	public:
 
-		enum memory {
-			DEVICE_LOCAL			= 0x00000001,
-			HOST_VISIBLE			= 0x00000002,
-			HOST_COHERENT			= 0x00000004,
-			HOST_CACHED				= 0x00000008,
-			LAZILY_ALLOCATED		= 0x00000010,
-			PROTECTED				= 0x00000020
-		};
-
 		enum usage {
 			TRANSFER_SRC			= 0x00000001,
 			TRANSFER_DST			= 0x00000002,
@@ -44,13 +35,21 @@ namespace geodesuka::core::gcl {
 			SHADER_DEVICE_ADDRESS	= 0x00020000
 		};
 
+		buffer();
 		buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
 		~buffer();
 
-		//buffer(const buffer& Inp);																					// Copy Constructor
-		//buffer(buffer&& Inp);																						// Move Constructor
-		//buffer& operator=(const buffer& Rhs);																		// Copy Assign
-		//buffer& operator=(buffer&& Rhs);																			// Move Assign
+		buffer(const buffer& aInp);																					// Copy Constructor
+		buffer(buffer&& aInp);																						// Move Constructor
+
+		buffer& operator=(const buffer& aRhs);																		// Copy Assign
+		buffer& operator=(buffer&& aRhs);																			// Move Assign
+
+		// NOTE: These methods produce TRANSFER_OTS command buffers. They must be manually freed.
+		// Will copy data from from to left.
+		VkCommandBuffer operator<<(buffer& aRhs);
+		// Will copy data from left to right
+		VkCommandBuffer operator>>(buffer& aRhs);
 
 		void write(size_t aMemOffset, size_t aMemSize, void* aData);
 		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
@@ -59,8 +58,6 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		// Does not hold an host memory data unless explicity requested by API.
-
 		context* Context;
 
 		VkBufferCreateInfo CreateInfo{};
@@ -68,7 +65,6 @@ namespace geodesuka::core::gcl {
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
 		int MemoryProperty;
-		//int MemoryType;
 
 		int Count;
 		util::variable MemoryLayout;
@@ -82,7 +78,7 @@ namespace geodesuka::core::gcl {
 		// usage on both host and device memory, or not to keep a
 		// staging buffer would imply that every transfer operation
 		// will have a new allocation.
-		buffer* StagingBuffer;
+		//buffer* StagingBuffer;
 
 	};
 

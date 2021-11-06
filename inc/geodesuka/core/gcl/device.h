@@ -19,6 +19,15 @@ namespace geodesuka::core::gcl {
 			GRAPHICS	= 0x00000004,
 			PRESENT		= 0x00000008
 		};
+
+		enum memory {
+			DEVICE_LOCAL			= 0x00000001,
+			HOST_VISIBLE			= 0x00000002,
+			HOST_COHERENT			= 0x00000004,
+			HOST_CACHED				= 0x00000008,
+			LAZILY_ALLOCATED		= 0x00000010,
+			PROTECTED				= 0x00000020
+		};
 		
 		struct queue_family_capability {
 			// Supported Operations

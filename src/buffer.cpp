@@ -8,6 +8,14 @@
 
 namespace geodesuka::core::gcl {
 
+	buffer::buffer() {
+		this->Context = nullptr;
+		this->Handle = VK_NULL_HANDLE;
+		this->MemoryHandle = VK_NULL_HANDLE;
+		this->MemoryProperty = 0;
+		this->Count = 0;
+	}
+
 	buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
 		VkResult Result = VK_SUCCESS;
 
@@ -41,9 +49,9 @@ namespace geodesuka::core::gcl {
 			VkPhysicalDeviceMemoryProperties MemProp;
 			vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
 
-			this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			this->AllocateInfo.pNext = NULL;
-			this->AllocateInfo.allocationSize = MemReq.size;
+			this->AllocateInfo.sType			= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			this->AllocateInfo.pNext			= NULL;
+			this->AllocateInfo.allocationSize	= MemReq.size;
 			// Currently index selection chooses indice based on proposed aMemType,
 			// and can possibly include extra features rather than exactly demanded.
 			// Maybe change to exactly only chosen features later on.
@@ -67,18 +75,28 @@ namespace geodesuka::core::gcl {
 			Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
 		}
 
+		if ((Result == VkResult::VK_SUCCESS) && (aBufferData != NULL) && ((this->MemoryProperty & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE)) {
+			void* nptr = NULL;
+			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
+			if ((nptr != NULL) && (Result == VK_SUCCESS)) {
+				memcpy(nptr, aBufferData, this->CreateInfo.size);
+				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+			}
+		}
+
+		/*
 		// Create staging buffer if not host visible.
-		if ((this->MemoryProperty & (buffer::memory::HOST_VISIBLE)) == buffer::memory::HOST_VISIBLE) {
+		if ((this->MemoryProperty & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE) {
 			this->StagingBuffer = nullptr;
 			void* nptr = NULL;
-			vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
+			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
 			if (nptr != NULL) {
 				memcpy(nptr, aBufferData, this->CreateInfo.size);
 				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 			}
 		}
 		else {
-			this->StagingBuffer = new buffer(Context, buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, aCount, aMemoryLayout, aBufferData);
+			this->StagingBuffer = new buffer(Context, device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT, buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, aCount, aMemoryLayout, aBufferData);
 			//void* nptr = NULL;
 			//Result = vkMapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
 			//if (nptr != NULL) {
@@ -132,6 +150,7 @@ namespace geodesuka::core::gcl {
 			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
 		}
 
+		*/
 		// Transfer data over.
 		
 	}
@@ -141,8 +160,233 @@ namespace geodesuka::core::gcl {
 		this->Handle = VK_NULL_HANDLE;
 		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
 		this->MemoryHandle = VK_NULL_HANDLE;
-		delete this->StagingBuffer; 
-		this->StagingBuffer = nullptr;
+		this->Context = nullptr;
+	}
+
+	buffer::buffer(const buffer& aInp) {
+		this->Context = aInp.Context;
+		this->CreateInfo = aInp.CreateInfo;
+		this->AllocateInfo = aInp.AllocateInfo;
+		this->MemoryProperty = aInp.MemoryProperty;
+		this->Count = aInp.Count;
+		this->MemoryLayout = aInp.MemoryLayout;
+		VkResult Result = VkResult::VK_SUCCESS;
+		if (this->Context != nullptr) {
+			Result = vkCreateBuffer(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
+			if (Result == VkResult::VK_SUCCESS) {
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+			}
+			if (Result == VkResult::VK_SUCCESS) {
+				Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+			}
+			if (Result == VkResult::VK_SUCCESS) {
+				VkSubmitInfo Submission{};
+				VkCommandBufferBeginInfo BeginInfo{};
+				VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+				VkBufferCopy Region{};
+				VkFenceCreateInfo FenceCreateInfo{};
+				VkFence Fence;
+
+				Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+				Submission.pNext					= NULL;
+				Submission.waitSemaphoreCount		= 0;
+				Submission.pWaitSemaphores			= NULL;
+				Submission.pWaitDstStageMask		= 0;
+				Submission.commandBufferCount		= 1;
+				Submission.pCommandBuffers			= &CommandBuffer;
+				Submission.signalSemaphoreCount		= 0;
+				Submission.pSignalSemaphores		= NULL;
+
+				BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				BeginInfo.pNext						= NULL;
+				BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+				BeginInfo.pInheritanceInfo			= NULL;
+
+				Region.srcOffset					= 0;
+				Region.dstOffset					= 0;
+				Region.size							= this->Count * this->MemoryLayout.Type.Size;
+
+				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+				FenceCreateInfo.pNext				= NULL;
+				FenceCreateInfo.flags				= 0;
+
+				this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				if (CommandBuffer != VK_NULL_HANDLE) {
+					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+					vkCmdCopyBuffer(CommandBuffer, aInp.Handle, this->Handle, 1, &Region);
+					Result = vkEndCommandBuffer(CommandBuffer);
+					this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+					vkDestroyFence(this->Context->handle(), Fence, NULL);
+				}
+				this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+			}
+		}
+	}
+
+	buffer::buffer(buffer&& aInp) {
+		this->Context			= aInp.Context;
+		this->CreateInfo		= aInp.CreateInfo;
+		this->Handle			= aInp.Handle;
+		this->AllocateInfo		= aInp.AllocateInfo;
+		this->MemoryHandle		= aInp.MemoryHandle;
+		this->MemoryProperty	= aInp.MemoryProperty;
+		this->Count				= aInp.Count;
+		this->MemoryLayout		= aInp.MemoryLayout;
+
+		aInp.Context			= nullptr;
+		aInp.CreateInfo			= {};
+		aInp.Handle				= VK_NULL_HANDLE;
+		aInp.AllocateInfo		= {};
+		aInp.MemoryHandle		= VK_NULL_HANDLE;
+		aInp.MemoryProperty		= 0;
+		aInp.Count				= 0;
+		aInp.MemoryLayout		= util::variable();
+	}
+
+	buffer& buffer::operator=(const buffer& aRhs) {
+		if (this->Context == nullptr) return *this;
+		if (this->CreateInfo.size != aRhs.CreateInfo.size) {
+			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+			this->Handle = VK_NULL_HANDLE;
+			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+			this->MemoryHandle = VK_NULL_HANDLE;
+		}
+
+		VkResult Result = VkResult::VK_SUCCESS;
+		if (this->Context != nullptr) {
+			Result = vkCreateBuffer(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
+			if (Result == VkResult::VK_SUCCESS) {
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+			}
+			if (Result == VkResult::VK_SUCCESS) {
+				Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+			}
+			if (Result == VkResult::VK_SUCCESS) {
+				VkSubmitInfo Submission{};
+				VkCommandBufferBeginInfo BeginInfo{};
+				VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+				VkBufferCopy Region{};
+				VkFenceCreateInfo FenceCreateInfo{};
+				VkFence Fence;
+
+				Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+				Submission.pNext					= NULL;
+				Submission.waitSemaphoreCount		= 0;
+				Submission.pWaitSemaphores			= NULL;
+				Submission.pWaitDstStageMask		= 0;
+				Submission.commandBufferCount		= 1;
+				Submission.pCommandBuffers			= &CommandBuffer;
+				Submission.signalSemaphoreCount		= 0;
+				Submission.pSignalSemaphores		= NULL;
+
+				BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				BeginInfo.pNext						= NULL;
+				BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+				BeginInfo.pInheritanceInfo			= NULL;
+
+				Region.srcOffset					= 0;
+				Region.dstOffset					= 0;
+				Region.size							= this->Count * this->MemoryLayout.Type.Size;
+
+				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+				FenceCreateInfo.pNext				= NULL;
+				FenceCreateInfo.flags				= 0;
+
+				this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				if (CommandBuffer != VK_NULL_HANDLE) {
+					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+					vkCmdCopyBuffer(CommandBuffer, aRhs.Handle, this->Handle, 1, &Region);
+					Result = vkEndCommandBuffer(CommandBuffer);
+					this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+					vkDestroyFence(this->Context->handle(), Fence, NULL);
+				}
+				this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+			}
+		}
+
+		return *this;
+	}
+
+	buffer& buffer::operator=(buffer&& aRhs) {
+		vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+		this->Handle = VK_NULL_HANDLE;
+		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+		this->MemoryHandle = VK_NULL_HANDLE;
+
+		this->Context			= aRhs.Context;
+		this->CreateInfo		= aRhs.CreateInfo;
+		this->Handle			= aRhs.Handle;
+		this->AllocateInfo		= aRhs.AllocateInfo;
+		this->MemoryHandle		= aRhs.MemoryHandle;
+		this->MemoryProperty	= aRhs.MemoryProperty;
+		this->Count				= aRhs.Count;
+		this->MemoryLayout		= aRhs.MemoryLayout;
+
+		aRhs.Context			= nullptr;
+		aRhs.CreateInfo			= {};
+		aRhs.Handle				= VK_NULL_HANDLE;
+		aRhs.AllocateInfo		= {};
+		aRhs.MemoryHandle		= VK_NULL_HANDLE;
+		aRhs.MemoryProperty		= 0;
+		aRhs.Count				= 0;
+		aRhs.MemoryLayout		= util::variable();
+
+		return *this;
+	}
+
+	VkCommandBuffer buffer::operator<<(buffer& aRhs) {
+		VkResult Result = VkResult::VK_SUCCESS;
+		VkSubmitInfo Submission{};
+		VkCommandBufferBeginInfo BeginInfo{};
+		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		VkBufferCopy Region{};
+		//VkFenceCreateInfo FenceCreateInfo{};
+		//VkFence Fence;
+		
+		if (this->Context != aRhs.Context) return CommandBuffer;
+
+		Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		Submission.pNext					= NULL;
+		Submission.waitSemaphoreCount		= 0;
+		Submission.pWaitSemaphores			= NULL;
+		Submission.pWaitDstStageMask		= 0;
+		Submission.commandBufferCount		= 1;
+		Submission.pCommandBuffers			= &CommandBuffer;
+		Submission.signalSemaphoreCount		= 0;
+		Submission.pSignalSemaphores		= NULL;
+
+		BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		BeginInfo.pNext						= NULL;
+		BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.pInheritanceInfo			= NULL;
+
+		Region.srcOffset					= 0;
+		Region.dstOffset					= 0;
+		Region.size							= this->Count * this->MemoryLayout.Type.Size;
+
+		//FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		//FenceCreateInfo.pNext				= NULL;
+		//FenceCreateInfo.flags				= 0;
+
+		this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		if (CommandBuffer != VK_NULL_HANDLE) {
+			//Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+			Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+			vkCmdCopyBuffer(CommandBuffer, aRhs.Handle, this->Handle, 1, &Region);
+			Result = vkEndCommandBuffer(CommandBuffer);
+			//this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+			//Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+		}
+		//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		return CommandBuffer;
+	}
+
+	VkCommandBuffer buffer::operator>>(buffer& aRhs) {
+		return (aRhs << *this);
 	}
 
 	void buffer::write(size_t aMemOffset, size_t aMemSize, void* aData) {
@@ -154,14 +398,20 @@ namespace geodesuka::core::gcl {
 	}
 
 	void buffer::write(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData) {
-		if ((aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
-
-		// Gathers memory properties of parent device.
-		VkPhysicalDeviceMemoryProperties Property;
-		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
+		if ((this->Context == nullptr) || (aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
+		if ((this->MemoryProperty & device::memory::HOST_VISIBLE) != device::memory::HOST_VISIBLE) return;
 
 		VkResult Result = VkResult::VK_SUCCESS;
-		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
+		void* nptr = NULL;
+		Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+		if ((nptr == NULL) || (Result != VK_SUCCESS)) return;
+		for (uint32_t i = 0; i < aRegionCount; i++) {
+			memcpy((void*)((uintptr_t)nptr + (uintptr_t)aRegion[i].dstOffset), (void*)((uintptr_t)aData + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+		}
+		vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+
+		/*
+		if ((this->MemoryProperty & device::memory::HOST_VISIBLE) == device::memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
 
 			void* nptr = NULL;
@@ -226,6 +476,7 @@ namespace geodesuka::core::gcl {
 			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
 
 		}
+		*/
 
 	}
 
@@ -238,14 +489,20 @@ namespace geodesuka::core::gcl {
 	}
 
 	void buffer::read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData) {
-		if ((aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
+		if ((this->Context == nullptr) || (aRegionCount == 0) || (aRegion == NULL) || (aData == NULL)) return;
+		if ((this->MemoryProperty & device::memory::HOST_VISIBLE) != device::memory::HOST_VISIBLE) return;
 
-		// Gathers memory properties of parent device.
-		VkPhysicalDeviceMemoryProperties Property;
-		vkGetPhysicalDeviceMemoryProperties(this->Context->parent()->handle(), &Property);
-
+		void* nptr = NULL;
 		VkResult Result = VkResult::VK_SUCCESS;
-		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & memory::HOST_VISIBLE) == memory::HOST_VISIBLE) {
+		Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+		if ((nptr == NULL) || (Result != VK_SUCCESS)) return;
+		for (uint32_t i = 0; i < aRegionCount; i++) {
+			memcpy((void*)((uintptr_t)aData + (uintptr_t)aRegion[i].dstOffset), (void*)((uintptr_t)nptr + (uintptr_t)aRegion[i].srcOffset), aRegion[i].size);
+		}
+		vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+
+		/*
+		if ((Property.memoryTypes[this->AllocateInfo.memoryTypeIndex].propertyFlags & device::memory::HOST_VISIBLE) == device::memory::HOST_VISIBLE) {
 			// If memory buffer is host visible, use direct write operation.
 
 			void* nptr = NULL;
@@ -310,6 +567,8 @@ namespace geodesuka::core::gcl {
 			}
 
 		}
+		*/
+
 	}
 
 }

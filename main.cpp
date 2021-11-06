@@ -30,13 +30,28 @@ using namespace geodesuka::builtin::object;
 */
 // Creates a window on every display
 
+/*
+TODO:
+Add functions.
+waitfor(Seconds);
+get_time();
+
+Complete system_terminal class.
+
+Finish texture class.
+
+Finish system_window class.
+
+Finish Triangle Example.
+*/
+
 // Updated buffer.h, testing 
 int main(int argc, char *argv[]) {
 	geodesuka::engine Engine(argc, argv);
 	if (!Engine.is_ready()) return -1;
 	std::cout << "Geodesuka Engine";
 	std::cout << " - Version: " << Engine.get_version().Major << "." << Engine.get_version().Minor << "." << Engine.get_version().Patch;
-	std::cout << " - Date: 20211023" << std::endl;
+	std::cout << " - Date: 20211104" << std::endl;
 
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
@@ -52,6 +67,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	/*
+	//*/
 	math::real Vertices[] = {
 		-1.0, 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 0.0,
 		 0.0, 1.0, 0.5, 0.0, 1.0, 0.0, 1.0, 0.0,
@@ -71,54 +87,128 @@ int main(int argc, char *argv[]) {
 	Variable.Type.push(util::type::id::REAL2, "TexCoord");
 	Variable.Type.push(util::type::id::REAL3, "Color");
 
-	//buffer* Buffer = new buffer(
-	//	Context, 
-	//	buffer::memory::HOST_VISIBLE | buffer::memory::HOST_COHERENT, 
-	//	buffer::usage::VERTEX,
-	//	3, 
-	//	Variable,
-	//	Vertices
-	//);
+	{
+		buffer HostBuffer(
+			Context,
+			device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT,
+			buffer::usage::VERTEX,
+			3,
+			Variable,
+			Vertices
+		);
 
-	buffer* Buffer = new buffer(
-		Context,
-		buffer::memory::DEVICE_LOCAL,
-		buffer::usage::VERTEX,
-		3,
-		Variable,
-		Vertices
-	);
+		buffer DeviceBuffer(
+			Context,
+			device::memory::DEVICE_LOCAL,
+			buffer::usage::VERTEX,
+			3,
+			Variable,
+			NULL
+		);
 
-	Buffer->read(0, 24 * sizeof(math::real), VertexReturn);
+		buffer ReturnBuffer(
+			Context,
+			device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT,
+			buffer::usage::VERTEX,
+			3,
+			Variable,
+			NULL
+		);
 
-	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
-		std::cout << "Data matches" << std::endl;
+		// Test methods later.
+		//buffer CopyConstructor(HostBuffer);
+		//buffer CopyMove(buffer(
+		//	Context,
+		//	device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT,
+		//	buffer::usage::VERTEX,
+		//	3,
+		//	Variable,
+		//	Vertices
+		//));
+		//buffer CopyAssignment = HostBuffer;
+		//buffer MoveAssignment = buffer(
+		//	Context,
+		//	device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT,
+		//	buffer::usage::VERTEX,
+		//	3,
+		//	Variable,
+		//	Vertices
+		//);
+
+		VkSubmitInfo Submission[2];
+		VkCommandBuffer CommandBuffer[2];
+		VkSemaphoreCreateInfo SemaphoreCreateInfo{};
+		VkSemaphore Semaphore;
+		VkFenceCreateInfo FenceCreateInfo{};
+		VkFence Fence;
+
+		FenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		FenceCreateInfo.pNext = NULL;
+		FenceCreateInfo.flags = 0;
+
+		SemaphoreCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		SemaphoreCreateInfo.pNext = NULL;
+		SemaphoreCreateInfo.flags = 0;
+
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
+		Result = vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
+
+		CommandBuffer[0] = (DeviceBuffer << HostBuffer);
+		CommandBuffer[1] = (ReturnBuffer << DeviceBuffer);
+
+		Submission[0].sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		Submission[0].pNext					= NULL;
+		Submission[0].waitSemaphoreCount	= 0;
+		Submission[0].pWaitSemaphores		= NULL;
+		Submission[0].pWaitDstStageMask		= 0;
+		Submission[0].commandBufferCount	= 1;
+		Submission[0].pCommandBuffers		= &CommandBuffer[0];
+		Submission[0].signalSemaphoreCount	= 1;
+		Submission[0].pSignalSemaphores		= &Semaphore;
+
+		Submission[1].sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		Submission[1].pNext					= NULL;
+		Submission[1].waitSemaphoreCount	= 1;
+		Submission[1].pWaitSemaphores		= &Semaphore;
+		Submission[1].pWaitDstStageMask		= 0;
+		Submission[1].commandBufferCount	= 1;
+		Submission[1].pCommandBuffers		= &CommandBuffer[1];
+		Submission[1].signalSemaphoreCount	= 0;
+		Submission[1].pSignalSemaphores		= NULL;
+
+		Context->submit(device::qfs::TRANSFER, 2, Submission, Fence);
+		vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+
+		ReturnBuffer.read(0, 24 * sizeof(math::real), VertexReturn);
+
+		if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
+			std::cout << "\nData matches" << std::endl;
+		}
+		else {
+			std::cout << "\nData doesn't match" << std::endl;
+		}
 	}
-	else {
-		std::cout << "Data doesn't match" << std::endl;
-	}
 
-	// No longer in use.
-	delete Buffer;
-	//*/
 
 	Engine.tsleep(1);
 
-	system_window::create_info CreateInfo;
-	CreateInfo.Display				= Engine.get_primary_display();
-	CreateInfo.WindowProperty		= window::prop();
-	CreateInfo.SwapchainProperty	= swapchain::prop();
-	CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
+	//system_window::create_info CreateInfo;
+	//CreateInfo.Display				= Engine.get_primary_display();
+	//CreateInfo.WindowProperty		= window::prop();
+	//CreateInfo.SwapchainProperty	= swapchain::prop();
+	//CreateInfo.Position				= math::real3(0.0, 0.0, 0.0);
 
-	system_window* SystemWindow = new system_window(&Engine, Context, &CreateInfo, 480, 640, "cock");
-	triangle* Triangle = new triangle(&Engine, Context);
+	//system_window* SystemWindow = new system_window(&Engine, Context, &CreateInfo, 480, 640, "cock");
+	//triangle* Triangle = new triangle(&Engine, Context);
 
-	while (true) {
+	//while (true) {
 
-		Triangle->draw(SystemWindow);
+	//	Triangle->draw(SystemWindow);
 
-		Engine.tsleep(0.02);
-	}
+	//	Engine.tsleep(0.02);
+	//}
 
 	return 0;
 }
