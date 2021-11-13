@@ -58,6 +58,8 @@ namespace geodesuka::core::gcl {
 		// Queries if queue type exists with context.
 		bool available(device::qfs aQFS);
 
+		//TODO: Make create/destroy thread safe.
+		//TODO: Also add VkResult as output.
 		// Will create a series of command buffer handles, and fill the respective arguments.
 		void create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 

@@ -18,6 +18,9 @@ namespace geodesuka::core::stage {
 
 		std::vector<object::camera3d*> Camera;
 
+		//object::skybox* Skybox;
+		//std::vector<object::light*> Light;
+
 	private:
 
 	};

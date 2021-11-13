@@ -17,15 +17,15 @@ namespace geodesuka::core::gcl {
 	}
 
 	buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
+		if (aContext == nullptr) return;
 		VkResult Result = VK_SUCCESS;
-
 		this->Context = aContext;
 
 		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 		this->CreateInfo.pNext						= NULL;
 		this->CreateInfo.flags						= 0; // Ignore.
 		this->CreateInfo.size						= aCount * aMemoryLayout.Type.Size;
-		this->CreateInfo.usage						= (VkBufferUsageFlags)(aUsage | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST);
+		this->CreateInfo.usage						= (VkBufferUsageFlags)(aUsage | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST); // Enable Transfer
 		this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 		this->CreateInfo.queueFamilyIndexCount		= 0;
 		this->CreateInfo.pQueueFamilyIndices		= NULL;
@@ -83,83 +83,80 @@ namespace geodesuka::core::gcl {
 				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 			}
 		}
+		
+	}
 
-		/*
-		// Create staging buffer if not host visible.
-		if ((this->MemoryProperty & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE) {
-			this->StagingBuffer = nullptr;
+	buffer::buffer(context* aContext, int aMemoryType, int aUsage, size_t aMemorySize, void* aBufferData) {
+		if (aContext == nullptr) return;
+		VkResult Result = VK_SUCCESS;
+		this->Context = aContext;
+
+		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		this->CreateInfo.pNext						= NULL;
+		this->CreateInfo.flags						= 0; // Ignore.
+		this->CreateInfo.size						= aMemorySize;
+		this->CreateInfo.usage						= (VkBufferUsageFlags)(aUsage | buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST); // Enable Transfer
+		this->CreateInfo.sharingMode				= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+		this->CreateInfo.queueFamilyIndexCount		= 0;
+		this->CreateInfo.pQueueFamilyIndices		= NULL;
+
+		// Create Device Buffer Object.
+		Result = vkCreateBuffer(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
+
+		// Allocates Memory Handle
+		if (Result == VkResult::VK_SUCCESS) {
+			// Gathers memory requirements of the created buffer.
+			VkMemoryRequirements MemReq;
+			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
+
+			// Gathers memory properties of the device.
+			VkPhysicalDeviceMemoryProperties MemProp;
+			vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
+
+			this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+			this->AllocateInfo.pNext = NULL;
+			this->AllocateInfo.allocationSize = MemReq.size;
+			// Currently index selection chooses indice based on proposed aMemType,
+			// and can possibly include extra features rather than exactly demanded.
+			// Maybe change to exactly only chosen features later on.
+			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
+				// Searches for exact memory properties.
+				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
+				// Searches for approximate memory properties, with additional props.
+				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemoryType) == aMemoryType)) {
+					this->MemoryProperty = MemProp.memoryTypes[i].propertyFlags;
+					this->AllocateInfo.memoryTypeIndex = i;
+					break;
+				}
+			}
+
+			// Allocate Device Memory.
+			Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+		}
+
+		// Bind memory to buffer
+		if (Result == VkResult::VK_SUCCESS) {
+			Result = vkBindBufferMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+		}
+
+		if ((Result == VkResult::VK_SUCCESS) && (aBufferData != NULL) && ((this->MemoryProperty & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE)) {
 			void* nptr = NULL;
 			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
-			if (nptr != NULL) {
+			if ((nptr != NULL) && (Result == VK_SUCCESS)) {
 				memcpy(nptr, aBufferData, this->CreateInfo.size);
 				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
 			}
 		}
-		else {
-			this->StagingBuffer = new buffer(Context, device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT, buffer::usage::TRANSFER_SRC | buffer::usage::TRANSFER_DST, aCount, aMemoryLayout, aBufferData);
-			//void* nptr = NULL;
-			//Result = vkMapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle, 0, this->CreateInfo.size, 0, &nptr);
-			//if (nptr != NULL) {
-			//	memcpy(nptr, aBufferData, this->CreateInfo.size);
-			//	vkUnmapMemory(this->Context->handle(), this->StagingBuffer->MemoryHandle);
-			//}
 
-			// Copy from stage buffer to device.
-			// Execute transfer commands
-			VkCommandBuffer Transfer = NULL;
-			this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
-
-			VkCommandBufferBeginInfo BeginInfo;
-			BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			BeginInfo.pNext						= NULL;
-			BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-			BeginInfo.pInheritanceInfo			= NULL;
-
-			VkBufferCopy Region;
-			Region.srcOffset				= 0;
-			Region.dstOffset				= 0;
-			Region.size						= this->CreateInfo.size;
-
-			// Fill out command buffer.
-			Result = vkBeginCommandBuffer(Transfer, &BeginInfo);
-			vkCmdCopyBuffer(Transfer, this->StagingBuffer->Handle, this->Handle, 1, &Region);
-			Result = vkEndCommandBuffer(Transfer);
-
-			// Create fence
-			VkFence Fence;
-			VkFenceCreateInfo FenceCreateInfo;
-			FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-			FenceCreateInfo.pNext				= NULL;
-			FenceCreateInfo.flags				= 0;
-			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
-
-			VkSubmitInfo Submission;
-			Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-			Submission.pNext					= NULL;
-			Submission.waitSemaphoreCount		= 0;
-			Submission.pWaitSemaphores			= NULL;
-			Submission.pWaitDstStageMask		= 0;
-			Submission.commandBufferCount		= 1;
-			Submission.pCommandBuffers			= &Transfer;
-			Submission.signalSemaphoreCount		= 0;
-			Submission.pSignalSemaphores		= NULL;
-
-			this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
-			Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-			vkDestroyFence(this->Context->handle(), Fence, NULL);
-			this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &Transfer);
-		}
-
-		*/
-		// Transfer data over.
-		
 	}
 
 	buffer::~buffer() {
-		vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-		this->Handle = VK_NULL_HANDLE;
-		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-		this->MemoryHandle = VK_NULL_HANDLE;
+		if (this->Context != nullptr) {
+			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+			this->Handle = VK_NULL_HANDLE;
+			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+			this->MemoryHandle = VK_NULL_HANDLE;
+		}
 		this->Context = nullptr;
 	}
 
@@ -246,13 +243,22 @@ namespace geodesuka::core::gcl {
 	}
 
 	buffer& buffer::operator=(const buffer& aRhs) {
-		if (this->Context == nullptr) return *this;
-		if (this->CreateInfo.size != aRhs.CreateInfo.size) {
+		if (this == &aRhs) return *this;
+		if ((this->Context != nullptr) && (this->CreateInfo.size != aRhs.CreateInfo.size)) {
 			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
 			this->Handle = VK_NULL_HANDLE;
 			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
 			this->MemoryHandle = VK_NULL_HANDLE;
 		}
+
+		this->Context			= aRhs.Context;
+		this->CreateInfo		= aRhs.CreateInfo;
+		//this->Handle			= aRhs.Handle;
+		this->AllocateInfo		= aRhs.AllocateInfo;
+		//this->MemoryHandle		= aRhs.MemoryHandle;
+		this->MemoryProperty	= aRhs.MemoryProperty;
+		this->Count				= aRhs.Count;
+		this->MemoryLayout		= aRhs.MemoryLayout;
 
 		VkResult Result = VkResult::VK_SUCCESS;
 		if (this->Context != nullptr) {
@@ -312,10 +318,12 @@ namespace geodesuka::core::gcl {
 	}
 
 	buffer& buffer::operator=(buffer&& aRhs) {
-		vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-		this->Handle = VK_NULL_HANDLE;
-		vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-		this->MemoryHandle = VK_NULL_HANDLE;
+		if (this->Context != nullptr) {
+			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+			this->Handle = VK_NULL_HANDLE;
+			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+			this->MemoryHandle = VK_NULL_HANDLE;
+		}
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;
@@ -569,6 +577,10 @@ namespace geodesuka::core::gcl {
 		}
 		*/
 
+	}
+
+	VkBuffer buffer::handle() {
+		return this->Handle;
 	}
 
 }

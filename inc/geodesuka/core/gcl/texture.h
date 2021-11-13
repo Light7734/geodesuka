@@ -23,10 +23,6 @@ namespace geodesuka::core::gcl {
 
 		friend class object::system_window;
 
-		enum format {
-
-		};
-
 		enum sample {
 			COUNT_1		= 0x00000001,
 			COUNT_2		= 0x00000002,
@@ -53,38 +49,53 @@ namespace geodesuka::core::gcl {
 			INPUT_ATTACHMENT			= 0x00000080
 		};
 
-		enum layout {
-
-		};
-
 		struct prop {
-			//int Format;
-			//int Resolution[3];
-			int MipLevels;
-			int LayerCount;
-			int Sampling;
+			//int MipLevelCount;
+			int ArrayLayerCount;
+			int SampleCounts;
 			int Tiling;
 			int Usage;
-			int Layout;
+			//int InitialLayout;
 
-			//prop();
+			prop();
 		};
 
+		// Will yield the number of bits per pixel.
+		static size_t bpp(VkFormat aFormat);
+		static size_t bitsperpixel(VkFormat aFormat);
 
-		texture(context *aCtx, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth);
+		texture();
+		texture(context *aContext, int aMemoryType, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth, void *aTextureData);
 		~texture();
+		
+		// Copy Constructor.
+		texture(texture& aInput);
+		// Move Constructor.
+		texture(texture&& aInput);
+		// Copy Assignment.
+		texture& operator=(texture& aRhs);
+		// Move Assignment.
+		texture& operator=(texture&& aRhs);
 
-		VkImageView get_view();
+		// 
 
 	private:
 
 		context* Context;
-
 		VkImageCreateInfo CreateInfo{};
 		VkImage Handle;
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
 
+		VkImageLayout CurrentImageLayout;
+		int MemoryType;
+		int BytesPerPixel;
+
+		// Will have dimensions of MipLevel - 1.
+		VkExtent3D* MipExtent;
+
+
+		uint32_t miplevelcalc(VkImageType aImageType, VkExtent3D aExtent);
 
 	};
 

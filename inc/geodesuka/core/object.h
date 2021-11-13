@@ -21,6 +21,7 @@
 
 #include "./math.h"
 
+#include "gcl/device.h"
 #include "gcl/context.h"
 
 #include "hid/keyboard.h"
@@ -55,7 +56,10 @@ namespace geodesuka::core {
 		//friend class engine;
 
 		std::mutex Mutex;
-		//std::vector<gcl::command*> DrawCommand;
+		VkSubmitInfo TransferSubmit{};
+		VkSubmitInfo ComputeSubmit{};
+		uint32_t DrawCommandCount;
+		VkCommandBuffer *DrawCommand;
 		
 		~object_t();
 		//virtual ~object_t() = default;
@@ -162,9 +166,6 @@ namespace geodesuka::core {
 		//boolean isGraphicalActive;
 
 		object_t(engine *aEngine, gcl::context *aContext);
-
-		// Submits object to 
-		virtual void ensubmit();
 
 	};
 

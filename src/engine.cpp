@@ -144,6 +144,10 @@ namespace geodesuka {
 
 		this->isReady = this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady && this->isSystemDisplayAvailable && this->isGCDeviceAvailable;
 
+		std::cout << "Geodesuka Engine";
+		std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
+		std::cout << " - Date: " << this->Date << std::endl;
+
 		// Engine is ready, initialize loops.
 		if (this->isReady) {
 
@@ -152,6 +156,7 @@ namespace geodesuka {
 			this->RenderThread = std::thread(&engine::trender, this);
 
 		}
+
 
 		// ------------------------- Debug Print Info ------------------------- //
 

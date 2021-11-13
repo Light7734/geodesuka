@@ -3,6 +3,12 @@
 #define GEODESUKA_CORE_GCL_BUFFER_H
 
 /*
+* Usage:
+*	When using this with other functions as non pointer stack type, please pass
+*	by reference/pointer. If you pass by value, the constructor/assignment methods
+*	will be called and you will unintentionally create, copy and move data on the 
+*	device needlessly.
+* 
 * TODO:
 *	-Figure out how to schedule mem transfers with engine backend.
 *	-Add an option to use dynamically created staging buffer.
@@ -18,6 +24,8 @@
 #include "context.h"
 
 namespace geodesuka::core::gcl {
+
+	class texture;
 
 	class buffer {
 	public:
@@ -37,6 +45,7 @@ namespace geodesuka::core::gcl {
 
 		buffer();
 		buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
+		buffer(context* aContext, int aMemoryType, int aUsage, size_t aMemorySize, void* aBufferData);
 		~buffer();
 
 		buffer(const buffer& aInp);																					// Copy Constructor
@@ -55,6 +64,8 @@ namespace geodesuka::core::gcl {
 		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
 		void read(size_t aMemOffset, size_t aMemSize, void* aData);
 		void read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData);
+
+		VkBuffer handle();
 
 	private:
 

@@ -331,10 +331,13 @@ namespace geodesuka::core::gcl {
 		}
 
 		// If total clear count is equal to active command buffers, delete all.
-		if (TotalClearCount >= this->CommandBufferCount[Index]) {
+		if (TotalClearCount == this->CommandBufferCount[Index]) {
 			vkFreeCommandBuffers(this->Handle, this->Pool[Index], this->CommandBufferCount[Index], this->CommandBuffer[Index]);
 			free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = NULL;
 			this->CommandBufferCount[Index] = 0;
+			for (size_t i = 0; i < aCommandBufferCount; i++) {
+				aCommandBuffer[i] = VK_NULL_HANDLE;
+			}
 			return;
 		}
 
@@ -350,6 +353,8 @@ namespace geodesuka::core::gcl {
 				if (aCommandBuffer[i] == this->CommandBuffer[Index][j]) {
 					TotalClearList[k] = aCommandBuffer[j];
 					this->CommandBuffer[Index][j] = VK_NULL_HANDLE;
+					// TODO: Test this line.
+					aCommandBuffer[j] = VK_NULL_HANDLE;
 					k += 1;
 				}
 			}

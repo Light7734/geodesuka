@@ -85,10 +85,4 @@ namespace geodesuka::core {
 		//std::cout << "Object Created" << std::endl;
 	}
 
-	void object_t::ensubmit() {
-		this->ParentEngine->Mutex.lock();
-		this->ParentEngine->Object.push_back(this);
-		this->ParentEngine->Mutex.unlock();
-	}
-
 }
