@@ -38,9 +38,9 @@ namespace geodesuka::core::gcl {
 
 		int Index = 0;
 		VkResult Result = VkResult::VK_SUCCESS;
-		this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		this->CreateInfo.pNext = NULL;
-		this->CreateInfo.flags = 0;
+		this->CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		this->CreateInfo.pNext					= NULL;
+		this->CreateInfo.flags					= 0;
 		if ((aWidth > 1) && (aHeight > 1) && (aDepth > 1)) {
 			this->CreateInfo.imageType = VkImageType::VK_IMAGE_TYPE_3D;
 		}
@@ -53,7 +53,7 @@ namespace geodesuka::core::gcl {
 		else {
 			return;
 		}
-		this->CreateInfo.format = (VkFormat)aFormat;
+		this->CreateInfo.format					= (VkFormat)aFormat;
 		switch (this->CreateInfo.imageType) {
 		default:
 			return;
@@ -67,16 +67,20 @@ namespace geodesuka::core::gcl {
 			this->CreateInfo.extent = { (uint32_t)aWidth, (uint32_t)aHeight, (uint32_t)aDepth };
 			break;
 		}
-		this->CreateInfo.mipLevels = this->miplevelcalc(this->CreateInfo.imageType, this->CreateInfo.extent);
-		this->CreateInfo.arrayLayers = aProperty.ArrayLayerCount;
-		this->CreateInfo.samples = (VkSampleCountFlagBits)aProperty.SampleCounts;
-		this->CreateInfo.tiling = (VkImageTiling)aProperty.Tiling;
-		this->CreateInfo.usage = aProperty.Usage | texture::usage::TRANSFER_SRC | texture::usage::TRANSFER_DST; // Enable Transfer
-		this->CreateInfo.sharingMode = VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
-		this->CreateInfo.queueFamilyIndexCount = 0;
-		this->CreateInfo.pQueueFamilyIndices = NULL;
-		this->CreateInfo.initialLayout = VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-		this->CurrentImageLayout = this->CreateInfo.initialLayout;
+		this->CreateInfo.mipLevels				= this->miplevelcalc(this->CreateInfo.imageType, this->CreateInfo.extent);
+		this->CreateInfo.arrayLayers			= aProperty.ArrayLayerCount;
+		this->CreateInfo.samples				= (VkSampleCountFlagBits)aProperty.SampleCounts;
+		this->CreateInfo.tiling					= (VkImageTiling)aProperty.Tiling;
+		this->CreateInfo.usage					= aProperty.Usage | texture::usage::TRANSFER_SRC | texture::usage::TRANSFER_DST; // Enable Transfer
+		this->CreateInfo.sharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+		this->CreateInfo.queueFamilyIndexCount	= 0;
+		this->CreateInfo.pQueueFamilyIndices	= NULL;
+		this->CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
+
+		this->BytesPerPixel = this->bytesperpixel(this->CreateInfo.format);
+		// So apparently mip levels can have their own image layouts.
+		// and possibly elements of a texture array.
+
 
 		Result = vkCreateImage(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
 
@@ -128,6 +132,16 @@ namespace geodesuka::core::gcl {
 			Result = vkBindImageMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
 		}
 
+		// All initialized layouts is above.
+		// i = mip level, and j = array level;
+		this->Layout = (VkImageLayout**)malloc(this->CreateInfo.mipLevels * sizeof(VkImageLayout*));
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			this->Layout[i] = (VkImageLayout*)malloc(this->CreateInfo.arrayLayers * sizeof(VkImageLayout));
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i][j] = this->CreateInfo.initialLayout;
+			}
+		}
+
 		// Choose conditions for the image to be written to.
 		if (true) {
 
@@ -142,17 +156,28 @@ namespace geodesuka::core::gcl {
 		);
 
 		VkSubmitInfo Submission[2] = { {}, {} };
+		//VkSubmitInfo Submission{};
 		VkCommandBufferBeginInfo BeginInfo[2] = { {}, {} };
 		VkCommandBuffer CommandBuffer[2] = { VK_NULL_HANDLE, VK_NULL_HANDLE };
 		VkSemaphoreCreateInfo SemaphoreCreateInfo{};
 		VkSemaphore Semaphore = VK_NULL_HANDLE;
 		VkFenceCreateInfo FenceCreateInfo{};
-		VkFence Fence;
+		VkFence Fence[2];
 		VkImageMemoryBarrier Barrier{};
 		VkBufferImageCopy BufferImageRegion{};
 
-		VkImageBlit* MipGen = NULL;
-		VkImageMemoryBarrier* MipBarrier = NULL;
+		//VkImageBlit* MipGen = NULL;
+		//VkImageMemoryBarrier* MipBarrier = NULL;
+
+		//Submission.sType						= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		//Submission.pNext						= NULL;
+		//Submission.waitSemaphoreCount			= 0;
+		//Submission.pWaitSemaphores				= NULL;
+		//Submission.pWaitDstStageMask			= 0;
+		//Submission.commandBufferCount			= 2;
+		//Submission.pCommandBuffers				= CommandBuffer;
+		//Submission.signalSemaphoreCount			= 0;
+		//Submission.pSignalSemaphores			= NULL;
 
 		// Transfer Submission.
 		Submission[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -198,17 +223,20 @@ namespace geodesuka::core::gcl {
 		Barrier.pNext								= NULL;
 		Barrier.srcAccessMask						= 0;
 		Barrier.dstAccessMask						= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
-		Barrier.oldLayout							= this->CurrentImageLayout;
+		Barrier.oldLayout							= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
 		Barrier.newLayout							= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 		Barrier.srcQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
 		Barrier.dstQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
 		Barrier.image								= this->Handle;
 		Barrier.subresourceRange.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
 		Barrier.subresourceRange.baseMipLevel		= 0;
-		Barrier.subresourceRange.levelCount			= this->CreateInfo.mipLevels;
+		Barrier.subresourceRange.levelCount			= 1;
 		Barrier.subresourceRange.baseArrayLayer		= 0;
 		Barrier.subresourceRange.layerCount			= this->CreateInfo.arrayLayers;
-		this->CurrentImageLayout					= Barrier.newLayout;
+		// Track update to all elements.
+		for (uint32_t i = 0; i < this->CreateInfo.arrayLayers; i++) {
+			this->Layout[0][i] = Barrier.newLayout;
+		}
 
 		BufferImageRegion.bufferOffset						= 0;
 		BufferImageRegion.bufferRowLength					= 0;
@@ -220,17 +248,17 @@ namespace geodesuka::core::gcl {
 		BufferImageRegion.imageOffset						= { 0, 0, 0 };
 		BufferImageRegion.imageExtent						= this->CreateInfo.extent;
 
-		Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
-		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+		//Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
+		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[0]);
+		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[1]);
 		this->Context->create(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
 		this->Context->create(context::GRAPHICS, 1, &CommandBuffer[1]);
-		MipGen = (VkImageBlit*)malloc((this->CreateInfo.mipLevels - 1) * sizeof(VkImageBlit));
-		MipBarrier = (VkImageMemoryBarrier*)malloc((this->CreateInfo.mipLevels - 1) * sizeof(VkImageMemoryBarrier));
 		// Check allocation results before commencing.
 		
-		// Create Transfer Command.
+		// Staging Buffer transfer operations.
 		Result = vkBeginCommandBuffer(CommandBuffer[0], &BeginInfo[0]);
 
+		// Waits for nothing, to transfer to mip 0 image.
 		vkCmdPipelineBarrier(
 			CommandBuffer[0], 
 			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
@@ -239,49 +267,80 @@ namespace geodesuka::core::gcl {
 			0, NULL,
 			0, NULL, 
 			1, &Barrier);
-		vkCmdCopyBufferToImage(CommandBuffer[0], StagingBuffer.handle(), this->Handle, this->CurrentImageLayout, 1, &BufferImageRegion);
+		vkCmdCopyBufferToImage(CommandBuffer[0], StagingBuffer.handle(), this->Handle, this->Layout[0][0], 1, &BufferImageRegion);
 
 		Result = vkEndCommandBuffer(CommandBuffer[0]);
 
 		// filling out this command buffer generates mip maps.
 		Result = vkBeginCommandBuffer(CommandBuffer[1], &BeginInfo[1]);
 
-		// Generate Mip Level params to blit image.
-		for (int i = 0; i < this->CreateInfo.mipLevels - 1; i++) {
+		/*
+		0 -> 1 -> 2 -> 3 -> 4 ... N
+		D -> U -> U -> U -> U ... U
+		S -> D -> U -> U -> U ... U
+		S -> S -> D -> U -> U ... U
+		*/
 
-			// Uses bit shifts to generate mip maps.
+		// Generate Mip Level params to blit image.
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels - 1; i++) {
+
+
+			VkImageMemoryBarrier BlitBarrier[2] = { {}, {} };
+			VkImageBlit MipGen{};
+
+			// Changes previous mip level from dst to src, for blitting.
+			BlitBarrier[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			BlitBarrier[0].pNext							= NULL;
+			BlitBarrier[0].srcAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
+			BlitBarrier[0].dstAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
+			BlitBarrier[0].oldLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+			BlitBarrier[0].newLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			BlitBarrier[0].srcQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
+			BlitBarrier[0].dstQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
+			BlitBarrier[0].image							= this->Handle;
+			BlitBarrier[0].subresourceRange.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			BlitBarrier[0].subresourceRange.baseMipLevel	= i;
+			BlitBarrier[0].subresourceRange.levelCount		= 1;
+			BlitBarrier[0].subresourceRange.baseArrayLayer	= 0;
+			BlitBarrier[0].subresourceRange.layerCount		= this->CreateInfo.arrayLayers;
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i][j] = BlitBarrier[0].newLayout;
+			}
+
+			// Prepares next mip for writing
+			BlitBarrier[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			BlitBarrier[1].pNext							= NULL;
+			BlitBarrier[1].srcAccessMask					= 0;
+			BlitBarrier[1].dstAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
+			BlitBarrier[1].oldLayout						= this->CreateInfo.initialLayout;
+			BlitBarrier[1].newLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+			BlitBarrier[1].srcQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
+			BlitBarrier[1].dstQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
+			BlitBarrier[1].image							= this->Handle;
+			BlitBarrier[1].subresourceRange.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			BlitBarrier[1].subresourceRange.baseMipLevel	= i + 1;
+			BlitBarrier[1].subresourceRange.levelCount		= 1;
+			BlitBarrier[1].subresourceRange.baseArrayLayer	= 0;
+			BlitBarrier[1].subresourceRange.layerCount		= this->CreateInfo.arrayLayers;
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i + 1][j] = BlitBarrier[1].newLayout;
+			}
+						// Uses bit shifts to generate mip maps.
 			// Source Description.
-			MipGen[i].srcSubresource.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			MipGen[i].srcSubresource.mipLevel			= i;
-			MipGen[i].srcSubresource.baseArrayLayer		= 0;
-			MipGen[i].srcSubresource.layerCount			= this->CreateInfo.arrayLayers;
-			MipGen[i].srcOffsets[0] = { 0, 0, 0 };
-			MipGen[i].srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), (int32_t)(this->CreateInfo.extent.depth >> i) };
+			MipGen.srcSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			MipGen.srcSubresource.mipLevel			= i;
+			MipGen.srcSubresource.baseArrayLayer	= 0;
+			MipGen.srcSubresource.layerCount		= this->CreateInfo.arrayLayers;
+			MipGen.srcOffsets[0] = { 0, 0, 0 };
+			MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), (int32_t)(this->CreateInfo.extent.depth >> i) };
 
 			// Destination Description.
-			MipGen[i].dstSubresource.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			MipGen[i].dstSubresource.mipLevel			= i + 1;
-			MipGen[i].dstSubresource.baseArrayLayer		= 0;
-			MipGen[i].dstSubresource.layerCount			= this->CreateInfo.arrayLayers;
-			MipGen[i].dstOffsets[0] = { 0, 0, 0 };
-			MipGen[i].dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), (int32_t)(this->CreateInfo.extent.depth >> (i + 1)) };
-
-			//
-			MipBarrier[i].sType								= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			MipBarrier[i].pNext								= NULL;
-			MipBarrier[i].srcAccessMask						= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
-			MipBarrier[i].dstAccessMask						= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
-			MipBarrier[i].oldLayout							= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			MipBarrier[i].newLayout							= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-			MipBarrier[i].srcQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			MipBarrier[i].dstQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			MipBarrier[i].image								= this->Handle;
-			MipBarrier[i].subresourceRange.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			MipBarrier[i].subresourceRange.baseMipLevel		= 0;
-			MipBarrier[i].subresourceRange.levelCount		= this->CreateInfo.mipLevels;
-			MipBarrier[i].subresourceRange.baseArrayLayer	= 0;
-			MipBarrier[i].subresourceRange.layerCount		= this->CreateInfo.arrayLayers;
-
+			MipGen.dstSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			MipGen.dstSubresource.mipLevel			= i + 1;
+			MipGen.dstSubresource.baseArrayLayer	= 0;
+			MipGen.dstSubresource.layerCount		= this->CreateInfo.arrayLayers;
+			MipGen.dstOffsets[0] = { 0, 0, 0 };
+			MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), (int32_t)(this->CreateInfo.extent.depth >> (i + 1)) };
 
 			vkCmdPipelineBarrier(
 				CommandBuffer[1],
@@ -290,42 +349,71 @@ namespace geodesuka::core::gcl {
 				0,
 				0, NULL,
 				0, NULL,
-				1, &Barrier
+				2, BlitBarrier
 			);
+
+			//vkCmdPipelineBarrier(
+			//	CommandBuffer[1],
+			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			//	0,
+			//	0, NULL,
+			//	0, NULL,
+			//	1, &BlitBarrier[0]
+			//);
 
 			vkCmdBlitImage(
 				CommandBuffer[1],
-				this->Handle, this->CurrentImageLayout, this->Handle, this->CurrentImageLayout,
-				this->CreateInfo.mipLevels,
-				NULL,
+				this->Handle, this->Layout[i][0], this->Handle, this->Layout[i + 1][0],
+				1,
+				&MipGen,
 				VkFilter::VK_FILTER_LINEAR
 			);
+
+			//vkCmdPipelineBarrier(
+			//	CommandBuffer[1],
+			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			//	0,
+			//	0, NULL,
+			//	0, NULL,
+			//	1, &BlitBarrier[1]
+			//);
 		}
 
 		Result = vkEndCommandBuffer(CommandBuffer[1]);
 
-		this->Context->submit(device::qfs::TRANSFER, 1, &Submission[0], VK_NULL_HANDLE);
-		this->Context->submit(device::qfs::GRAPHICS, 1, &Submission[1], Fence);
-		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-		vkDestroyFence(this->Context->handle(), Fence, NULL);
+		this->Context->submit(device::qfs::TRANSFER, 1, &Submission[0], Fence[0]);
+		this->Context->submit(device::qfs::GRAPHICS, 1, &Submission[1], Fence[1]);
+		//this->Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
+		Result = vkWaitForFences(this->Context->handle(), 2, Fence, VK_TRUE, UINT64_MAX);
+		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
+		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
 		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
 		this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
 
-
-		// Upload memory to memory.
-		if ((Result == VkResult::VK_SUCCESS) && (aTextureData != NULL) && ((this->MemoryType & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE)) {
-			void* nptr = NULL;
-			this->BytesPerPixel = texture::bpp((VkFormat)aFormat);
-			Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
-			if ((Result == VkResult::VK_SUCCESS) && (nptr != NULL)) {
-				memcpy(nptr, aTextureData, aWidth * aHeight * aDepth * this->BytesPerPixel);
-				vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
-			}
-		}
+		//// Upload memory to memory.
+		//if ((Result == VkResult::VK_SUCCESS) && (aTextureData != NULL) && ((this->MemoryType & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE)) {
+		//	void* nptr = NULL;
+		//	this->BytesPerPixel = texture::bytesperpixel((VkFormat)aFormat);
+		//	Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
+		//	if ((Result == VkResult::VK_SUCCESS) && (nptr != NULL)) {
+		//		memcpy(nptr, aTextureData, aWidth * aHeight * aDepth * this->BytesPerPixel);
+		//		vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
+		//	}
+		//}
 
 	}
 
 	texture::~texture() {
+		if (this->Layout != NULL) {
+			for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+				free(this->Layout[i]);
+				this->Layout[i] = NULL;
+			}
+		}
+		free(this->Layout);
+		this->Layout = NULL;
 		if (this->Context != nullptr) {
 			vkDestroyImage(this->Context->handle(), this->Handle, NULL);
 			this->Handle = VK_NULL_HANDLE;
@@ -404,6 +492,16 @@ namespace geodesuka::core::gcl {
 		return *this;
 	}
 
+	/*
+	0 = 640, 480
+	1 = 320, 240
+	2 = 160, 120
+	3 = 80, 60
+	4 = 40, 30
+	5 = 20, 15
+
+	6 mip levels.
+	*/
 	uint32_t texture::miplevelcalc(VkImageType aImageType, VkExtent3D aExtent) {
 		uint32_t MipLevelCount = 1;
 		switch (aImageType) {
@@ -451,7 +549,7 @@ namespace geodesuka::core::gcl {
 
 
 
-	size_t texture::bpp(VkFormat aFormat) {
+	size_t texture::bytesperpixel(VkFormat aFormat) {
 		return (texture::bitsperpixel(aFormat) / 8);
 	}
 

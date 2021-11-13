@@ -50,18 +50,16 @@ namespace geodesuka::core::gcl {
 		};
 
 		struct prop {
-			//int MipLevelCount;
 			int ArrayLayerCount;
 			int SampleCounts;
 			int Tiling;
 			int Usage;
-			//int InitialLayout;
 
 			prop();
 		};
 
 		// Will yield the number of bits per pixel.
-		static size_t bpp(VkFormat aFormat);
+		static size_t bytesperpixel(VkFormat aFormat);
 		static size_t bitsperpixel(VkFormat aFormat);
 
 		texture();
@@ -87,7 +85,11 @@ namespace geodesuka::core::gcl {
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
 
-		VkImageLayout CurrentImageLayout;
+		// Keeps track of image layouts, needed for 
+		// other operations.
+		VkImageLayout** Layout;
+
+		//VkImageLayout CurrentImageLayout;
 		int MemoryType;
 		int BytesPerPixel;
 

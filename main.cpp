@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	buffer_unit_test(Context);
+	//buffer_unit_test(Context);
 	texture_unit_test(Context);
 
 
@@ -256,9 +256,9 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 
 	//HostProp.MipLevelCount		= 1;
 	HostProp.ArrayLayerCount		= 1;
-	HostProp.SampleCounts	= texture::sample::COUNT_1;
-	HostProp.Tiling			= texture::tiling::OPTIMAL;
-	HostProp.Usage			= texture::usage::SAMPLED;
+	HostProp.SampleCounts			= texture::sample::COUNT_1;
+	HostProp.Tiling					= texture::tiling::OPTIMAL;
+	HostProp.Usage					= texture::usage::SAMPLED;
 
 	unsigned char PixelData[4 * 4 * 4] = {
 		0xAA, 0xBB, 0xCC, 0xDD, 0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,
@@ -267,7 +267,7 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 		0xAA, 0xBB, 0xCC, 0xDD, 0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD
 	};
 
-	texture HostTexture(Context, device::memory::HOST_VISIBLE | device::memory::HOST_COHERENT, HostProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
+	texture HostTexture(Context, device::memory::DEVICE_LOCAL, HostProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 
 
 }
