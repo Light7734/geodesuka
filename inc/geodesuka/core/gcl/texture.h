@@ -88,14 +88,11 @@ namespace geodesuka::core::gcl {
 		// Keeps track of image layouts, needed for 
 		// other operations.
 		VkImageLayout** Layout;
+		VkExtent3D* MipExtent; // Fill out later for more readable code.
 
 		//VkImageLayout CurrentImageLayout;
 		int MemoryType;
 		int BytesPerPixel;
-
-		// Will have dimensions of MipLevel - 1.
-		VkExtent3D* MipExtent;
-
 
 		uint32_t miplevelcalc(VkImageType aImageType, VkExtent3D aExtent);
 

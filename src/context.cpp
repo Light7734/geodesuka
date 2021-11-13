@@ -275,11 +275,12 @@ namespace geodesuka::core::gcl {
 		return (this->available(aQFS) != -1);
 	}
 
-	void context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
-		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
+	VkResult context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		VkResult Result = VkResult::VK_INCOMPLETE;
+		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return VkResult::VK_INCOMPLETE;
 		int i = -1;
 		switch (aCommandType) {
-		default: return;
+		default: return Result;
 		case context::cmdtype::TRANSFER_OTS:	i = 0; break;
 		case context::cmdtype::TRANSFER_OAD:	i = 1; break;
 		case context::cmdtype::COMPUTE:			i = 2; break;
@@ -295,7 +296,7 @@ namespace geodesuka::core::gcl {
 		}
 
 		// If new allocation failed, close out operation.
-		if (nptr == NULL) return;
+		if (nptr == NULL) return VkResult::VK_ERROR_OUT_OF_HOST_MEMORY;
 		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
 
 		VkCommandBufferAllocateInfo AllocateInfo;
@@ -305,9 +306,10 @@ namespace geodesuka::core::gcl {
 		AllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		AllocateInfo.commandBufferCount		= aCommandBufferCount;
 
-		VkResult Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, &this->CommandBuffer[i][this->CommandBufferCount[i]]);
+		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, &this->CommandBuffer[i][this->CommandBufferCount[i]]);
 		memcpy(aCommandBuffer, &this->CommandBuffer[i][this->CommandBufferCount[i]], aCommandBufferCount * sizeof(VkCommandBuffer));
 		this->CommandBufferCount[i] += aCommandBufferCount;
+		return Result;
 	}
 
 	void context::destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
@@ -415,8 +417,9 @@ namespace geodesuka::core::gcl {
 		return Result;
 	}
 
-	void context::present(VkPresentInfoKHR* aPresentation) {
-		if ((aPresentation == NULL) || (this->qfi(device::qfs::PRESENT) == -1)) return;
+	VkResult context::present(VkPresentInfoKHR* aPresentation) {
+		VkResult Result = VkResult::VK_INCOMPLETE;
+		if ((aPresentation == NULL) || (this->qfi(device::qfs::PRESENT) == -1)) return Result;
 
 		uint32_t QueueFamilyCount = 0;
 		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
@@ -436,7 +439,7 @@ namespace geodesuka::core::gcl {
 		while (true) {
 			int Index = i + Offset;
 			if (this->Queue[Index].Mutex.try_lock()) {
-				vkQueuePresentKHR(this->Queue[Index].Handle, aPresentation);
+				Result = vkQueuePresentKHR(this->Queue[Index].Handle, aPresentation);
 				this->Queue[Index].Mutex.unlock();
 				break;
 			}
@@ -445,7 +448,7 @@ namespace geodesuka::core::gcl {
 				i = 0;
 			}
 		}
-
+		return Result;
 	}
 
 	VkInstance context::inst() {

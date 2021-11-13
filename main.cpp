@@ -66,79 +66,79 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//buffer_unit_test(Context);
-	//texture_unit_test(Context);
+	buffer_unit_test(Context);
+	texture_unit_test(Context);
 
-	VkSubmitInfo Submission{};
-	VkCommandBufferBeginInfo BeginInfo{};
-	VkCommandPoolCreateInfo CommandPoolCreateInfo{};
-	VkCommandPool CommandPool;
-	VkCommandBufferAllocateInfo CommandBufferAllocateInfo{};
-	VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
-	VkFenceCreateInfo FenceCreateInfo{};
-	VkFence Fence;
-	VkQueue Queue;
-	VkResult Result = VkResult::VK_SUCCESS;
+	//VkSubmitInfo Submission{};
+	//VkCommandBufferBeginInfo BeginInfo{};
+	//VkCommandPoolCreateInfo CommandPoolCreateInfo{};
+	//VkCommandPool CommandPool;
+	//VkCommandBufferAllocateInfo CommandBufferAllocateInfo{};
+	//VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+	//VkFenceCreateInfo FenceCreateInfo{};
+	//VkFence Fence;
+	//VkQueue Queue;
+	//VkResult Result = VkResult::VK_SUCCESS;
 
-	Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	Submission.pNext					= NULL;
-	Submission.waitSemaphoreCount		= 0;
-	Submission.pWaitSemaphores			= NULL;
-	Submission.pWaitDstStageMask		= 0;
-	Submission.commandBufferCount		= 1;
-	Submission.pCommandBuffers			= &CommandBuffer;
-	Submission.signalSemaphoreCount		= 0;
-	Submission.pSignalSemaphores		= NULL;
+	//Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	//Submission.pNext					= NULL;
+	//Submission.waitSemaphoreCount		= 0;
+	//Submission.pWaitSemaphores			= NULL;
+	//Submission.pWaitDstStageMask		= 0;
+	//Submission.commandBufferCount		= 1;
+	//Submission.pCommandBuffers			= &CommandBuffer;
+	//Submission.signalSemaphoreCount		= 0;
+	//Submission.pSignalSemaphores		= NULL;
 
-	BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	BeginInfo.pNext						= NULL;
-	BeginInfo.flags						= 0;
-	BeginInfo.pInheritanceInfo			= NULL;
+	//BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	//BeginInfo.pNext						= NULL;
+	//BeginInfo.flags						= 0;
+	//BeginInfo.pInheritanceInfo			= NULL;
 
-	FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	FenceCreateInfo.pNext				= NULL;
-	FenceCreateInfo.flags				= 0;
+	//FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	//FenceCreateInfo.pNext				= NULL;
+	//FenceCreateInfo.flags				= 0;
 
-	vkGetDeviceQueue(Context->handle(), 0, 0, &Queue);
-	Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
-
-	//CommandPoolCreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-	//CommandPoolCreateInfo.pNext						= NULL;
-	//CommandPoolCreateInfo.flags						= 0;
-	//CommandPoolCreateInfo.queueFamilyIndex			= 0; 
-	//Result = vkCreateCommandPool(Context->handle(), &CommandPoolCreateInfo, NULL, &CommandPool);
-	//CommandBufferAllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	//CommandBufferAllocateInfo.pNext					= NULL;
-	//CommandBufferAllocateInfo.commandPool			= CommandPool;
-	//CommandBufferAllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	//CommandBufferAllocateInfo.commandBufferCount	= 1;
-	//Result = vkAllocateCommandBuffers(Context->handle(), &CommandBufferAllocateInfo, &CommandBuffer);
-	Context->create(context::GRAPHICS, 1, &CommandBuffer);
-
-
-	Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
-	// Does nothing.
-	Result = vkEndCommandBuffer(CommandBuffer);
-
-	//Result = vkQueueSubmit(Queue, 1, &Submission, Fence);
-	Result = Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
-
-	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
-
-	Context->destroy(context::GRAPHICS, 1, &CommandBuffer);
-	//vkFreeCommandBuffers(Context->handle(), CommandPool, 1, &CommandBuffer);
-	//vkDestroyCommandPool(Context->handle(), CommandPool, NULL);
-	vkDestroyFence(Context->handle(), Fence, NULL);
-
+	//vkGetDeviceQueue(Context->handle(), 0, 0, &Queue);
 	//Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
-	//Context->create(context::COMPUTE, 1, &CommandBuffer);
+
+	////CommandPoolCreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	////CommandPoolCreateInfo.pNext						= NULL;
+	////CommandPoolCreateInfo.flags						= 0;
+	////CommandPoolCreateInfo.queueFamilyIndex			= 0; 
+	////Result = vkCreateCommandPool(Context->handle(), &CommandPoolCreateInfo, NULL, &CommandPool);
+	////CommandBufferAllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	////CommandBufferAllocateInfo.pNext					= NULL;
+	////CommandBufferAllocateInfo.commandPool			= CommandPool;
+	////CommandBufferAllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	////CommandBufferAllocateInfo.commandBufferCount	= 1;
+	////Result = vkAllocateCommandBuffers(Context->handle(), &CommandBufferAllocateInfo, &CommandBuffer);
+	//Result = Context->create(context::GRAPHICS, 1, &CommandBuffer);
+
+
 	//Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
-	//// Nothing...
+	//// Does nothing.
 	//Result = vkEndCommandBuffer(CommandBuffer);
+
+	////Result = vkQueueSubmit(Queue, 1, &Submission, Fence);
 	//Result = Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
+
 	//Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+
+	//Context->destroy(context::GRAPHICS, 1, &CommandBuffer);
+	////vkFreeCommandBuffers(Context->handle(), CommandPool, 1, &CommandBuffer);
+	////vkDestroyCommandPool(Context->handle(), CommandPool, NULL);
 	//vkDestroyFence(Context->handle(), Fence, NULL);
-	//Context->destroy(context::COMPUTE, 1, &CommandBuffer);
+
+	////Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
+	////Context->create(context::COMPUTE, 1, &CommandBuffer);
+	////Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+	////// Nothing...
+	////Result = vkEndCommandBuffer(CommandBuffer);
+	////Result = Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
+	////Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+	////vkDestroyFence(Context->handle(), Fence, NULL);
+	////Context->destroy(context::COMPUTE, 1, &CommandBuffer);
 
 
 
@@ -340,7 +340,9 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 		0xAA, 0xBB, 0xCC, 0xDD, 0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD
 	};
 
-	texture HostTexture(Context, device::memory::DEVICE_LOCAL, HostProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
+	texture DeviceTexture(Context, device::memory::DEVICE_LOCAL, HostProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
+
+
 
 
 }

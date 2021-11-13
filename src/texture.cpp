@@ -156,7 +156,6 @@ namespace geodesuka::core::gcl {
 		);
 
 		VkSubmitInfo Submission[2] = { {}, {} };
-		//VkSubmitInfo Submission{};
 		VkCommandBufferBeginInfo BeginInfo[2] = { {}, {} };
 		VkCommandBuffer CommandBuffer[2] = { VK_NULL_HANDLE, VK_NULL_HANDLE };
 		VkSemaphoreCreateInfo SemaphoreCreateInfo{};
@@ -165,19 +164,6 @@ namespace geodesuka::core::gcl {
 		VkFence Fence[2];
 		VkImageMemoryBarrier Barrier{};
 		VkBufferImageCopy BufferImageRegion{};
-
-		//VkImageBlit* MipGen = NULL;
-		//VkImageMemoryBarrier* MipBarrier = NULL;
-
-		//Submission.sType						= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		//Submission.pNext						= NULL;
-		//Submission.waitSemaphoreCount			= 0;
-		//Submission.pWaitSemaphores				= NULL;
-		//Submission.pWaitDstStageMask			= 0;
-		//Submission.commandBufferCount			= 2;
-		//Submission.pCommandBuffers				= CommandBuffer;
-		//Submission.signalSemaphoreCount			= 0;
-		//Submission.pSignalSemaphores			= NULL;
 
 		// Transfer Submission.
 		Submission[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -376,34 +362,15 @@ namespace geodesuka::core::gcl {
 				2, BlitBarrier
 			);
 
-			//vkCmdPipelineBarrier(
-			//	CommandBuffer[1],
-			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-			//	0,
-			//	0, NULL,
-			//	0, NULL,
-			//	1, &BlitBarrier[0]
-			//);
+			vkCmdBlitImage(
+				CommandBuffer[1],
+				this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+				this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&MipGen,
+				VkFilter::VK_FILTER_LINEAR
+			);
 
-			//vkCmdBlitImage(
-			//	CommandBuffer[1],
-			//	this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-			//	this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-			//	1,
-			//	&MipGen,
-			//	VkFilter::VK_FILTER_LINEAR
-			//);
-
-			//vkCmdPipelineBarrier(
-			//	CommandBuffer[1],
-			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-			//	VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-			//	0,
-			//	0, NULL,
-			//	0, NULL,
-			//	1, &BlitBarrier[1]
-			//);
 		}
 
 		Result = vkEndCommandBuffer(CommandBuffer[1]);
@@ -416,17 +383,6 @@ namespace geodesuka::core::gcl {
 		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
 		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
 		this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
-
-		//// Upload memory to memory.
-		//if ((Result == VkResult::VK_SUCCESS) && (aTextureData != NULL) && ((this->MemoryType & (device::memory::HOST_VISIBLE)) == device::memory::HOST_VISIBLE)) {
-		//	void* nptr = NULL;
-		//	this->BytesPerPixel = texture::bytesperpixel((VkFormat)aFormat);
-		//	Result = vkMapMemory(this->Context->handle(), this->MemoryHandle, 0, VK_WHOLE_SIZE, 0, &nptr);
-		//	if ((Result == VkResult::VK_SUCCESS) && (nptr != NULL)) {
-		//		memcpy(nptr, aTextureData, aWidth * aHeight * aDepth * this->BytesPerPixel);
-		//		vkUnmapMemory(this->Context->handle(), this->MemoryHandle);
-		//	}
-		//}
 
 	}
 

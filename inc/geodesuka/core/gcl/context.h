@@ -59,9 +59,8 @@ namespace geodesuka::core::gcl {
 		bool available(device::qfs aQFS);
 
 		//TODO: Make create/destroy thread safe.
-		//TODO: Also add VkResult as output.
 		// Will create a series of command buffer handles, and fill the respective arguments.
-		void create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Will search and clear allocated command buffers from instance.
 		void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
@@ -70,7 +69,7 @@ namespace geodesuka::core::gcl {
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
 		// Simply presents images corresponding to indices.
-		void present(VkPresentInfoKHR* aPresentation);
+		VkResult present(VkPresentInfoKHR* aPresentation);
 
 		VkInstance inst();
 		device* parent();
