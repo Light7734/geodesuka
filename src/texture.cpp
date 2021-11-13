@@ -208,7 +208,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo[1].pNext							= NULL;
-		BeginInfo[1].flags							= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo[1].flags = 0;// VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		BeginInfo[1].pInheritanceInfo				= NULL;
 
 		SemaphoreCreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -332,7 +332,19 @@ namespace geodesuka::core::gcl {
 			MipGen.srcSubresource.baseArrayLayer	= 0;
 			MipGen.srcSubresource.layerCount		= this->CreateInfo.arrayLayers;
 			MipGen.srcOffsets[0] = { 0, 0, 0 };
-			MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), (int32_t)(this->CreateInfo.extent.depth >> i) };
+			switch (this->CreateInfo.imageType) {
+			default:
+				return;
+			case VK_IMAGE_TYPE_1D:
+				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), 1, 1 };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), 1 };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), (int32_t)(this->CreateInfo.extent.depth >> i) };
+				break;
+			}
 
 			// Destination Description.
 			MipGen.dstSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
@@ -340,7 +352,19 @@ namespace geodesuka::core::gcl {
 			MipGen.dstSubresource.baseArrayLayer	= 0;
 			MipGen.dstSubresource.layerCount		= this->CreateInfo.arrayLayers;
 			MipGen.dstOffsets[0] = { 0, 0, 0 };
-			MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), (int32_t)(this->CreateInfo.extent.depth >> (i + 1)) };
+			switch (this->CreateInfo.imageType) {
+			default:
+				return;
+			case VK_IMAGE_TYPE_1D:
+				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), 1, 1 };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), 1 };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), (int32_t)(this->CreateInfo.extent.depth >> (i + 1)) };
+				break;
+			}
 
 			vkCmdPipelineBarrier(
 				CommandBuffer[1],
@@ -362,13 +386,14 @@ namespace geodesuka::core::gcl {
 			//	1, &BlitBarrier[0]
 			//);
 
-			vkCmdBlitImage(
-				CommandBuffer[1],
-				this->Handle, this->Layout[i][0], this->Handle, this->Layout[i + 1][0],
-				1,
-				&MipGen,
-				VkFilter::VK_FILTER_LINEAR
-			);
+			//vkCmdBlitImage(
+			//	CommandBuffer[1],
+			//	this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			//	this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			//	1,
+			//	&MipGen,
+			//	VkFilter::VK_FILTER_LINEAR
+			//);
 
 			//vkCmdPipelineBarrier(
 			//	CommandBuffer[1],
@@ -383,10 +408,10 @@ namespace geodesuka::core::gcl {
 
 		Result = vkEndCommandBuffer(CommandBuffer[1]);
 
-		this->Context->submit(device::qfs::TRANSFER, 1, &Submission[0], Fence[0]);
-		this->Context->submit(device::qfs::GRAPHICS, 1, &Submission[1], Fence[1]);
+		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission[0], Fence[0]);
+		Result = this->Context->submit(device::qfs::GRAPHICS, 1, &Submission[1], Fence[1]);
 		//this->Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
-		Result = vkWaitForFences(this->Context->handle(), 2, Fence, VK_TRUE, UINT64_MAX);
+		Result = vkWaitForFences(this->Context->handle(), 1, &Fence[1], VK_TRUE, UINT64_MAX);
 		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
 		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
 		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);

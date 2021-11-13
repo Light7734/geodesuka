@@ -189,19 +189,23 @@ namespace geodesuka::core::gcl {
 		
 		// One time submit pool
 		this->PoolCreateInfo[0].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+		this->PoolCreateInfo[0].queueFamilyIndex	= this->qfi(device::qfs::TRANSFER);
 
 		// Persistent Transfer operations.
 		this->PoolCreateInfo[1].flags				= 0;
+		this->PoolCreateInfo[1].queueFamilyIndex	= this->qfi(device::qfs::TRANSFER);
 
 		// Compute operations.
 		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::COMPUTE);
 
 		// Graphics operations.
 		this->PoolCreateInfo[3].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[3].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS);
 
 		for (int i = 0; i < 4; i++) {
 			if (this->QFI[i] != -1) {
-				this->PoolCreateInfo[i].queueFamilyIndex = this->QFI[i];
+				//this->PoolCreateInfo[i].queueFamilyIndex = this->QFI[i];
 				Result = vkCreateCommandPool(this->Handle, &this->PoolCreateInfo[i], NULL, &this->Pool[i]);
 			}
 			this->CommandBufferCount[i] = 0;
@@ -375,8 +379,9 @@ namespace geodesuka::core::gcl {
 		nptr = NULL;
 	}
 
-	void context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return;
+	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
+		VkResult Result = VkResult::VK_INCOMPLETE;
+		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return Result;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
 
@@ -398,7 +403,7 @@ namespace geodesuka::core::gcl {
 		while (true) {
 			int Index = i + Offset;
 			if (this->Queue[Index].Mutex.try_lock()) {
-				vkQueueSubmit(this->Queue[Index].Handle, aSubmissionCount, aSubmission, aFence);
+				Result = vkQueueSubmit(this->Queue[Index].Handle, aSubmissionCount, aSubmission, aFence);
 				this->Queue[Index].Mutex.unlock();
 				break;
 			}
@@ -407,7 +412,7 @@ namespace geodesuka::core::gcl {
 				i = 0;
 			}
 		}
-
+		return Result;
 	}
 
 	void context::present(VkPresentInfoKHR* aPresentation) {
