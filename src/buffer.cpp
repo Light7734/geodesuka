@@ -418,7 +418,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	VkCommandBuffer buffer::operator>>(texture& aRhs) {
-		//return (*this >> aRhs);
+		return (aRhs >> *this);
 		return VK_NULL_HANDLE;
 	}
 

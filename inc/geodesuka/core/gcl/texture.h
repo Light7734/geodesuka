@@ -94,9 +94,9 @@ namespace geodesuka::core::gcl {
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
 
-		int MemoryType;
-		int BytesPerPixel;
+		size_t BytesPerPixel;
 		size_t MemorySize;
+		int MemoryType;
 
 		VkImageLayout** Layout; // Keeps track of mip level and element image layouts.
 		VkExtent3D* MipExtent; // TODO: Fill out MipExtent for easier blitting.

@@ -178,6 +178,7 @@ namespace geodesuka {
 		state State;
 
 		std::vector<const char*> RequiredExtension;
+		std::vector<const char*> EnabledLayer;
 
 		// Engine Mutex
 		std::mutex Mutex;

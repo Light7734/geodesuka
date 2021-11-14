@@ -224,7 +224,9 @@ namespace geodesuka::core::gcl {
 
 		// Clear all command buffers and pools.
 		for (int i = 0; i < 4; i++) {
-			vkFreeCommandBuffers(this->Handle, this->Pool[i], this->CommandBufferCount[i], this->CommandBuffer[i]);
+			if (this->CommandBufferCount[i] > 0) {
+				vkFreeCommandBuffers(this->Handle, this->Pool[i], this->CommandBufferCount[i], this->CommandBuffer[i]);
+			}
 			free(this->CommandBuffer[i]); this->CommandBuffer[i] = NULL;
 			this->CommandBufferCount[i] = 0;
 			vkDestroyCommandPool(this->Handle, this->Pool[i], NULL);

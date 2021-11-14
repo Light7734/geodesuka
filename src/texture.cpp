@@ -131,6 +131,7 @@ namespace geodesuka::core::gcl {
 			Result = vkBindImageMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
 		}
 
+		// TODO: Fix later for failed allocations.
 		// All initialized layouts is above.
 		// i = mip level, and j = array level;
 		this->Layout = (VkImageLayout**)malloc(this->CreateInfo.mipLevels * sizeof(VkImageLayout*));
@@ -141,11 +142,26 @@ namespace geodesuka::core::gcl {
 			}
 		}
 
-		// Choose conditions for the image to be written to.
-		if (true) {
-
+		// Mip Level resolutions.
+		this->MipExtent = (VkExtent3D*)malloc(this->CreateInfo.mipLevels * sizeof(VkExtent3D));
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			switch (this->CreateInfo.imageType) {
+			default:
+				return;
+			case VK_IMAGE_TYPE_1D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), 1u, 1u };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), 1u };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), (this->CreateInfo.extent.depth >> i) };
+				break;
+			}
 		}
 
+	
+		// Create staging buffer and prepare for transfer.
 		buffer StagingBuffer(
 			Context,
 			device::HOST_VISIBLE | device::HOST_COHERENT,
@@ -154,11 +170,13 @@ namespace geodesuka::core::gcl {
 			aTextureData
 		);
 
+		// Disgusting code, tmi.
 		VkSubmitInfo Submission[2] = { {}, {} };
 		VkCommandBufferBeginInfo BeginInfo[2] = { {}, {} };
 		VkCommandBuffer CommandBuffer[2] = { VK_NULL_HANDLE, VK_NULL_HANDLE };
 		VkSemaphoreCreateInfo SemaphoreCreateInfo{};
 		VkSemaphore Semaphore = VK_NULL_HANDLE;
+		VkPipelineStageFlags StageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT;
 		VkFenceCreateInfo FenceCreateInfo{};
 		VkFence Fence[2];
 		VkImageMemoryBarrier Barrier{};
@@ -180,7 +198,7 @@ namespace geodesuka::core::gcl {
 		Submission[1].pNext							= NULL;
 		Submission[1].waitSemaphoreCount			= 1;
 		Submission[1].pWaitSemaphores				= &Semaphore;
-		Submission[1].pWaitDstStageMask				= 0;
+		Submission[1].pWaitDstStageMask				= &StageFlags;
 		Submission[1].commandBufferCount			= 1;
 		Submission[1].pCommandBuffers				= &CommandBuffer[1];
 		Submission[1].signalSemaphoreCount			= 0;
@@ -193,7 +211,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo[1].pNext							= NULL;
-		BeginInfo[1].flags = 0;// VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo[1].flags							= 0;// VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		BeginInfo[1].pInheritanceInfo				= NULL;
 
 		SemaphoreCreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -233,7 +251,7 @@ namespace geodesuka::core::gcl {
 		BufferImageRegion.imageOffset						= { 0, 0, 0 };
 		BufferImageRegion.imageExtent						= this->CreateInfo.extent;
 
-		//Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
+		Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[0]);
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[1]);
 		this->Context->create(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
@@ -260,6 +278,7 @@ namespace geodesuka::core::gcl {
 		Result = vkBeginCommandBuffer(CommandBuffer[1], &BeginInfo[1]);
 
 		/*
+		Generating Mipmaps.
 		0 -> 1 -> 2 -> 3 -> 4 ... N
 		D -> U -> U -> U -> U ... U
 		S -> D -> U -> U -> U ... U
@@ -310,7 +329,8 @@ namespace geodesuka::core::gcl {
 			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
 				this->Layout[i + 1][j] = BlitBarrier[1].newLayout;
 			}
-						// Uses bit shifts to generate mip maps.
+
+			// Uses bit shifts to generate mip maps.
 			// Source Description.
 			MipGen.srcSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
 			MipGen.srcSubresource.mipLevel			= i;
@@ -367,7 +387,7 @@ namespace geodesuka::core::gcl {
 				this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 				1,
 				&MipGen,
-				VkFilter::VK_FILTER_LINEAR
+				VkFilter::VK_FILTER_NEAREST
 			);
 
 		}
@@ -380,6 +400,7 @@ namespace geodesuka::core::gcl {
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence[1], VK_TRUE, UINT64_MAX);
 		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
 		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
+		vkDestroySemaphore(this->Context->handle(), Semaphore, NULL);
 		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
 		this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
 
@@ -388,12 +409,11 @@ namespace geodesuka::core::gcl {
 	texture::~texture() {
 		if (this->Layout != NULL) {
 			for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
-				free(this->Layout[i]);
-				this->Layout[i] = NULL;
+				free(this->Layout[i]); this->Layout[i] = NULL;
 			}
 		}
-		free(this->Layout);
-		this->Layout = NULL;
+		free(this->Layout); this->Layout = NULL;
+		free(this->MipExtent); this->MipExtent = NULL;
 		if (this->Context != nullptr) {
 			vkDestroyImage(this->Context->handle(), this->Handle, NULL);
 			this->Handle = VK_NULL_HANDLE;
@@ -404,29 +424,71 @@ namespace geodesuka::core::gcl {
 	}
 
 	texture::texture(texture& aInput) {
+		this->Context			= aInput.Context;
+		this->CreateInfo		= aInput.CreateInfo;
+		this->Handle			= VK_NULL_HANDLE;
+		this->AllocateInfo		= aInput.AllocateInfo;
+		this->MemoryHandle		= VK_NULL_HANDLE;
 
-	}
-
-	texture::texture(texture&& aInput) {
-
-	}
-
-	texture& texture::operator=(texture& aRhs) {
-		if (this == &aRhs) return *this;
+		this->BytesPerPixel		= aInput.BytesPerPixel;
+		this->MemorySize		= aInput.MemorySize;
+		this->MemoryType		= aInput.MemoryType;
 
 		VkResult Result = VkResult::VK_SUCCESS;
-		VkSubmitInfo Submission;
+		this->Layout = (VkImageLayout**)malloc(this->CreateInfo.mipLevels * sizeof(VkImageLayout*));
+		this->MipExtent = (VkExtent3D*)malloc(this->CreateInfo.mipLevels * sizeof(VkExtent3D));
+		Result = vkCreateImage(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
+		if (Result == VkResult::VK_SUCCESS) {
+			Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+		}
+		if (Result == VkResult::VK_SUCCESS) {
+			Result = vkBindImageMemory(this->Context->handle(), this->Handle, this->MemoryHandle, 0);
+		}
+
+		// Check if allocation succeeded.
+		if ((Result != VkResult::VK_SUCCESS) || (this->Layout == NULL) || (this->MipExtent == NULL)) return;
+
+		// All initialized layouts is above.
+		// i = mip level, and j = array level;
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			this->Layout[i] = (VkImageLayout*)malloc(this->CreateInfo.arrayLayers * sizeof(VkImageLayout));
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i][j] = this->CreateInfo.initialLayout;
+			}
+		}
+
+		// Mip Level resolutions.
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			switch (this->CreateInfo.imageType) {
+			default:
+				return;
+			case VK_IMAGE_TYPE_1D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), 1u, 1u };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), 1u };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), (this->CreateInfo.extent.depth >> i) };
+				break;
+			}
+		}
+
+		VkSubmitInfo Submission{};
 		VkCommandBufferBeginInfo BeginInfo{};
-		VkCommandBuffer CommandBuffer;
+		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+
+		VkImageMemoryBarrier Barrier{};
+		VkImageCopy Region{};
+
 		VkFenceCreateInfo FenceCreateInfo{};
 		VkFence Fence;
-		VkImageCopy Region{};
 
 		Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		Submission.pNext					= NULL;
 		Submission.waitSemaphoreCount		= 0;
 		Submission.pWaitSemaphores			= NULL;
-		Submission.pWaitDstStageMask		= 0;
+		Submission.pWaitDstStageMask		= NULL;
 		Submission.commandBufferCount		= 1;
 		Submission.pCommandBuffers			= &CommandBuffer;
 		Submission.signalSemaphoreCount		= 0;
@@ -437,33 +499,105 @@ namespace geodesuka::core::gcl {
 		BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		BeginInfo.pInheritanceInfo			= NULL;
 
-		FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		FenceCreateInfo.pNext				= NULL;
-		FenceCreateInfo.flags				= 0;
+		Barrier.sType						;
+		Barrier.pNext						;
+		Barrier.srcAccessMask				;
+		Barrier.dstAccessMask				;
+		Barrier.oldLayout					;
+		Barrier.newLayout					;
+		Barrier.srcQueueFamilyIndex			;
+		Barrier.dstQueueFamilyIndex			;
+		Barrier.image						;
+		Barrier.subresourceRange			;
 
-		Region.srcSubresource.aspectMask;
-		Region.srcSubresource.mipLevel;
-		Region.srcSubresource.baseArrayLayer;
-		Region.srcSubresource.layerCount;
-		Region.srcOffset = { 0, 0, 0 };
-		Region.dstSubresource.aspectMask;
-		Region.dstSubresource.mipLevel;
-		Region.dstSubresource.baseArrayLayer;
-		Region.dstSubresource.layerCount;
-		Region.dstOffset = { 0, 0, 0 };
-		Region.extent = { aRhs.CreateInfo.extent.width, aRhs.CreateInfo.extent.height, aRhs.CreateInfo.extent.depth };
 
-		this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
-		if (CommandBuffer != VK_NULL_HANDLE) {
-			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
-			Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
-			//vkCmdCopyImage(CommandBuffer, aRhs.Handle, NULL, this->Handle, NULL, 1, &Region);
-			Result = vkEndCommandBuffer(CommandBuffer);
-			this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
-			Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-			vkDestroyFence(this->Context->handle(), Fence, NULL);
-		}
-		this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		this->Context->create(context::TRANSFER_OTS, 1, &CommandBuffer);
+		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+
+
+		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+		// Actual transfer operations.
+		vkCmdPipelineBarrier(CommandBuffer,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0,
+			0, NULL,
+			0, NULL,
+			1, &Barrier
+		);
+
+		vkCmdCopyImage(CommandBuffer,
+			aInput.Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			1, &Region
+		);
+		Result = vkEndCommandBuffer(CommandBuffer);
+
+		this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+		vkDestroyFence(this->Context->handle(), Fence, NULL);
+
+
+
+	}
+
+	texture::texture(texture&& aInput) {
+
+	}
+
+	texture& texture::operator=(texture& aRhs) {
+		if (this == &aRhs) return *this;
+
+		//VkResult Result = VkResult::VK_SUCCESS;
+		//VkSubmitInfo Submission;
+		//VkCommandBufferBeginInfo BeginInfo{};
+		//VkCommandBuffer CommandBuffer;
+		//VkFenceCreateInfo FenceCreateInfo{};
+		//VkFence Fence;
+		//VkImageCopy Region{};
+
+		//Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		//Submission.pNext					= NULL;
+		//Submission.waitSemaphoreCount		= 0;
+		//Submission.pWaitSemaphores			= NULL;
+		//Submission.pWaitDstStageMask		= 0;
+		//Submission.commandBufferCount		= 1;
+		//Submission.pCommandBuffers			= &CommandBuffer;
+		//Submission.signalSemaphoreCount		= 0;
+		//Submission.pSignalSemaphores		= NULL;
+
+		//BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		//BeginInfo.pNext						= NULL;
+		//BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		//BeginInfo.pInheritanceInfo			= NULL;
+
+		//FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		//FenceCreateInfo.pNext				= NULL;
+		//FenceCreateInfo.flags				= 0;
+
+		//Region.srcSubresource.aspectMask;
+		//Region.srcSubresource.mipLevel;
+		//Region.srcSubresource.baseArrayLayer;
+		//Region.srcSubresource.layerCount;
+		//Region.srcOffset = { 0, 0, 0 };
+		//Region.dstSubresource.aspectMask;
+		//Region.dstSubresource.mipLevel;
+		//Region.dstSubresource.baseArrayLayer;
+		//Region.dstSubresource.layerCount;
+		//Region.dstOffset = { 0, 0, 0 };
+		//Region.extent = { aRhs.CreateInfo.extent.width, aRhs.CreateInfo.extent.height, aRhs.CreateInfo.extent.depth };
+
+		//this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//if (CommandBuffer != VK_NULL_HANDLE) {
+		//	Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+		//	Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+		//	//vkCmdCopyImage(CommandBuffer, aRhs.Handle, NULL, this->Handle, NULL, 1, &Region);
+		//	Result = vkEndCommandBuffer(CommandBuffer);
+		//	this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+		//	Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
+		//	vkDestroyFence(this->Context->handle(), Fence, NULL);
+		//}
+		//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 
 		return *this;
 	}
@@ -473,23 +607,21 @@ namespace geodesuka::core::gcl {
 	}
 
 	VkCommandBuffer texture::operator<<(texture& aRhs) {
-
-		return VkCommandBuffer();
+		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		return CommandBuffer;
 	}
 
 	VkCommandBuffer texture::operator>>(texture& aRhs) {
-
-		return VkCommandBuffer();
+		return (aRhs << *this);
 	}
 
 	VkCommandBuffer texture::operator<<(buffer& aRhs) {
-
-		return VkCommandBuffer();
+		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		return CommandBuffer;
 	}
 
 	VkCommandBuffer texture::operator>>(buffer& aRhs) {
-
-		return VkCommandBuffer();
+		return (aRhs << *this);
 	}
 
 	/*
