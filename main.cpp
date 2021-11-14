@@ -367,6 +367,10 @@ int main(int argc, char *argv[]) {
 		Result = vkCreateGraphicsPipelines(Context->handle(), VK_NULL_HANDLE, 1, &CreateInfo, NULL, &Pipeline[i]);
 		DeltaTime[i] = glfwGetTime() - DeltaTime[i];
 	}
+	std::cout << "\n\n\n\n\n\n\n" << std::endl;
+	for (uint32_t i = 0; i < 10; i++) {
+		std::cout << "time: " << DeltaTime[i] * 1000.0 << std::endl;
+	}
 
 
 	Engine.tsleep(1);
