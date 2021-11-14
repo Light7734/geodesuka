@@ -14,8 +14,6 @@
 *	-Add an option to use dynamically created staging buffer.
 */
 
-#include <stdarg.h>
-
 #include "../math.h"
 
 #include "../util/variable.h"
@@ -29,6 +27,8 @@ namespace geodesuka::core::gcl {
 
 	class buffer {
 	public:
+
+		friend class texture;
 
 		enum usage {
 			TRANSFER_SRC			= 0x00000001,
@@ -54,11 +54,17 @@ namespace geodesuka::core::gcl {
 		buffer& operator=(const buffer& aRhs);																		// Copy Assign
 		buffer& operator=(buffer&& aRhs);																			// Move Assign
 
-		// NOTE: These methods produce TRANSFER_OTS command buffers. They must be manually freed.
-		// Will copy data from from to left.
+		// The following four commands will produce command buffers to be
+		// used for transfer operations. 
+		
+		// Will copy data from from right to left.
 		VkCommandBuffer operator<<(buffer& aRhs);
-		// Will copy data from left to right
+		// Will copy data from left to right.
 		VkCommandBuffer operator>>(buffer& aRhs);
+		// Will copy data from right to left.
+		VkCommandBuffer operator<<(texture& aRhs);
+		// Will copy data from left to right.
+		VkCommandBuffer operator>>(texture& aRhs);
 
 		void write(size_t aMemOffset, size_t aMemSize, void* aData);
 		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
@@ -79,7 +85,7 @@ namespace geodesuka::core::gcl {
 
 		int Count;
 		util::variable MemoryLayout;
-
+		
 		// Make staging buffer optional. Trade off.
 		// Faster Transfer of Data at the cost of double mem usage.
 		// Only device mem usage, but slower transfers.

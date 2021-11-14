@@ -36,7 +36,6 @@ namespace geodesuka::core::gcl {
 		if (aContext == nullptr) return;
 		this->Context = aContext;
 
-		int Index = 0;
 		VkResult Result = VkResult::VK_SUCCESS;
 		this->CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		this->CreateInfo.pNext					= NULL;
@@ -471,6 +470,26 @@ namespace geodesuka::core::gcl {
 
 	texture& texture::operator=(texture&& aRhs) {
 		return *this;
+	}
+
+	VkCommandBuffer texture::operator<<(texture& aRhs) {
+
+		return VkCommandBuffer();
+	}
+
+	VkCommandBuffer texture::operator>>(texture& aRhs) {
+
+		return VkCommandBuffer();
+	}
+
+	VkCommandBuffer texture::operator<<(buffer& aRhs) {
+
+		return VkCommandBuffer();
+	}
+
+	VkCommandBuffer texture::operator>>(buffer& aRhs) {
+
+		return VkCommandBuffer();
 	}
 
 	/*

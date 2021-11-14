@@ -71,6 +71,8 @@ namespace geodesuka {
 				this->RequiredExtension.push_back(OSExtensionList[i]);
 			}
 			//this->RequiredExtension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);
+			//this->RequiredExtension.push_back("VK_LAYER_KHRONOS_validation");
+			const char* Layers[1] = { "VK_LAYER_KHRONOS_validation" };
 
 			for (size_t i = 0; i < this->RequiredExtension.size(); i++) {
 				std::cout << this->RequiredExtension[i] << std::endl;
@@ -88,8 +90,8 @@ namespace geodesuka {
 			this->InstProp.pNext						= NULL;
 			this->InstProp.flags						= 0;
 			this->InstProp.pApplicationInfo				= &AppProp;
-			this->InstProp.enabledLayerCount			= 0;
-			this->InstProp.ppEnabledLayerNames			= NULL;
+			this->InstProp.enabledLayerCount			= 1;
+			this->InstProp.ppEnabledLayerNames			= Layers;
 			this->InstProp.enabledExtensionCount		= this->RequiredExtension.size();
 			this->InstProp.ppEnabledExtensionNames		= this->RequiredExtension.data();
 

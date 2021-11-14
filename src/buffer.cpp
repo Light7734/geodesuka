@@ -1,10 +1,7 @@
 #include <geodesuka/core/gcl/buffer.h>
 
-#include <stdarg.h>
-
-#include <geodesuka/core/math.h>
-
-#include <geodesuka/core/util/variable.h>
+// Used to interact with texture class
+#include <geodesuka/core/gcl/texture.h>
 
 namespace geodesuka::core::gcl {
 
@@ -201,7 +198,7 @@ namespace geodesuka::core::gcl {
 
 				Region.srcOffset					= 0;
 				Region.dstOffset					= 0;
-				Region.size							= this->Count * this->MemoryLayout.Type.Size;
+				Region.size							= this->CreateInfo.size; // this->Count* this->MemoryLayout.Type.Size;
 
 				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				FenceCreateInfo.pNext				= NULL;
@@ -294,7 +291,7 @@ namespace geodesuka::core::gcl {
 
 				Region.srcOffset					= 0;
 				Region.dstOffset					= 0;
-				Region.size							= this->Count * this->MemoryLayout.Type.Size;
+				Region.size							= this->CreateInfo.size; // this->Count* this->MemoryLayout.Type.Size;
 
 				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				FenceCreateInfo.pNext				= NULL;
@@ -374,7 +371,7 @@ namespace geodesuka::core::gcl {
 
 		Region.srcOffset					= 0;
 		Region.dstOffset					= 0;
-		Region.size							= this->Count * this->MemoryLayout.Type.Size;
+		Region.size							= this->CreateInfo.size; //this->Count* this->MemoryLayout.Type.Size;
 
 		//FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		//FenceCreateInfo.pNext				= NULL;
@@ -395,6 +392,34 @@ namespace geodesuka::core::gcl {
 
 	VkCommandBuffer buffer::operator>>(buffer& aRhs) {
 		return (aRhs << *this);
+	}
+
+	VkCommandBuffer buffer::operator<<(texture& aRhs) {
+		VkCommandBufferBeginInfo BeginInfo{};
+		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		VkBufferImageCopy Region{};
+		// Return empty handle if sizes don't match.
+		if (this->CreateInfo.size != aRhs.MemorySize) return CommandBuffer;
+
+		vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+
+		// Use barrier for transition if layout doesn't match.
+
+
+		vkCmdCopyImageToBuffer(CommandBuffer,
+			aRhs.Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			this->Handle,
+			1, &Region
+		);
+		vkEndCommandBuffer(CommandBuffer);
+
+
+		return CommandBuffer;
+	}
+
+	VkCommandBuffer buffer::operator>>(texture& aRhs) {
+		//return (*this >> aRhs);
+		return VK_NULL_HANDLE;
 	}
 
 	void buffer::write(size_t aMemOffset, size_t aMemSize, void* aData) {

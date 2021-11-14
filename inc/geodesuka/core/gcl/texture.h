@@ -21,6 +21,7 @@ namespace geodesuka::core::gcl {
 	class texture {
 	public:
 
+		friend class buffer;
 		friend class object::system_window;
 
 		enum sample {
@@ -75,6 +76,14 @@ namespace geodesuka::core::gcl {
 		// Move Assignment.
 		texture& operator=(texture&& aRhs);
 
+		VkCommandBuffer operator<<(texture& aRhs);
+
+		VkCommandBuffer operator>>(texture& aRhs);
+
+		VkCommandBuffer operator<<(buffer& aRhs);
+
+		VkCommandBuffer operator>>(buffer& aRhs);
+
 		// 
 
 	private:
@@ -85,14 +94,13 @@ namespace geodesuka::core::gcl {
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
 
-		// Keeps track of image layouts, needed for 
-		// other operations.
-		VkImageLayout** Layout;
-		VkExtent3D* MipExtent; // Fill out later for more readable code.
-
-		//VkImageLayout CurrentImageLayout;
 		int MemoryType;
 		int BytesPerPixel;
+		size_t MemorySize;
+
+		VkImageLayout** Layout; // Keeps track of mip level and element image layouts.
+		VkExtent3D* MipExtent; // TODO: Fill out MipExtent for easier blitting.
+
 
 		uint32_t miplevelcalc(VkImageType aImageType, VkExtent3D aExtent);
 

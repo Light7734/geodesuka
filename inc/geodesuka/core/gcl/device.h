@@ -90,8 +90,8 @@ namespace geodesuka::core::gcl {
 		// Properties, Features, and Extensions Available.
 		uint32_t ExtensionCount;
 		VkExtensionProperties* Extension;
-		VkPhysicalDeviceProperties Properties;
-		VkPhysicalDeviceFeatures Features;
+		VkPhysicalDeviceProperties Properties{};
+		VkPhysicalDeviceFeatures Features{};
 
 	};
 
