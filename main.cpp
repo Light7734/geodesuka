@@ -362,7 +362,13 @@ int main(int argc, char *argv[]) {
 
 	double DeltaTime[10];
 	VkPipeline Pipeline[10];
-	for (uint32_t i = 0; i < 10; i++) {
+
+
+	DeltaTime[0] = glfwGetTime();
+	Result = vkCreateGraphicsPipelines(Context->handle(), VK_NULL_HANDLE, 1, &CreateInfo, NULL, &Pipeline[0]);
+	DeltaTime[0] = glfwGetTime() - DeltaTime[0];
+	vkDestroyPipeline(Context->handle(), Pipeline[0], NULL);
+	for (uint32_t i = 1; i < 10; i++) {
 		DeltaTime[i] = glfwGetTime();
 		Result = vkCreateGraphicsPipelines(Context->handle(), VK_NULL_HANDLE, 1, &CreateInfo, NULL, &Pipeline[i]);
 		DeltaTime[i] = glfwGetTime() - DeltaTime[i];
