@@ -70,21 +70,24 @@ namespace geodesuka::core::gcl {
 		// Copy Constructor.
 		texture(texture& aInput);
 		// Move Constructor.
-		texture(texture&& aInput);
+		texture(texture&& aInput) noexcept;
 		// Copy Assignment.
 		texture& operator=(texture& aRhs);
 		// Move Assignment.
-		texture& operator=(texture&& aRhs);
+		texture& operator=(texture&& aRhs) noexcept;
 
+		// Each of these operators produces OTS Command Buffers.
+
+		// Copies the contents and mip levels of the right, to the left.
 		VkCommandBuffer operator<<(texture& aRhs);
-
+		// Copies the contents and mip levels of the left, to the right.
 		VkCommandBuffer operator>>(texture& aRhs);
-
+		// Copies the contents of the first buffer to the first mip level of the texture.
 		VkCommandBuffer operator<<(buffer& aRhs);
-
+		// Copies the contents of the first mip level to the buffer on the right.
 		VkCommandBuffer operator>>(buffer& aRhs);
-
-		// 
+		// Produces OTS Graphics command to generate mip maps from base level.
+		VkCommandBuffer generate_mipmaps(VkFilter aFilter);
 
 	private:
 
@@ -93,16 +96,15 @@ namespace geodesuka::core::gcl {
 		VkImage Handle;
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
-
-		size_t BytesPerPixel;
-		size_t MemorySize;
 		int MemoryType;
+		size_t BytesPerPixel;
+		size_t MemorySize; // Size of the image
 
 		VkImageLayout** Layout; // Keeps track of mip level and element image layouts.
 		VkExtent3D* MipExtent; // TODO: Fill out MipExtent for easier blitting.
 
-
 		uint32_t miplevelcalc(VkImageType aImageType, VkExtent3D aExtent);
+		void pmclearall();
 
 	};
 

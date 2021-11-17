@@ -205,7 +205,6 @@ namespace geodesuka::core::gcl {
 
 		for (int i = 0; i < 4; i++) {
 			if (this->QFI[i] != -1) {
-				//this->PoolCreateInfo[i].queueFamilyIndex = this->QFI[i];
 				Result = vkCreateCommandPool(this->Handle, &this->PoolCreateInfo[i], NULL, &this->Pool[i]);
 			}
 			this->CommandBufferCount[i] = 0;
@@ -278,6 +277,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	VkResult context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		//this->Mutex.lock();
 		VkResult Result = VkResult::VK_INCOMPLETE;
 		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return VkResult::VK_INCOMPLETE;
 		int i = -1;
@@ -311,10 +311,12 @@ namespace geodesuka::core::gcl {
 		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, &this->CommandBuffer[i][this->CommandBufferCount[i]]);
 		memcpy(aCommandBuffer, &this->CommandBuffer[i][this->CommandBufferCount[i]], aCommandBufferCount * sizeof(VkCommandBuffer));
 		this->CommandBufferCount[i] += aCommandBufferCount;
+		//this->Mutex.unlock();
 		return Result;
 	}
 
 	void context::destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		//this->Mutex.lock();
 		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
 		int Index = -1;
 		switch (aCommandType) {
@@ -381,6 +383,7 @@ namespace geodesuka::core::gcl {
 		}
 		free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = nptr;
 		nptr = NULL;
+		//this->Mutex.unlock();
 	}
 
 	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {

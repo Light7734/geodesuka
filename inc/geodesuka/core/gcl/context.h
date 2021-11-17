@@ -32,6 +32,7 @@ namespace geodesuka::core::gcl {
 		//	PRESENT		= 0x00000008
 		//};
 
+		// TODO: Remove these options and only create TRANSFER, COMPUTE, GRAPHICS pools.
 		enum cmdtype {
 			// One time submit for transfer operations.
 			TRANSFER_OTS,

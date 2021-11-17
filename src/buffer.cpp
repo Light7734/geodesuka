@@ -344,25 +344,19 @@ namespace geodesuka::core::gcl {
 	}
 
 	VkCommandBuffer buffer::operator<<(buffer& aRhs) {
-		VkResult Result = VkResult::VK_SUCCESS;
-		VkSubmitInfo Submission{};
-		VkCommandBufferBeginInfo BeginInfo{};
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
-		VkBufferCopy Region{};
-		//VkFenceCreateInfo FenceCreateInfo{};
-		//VkFence Fence;
-		
-		if (this->Context != aRhs.Context) return CommandBuffer;
+		// Both operands must share the same parent context, and have same memory size.
+		if ((this->Context != aRhs.Context) || ((size_t)this->CreateInfo.size != aRhs.CreateInfo.size)) return CommandBuffer;
+		// Left operand must have TRANSFER_DST flag enabled, and Right operand must have TRANSFER_SRC flag enabled.
+		if (
+			((this->CreateInfo.usage & buffer::usage::TRANSFER_DST) != buffer::usage::TRANSFER_DST)
+			||
+			((aRhs.CreateInfo.usage & buffer::usage::TRANSFER_SRC) != buffer::usage::TRANSFER_SRC)
+		) return CommandBuffer;
 
-		Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		Submission.pNext					= NULL;
-		Submission.waitSemaphoreCount		= 0;
-		Submission.pWaitSemaphores			= NULL;
-		Submission.pWaitDstStageMask		= 0;
-		Submission.commandBufferCount		= 1;
-		Submission.pCommandBuffers			= &CommandBuffer;
-		Submission.signalSemaphoreCount		= 0;
-		Submission.pSignalSemaphores		= NULL;
+		VkResult Result = VkResult::VK_SUCCESS;
+		VkCommandBufferBeginInfo BeginInfo{};
+		VkBufferCopy Region{};
 
 		BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext						= NULL;
@@ -371,22 +365,14 @@ namespace geodesuka::core::gcl {
 
 		Region.srcOffset					= 0;
 		Region.dstOffset					= 0;
-		Region.size							= this->CreateInfo.size; //this->Count* this->MemoryLayout.Type.Size;
+		Region.size							= this->CreateInfo.size;
 
-		//FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		//FenceCreateInfo.pNext				= NULL;
-		//FenceCreateInfo.flags				= 0;
-
-		this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 		if (CommandBuffer != VK_NULL_HANDLE) {
-			//Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 			Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 			vkCmdCopyBuffer(CommandBuffer, aRhs.Handle, this->Handle, 1, &Region);
 			Result = vkEndCommandBuffer(CommandBuffer);
-			//this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
-			//Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
 		}
-		//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 		return CommandBuffer;
 	}
 
@@ -395,24 +381,63 @@ namespace geodesuka::core::gcl {
 	}
 
 	VkCommandBuffer buffer::operator<<(texture& aRhs) {
-		VkCommandBufferBeginInfo BeginInfo{};
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
-		VkBufferImageCopy Region{};
-		// Return empty handle if sizes don't match.
-		if (this->CreateInfo.size != aRhs.MemorySize) return CommandBuffer;
+		// Must share the same parent context and have the same size.
+		if ((this->Context != aRhs.Context) || ((size_t)this->CreateInfo.size != aRhs.MemorySize)) return CommandBuffer;
+		// buffer must have enabled, DST flag. texture must have SRC flag.
+		if (
+			((this->CreateInfo.usage & buffer::usage::TRANSFER_DST) != buffer::usage::TRANSFER_DST) 
+			|| 
+			((aRhs.CreateInfo.usage & texture::usage::TRANSFER_SRC) != texture::usage::TRANSFER_SRC)
+		) return CommandBuffer;
 
-		vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+		VkResult Result = VkResult::VK_SUCCESS;
+		VkCommandBufferBeginInfo BeginInfo{};
+		std::vector<VkImageMemoryBarrier> Barrier(aRhs.CreateInfo.arrayLayers);
+		VkBufferImageCopy Region{};
+
+		BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		BeginInfo.pNext						= NULL;
+		BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.pInheritanceInfo			= NULL;
+
+		for (uint32_t i = 0; i < aRhs.CreateInfo.arrayLayers; i++) {
+			Barrier[i].sType								= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			Barrier[i].pNext								= NULL;
+			Barrier[i].srcAccessMask						= VkAccessFlagBits::VK_ACCESS_MEMORY_WRITE_BIT;
+			Barrier[i].dstAccessMask						= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
+			Barrier[i].oldLayout							= aRhs.Layout[0][i];
+			Barrier[i].newLayout							= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+			Barrier[i].srcQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
+			Barrier[i].dstQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
+			Barrier[i].image								= aRhs.Handle;
+			Barrier[i].subresourceRange.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			Barrier[i].subresourceRange.baseMipLevel		= 0;
+			Barrier[i].subresourceRange.levelCount			= 1;
+			Barrier[i].subresourceRange.baseArrayLayer		= i;
+			Barrier[i].subresourceRange.layerCount			= 1;
+		}
+
+		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
 		// Use barrier for transition if layout doesn't match.
-
+		vkCmdPipelineBarrier(CommandBuffer,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0,
+			0, NULL,
+			0, NULL,
+			Barrier.size(), Barrier.data()
+		);
 
 		vkCmdCopyImageToBuffer(CommandBuffer,
 			aRhs.Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
 			this->Handle,
 			1, &Region
 		);
-		vkEndCommandBuffer(CommandBuffer);
 
+		Result = vkEndCommandBuffer(CommandBuffer);
 
 		return CommandBuffer;
 	}

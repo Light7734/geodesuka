@@ -91,9 +91,9 @@ namespace geodesuka {
 			this->InstProp.pNext						= NULL;
 			this->InstProp.flags						= 0;
 			this->InstProp.pApplicationInfo				= &this->AppProp;
-			this->InstProp.enabledLayerCount			= this->EnabledLayer.size();
+			this->InstProp.enabledLayerCount			= (uint32_t)this->EnabledLayer.size();
 			this->InstProp.ppEnabledLayerNames			= this->EnabledLayer.data();
-			this->InstProp.enabledExtensionCount		= this->RequiredExtension.size();
+			this->InstProp.enabledExtensionCount		= (uint32_t)this->RequiredExtension.size();
 			this->InstProp.ppEnabledExtensionNames		= this->RequiredExtension.data();
 
 			VkResult Result = vkCreateInstance(&InstProp, NULL, &this->Instance);

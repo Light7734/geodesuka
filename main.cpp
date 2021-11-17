@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
 }
 
 void buffer_unit_test(geodesuka::core::gcl::context *Context) {
+	std::cout << " -------------------- Buffer memory integrity test -------------------- " << std::endl;
 	// This function tests the integrity of data by passing
 	// it to the selected devices memory, and then retrieving it.
 	math::real Vertices[] = {
@@ -254,6 +255,7 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 }
 
 void texture_unit_test(geodesuka::core::gcl::context *Context) {
+	std::cout << " -------------------- Texture memory integrity test -------------------- " << std::endl;
 	// This function tests the integrity of data by passing
 	// it to the selected devices memory, and then retrieving it.
 	texture::prop DeviceProp = texture::prop();
@@ -274,17 +276,17 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 	texture DeviceTexture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 
 	{
-		// Test copy/move constructors/assignment.
-		texture CopyConstructor(DeviceTexture);
-		texture MoveConstructor(
-			texture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData)
-		);
-
-		texture CopyAssignment;
-		CopyAssignment = DeviceTexture;
-		texture MoveAssignment;
-		MoveAssignment = texture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 	}
+	// Test copy/move constructors/assignment.
+	texture CopyConstructor(DeviceTexture);
+	texture MoveConstructor(
+		texture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData)
+	);
+
+	texture CopyAssignment;
+	CopyAssignment = DeviceTexture;
+	texture MoveAssignment;
+	MoveAssignment = texture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 
 	buffer HostBuffer(
 		Context,
@@ -294,6 +296,43 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 		NULL
 	);
 
+
+	VkResult Result = VkResult::VK_SUCCESS;
+	VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+	VkSubmitInfo Submission{};
+	VkFenceCreateInfo FenceCreateInfo{};
+	VkFence Fence;
+
+	Submission.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	Submission.pNext					= NULL;
+	Submission.waitSemaphoreCount		= 0;
+	Submission.pWaitSemaphores			= NULL;
+	Submission.pWaitDstStageMask		= NULL;
+	Submission.commandBufferCount		= 1;
+	Submission.pCommandBuffers			= &CommandBuffer;
+	Submission.signalSemaphoreCount		= 0;
+	Submission.pSignalSemaphores		= NULL;
+
+	FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+	FenceCreateInfo.pNext				= NULL;
+	FenceCreateInfo.flags				= 0;
+
+	Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
+
+	HostBuffer.write(0, 64, 0);
+	// Get copy assignment memory.
+	CommandBuffer = (HostBuffer << CopyConstructor);
+	Context->submit(device::TRANSFER, 1, &Submission, Fence);
+	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+
+	CommandBuffer = (HostBuffer << MoveConstructor);
+
+	CommandBuffer = (HostBuffer << CopyAssignment);
+
+	CommandBuffer = (HostBuffer << MoveAssignment);
+
+
+	vkDestroyFence(Context->handle(), Fence, NULL);
 
 
 }
