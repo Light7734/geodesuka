@@ -608,6 +608,130 @@ namespace geodesuka::core::gcl {
 
 	VkCommandBuffer texture::operator<<(texture& aRhs) {
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		// Cannot do transfer operations if they do not share the
+		// same context.
+		if (this->Context != aRhs.Context) return CommandBuffer;
+		// Check if dimensions are equal.
+		if ((this->CreateInfo.extent.width != aRhs.CreateInfo.extent.width) ||
+			(this->CreateInfo.extent.height != aRhs.CreateInfo.extent.height) ||
+			(this->CreateInfo.extent.depth != aRhs.CreateInfo.extent.depth) ||
+			(this->CreateInfo.arrayLayers != aRhs.CreateInfo.arrayLayers) ||
+			(this->CreateInfo.mipLevels != aRhs.CreateInfo.mipLevels) ||
+			(this->CreateInfo.format != aRhs.CreateInfo.format)
+		) return CommandBuffer;
+
+		// Check if proper usage flags are enabled.
+		if (
+			((this->CreateInfo.usage & texture::usage::TRANSFER_DST) != texture::usage::TRANSFER_DST) 
+			||
+			((aRhs.CreateInfo.usage & texture::usage::TRANSFER_SRC) != texture::usage::TRANSFER_SRC)
+		) return CommandBuffer;
+
+		// Ready to setup transfer operations.
+		VkResult Result = VkResult::VK_SUCCESS;
+		VkCommandBufferBeginInfo BeginInfo{};
+		std::vector<VkImageMemoryBarrier> Barrier;
+		std::vector<VkImageCopy> Region;
+
+		BeginInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		BeginInfo.pNext					= NULL;
+		BeginInfo.flags					= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.pInheritanceInfo		= NULL;
+
+		// Use Barrier layout transitions for al
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+
+				// Image layout transitions for source.
+				if (this->Layout[i][j] != VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL) {
+					VkImageMemoryBarrier temp{};
+					VkImageSubresourceRange Range{};
+
+					Range.aspectMask				= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+					Range.baseMipLevel				= i;
+					Range.levelCount				= 1;
+					Range.baseArrayLayer			= j;
+					Range.layerCount				= 1;
+
+					temp.sType						= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+					temp.pNext						= NULL;
+					temp.srcAccessMask				= VkAccessFlagBits::VK_ACCESS_MEMORY_WRITE_BIT; // Hopefully finishes all previous writes?
+					temp.dstAccessMask				= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
+					temp.oldLayout					= this->Layout[i][j];
+					temp.newLayout					= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+					temp.srcQueueFamilyIndex		= VK_QUEUE_FAMILY_IGNORED;
+					temp.dstQueueFamilyIndex		= VK_QUEUE_FAMILY_IGNORED;
+					temp.image						= this->Handle;
+					temp.subresourceRange			= Range;
+					this->Layout[i][j]				= temp.newLayout;
+					Barrier.push_back(temp);
+				}
+
+				// Image layout transitions for source.
+				if (aRhs.Layout[i][j] != VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
+					VkImageMemoryBarrier temp{};
+					VkImageSubresourceRange Range{};
+
+					Range.aspectMask				= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT; // Figure out what other options do.
+					Range.baseMipLevel				= i;
+					Range.levelCount				= 1;
+					Range.baseArrayLayer			= j;
+					Range.layerCount				= 1;
+
+					temp.sType						= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+					temp.pNext						= NULL;
+					temp.srcAccessMask				= VkAccessFlagBits::VK_ACCESS_MEMORY_WRITE_BIT; // Hopefully finishes all previous writes?
+					temp.dstAccessMask				= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
+					temp.oldLayout					= aRhs.Layout[i][j];
+					temp.newLayout					= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+					temp.srcQueueFamilyIndex		= VK_QUEUE_FAMILY_IGNORED;
+					temp.dstQueueFamilyIndex		= VK_QUEUE_FAMILY_IGNORED;
+					temp.image						= aRhs.Handle;
+					temp.subresourceRange			= Range;
+					aRhs.Layout[i][j]				= temp.newLayout;
+					Barrier.push_back(temp);
+				}
+
+			}
+
+			VkImageCopy SubRegion{};
+			// Specify memory regions to copy.
+			SubRegion.srcSubresource.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			SubRegion.srcSubresource.mipLevel			= i;
+			SubRegion.srcSubresource.baseArrayLayer		= 0;
+			SubRegion.srcSubresource.layerCount			= aRhs.CreateInfo.arrayLayers;
+			SubRegion.srcOffset							= { 0, 0, 0 };
+			SubRegion.dstSubresource.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+			SubRegion.dstSubresource.mipLevel			= i;
+			SubRegion.dstSubresource.baseArrayLayer		= 0;
+			SubRegion.dstSubresource.layerCount			= this->CreateInfo.arrayLayers;
+			SubRegion.dstOffset							= { 0, 0, 0 };
+			SubRegion.extent							= this->MipExtent[i];
+
+			Region.push_back(SubRegion);
+		}
+
+		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
+
+		// Transition all images.
+		vkCmdPipelineBarrier(CommandBuffer,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0,
+			0, NULL,
+			0, NULL,
+			Barrier.size(), Barrier.data()
+		);
+
+		vkCmdCopyImage(CommandBuffer,
+			aRhs.Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+			this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			Region.size(), Region.data()
+		);
+
+		Result = vkEndCommandBuffer(CommandBuffer);
+
 		return CommandBuffer;
 	}
 
@@ -617,6 +741,9 @@ namespace geodesuka::core::gcl {
 
 	VkCommandBuffer texture::operator<<(buffer& aRhs) {
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
+		if (this->Context != aRhs.Context) return CommandBuffer;
+
+
 		return CommandBuffer;
 	}
 
