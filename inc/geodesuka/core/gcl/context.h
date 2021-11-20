@@ -59,12 +59,23 @@ namespace geodesuka::core::gcl {
 		// Queries if queue type exists with context.
 		bool available(device::qfs aQFS);
 
+		// Will create a single command buffer with selected operations.
+		VkCommandBuffer create(device::qfs aQFS);
+		// Will create a list of command buffers with this context and selected support options.
+		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		// Will destroy a single command buffer created by this context.
+		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+		// Will destroy all command buffers provided if they were created by this context.
+		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
+
+	
 		//TODO: Make create/destroy thread safe.
 		// Will create a series of command buffer handles, and fill the respective arguments.
-		VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		//VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
+		//void destroy(VkCommandBuffer aCommandBuffer);
 		// Will search and clear allocated command buffers from instance.
-		void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		//void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
@@ -110,11 +121,11 @@ namespace geodesuka::core::gcl {
 		queue *Queue;
 
 		// Builtin command pools.
-		VkCommandPoolCreateInfo PoolCreateInfo[4];
-		VkCommandPool Pool[4];
-		uint32_t CommandBufferCount[4];
-		VkCommandBufferAllocateInfo *AllocateInfo[4];
-		VkCommandBuffer *CommandBuffer[4];
+		VkCommandPoolCreateInfo PoolCreateInfo[3];
+		VkCommandPool Pool[3];
+		uint32_t CommandBufferCount[3];
+		//VkCommandBufferAllocateInfo *AllocateInfo[3];
+		VkCommandBuffer *CommandBuffer[3];
 
 	};
 

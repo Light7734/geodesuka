@@ -175,7 +175,7 @@ namespace geodesuka::core::gcl {
 			QueueArrayOffset += QueueFamilyProperty[this->UQFI[i]].queueCount;
 		}
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			this->PoolCreateInfo[i].sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 			this->PoolCreateInfo[i].pNext = NULL;
 		}
@@ -188,31 +188,30 @@ namespace geodesuka::core::gcl {
 		// Allows individual command buffers to be reset.
 		
 		// One time submit pool
-		this->PoolCreateInfo[0].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
+		// Transfer operations.
+		this->PoolCreateInfo[0].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		this->PoolCreateInfo[0].queueFamilyIndex	= this->qfi(device::qfs::TRANSFER);
 
-		// Persistent Transfer operations.
-		this->PoolCreateInfo[1].flags				= 0;
-		this->PoolCreateInfo[1].queueFamilyIndex	= this->qfi(device::qfs::TRANSFER);
-
 		// Compute operations.
-		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::COMPUTE);
+		this->PoolCreateInfo[1].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[1].queueFamilyIndex	= this->qfi(device::qfs::COMPUTE);
 
 		// Graphics operations.
-		this->PoolCreateInfo[3].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		this->PoolCreateInfo[3].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS);
+		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS);
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			if (this->QFI[i] != -1) {
 				Result = vkCreateCommandPool(this->Handle, &this->PoolCreateInfo[i], NULL, &this->Pool[i]);
+			}
+			else {
+				this->Pool[i] = VK_NULL_HANDLE;
 			}
 			this->CommandBufferCount[i] = 0;
 			this->CommandBuffer[i] = NULL;
 		}
 
 		this->Engine->submit(this);
-
 	}
 
 	context::~context() {
@@ -222,7 +221,7 @@ namespace geodesuka::core::gcl {
 		this->Engine->remove(this);
 
 		// Clear all command buffers and pools.
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			if (this->CommandBufferCount[i] > 0) {
 				vkFreeCommandBuffers(this->Handle, this->Pool[i], this->CommandBufferCount[i], this->CommandBuffer[i]);
 			}
@@ -276,6 +275,162 @@ namespace geodesuka::core::gcl {
 		return (this->available(aQFS) != -1);
 	}
 
+	VkCommandBuffer context::create(device::qfs aQFS) {
+		VkCommandBuffer temp = VK_NULL_HANDLE;
+		this->create(aQFS, 1, &temp);
+		return temp;
+	}
+
+	VkResult context::create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		VkResult Result = VkResult::VK_INCOMPLETE;
+		if ((this->qfi(aQFS) < 0) || (aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return Result;
+
+		int i;
+		switch (aQFS) {
+		default: return Result;
+		case device::qfs::TRANSFER:	 i = 0; break;
+		case device::qfs::COMPUTE:	 i = 1; break;
+		case device::qfs::GRAPHICS:	 i = 2; break;
+		}
+
+		// Pool is invalid.
+		if (this->Pool[i] == VK_NULL_HANDLE) return Result;
+
+		VkCommandBufferAllocateInfo AllocateInfo{};
+
+		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		AllocateInfo.pNext					= NULL;
+		AllocateInfo.commandPool			= this->Pool[i];
+		AllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		AllocateInfo.commandBufferCount		= aCommandBufferCount;
+
+		//this->Mutex.lock();
+		// Check if allocation is succesful.
+		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, aCommandBuffer);
+		if (Result != VkResult::VK_SUCCESS) {
+			return Result;
+		}
+
+		// alloc/realloc command buffer memory pool.
+		void* nptr = NULL;
+		if (this->CommandBuffer[i] == NULL) {
+			nptr = malloc(aCommandBufferCount * sizeof(VkCommandBuffer));
+		}
+		else {
+			nptr = realloc(this->CommandBuffer[i], (aCommandBufferCount + this->CommandBufferCount[i]) * sizeof(VkCommandBuffer));
+		}
+
+		// Out of host memory.
+		if (nptr == NULL) {
+			Result = VkResult::VK_ERROR_OUT_OF_HOST_MEMORY;
+			vkFreeCommandBuffers(this->Handle, this->Pool[i], aCommandBufferCount, aCommandBuffer);
+			for (size_t j = 0; j < aCommandBufferCount; j++) {
+				aCommandBuffer[j] = VK_NULL_HANDLE;
+			}
+			return Result;
+		}
+
+		// Copy new pointer over.
+		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
+
+		// Store new command buffers.
+		memcpy(&this->CommandBuffer[this->CommandBufferCount[i]], aCommandBuffer, aCommandBufferCount * sizeof(VkCommandBuffer));
+
+		// Account for new buffer count.
+		this->CommandBufferCount[i] += aCommandBufferCount;
+
+		return Result;
+	}
+
+	void context::destroy(device::qfs aQFS, VkCommandBuffer& aCommandBuffer) {
+		this->destroy(aQFS, 1, &aCommandBuffer);
+	}
+
+	void context::destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+		if ((this->qfi(aQFS) < 0) || (aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
+		// Takes a list of aggregated command buffers and cross references them
+		// with already created command buffers.
+
+
+		int Index;
+		switch (aQFS) {
+		default: return;
+		case device::qfs::TRANSFER:	 Index = 0; break;
+		case device::qfs::COMPUTE:	 Index = 1; break;
+		case device::qfs::GRAPHICS:	 Index = 2; break;
+		}
+
+		if (this->Pool[Index] == VK_NULL_HANDLE) return;
+
+		// Match
+		int MatchCount = 0;
+		VkCommandBuffer* MatchBuffer = NULL;
+		VkCommandBuffer* NewBuffer = NULL;
+
+		// Count number of matches.
+		for (uint32_t i = 0; i < this->CommandBufferCount[Index]; i++) {
+			for (uint32_t j = 0; j < aCommandBufferCount; j++) {
+				if (this->CommandBuffer[Index][i] == aCommandBuffer[j]) {
+					MatchCount += 1;
+				}
+			}
+		}
+
+		// No command buffers matched.
+		if (MatchCount == 0) return;
+
+		// Clears all command buffer with family in question.
+		if (MatchCount == this->CommandBufferCount[Index]) {
+			this->Mutex.lock();
+			vkFreeCommandBuffers(this->Handle, this->Pool[Index], aCommandBufferCount, aCommandBuffer);
+			free(this->CommandBuffer[Index]);
+			this->CommandBuffer[Index] = NULL;
+			this->Mutex.unlock();
+			return;
+		}
+
+		MatchBuffer = (VkCommandBuffer*)malloc(MatchCount * sizeof(VkCommandBuffer));
+		NewBuffer = (VkCommandBuffer*)malloc((this->CommandBufferCount[Index] - MatchCount) * sizeof(VkCommandBuffer));
+
+		// Memory allocation failure.
+		if ((MatchBuffer == NULL) || (NewBuffer == NULL)) {
+			free(MatchBuffer);
+			MatchBuffer = NULL;
+			free(NewBuffer);
+			NewBuffer = NULL;
+			return;
+		}
+
+		this->Mutex.lock();
+		int m = 0;
+		int n = 0;
+		for (uint32_t i = 0; i < this->CommandBufferCount[Index]; i++) {
+			for (uint32_t j = 0; j < aCommandBufferCount; j++) {
+				if (this->CommandBuffer[Index][i] == aCommandBuffer[j]) {
+					MatchBuffer[m] = this->CommandBuffer[Index][i];
+					this->CommandBuffer[Index][i] = VK_NULL_HANDLE;
+					aCommandBuffer[j] = VK_NULL_HANDLE;
+					m += 1;
+				}
+				else {
+					NewBuffer[n] = this->CommandBuffer[Index][i];
+					this->CommandBuffer[Index][i] = VK_NULL_HANDLE;
+					n += 1;
+				}
+			}
+		}
+
+		vkFreeCommandBuffers(this->Handle, this->Pool[Index], MatchCount, MatchBuffer);
+		free(MatchBuffer);
+		MatchBuffer = NULL;
+		free(this->CommandBuffer[Index]);
+		this->CommandBuffer[Index] = NewBuffer;
+		this->CommandBufferCount[Index] = this->CommandBufferCount[Index] - MatchCount;
+		this->Mutex.unlock();
+		return;
+	}
+
+	/*
 	VkResult context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
 		//this->Mutex.lock();
 		VkResult Result = VkResult::VK_INCOMPLETE;
@@ -385,6 +540,7 @@ namespace geodesuka::core::gcl {
 		nptr = NULL;
 		//this->Mutex.unlock();
 	}
+	*/
 
 	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
 		VkResult Result = VkResult::VK_INCOMPLETE;

@@ -90,6 +90,8 @@ macro def collision and interference.
 
 # To Do List:
 
+- Create System Terminal Class for engine debug commands.
+
 - Add proper constructors to natural vectors.
 
 - Finish texture.h staging buffer backend now that

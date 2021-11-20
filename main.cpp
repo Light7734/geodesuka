@@ -275,8 +275,6 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 
 	texture DeviceTexture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 
-	{
-	}
 	// Test copy/move constructors/assignment.
 	texture CopyConstructor(DeviceTexture);
 	texture MoveConstructor(
