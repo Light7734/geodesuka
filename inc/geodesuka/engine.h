@@ -184,8 +184,8 @@ namespace geodesuka {
 		std::mutex Mutex;
 
 		// Maintain versioning system.
-		const version Version = { 0, 0, 16 };
-		const int Date = 20211104;
+		const version Version = { 0, 0, 17 };
+		const int Date = 20211120;
 
 		// Engine Startup Conditions
 		bool isGLSLANGReady;
