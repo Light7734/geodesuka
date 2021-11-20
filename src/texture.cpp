@@ -630,7 +630,7 @@ namespace geodesuka::core::gcl {
 
 	texture& texture::operator=(texture& aRhs) {
 		if (this == &aRhs) return *this;
-		//if (this->Context != aRhs.Context) return *this;
+		this->pmclearall();
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;

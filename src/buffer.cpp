@@ -207,12 +207,7 @@ namespace geodesuka::core::gcl {
 
 	buffer& buffer::operator=(buffer& aRhs) {
 		if (this == &aRhs) return *this;
-		if ((this->Context != nullptr) && (this->CreateInfo.size != aRhs.CreateInfo.size)) {
-			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-			this->Handle = VK_NULL_HANDLE;
-			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-			this->MemoryHandle = VK_NULL_HANDLE;
-		}
+		this->pmclearall();
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;
@@ -234,9 +229,7 @@ namespace geodesuka::core::gcl {
 			}
 			if (Result == VkResult::VK_SUCCESS) {
 				VkSubmitInfo Submission{};
-				VkCommandBufferBeginInfo BeginInfo{};
 				VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
-				VkBufferCopy Region{};
 				VkFenceCreateInfo FenceCreateInfo{};
 				VkFence Fence;
 
@@ -250,32 +243,17 @@ namespace geodesuka::core::gcl {
 				Submission.signalSemaphoreCount		= 0;
 				Submission.pSignalSemaphores		= NULL;
 
-				BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-				BeginInfo.pNext						= NULL;
-				BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-				BeginInfo.pInheritanceInfo			= NULL;
-
-				Region.srcOffset					= 0;
-				Region.dstOffset					= 0;
-				Region.size							= this->CreateInfo.size; // this->Count* this->MemoryLayout.Type.Size;
-
 				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				FenceCreateInfo.pNext				= NULL;
 				FenceCreateInfo.flags				= 0;
 
-				//this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
-				CommandBuffer = this->Context->create(device::qfs::TRANSFER);
-				if (CommandBuffer != VK_NULL_HANDLE) {
-					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
-					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
-					vkCmdCopyBuffer(CommandBuffer, aRhs.Handle, this->Handle, 1, &Region);
-					Result = vkEndCommandBuffer(CommandBuffer);
-					this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
-					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-					vkDestroyFence(this->Context->handle(), Fence, NULL);
-				}
-				//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				CommandBuffer = (*this << aRhs);
+				Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+				Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+				Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+
 				this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
+				vkDestroyFence(this->Context->handle(), Fence, NULL);
 			}
 		}
 
@@ -283,12 +261,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	buffer& buffer::operator=(buffer&& aRhs) noexcept {
-		if (this->Context != nullptr) {
-			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-			this->Handle = VK_NULL_HANDLE;
-			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-			this->MemoryHandle = VK_NULL_HANDLE;
-		}
+		this->pmclearall();
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;
