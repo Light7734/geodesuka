@@ -67,12 +67,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	context_unit_test(Context);
+	//context_unit_test(Context);
 	buffer_unit_test(Context);
 	texture_unit_test(Context);
 
 	// Move this function somewhere else.
-	Engine.tsleep(5);
+	Engine.tsleep(3);
 
 	return 0;
 }
@@ -91,12 +91,10 @@ void context_unit_test(geodesuka::core::gcl::context* Context) {
 	Context->destroy(device::qfs::TRANSFER, 2, &Array[4]);
 	Context->destroy(device::qfs::TRANSFER, Array[6]);
 
-
-
 }
 
 void buffer_unit_test(geodesuka::core::gcl::context *Context) {
-	std::cout << " -------------------- Buffer memory integrity test -------------------- " << std::endl;
+	std::cout << " -------------------- buffer.h memory integrity test -------------------- " << std::endl;
 	// This function tests the integrity of data by passing
 	// it to the selected devices memory, and then retrieving it.
 	math::real Vertices[] = {
@@ -279,7 +277,7 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 }
 
 void texture_unit_test(geodesuka::core::gcl::context *Context) {
-	std::cout << " -------------------- Texture memory integrity test -------------------- " << std::endl;
+	std::cout << " -------------------- texture.h memory integrity test -------------------- " << std::endl;
 	// This function tests the integrity of data by passing
 	// it to the selected devices memory, and then retrieving it.
 	texture::prop DeviceProp = texture::prop();
@@ -296,6 +294,16 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 		0xAA, 0xBB, 0xCC, 0xDD, 0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,
 		0xAA, 0xBB, 0xCC, 0xDD, 0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD,0xAA, 0xBB, 0xCC, 0xDD
 	};
+
+	unsigned char EmptyData[4 * 4 * 4] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	};
+
+	unsigned char ReturnData[64];
+	memset(ReturnData, 0x00, 64);
 
 	texture DeviceTexture(Context, device::memory::DEVICE_LOCAL, DeviceProp, VkFormat::VK_FORMAT_R8G8B8A8_UINT, 4, 4, 1, (void*)PixelData);
 
@@ -341,20 +349,78 @@ void texture_unit_test(geodesuka::core::gcl::context *Context) {
 
 	Result = vkCreateFence(Context->handle(), &FenceCreateInfo, NULL, &Fence);
 
-	HostBuffer.write(0, 64, 0);
-	// Get copy assignment memory.
+	memset(ReturnData, 0x00, 64);
+	HostBuffer.write(0, 64, EmptyData);
+
+	// Device Transfer Operation.
 	CommandBuffer = (HostBuffer << CopyConstructor);
-	Context->submit(device::TRANSFER, 1, &Submission, Fence);
+	Result = Context->submit(device::TRANSFER, 1, &Submission, Fence);
 	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+	Result = vkResetFences(Context->handle(), 1, &Fence);
+	Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
+	HostBuffer.read(0, 64, ReturnData);
+	if (memcmp(PixelData, ReturnData, 64) == 0) {
+		std::cout << "texture.h Copy Constructor Memory Integrity Test Status: SUCCESS." << std::endl;
+	}
+	else {
+		std::cout << "texture.h Copy Constructor Memory Integrity Test Status: FAILURE." << std::endl;
+	}
+
+
+	memset(ReturnData, 0x00, 64);
+	HostBuffer.write(0, 64, EmptyData);
+	// Device Transfer Operation.
 	CommandBuffer = (HostBuffer << MoveConstructor);
+	Result = Context->submit(device::TRANSFER, 1, &Submission, Fence);
+	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+	Result = vkResetFences(Context->handle(), 1, &Fence);
+	Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
+	HostBuffer.read(0, 64, ReturnData);
+	if (memcmp(PixelData, ReturnData, 64) == 0) {
+		std::cout << "texture.h Move Constructor Memory Integrity Test Status: SUCCESS." << std::endl;
+	}
+	else {
+		std::cout << "texture.h Move Constructor Memory Integrity Test Status: FAILURE." << std::endl;
+	}
+
+	// ----- Copy Assignment -----
+	memset(ReturnData, 0x00, 64);
+	HostBuffer.write(0, 64, EmptyData);
+	// Device Transfer Operation.
 	CommandBuffer = (HostBuffer << CopyAssignment);
+	Result = Context->submit(device::TRANSFER, 1, &Submission, Fence);
+	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+	Result = vkResetFences(Context->handle(), 1, &Fence);
+	Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
+	HostBuffer.read(0, 64, ReturnData);
+	if (memcmp(PixelData, ReturnData, 64) == 0) {
+		std::cout << "texture.h Copy Assignment Memory Integrity Test Status: SUCCESS." << std::endl;
+	}
+	else {
+		std::cout << "texture.h Copy Assignment Memory Integrity Test Status: FAILURE." << std::endl;
+	}
+
+	// ----- Move Assignment -----
+	memset(ReturnData, 0x00, 64);
+	HostBuffer.write(0, 64, EmptyData);
+	// Device Transfer Operation.
 	CommandBuffer = (HostBuffer << MoveAssignment);
+	Result = Context->submit(device::TRANSFER, 1, &Submission, Fence);
+	Result = vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+	Result = vkResetFences(Context->handle(), 1, &Fence);
+	Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
+	HostBuffer.read(0, 64, ReturnData);
+	if (memcmp(PixelData, ReturnData, 64) == 0) {
+		std::cout << "texture.h Move Assignment Memory Integrity Test Status: SUCCESS." << std::endl;
+	}
+	else {
+		std::cout << "texture.h Move Assignment Memory Integrity Test Status: FAILURE." << std::endl;
+	}
 
 	vkDestroyFence(Context->handle(), Fence, NULL);
-
 
 }

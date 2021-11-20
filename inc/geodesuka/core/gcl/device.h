@@ -55,9 +55,13 @@ namespace geodesuka::core::gcl {
 		VkPhysicalDeviceFeatures get_features() const;
 		VkPhysicalDeviceMemoryProperties get_memory_properties() const;
 		const VkExtensionProperties* get_extensions(uint32_t* aExtensionCount) const;
+		int get_memory_type_index(VkMemoryRequirements aMemoryRequirements, int aMemoryType) const;
+		int get_memory_type(int aMemoryTypeIndex);
 
 		const VkQueueFamilyProperties* get_queue_families(uint32_t* aQueueFamilyCount) const;
 		const queue_family_capability* get_capability(uint32_t* aQueueFamilyCount) const;
+
+
 
 		// Checks if device has queue support bit.
 		bool available(unsigned int aQSB) const;
@@ -92,6 +96,7 @@ namespace geodesuka::core::gcl {
 		VkExtensionProperties* Extension;
 		VkPhysicalDeviceProperties Properties{};
 		VkPhysicalDeviceFeatures Features{};
+		VkPhysicalDeviceMemoryProperties MemoryProperties{};
 
 	};
 

@@ -13,7 +13,7 @@ namespace geodesuka::core::gcl {
 		this->Count = 0;
 	}
 
-	buffer::buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
+	buffer::buffer(context* aContext, int aMemoryType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData) {
 		if (aContext == nullptr) return;
 		VkResult Result = VK_SUCCESS;
 		this->Context = aContext;
@@ -39,32 +39,24 @@ namespace geodesuka::core::gcl {
 		// Allocates Memory Handle
 		if (Result == VkResult::VK_SUCCESS) {
 			// Gathers memory requirements of the created buffer.
-			VkMemoryRequirements MemReq;
-			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
+			VkMemoryRequirements MemoryRequirement;
+			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemoryRequirement);
 
-			// Gathers memory properties of the device.
-			VkPhysicalDeviceMemoryProperties MemProp;
-			vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
+			// Will search for exact then approximate type.
+			int MemoryTypeIndex = aContext->parent()->get_memory_type_index(MemoryRequirement, aMemoryType);
+			if (MemoryTypeIndex >= 0) {
+				this->AllocateInfo.sType			= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				this->AllocateInfo.pNext			= NULL;
+				this->AllocateInfo.allocationSize	= MemoryRequirement.size;
+				this->AllocateInfo.memoryTypeIndex	= MemoryTypeIndex;
+				this->MemoryProperty				= aContext->parent()->get_memory_type(MemoryTypeIndex);
 
-			this->AllocateInfo.sType			= VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			this->AllocateInfo.pNext			= NULL;
-			this->AllocateInfo.allocationSize	= MemReq.size;
-			// Currently index selection chooses indice based on proposed aMemType,
-			// and can possibly include extra features rather than exactly demanded.
-			// Maybe change to exactly only chosen features later on.
-			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
-				// Searches for exact memory properties.
-				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
-				// Searches for approximate memory properties, with additional props.
-				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemType) == aMemType)) {
-					this->MemoryProperty = MemProp.memoryTypes[i].propertyFlags;
-					this->AllocateInfo.memoryTypeIndex = i;
-					break;
-				}
+				// Allocate Device Memory.
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
 			}
-			
-			// Allocate Device Memory.
-			Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+			else {
+				Result = VkResult::VK_ERROR_FORMAT_NOT_SUPPORTED;
+			}
 		}
 
 		// Bind memory to buffer
@@ -103,32 +95,24 @@ namespace geodesuka::core::gcl {
 		// Allocates Memory Handle
 		if (Result == VkResult::VK_SUCCESS) {
 			// Gathers memory requirements of the created buffer.
-			VkMemoryRequirements MemReq;
-			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemReq);
+			VkMemoryRequirements MemoryRequirement;
+			vkGetBufferMemoryRequirements(aContext->handle(), this->Handle, &MemoryRequirement);
 
-			// Gathers memory properties of the device.
-			VkPhysicalDeviceMemoryProperties MemProp;
-			vkGetPhysicalDeviceMemoryProperties(aContext->parent()->handle(), &MemProp);
+			// Will search for exact then approximate type.
+			int MemoryTypeIndex = aContext->parent()->get_memory_type_index(MemoryRequirement, aMemoryType);
+			if (MemoryTypeIndex >= 0) {
+				this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				this->AllocateInfo.pNext = NULL;
+				this->AllocateInfo.allocationSize = MemoryRequirement.size;
+				this->AllocateInfo.memoryTypeIndex = MemoryTypeIndex;
+				this->MemoryProperty = aContext->parent()->get_memory_type(MemoryTypeIndex);
 
-			this->AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-			this->AllocateInfo.pNext = NULL;
-			this->AllocateInfo.allocationSize = MemReq.size;
-			// Currently index selection chooses indice based on proposed aMemType,
-			// and can possibly include extra features rather than exactly demanded.
-			// Maybe change to exactly only chosen features later on.
-			for (uint32_t i = 0; i < MemProp.memoryTypeCount; i++) {
-				// Searches for exact memory properties.
-				//if (((MemReq.memoryTypeBits & (1 << i)) >> i) && (MemProp.memoryTypes[i].propertyFlags == aMemType))
-				// Searches for approximate memory properties, with additional props.
-				if (((MemReq.memoryTypeBits & (1 << i)) >> i) && ((MemProp.memoryTypes[i].propertyFlags & aMemoryType) == aMemoryType)) {
-					this->MemoryProperty = MemProp.memoryTypes[i].propertyFlags;
-					this->AllocateInfo.memoryTypeIndex = i;
-					break;
-				}
+				// Allocate Device Memory.
+				Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
 			}
-
-			// Allocate Device Memory.
-			Result = vkAllocateMemory(this->Context->handle(), &this->AllocateInfo, NULL, &this->MemoryHandle);
+			else {
+				Result = VkResult::VK_ERROR_FORMAT_NOT_SUPPORTED;
+			}
 		}
 
 		// Bind memory to buffer
@@ -148,22 +132,18 @@ namespace geodesuka::core::gcl {
 	}
 
 	buffer::~buffer() {
-		if (this->Context != nullptr) {
-			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
-			this->Handle = VK_NULL_HANDLE;
-			vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
-			this->MemoryHandle = VK_NULL_HANDLE;
-		}
-		this->Context = nullptr;
+		this->pmclearall();
 	}
 
-	buffer::buffer(const buffer& aInp) {
-		this->Context = aInp.Context;
-		this->CreateInfo = aInp.CreateInfo;
-		this->AllocateInfo = aInp.AllocateInfo;
-		this->MemoryProperty = aInp.MemoryProperty;
-		this->Count = aInp.Count;
-		this->MemoryLayout = aInp.MemoryLayout;
+	buffer::buffer(buffer& aInp) {
+		this->Context			= aInp.Context;
+
+		this->CreateInfo		= aInp.CreateInfo;
+		this->AllocateInfo		= aInp.AllocateInfo;
+		this->MemoryProperty	= aInp.MemoryProperty;
+		this->Count				= aInp.Count;
+		this->MemoryLayout		= aInp.MemoryLayout;
+
 		VkResult Result = VkResult::VK_SUCCESS;
 		if (this->Context != nullptr) {
 			Result = vkCreateBuffer(this->Context->handle(), &this->CreateInfo, NULL, &this->Handle);
@@ -175,9 +155,7 @@ namespace geodesuka::core::gcl {
 			}
 			if (Result == VkResult::VK_SUCCESS) {
 				VkSubmitInfo Submission{};
-				VkCommandBufferBeginInfo BeginInfo{};
 				VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
-				VkBufferCopy Region{};
 				VkFenceCreateInfo FenceCreateInfo{};
 				VkFence Fence;
 
@@ -191,37 +169,23 @@ namespace geodesuka::core::gcl {
 				Submission.signalSemaphoreCount		= 0;
 				Submission.pSignalSemaphores		= NULL;
 
-				BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-				BeginInfo.pNext						= NULL;
-				BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-				BeginInfo.pInheritanceInfo			= NULL;
-
-				Region.srcOffset					= 0;
-				Region.dstOffset					= 0;
-				Region.size							= this->CreateInfo.size; // this->Count* this->MemoryLayout.Type.Size;
-
 				FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 				FenceCreateInfo.pNext				= NULL;
 				FenceCreateInfo.flags				= 0;
 
-				//this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
-				CommandBuffer = this->Context->create(device::qfs::TRANSFER);
-				if (CommandBuffer != VK_NULL_HANDLE) {
-					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
-					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
-					vkCmdCopyBuffer(CommandBuffer, aInp.Handle, this->Handle, 1, &Region);
-					Result = vkEndCommandBuffer(CommandBuffer);
-					this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
-					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-					vkDestroyFence(this->Context->handle(), Fence, NULL);
-				}
-				//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				CommandBuffer = (*this << aInp);
+				Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
+				Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+				Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
+
 				this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
+				vkDestroyFence(this->Context->handle(), Fence, NULL);
+
 			}
 		}
 	}
 
-	buffer::buffer(buffer&& aInp) {
+	buffer::buffer(buffer&& aInp) noexcept {
 		this->Context			= aInp.Context;
 		this->CreateInfo		= aInp.CreateInfo;
 		this->Handle			= aInp.Handle;
@@ -241,7 +205,7 @@ namespace geodesuka::core::gcl {
 		aInp.MemoryLayout		= util::variable();
 	}
 
-	buffer& buffer::operator=(const buffer& aRhs) {
+	buffer& buffer::operator=(buffer& aRhs) {
 		if (this == &aRhs) return *this;
 		if ((this->Context != nullptr) && (this->CreateInfo.size != aRhs.CreateInfo.size)) {
 			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
@@ -318,7 +282,7 @@ namespace geodesuka::core::gcl {
 		return *this;
 	}
 
-	buffer& buffer::operator=(buffer&& aRhs) {
+	buffer& buffer::operator=(buffer&& aRhs) noexcept {
 		if (this->Context != nullptr) {
 			vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
 			this->Handle = VK_NULL_HANDLE;
@@ -421,7 +385,18 @@ namespace geodesuka::core::gcl {
 			Barrier[i].subresourceRange.levelCount			= 1;
 			Barrier[i].subresourceRange.baseArrayLayer		= i;
 			Barrier[i].subresourceRange.layerCount			= 1;
+			aRhs.Layout[0][i]								= Barrier[i].newLayout;
 		}
+
+		Region.bufferOffset						= 0;
+		Region.bufferRowLength					= 0;
+		Region.bufferImageHeight				= 0;
+		Region.imageSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+		Region.imageSubresource.mipLevel		= 0;
+		Region.imageSubresource.baseArrayLayer	= 0;
+		Region.imageSubresource.layerCount		= aRhs.CreateInfo.arrayLayers;
+		Region.imageOffset						= { 0, 0, 0 };
+		Region.imageExtent						= aRhs.CreateInfo.extent;
 
 		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
@@ -637,6 +612,28 @@ namespace geodesuka::core::gcl {
 
 	VkBuffer buffer::handle() {
 		return this->Handle;
+	}
+
+	void buffer::pmclearall() {
+		if (this->Context != nullptr) {
+			if (this->Handle != VK_NULL_HANDLE) {
+				vkDestroyBuffer(this->Context->handle(), this->Handle, NULL);
+				this->Handle = VK_NULL_HANDLE;
+			}
+			if (this->MemoryHandle != VK_NULL_HANDLE) {
+				vkFreeMemory(this->Context->handle(), this->MemoryHandle, NULL);
+				this->MemoryHandle = VK_NULL_HANDLE;
+			}
+		}
+
+		this->Context = nullptr;
+		this->CreateInfo = {};
+		this->AllocateInfo = {};
+		this->MemoryProperty = 0;
+
+		this->Count = 0;
+		this->MemoryLayout = util::variable();
+
 	}
 
 }

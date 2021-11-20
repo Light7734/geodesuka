@@ -630,7 +630,7 @@ namespace geodesuka::core::gcl {
 
 	texture& texture::operator=(texture& aRhs) {
 		if (this == &aRhs) return *this;
-		if (this->Context != aRhs.Context) return *this;
+		//if (this->Context != aRhs.Context) return *this;
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;
@@ -674,6 +674,33 @@ namespace geodesuka::core::gcl {
 			return *this;
 		}
 
+		// Set initial layouts.
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i][j] = this->CreateInfo.initialLayout;
+			}
+		}
+
+		// Generate Mip resolutions.
+		// Mip Level resolutions.
+		this->MipExtent = (VkExtent3D*)malloc(this->CreateInfo.mipLevels * sizeof(VkExtent3D));
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			switch (this->CreateInfo.imageType) {
+			default: 
+				break;
+			case VK_IMAGE_TYPE_1D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), 1u, 1u };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), 1u };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), (this->CreateInfo.extent.depth >> i) };
+				break;
+			}
+		}
+
+
 		VkSubmitInfo Submission{};
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
 		VkFenceCreateInfo FenceCreateInfo{};
@@ -689,9 +716,13 @@ namespace geodesuka::core::gcl {
 		Submission.signalSemaphoreCount		= 0;
 		Submission.pSignalSemaphores		= NULL;
 
+		FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		FenceCreateInfo.pNext				= NULL;
+		FenceCreateInfo.flags				= 0;
+
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 		CommandBuffer = (*this << aRhs);
-		this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
 
 		vkDestroyFence(this->Context->handle(), Fence, NULL);
