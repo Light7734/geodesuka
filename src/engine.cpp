@@ -63,6 +63,9 @@ namespace geodesuka {
 
 		// (Vulkan) Load required window extensions.
 		if (this->isGLFWReady) {
+			// Validation Layers.
+			this->EnabledLayer.push_back("VK_LAYER_KHRONOS_validation");
+
 			// Certain extensions needed for interacting with Operating System window system.
 			uint32_t OSExtensionCount = 0;
 			const char** OSExtensionList = glfwGetRequiredInstanceExtensions(&OSExtensionCount);
@@ -70,7 +73,7 @@ namespace geodesuka {
 			for (uint32_t i = 0; i < OSExtensionCount; i++) {
 				this->RequiredExtension.push_back(OSExtensionList[i]);
 			}
-			//this->RequiredExtension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);
+			//this->RequiredExtension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);		
 
 			for (size_t i = 0; i < this->RequiredExtension.size(); i++) {
 				std::cout << this->RequiredExtension[i] << std::endl;
@@ -87,10 +90,10 @@ namespace geodesuka {
 			this->InstProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 			this->InstProp.pNext						= NULL;
 			this->InstProp.flags						= 0;
-			this->InstProp.pApplicationInfo				= &AppProp;
-			this->InstProp.enabledLayerCount			= 0;
-			this->InstProp.ppEnabledLayerNames			= NULL;
-			this->InstProp.enabledExtensionCount		= this->RequiredExtension.size();
+			this->InstProp.pApplicationInfo				= &this->AppProp;
+			this->InstProp.enabledLayerCount			= (uint32_t)this->EnabledLayer.size();
+			this->InstProp.ppEnabledLayerNames			= this->EnabledLayer.data();
+			this->InstProp.enabledExtensionCount		= (uint32_t)this->RequiredExtension.size();
 			this->InstProp.ppEnabledExtensionNames		= this->RequiredExtension.data();
 
 			VkResult Result = vkCreateInstance(&InstProp, NULL, &this->Instance);
@@ -100,7 +103,6 @@ namespace geodesuka {
 			else {
 				this->isVulkanReady = false;
 			}
-
 		}
 
 		// First initialized object is the system terminal.
@@ -144,6 +146,10 @@ namespace geodesuka {
 
 		this->isReady = this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady && this->isSystemDisplayAvailable && this->isGCDeviceAvailable;
 
+		std::cout << "Geodesuka Engine";
+		std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
+		std::cout << " - Date: " << this->Date << std::endl;
+
 		// Engine is ready, initialize loops.
 		if (this->isReady) {
 
@@ -152,6 +158,7 @@ namespace geodesuka {
 			this->RenderThread = std::thread(&engine::trender, this);
 
 		}
+
 
 		// ------------------------- Debug Print Info ------------------------- //
 

@@ -28,28 +28,6 @@ namespace geodesuka::builtin::object {
 
 	private:
 
-
-		// Describes the bound vertex buffers in draw call.
-		std::vector<VkVertexInputBindingDescription> InputBindingDescription;
-		// Describes the per vertex memory layout of bound buffers.
-		std::vector<VkVertexInputAttributeDescription> InputAttributeDescription;
-		// Shader stages of the graphics pipeline.
-		std::vector<VkPipelineShaderStageCreateInfo> ShaderStage;
-
-		// Shader Stages for triangle.
-		VkPipelineVertexInputStateCreateInfo VertexInput;
-		VkPipelineInputAssemblyStateCreateInfo InputAssembly;
-		//VkPipelineTessellationStateCreateInfo Tessellation;
-		VkPipelineViewportStateCreateInfo Viewport;
-		VkPipelineRasterizationStateCreateInfo Rasterizer;
-		VkPipelineMultisampleStateCreateInfo Multisample;
-		VkPipelineDepthStencilStateCreateInfo DepthStencil;
-		VkPipelineColorBlendStateCreateInfo ColorBlend;
-		VkPipelineDynamicStateCreateInfo DynamicState;
-
-		VkGraphicsPipelineCreateInfo CreateInfo;
-		VkPipeline GraphicsPipeline;
-
 	};
 
 }

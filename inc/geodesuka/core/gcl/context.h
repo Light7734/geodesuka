@@ -32,6 +32,7 @@ namespace geodesuka::core::gcl {
 		//	PRESENT		= 0x00000008
 		//};
 
+		// TODO: Remove these options and only create TRANSFER, COMPUTE, GRAPHICS pools.
 		enum cmdtype {
 			// One time submit for transfer operations.
 			TRANSFER_OTS,
@@ -58,17 +59,31 @@ namespace geodesuka::core::gcl {
 		// Queries if queue type exists with context.
 		bool available(device::qfs aQFS);
 
-		// Will create a series of command buffer handles, and fill the respective arguments.
-		void create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		// Will create a single command buffer with selected operations.
+		VkCommandBuffer create(device::qfs aQFS);
 
+		// Will create a list of command buffers with this context and selected support options.
+		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+
+		// Will destroy a single command buffer created by this context.
+		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+
+		// Will destroy all command buffers provided if they were created by this context.
+		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
+	
+		//TODO: Make create/destroy thread safe.
+		// Will create a series of command buffer handles, and fill the respective arguments.
+		//VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+
+		//void destroy(VkCommandBuffer aCommandBuffer);
 		// Will search and clear allocated command buffers from instance.
-		void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		//void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
-		void submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
+		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 
 		// Simply presents images corresponding to indices.
-		void present(VkPresentInfoKHR* aPresentation);
+		VkResult present(VkPresentInfoKHR* aPresentation);
 
 		VkInstance inst();
 		device* parent();
@@ -108,11 +123,10 @@ namespace geodesuka::core::gcl {
 		queue *Queue;
 
 		// Builtin command pools.
-		VkCommandPoolCreateInfo PoolCreateInfo[4];
-		VkCommandPool Pool[4];
-		uint32_t CommandBufferCount[4];
-		VkCommandBufferAllocateInfo *AllocateInfo[4];
-		VkCommandBuffer *CommandBuffer[4];
+		VkCommandPoolCreateInfo PoolCreateInfo[3];
+		VkCommandPool Pool[3];
+		uint32_t CommandBufferCount[3];
+		VkCommandBuffer *CommandBuffer[3];
 
 	};
 

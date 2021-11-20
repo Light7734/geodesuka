@@ -21,11 +21,8 @@ namespace geodesuka::core::gcl {
 	class texture {
 	public:
 
+		friend class buffer;
 		friend class object::system_window;
-
-		enum format {
-
-		};
 
 		enum sample {
 			COUNT_1		= 0x00000001,
@@ -53,38 +50,61 @@ namespace geodesuka::core::gcl {
 			INPUT_ATTACHMENT			= 0x00000080
 		};
 
-		enum layout {
-
-		};
-
 		struct prop {
-			//int Format;
-			//int Resolution[3];
-			int MipLevels;
-			int LayerCount;
-			int Sampling;
+			int ArrayLayerCount;
+			int SampleCounts;
 			int Tiling;
 			int Usage;
-			int Layout;
 
-			//prop();
+			prop();
 		};
 
+		// Will yield the number of bits per pixel.
+		static size_t bytesperpixel(VkFormat aFormat);
+		static size_t bitsperpixel(VkFormat aFormat);
 
-		texture(context *aCtx, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth);
+		texture();
+		texture(context *aContext, int aMemoryType, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth, void *aTextureData);
 		~texture();
+		
+		// Copy Constructor.
+		texture(texture& aInput);
+		// Move Constructor.
+		texture(texture&& aInput) noexcept;
+		// Copy Assignment.
+		texture& operator=(texture& aRhs);
+		// Move Assignment.
+		texture& operator=(texture&& aRhs) noexcept;
 
-		VkImageView get_view();
+		// Each of these operators produces OTS Command Buffers.
+
+		// Copies the contents and mip levels of the right, to the left.
+		VkCommandBuffer operator<<(texture& aRhs);
+		// Copies the contents and mip levels of the left, to the right.
+		VkCommandBuffer operator>>(texture& aRhs);
+		// Copies the contents of the first buffer to the first mip level of the texture.
+		VkCommandBuffer operator<<(buffer& aRhs);
+		// Copies the contents of the first mip level to the buffer on the right.
+		VkCommandBuffer operator>>(buffer& aRhs);
+		// Produces OTS Graphics command to generate mip maps from base level.
+		VkCommandBuffer generate_mipmaps(VkFilter aFilter);
 
 	private:
 
 		context* Context;
-
 		VkImageCreateInfo CreateInfo{};
 		VkImage Handle;
 		VkMemoryAllocateInfo AllocateInfo{};
 		VkDeviceMemory MemoryHandle;
+		int MemoryType;
+		size_t BytesPerPixel;
+		size_t MemorySize; // Size of the image
 
+		VkImageLayout** Layout; // Keeps track of mip level and element image layouts.
+		VkExtent3D* MipExtent; // TODO: Fill out MipExtent for easier blitting.
+
+		uint32_t miplevelcalc(VkImageType aImageType, VkExtent3D aExtent);
+		void pmclearall();
 
 	};
 

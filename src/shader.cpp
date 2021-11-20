@@ -54,17 +54,19 @@ namespace geodesuka::core::gcl {
 		}
 
 		if (this->isValid) {
-			glslang::TShader lShader(lShaderStage);
 
+			glslang::TShader lShader(lShaderStage);
 			// Clean me up later
 			lShader.setStrings(&aSource, 1);
-			lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
-			lShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_2);
-			lShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetLanguageVersionCount);
+			//lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
+			lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, lShaderStage, glslang::EShClient::EShClientVulkan, 100);
+			lShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
+			lShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
 			lShader.setEntryPoint("main");
-
-			EShMessages Options = (EShMessages)(EShMessages::EShMsgDebugInfo | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST | EShMessages::EShMsgDefault);
-			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 120, EProfile::ECoreProfile, false, false, Options);
+			//glslang::EOp
+			EShMessages Options = (EShMessages)(/*EShMessages::EShMsgDebugInfo |*/ EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST /*| EShMessages::EShMsgDefault*/);
+			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 100, false, Options);
+			//this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 100, EProfile::ENoProfile, false, false, Options);
 			if (this->isValid) {
 				// AST to SPIRV
 				glslang::GlslangToSpv(*lShader.getIntermediate(), this->Binary);
