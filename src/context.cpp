@@ -304,10 +304,11 @@ namespace geodesuka::core::gcl {
 		AllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		AllocateInfo.commandBufferCount		= aCommandBufferCount;
 
-		//this->Mutex.lock();
+		this->Mutex.lock();
 		// Check if allocation is succesful.
 		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, aCommandBuffer);
 		if (Result != VkResult::VK_SUCCESS) {
+			this->Mutex.unlock();
 			return Result;
 		}
 
@@ -327,6 +328,7 @@ namespace geodesuka::core::gcl {
 			for (size_t j = 0; j < aCommandBufferCount; j++) {
 				aCommandBuffer[j] = VK_NULL_HANDLE;
 			}
+			this->Mutex.unlock();
 			return Result;
 		}
 
@@ -334,11 +336,14 @@ namespace geodesuka::core::gcl {
 		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
 
 		// Store new command buffers.
-		memcpy(&this->CommandBuffer[this->CommandBufferCount[i]], aCommandBuffer, aCommandBufferCount * sizeof(VkCommandBuffer));
+		std::memcpy(&(this->CommandBuffer[i][this->CommandBufferCount[i]]), aCommandBuffer, aCommandBufferCount * sizeof(VkCommandBuffer));
+		//for (int j = this->CommandBufferCount[i]; j < aCommandBufferCount + this->CommandBufferCount[i]; j++) {
+		//	this->CommandBuffer[i][j] = aCommandBuffer[j - this->CommandBufferCount[i]];
+		//}
 
 		// Account for new buffer count.
 		this->CommandBufferCount[i] += aCommandBufferCount;
-
+		this->Mutex.unlock();
 		return Result;
 	}
 
@@ -381,10 +386,18 @@ namespace geodesuka::core::gcl {
 
 		// Clears all command buffer with family in question.
 		if (MatchCount == this->CommandBufferCount[Index]) {
+			for (uint32_t i = 0; i < this->CommandBufferCount[Index]; i++) {
+				for (uint32_t j = 0; j < aCommandBufferCount; j++) {
+					if (this->CommandBuffer[Index][i] == aCommandBuffer[j]) {
+						aCommandBuffer[j] = VK_NULL_HANDLE;
+					}
+				}
+			}
 			this->Mutex.lock();
 			vkFreeCommandBuffers(this->Handle, this->Pool[Index], aCommandBufferCount, aCommandBuffer);
 			free(this->CommandBuffer[Index]);
 			this->CommandBuffer[Index] = NULL;
+			this->CommandBufferCount[Index] = 0;
 			this->Mutex.unlock();
 			return;
 		}
@@ -404,20 +417,30 @@ namespace geodesuka::core::gcl {
 		this->Mutex.lock();
 		int m = 0;
 		int n = 0;
+		// Iterate through pre existing buffers and compare.
 		for (uint32_t i = 0; i < this->CommandBufferCount[Index]; i++) {
+			bool isFound = false;
+			int FoundIndex = -1;
+			// Compare to proposed buffers.
 			for (uint32_t j = 0; j < aCommandBufferCount; j++) {
 				if (this->CommandBuffer[Index][i] == aCommandBuffer[j]) {
-					MatchBuffer[m] = this->CommandBuffer[Index][i];
-					this->CommandBuffer[Index][i] = VK_NULL_HANDLE;
-					aCommandBuffer[j] = VK_NULL_HANDLE;
-					m += 1;
-				}
-				else {
-					NewBuffer[n] = this->CommandBuffer[Index][i];
-					this->CommandBuffer[Index][i] = VK_NULL_HANDLE;
-					n += 1;
+					isFound = true;
+					FoundIndex = j;
+					break;
 				}
 			}
+
+			if (isFound) {
+				// If match, move to MatchBuffer;
+				MatchBuffer[m] = aCommandBuffer[FoundIndex];
+				aCommandBuffer[FoundIndex] = VK_NULL_HANDLE;
+				m += 1;
+			}
+			else {
+				NewBuffer[n] = this->CommandBuffer[Index][i];
+				n += 1;
+			}
+
 		}
 
 		vkFreeCommandBuffers(this->Handle, this->Pool[Index], MatchCount, MatchBuffer);

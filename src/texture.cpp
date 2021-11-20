@@ -226,8 +226,11 @@ namespace geodesuka::core::gcl {
 		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
 		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
 		vkDestroySemaphore(this->Context->handle(), Semaphore, NULL);
-		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
-		this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
+		//this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
+		//this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
+		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer[0]);
+		this->Context->destroy(device::qfs::GRAPHICS, CommandBuffer[1]);
+
 
 		/*
 		// Disgusting code, tmi.
@@ -595,7 +598,8 @@ namespace geodesuka::core::gcl {
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
-		this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 		vkDestroyFence(this->Context->handle(), Fence, NULL);
 
 	}
@@ -691,7 +695,8 @@ namespace geodesuka::core::gcl {
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
 
 		vkDestroyFence(this->Context->handle(), Fence, NULL);
-		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer);
+		//this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer);
+		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
 		return *this;
 	}
@@ -823,7 +828,8 @@ namespace geodesuka::core::gcl {
 			Region.push_back(SubRegion);
 		}
 
-		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
 		// Transition all images.
@@ -900,7 +906,8 @@ namespace geodesuka::core::gcl {
 		CopyRegion.imageOffset							= { 0, 0, 0 };
 		CopyRegion.imageExtent							= this->CreateInfo.extent;
 
-		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
 		// Setup pipeline barriers.
@@ -942,7 +949,8 @@ namespace geodesuka::core::gcl {
 		BeginInfo.flags									= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		BeginInfo.pInheritanceInfo						= NULL;
 
-		Result = this->Context->create(context::cmdtype::GRAPHICS, 1, &CommandBuffer);
+		//Result = this->Context->create(context::cmdtype::GRAPHICS, 1, &CommandBuffer);
+		CommandBuffer = this->Context->create(device::qfs::GRAPHICS);
 		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
 		for (uint32_t i = 0; i < this->CreateInfo.mipLevels - 1; i++) {

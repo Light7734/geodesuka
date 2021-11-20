@@ -45,6 +45,7 @@ Finish system_window class.
 Finish Triangle Example.
 */
 
+void context_unit_test(geodesuka::core::gcl::context* Context);
 void buffer_unit_test(geodesuka::core::gcl::context* Context);
 void texture_unit_test(geodesuka::core::gcl::context* Context);
 
@@ -56,16 +57,17 @@ int main(int argc, char *argv[]) {
 	size_t DeviceCount = 0;
 	device** Device = Engine.get_device_list(&DeviceCount);
 	context* Context = nullptr;
-	context* Context2 = nullptr;
+	//context* Context2 = nullptr;
 	for (size_t i = 0; i < DeviceCount; i++) {
 		if (Device[i]->get_properties().deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
 			// Provide required extensions to allow context to create system windows.
 			//std::cout << "Transfer Index: " << Device[i]->qfi(device::qfs::PRESENT);
 			Context = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
-			Context2 = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
+			//Context2 = new context(&Engine, Device[i], system_window::RequiredExtension.size(), (const char**)system_window::RequiredExtension.data());
 		}
 	}
 
+	context_unit_test(Context);
 	buffer_unit_test(Context);
 	texture_unit_test(Context);
 
@@ -73,6 +75,24 @@ int main(int argc, char *argv[]) {
 	Engine.tsleep(5);
 
 	return 0;
+}
+
+void context_unit_test(geodesuka::core::gcl::context* Context) {
+
+	VkCommandBuffer Array[10];
+	Context->create(device::qfs::GRAPHICS, 3, &Array[7]);
+	Context->create(device::qfs::TRANSFER, 4, &Array[3]);
+	Context->create(device::qfs::COMPUTE, 3, &Array[0]);
+
+	// Should do nothing because these cmds don't exist in with qfs.
+	Context->destroy(device::qfs::GRAPHICS, 3, &Array[7]);
+
+	Context->destroy(device::qfs::TRANSFER, Array[3]);
+	Context->destroy(device::qfs::TRANSFER, 2, &Array[4]);
+	Context->destroy(device::qfs::TRANSFER, Array[6]);
+
+
+
 }
 
 void buffer_unit_test(geodesuka::core::gcl::context *Context) {
@@ -193,7 +213,8 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 
 	Context->submit(device::qfs::TRANSFER, 2, Submission, Fence);
 	vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-	Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	//Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	Context->destroy(device::qfs::TRANSFER, 2, CommandBuffer);
 	vkResetFences(Context->handle(), 1, &Fence);
 
 	ReturnBuffer.read(0, 24 * sizeof(math::real), VertexReturn);
@@ -209,7 +230,8 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 	CommandBuffer[1] = (ReturnBuffer << DeviceBuffer);
 	Context->submit(device::qfs::TRANSFER, 2, Submission, Fence);
 	vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-	Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	//Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	Context->destroy(device::qfs::TRANSFER, 2, CommandBuffer);
 	vkResetFences(Context->handle(), 1, &Fence);
 	ReturnBuffer.read(0, 24 * sizeof(math::real), VertexReturn);
 	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
@@ -225,7 +247,8 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 	CommandBuffer[1] = (ReturnBuffer << DeviceBuffer);
 	Context->submit(device::qfs::TRANSFER, 2, Submission, Fence);
 	vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-	Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	//Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	Context->destroy(device::qfs::TRANSFER, 2, CommandBuffer);
 	vkResetFences(Context->handle(), 1, &Fence);
 	ReturnBuffer.read(0, 24 * sizeof(math::real), VertexReturn);
 	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {
@@ -240,7 +263,8 @@ void buffer_unit_test(geodesuka::core::gcl::context *Context) {
 	CommandBuffer[1] = (ReturnBuffer << DeviceBuffer);
 	Context->submit(device::qfs::TRANSFER, 2, Submission, Fence);
 	vkWaitForFences(Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
-	Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	//Context->destroy(context::cmdtype::TRANSFER_OTS, 2, CommandBuffer);
+	Context->destroy(device::qfs::TRANSFER, 2, CommandBuffer);
 	vkResetFences(Context->handle(), 1, &Fence);
 	ReturnBuffer.read(0, 24 * sizeof(math::real), VertexReturn);
 	if (memcmp(Vertices, VertexReturn, 24 * sizeof(math::real)) == 0) {

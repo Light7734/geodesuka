@@ -204,7 +204,8 @@ namespace geodesuka::core::gcl {
 				FenceCreateInfo.pNext				= NULL;
 				FenceCreateInfo.flags				= 0;
 
-				this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				//this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 				if (CommandBuffer != VK_NULL_HANDLE) {
 					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
@@ -214,7 +215,8 @@ namespace geodesuka::core::gcl {
 					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
 					vkDestroyFence(this->Context->handle(), Fence, NULL);
 				}
-				this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 			}
 		}
 	}
@@ -297,7 +299,8 @@ namespace geodesuka::core::gcl {
 				FenceCreateInfo.pNext				= NULL;
 				FenceCreateInfo.flags				= 0;
 
-				this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				//this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 				if (CommandBuffer != VK_NULL_HANDLE) {
 					Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 					Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
@@ -307,7 +310,8 @@ namespace geodesuka::core::gcl {
 					Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT_MAX);
 					vkDestroyFence(this->Context->handle(), Fence, NULL);
 				}
-				this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+				this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 			}
 		}
 
@@ -367,7 +371,8 @@ namespace geodesuka::core::gcl {
 		Region.dstOffset					= 0;
 		Region.size							= this->CreateInfo.size;
 
-		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 		if (CommandBuffer != VK_NULL_HANDLE) {
 			Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 			vkCmdCopyBuffer(CommandBuffer, aRhs.Handle, this->Handle, 1, &Region);
@@ -418,7 +423,8 @@ namespace geodesuka::core::gcl {
 			Barrier[i].subresourceRange.layerCount			= 1;
 		}
 
-		Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
+		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
 		// Use barrier for transition if layout doesn't match.

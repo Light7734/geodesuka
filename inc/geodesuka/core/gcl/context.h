@@ -61,13 +61,15 @@ namespace geodesuka::core::gcl {
 
 		// Will create a single command buffer with selected operations.
 		VkCommandBuffer create(device::qfs aQFS);
+
 		// Will create a list of command buffers with this context and selected support options.
 		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+
 		// Will destroy a single command buffer created by this context.
 		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+
 		// Will destroy all command buffers provided if they were created by this context.
 		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
-
 	
 		//TODO: Make create/destroy thread safe.
 		// Will create a series of command buffer handles, and fill the respective arguments.
@@ -124,7 +126,6 @@ namespace geodesuka::core::gcl {
 		VkCommandPoolCreateInfo PoolCreateInfo[3];
 		VkCommandPool Pool[3];
 		uint32_t CommandBufferCount[3];
-		//VkCommandBufferAllocateInfo *AllocateInfo[3];
 		VkCommandBuffer *CommandBuffer[3];
 
 	};
