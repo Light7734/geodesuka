@@ -9,7 +9,7 @@ namespace geodesuka::core::gcl {
 
 	swapchain::prop::prop() {
 		this->Count				= 1;
-		this->Format			= VkFormat::VK_FORMAT_B8G8R8A8_SRGB;
+		//this->Format			= VkFormat::VK_FORMAT_B8G8R8A8_SRGB;
 		this->ColorSpace		= VkColorSpaceKHR::VK_COLORSPACE_SRGB_NONLINEAR_KHR;
 		//this->Resolution		= { 640, 480 };
 		this->Usage				= texture::usage::COLOR_ATTACHMENT;
@@ -19,7 +19,8 @@ namespace geodesuka::core::gcl {
 	}
 
 
-	swapchain::swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, uint32_t aWidth, uint32_t aHeight, swapchain* aOldSwapchain) {
+	swapchain::swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, int aPixelFormat, int aWidth, int aHeight, swapchain* aOldSwapchain) {
+
 
 		// Queries Available formats.
 		uint32_t lFormatCount;
@@ -50,7 +51,7 @@ namespace geodesuka::core::gcl {
 
 		for (size_t i = 0; i < lFormat.size(); i++) {
 			// Check if Format is supported.
-			if (lFormat[i].format == aProperty.Format) {
+			if (lFormat[i].format == aPixelFormat) {
 				isSupported[0] = true;
 			}
 			// Check if ColorSpace is supported by Device
@@ -83,6 +84,7 @@ namespace geodesuka::core::gcl {
 		}
 
 		// If success, then create swapchain.
+		VkResult Result = VkResult::VK_SUCCESS;
 		if (Success) {
 
 			VkExtent2D lExtent2D;
@@ -95,7 +97,7 @@ namespace geodesuka::core::gcl {
 			this->CreateInfo.flags						= 0;
 			this->CreateInfo.surface					= aSurface;
 			this->CreateInfo.minImageCount				= std::clamp((uint32_t)aProperty.Count, lSurfaceCapabilities.minImageCount, lSurfaceCapabilities.maxImageCount);
-			this->CreateInfo.imageFormat				= (VkFormat)aProperty.Format;
+			this->CreateInfo.imageFormat				= (VkFormat)aPixelFormat;
 			this->CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aProperty.ColorSpace;
 			this->CreateInfo.imageExtent				= lExtent2D;
 			this->CreateInfo.imageArrayLayers			= 1; // Maybe support later.
@@ -114,17 +116,20 @@ namespace geodesuka::core::gcl {
 				this->CreateInfo.oldSwapchain = aOldSwapchain->Handle;
 			}
 
-			VkResult Result = vkCreateSwapchainKHR(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
+			Result = vkCreateSwapchainKHR(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 		}
 		else {
 			this->Handle = VK_NULL_HANDLE;
 		}
-
 	}
 
 	swapchain::~swapchain() {
 		vkDestroySwapchainKHR(Context->handle(), this->Handle, NULL);
 		this->Handle = VK_NULL_HANDLE;
+	}
+
+	VkSwapchainKHR swapchain::handle() {
+		return this->Handle;
 	}
 
 }

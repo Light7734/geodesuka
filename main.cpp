@@ -45,6 +45,7 @@ Finish system_window class.
 Finish Triangle Example.
 */
 
+void all_unit_tests(geodesuka::core::gcl::context* Context);
 void context_unit_test(geodesuka::core::gcl::context* Context);
 void buffer_unit_test(geodesuka::core::gcl::context* Context);
 void texture_unit_test(geodesuka::core::gcl::context* Context);
@@ -67,14 +68,43 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	//context_unit_test(Context);
-	buffer_unit_test(Context);
-	texture_unit_test(Context);
+	system_display* SystemDisplay = Engine.get_primary_display();
+	window::prop WindowProperty = window::prop();
+	swapchain::prop SwapchainProperty = swapchain::prop();
+
+	WindowProperty.UserFocused = GLFW_FALSE;
+	
+
+	SwapchainProperty.Count				= 3;
+	SwapchainProperty.ColorSpace		= VkColorSpaceKHR::VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+	SwapchainProperty.Usage				= texture::usage::COLOR_ATTACHMENT;
+	SwapchainProperty.CompositeAlpha	= swapchain::composite::ALPHA_OPAQUE;
+	SwapchainProperty.PresentMode		= swapchain::mode::FIFO;
+	SwapchainProperty.Clipped			= true;
+
+	system_window* SystemWindow = new system_window(
+		&Engine,
+		Context,
+		SystemDisplay,
+		WindowProperty,
+		SwapchainProperty,
+		VkFormat::VK_FORMAT_B8G8R8A8_SRGB,
+		640,
+		480,
+		"cock"
+	);
+
+	//all_unit_tests(Context);
 
 	// Move this function somewhere else.
 	Engine.tsleep(3);
-
 	return 0;
+}
+
+void all_unit_tests(geodesuka::core::gcl::context* Context) {
+	context_unit_test(Context);
+	buffer_unit_test(Context);
+	texture_unit_test(Context);
 }
 
 void context_unit_test(geodesuka::core::gcl::context* Context) {

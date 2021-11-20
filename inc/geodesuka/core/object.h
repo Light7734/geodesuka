@@ -131,8 +131,8 @@ namespace geodesuka::core {
 
 	protected:
 
-		engine* ParentEngine;
-		gcl::context* ParentContext;
+		engine* Engine;
+		gcl::context* Context;
 
 		math::real3 InputVelocity;
 		math::real3 InputForce;

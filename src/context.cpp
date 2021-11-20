@@ -70,23 +70,6 @@ namespace geodesuka::core::gcl {
 			}
 		}
 
-		//for (int i = 0; i < 4; i++) {
-		//	if (this->QFI[i] == -1) continue;
-		//	if (this->UQFI.size() == 0) {
-		//		this->UQFI.push_back(this->QFI[i]);
-		//	}
-		//	bool AlreadyExists = false;
-		//	for (size_t j = 0; j < this->UQFI.size(); j++) {
-		//		if (this->QFI[i] == this->UQFI[j]) {
-		//			AlreadyExists = true;
-		//			break;
-		//		}
-		//	}
-		//	if (!AlreadyExists) {
-		//		this->UQFI.push_back(this->QFI[i]);
-		//	}
-		//}
-
 		// With UQFI found, generate queues for selected indices.
 		uint32_t QueueFamilyCount = 0;
 		const VkQueueFamilyProperties *QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
@@ -272,7 +255,7 @@ namespace geodesuka::core::gcl {
 	}
 
 	bool context::available(device::qfs aQFS) {
-		return (this->available(aQFS) != -1);
+		return (this->qfi(aQFS) != -1);
 	}
 
 	VkCommandBuffer context::create(device::qfs aQFS) {
@@ -453,118 +436,6 @@ namespace geodesuka::core::gcl {
 		return;
 	}
 
-	/*
-	VkResult context::create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
-		//this->Mutex.lock();
-		VkResult Result = VkResult::VK_INCOMPLETE;
-		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return VkResult::VK_INCOMPLETE;
-		int i = -1;
-		switch (aCommandType) {
-		default: return Result;
-		case context::cmdtype::TRANSFER_OTS:	i = 0; break;
-		case context::cmdtype::TRANSFER_OAD:	i = 1; break;
-		case context::cmdtype::COMPUTE:			i = 2; break;
-		case context::cmdtype::GRAPHICS:		i = 3; break;
-		}
-
-		void* nptr = NULL;
-		if (this->CommandBuffer[i] == NULL) {
-			nptr = malloc(aCommandBufferCount * sizeof(VkCommandBuffer));
-		}
-		else {
-			nptr = realloc(this->CommandBuffer[i], (this->CommandBufferCount[i] + aCommandBufferCount) * sizeof(VkCommandBuffer));
-		}
-
-		// If new allocation failed, close out operation.
-		if (nptr == NULL) return VkResult::VK_ERROR_OUT_OF_HOST_MEMORY;
-		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
-
-		VkCommandBufferAllocateInfo AllocateInfo;
-		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		AllocateInfo.pNext					= NULL;
-		AllocateInfo.commandPool			= this->Pool[i];
-		AllocateInfo.level					= VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		AllocateInfo.commandBufferCount		= aCommandBufferCount;
-
-		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, &this->CommandBuffer[i][this->CommandBufferCount[i]]);
-		memcpy(aCommandBuffer, &this->CommandBuffer[i][this->CommandBufferCount[i]], aCommandBufferCount * sizeof(VkCommandBuffer));
-		this->CommandBufferCount[i] += aCommandBufferCount;
-		//this->Mutex.unlock();
-		return Result;
-	}
-
-	void context::destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
-		//this->Mutex.lock();
-		if ((aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
-		int Index = -1;
-		switch (aCommandType) {
-		default: return;
-		case context::cmdtype::TRANSFER_OTS:	Index = 0; break;
-		case context::cmdtype::TRANSFER_OAD:	Index = 1; break;
-		case context::cmdtype::COMPUTE:			Index = 2; break;
-		case context::cmdtype::GRAPHICS:		Index = 3; break;
-		}
-		// If no command buffers are allocated from this context
-		if (this->CommandBufferCount[Index] == 0) return;
-
-		// Search for total number of buffers to clear.
-		int TotalClearCount = 0;
-		VkCommandBuffer* TotalClearList = NULL;
-		for (int i = 0; i < aCommandBufferCount; i++) {
-			for (int j = 0; j < this->CommandBufferCount[Index]; j++) {
-				if (aCommandBuffer[i] == this->CommandBuffer[Index][j]) {
-					TotalClearCount += 1;
-				}
-			}
-		}
-
-		// If total clear count is equal to active command buffers, delete all.
-		if (TotalClearCount == this->CommandBufferCount[Index]) {
-			vkFreeCommandBuffers(this->Handle, this->Pool[Index], this->CommandBufferCount[Index], this->CommandBuffer[Index]);
-			free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = NULL;
-			this->CommandBufferCount[Index] = 0;
-			for (size_t i = 0; i < aCommandBufferCount; i++) {
-				aCommandBuffer[i] = VK_NULL_HANDLE;
-			}
-			return;
-		}
-
-		if (TotalClearCount == 0) return;
-		TotalClearList = (VkCommandBuffer*)malloc(TotalClearCount * sizeof(VkCommandBuffer));
-		VkCommandBuffer *nptr = (VkCommandBuffer*)malloc((this->CommandBufferCount[Index] - TotalClearCount) * sizeof(VkCommandBuffer));
-		if (TotalClearList == NULL) return;
-
-		// Gather buffers to be cleared.
-		int k = 0;
-		for (int i = 0; i < aCommandBufferCount; i++) {
-			for (int j = 0; j < this->CommandBufferCount[Index]; j++) {
-				if (aCommandBuffer[i] == this->CommandBuffer[Index][j]) {
-					TotalClearList[k] = aCommandBuffer[j];
-					this->CommandBuffer[Index][j] = VK_NULL_HANDLE;
-					// TODO: Test this line.
-					aCommandBuffer[j] = VK_NULL_HANDLE;
-					k += 1;
-				}
-			}
-		}
-
-		vkFreeCommandBuffers(this->Handle, this->Pool[Index], TotalClearCount, TotalClearList);
-		free(TotalClearList); TotalClearList = NULL;
-
-		// Move remaining command buffers to new array.
-		k = 0;
-		for (int i = 0; i < this->CommandBufferCount[Index]; i++) {
-			if (this->CommandBuffer[Index][i] != VK_NULL_HANDLE) {
-				nptr[k] = this->CommandBuffer[Index][i];
-				k += 1;
-			}
-		}
-		free(this->CommandBuffer[Index]); this->CommandBuffer[Index] = nptr;
-		nptr = NULL;
-		//this->Mutex.unlock();
-	}
-	*/
-
 	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
 		VkResult Result = VkResult::VK_INCOMPLETE;
 		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return Result;
@@ -650,12 +521,6 @@ namespace geodesuka::core::gcl {
 	context::queue::queue() {
 		this->i = 0;
 		this->j = 0;
-		//this->Capability.Flags = 0;
-		//this->Capability.isTransferSupported = false;
-		//this->Capability.isComputeSupported = false;
-		//this->Capability.isGraphicsSupported = false;
-		//this->Capability.isPresentSupported = false;
-		//this->Capability.Support = 0;
 		this->Handle = VK_NULL_HANDLE;
 	}
 

@@ -89,6 +89,11 @@ namespace geodesuka::core::gcl {
 		// Produces OTS Graphics command to generate mip maps from base level.
 		VkCommandBuffer generate_mipmaps(VkFilter aFilter);
 
+		// Generates image views from texture instance.
+		VkImageView view(VkImageViewType aType, VkImageSubresourceRange aRange);
+		VkImageView view(VkImageViewType aType, VkComponentMapping aComponentMapping, VkImageSubresourceRange aRange);
+		void destroy_view(VkImageView aImageView);
+
 	private:
 
 		context* Context;

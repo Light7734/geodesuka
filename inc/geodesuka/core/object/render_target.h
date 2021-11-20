@@ -16,7 +16,10 @@ namespace geodesuka::core::object {
 	class render_target : public object_t {
 	public:
 
-		std::vector<gcl::texture*> Texture;
+		//std::vector<gcl::texture*> Texture;
+		int TextureCount;
+		gcl::texture* Texture;
+
 		
 		~render_target();
 

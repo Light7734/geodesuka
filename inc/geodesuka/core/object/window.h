@@ -83,9 +83,8 @@ namespace geodesuka::core::object {
 			int CenterCursor;
 			int FocusOnShow;
 			int Hovered;
-
 			int RefreshRate;
-			VkPresentModeKHR PresentationMode;
+			//VkPresentModeKHR PresentationMode;
 
 			prop();
 		};

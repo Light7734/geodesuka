@@ -49,10 +49,10 @@ namespace geodesuka::core::object {
 	public:
 
 		struct create_info {
-			system_display* Display;
+			//system_display* Display;
 			window::prop WindowProperty;
 			gcl::swapchain::prop SwapchainProperty;
-			math::real3 Position;
+			//math::real3 Position;
 		};
 
 		// Required Extensions for the class
@@ -62,10 +62,10 @@ namespace geodesuka::core::object {
 
 		//math::boolean CloseMe;
 
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle);
 
-		system_window(engine *aEngine, gcl::context *aContext, create_info *aCreateInfo, int aWidth, int aHeight, const char* aTitle);
-		//system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, float aSizeX, int aSizeY, const char* aTitle);
-		// Clears entire window out.
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, create_info* aCreateInfo, int aWidth, int aHeight, const char* aTitle);
+
 		~system_window();
 
 
@@ -82,15 +82,18 @@ namespace geodesuka::core::object {
 
 	private:
 
-		math::integer2 PositionSC;
-		//math::integer2 SizeSC;
-
-		system_display* ParentDisplay;			// Parent Display of this system_window.
+		system_display* Display;			// Parent Display of this system_window.
 
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 
 		gcl::swapchain* Swapchain;
+
+
+		math::integer2 PositionSC;
+		//math::integer2 SizeSC;
+
+
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		math::integer2 phys2scrn(math::real2 R);

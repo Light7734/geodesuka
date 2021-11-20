@@ -7,17 +7,17 @@ namespace geodesuka::core {
 	object_t::~object_t() {
 		// Clear everything, then remove.
 
-		if (this->ParentEngine != nullptr) {
+		if (this->Engine != nullptr) {
 			// If parent engine exists and is not in desctruction state, clear from engine.
-			this->ParentEngine->Mutex.lock();
-			if (this->ParentEngine->State != engine::state::ENGINE_DESTRUCTION_STATE) {
-				for (size_t i = 0; i < this->ParentEngine->Object.size(); i++) {
-					if (this == this->ParentEngine->Object[i]) {
-						this->ParentEngine->Object.erase(this->ParentEngine->Object.begin() + i);
+			this->Engine->Mutex.lock();
+			if (this->Engine->State != engine::state::ENGINE_DESTRUCTION_STATE) {
+				for (size_t i = 0; i < this->Engine->Object.size(); i++) {
+					if (this == this->Engine->Object[i]) {
+						this->Engine->Object.erase(this->Engine->Object.begin() + i);
 					}
 				}
 			}
-			this->ParentEngine->Mutex.unlock();
+			this->Engine->Mutex.unlock();
 		}
 		//std::cout << "Object Destroyed" << std::endl;
 	}
@@ -67,8 +67,8 @@ namespace geodesuka::core {
 
 
 		// Internal API.
-		this->ParentEngine = aEngine;
-		this->ParentContext = aContext;
+		this->Engine = aEngine;
+		this->Context = aContext;
 
 		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
 		this->InputForce = math::real3(0.0, 0.0, 0.0);

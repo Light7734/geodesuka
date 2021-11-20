@@ -118,6 +118,9 @@ C26451
 #include "core/stage.h"
 #include "core/stage/canvas.h"
 #include "core/stage/scene2d.h"
+#include "core/stage/scene3d.h"
+
+//#include "core/stage/desktop.h"
 
 namespace geodesuka {
 

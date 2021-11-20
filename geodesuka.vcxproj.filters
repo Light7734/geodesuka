@@ -334,6 +334,9 @@
     <ClCompile Include="src\timer.cpp">
       <Filter>src\core\logic</Filter>
     </ClCompile>
+    <ClCompile Include="src\desktop.cpp">
+      <Filter>src\core\stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -563,6 +566,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\logic\timer.h">
       <Filter>inc\geodesuka\core\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage\desktop.h">
+      <Filter>inc\geodesuka\core\stage</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

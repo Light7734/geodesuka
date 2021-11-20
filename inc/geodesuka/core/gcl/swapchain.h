@@ -13,6 +13,8 @@ namespace geodesuka::core::gcl {
 	class swapchain {
 	public:
 
+		friend class object::system_window;
+
 		enum composite {
 			ALPHA_OPAQUE			= 0x00000001,
 			ALPHA_PRE_MULTIPLIED	= 0x00000002,
@@ -29,10 +31,7 @@ namespace geodesuka::core::gcl {
 
 		struct prop {
 			int Count;
-			int Format;
 			int ColorSpace;
-			//VkExtent2D Resolution;
-			//int Layers;
 			int Usage;
 			int CompositeAlpha;
 			int PresentMode;
@@ -41,14 +40,16 @@ namespace geodesuka::core::gcl {
 			prop();
 		};
 
-		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, uint32_t aWidth, uint32_t aHeight, swapchain* aOldSwapchain);
+		std::vector<gcl::texture*> Texture;
+
+		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, int aPixelFormat, int aWidth, int aHeight, swapchain* aOldSwapchain);
 		~swapchain();
+
+		VkSwapchainKHR handle();
 
 	private:
 
 		context* Context;
-
-		std::vector<gcl::texture*> Texture;
 
 		VkSwapchainCreateInfoKHR CreateInfo{};
 		VkSwapchainKHR Handle;

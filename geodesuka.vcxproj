@@ -186,6 +186,7 @@
     <ClCompile Include="src\constants.cpp" />
     <ClCompile Include="src\context.cpp" />
     <ClCompile Include="src\cube.cpp" />
+    <ClCompile Include="src\desktop.cpp" />
     <ClCompile Include="src\device.cpp" />
     <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\desktop.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene2d.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene3d.h" />
     <ClInclude Include="inc\geodesuka\core\util\log.h" />
