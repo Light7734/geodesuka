@@ -146,18 +146,9 @@ namespace geodesuka {
 
 		this->isReady = this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady && this->isSystemDisplayAvailable && this->isGCDeviceAvailable;
 
-		std::cout << "Geodesuka Engine";
-		std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
-		std::cout << " - Date: " << this->Date << std::endl;
-
-		// Engine is ready, initialize loops.
-		if (this->isReady) {
-
-			// Initialize update thread for all objects.
-			this->UpdateThread = std::thread(&engine::tupdate, this);
-			this->RenderThread = std::thread(&engine::trender, this);
-
-		}
+		//std::cout << "Geodesuka Engine";
+		//std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
+		//std::cout << " - Date: " << this->Date << std::endl;
 
 
 		// ------------------------- Debug Print Info ------------------------- //
@@ -217,11 +208,6 @@ namespace geodesuka {
 	engine::~engine() {
 
 		this->State = state::ENGINE_DESTRUCTION_STATE;
-		this->Shutdown.store(true);
-		if (this->isReady) {
-			this->UpdateThread.join();
-			this->RenderThread.join();
-		}
 
 		// Destroys all active stages.
 		for (size_t i = 1; i <= this->Stage.size(); i++) {
@@ -267,6 +253,73 @@ namespace geodesuka {
 		glfwTerminate();
 
 		glslang::FinalizeProcess();
+	}
+
+	int engine::run(core::app* aApp) {
+		// Initialize update thread for all objects.
+		//this->UpdateThread = std::thread(&engine::tupdate, this);
+
+		//this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
+		this->RenderThread				= std::thread(&engine::trender, this);
+		this->AppThread					= std::thread(&core::app::run, aApp);
+
+		double t1, t2;
+		double wt, ht;
+		double t, dt;
+		double ts = 0.01;
+		dt = 0.0;
+
+		while (this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
+			// So fucking dumb...
+			this->ut_create_window_handle_call();
+			glfwPollEvents();
+
+			t1 = this->get_time();
+			// Update object list.
+			for (size_t i = 0; i < this->Object.size(); i++) {
+				this->Object[i]->update(dt);
+			}
+
+			// Update stage logic.
+			for (size_t i = 0; i < this->Stage.size(); i++) {
+				this->Stage[i]->update(dt);
+			}
+
+			// Wait for render operations to complete before transfer.
+			//vkWaitForFences();
+
+			//// Execute all host to device transfer operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+			//}
+			//
+			//// Execute all device compute operations.
+			//for (size_t i = 0; i < this->Context.size(); i++) {
+			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+			//}
+
+			t2 = this->get_time();
+			wt = t2 - t1;
+			if (wt < ts) {
+				ht = ts - wt;
+				this->tsleep(ht);
+			}
+			else {
+				ht = 0.0;
+			}
+			dt = wt + ht;
+		}
+
+
+		this->Shutdown.store(true);
+
+		//this->SystemTerminalThread.join();
+		this->RenderThread.join();
+		this->AppThread.join();
+
+		return 0;
 	}
 
 	core::object::system_display* engine::get_primary_display() {
@@ -434,87 +487,90 @@ namespace geodesuka {
 		}
 	}
 
-	// --------------- Render Thread --------------- //
-	// Updates all objects that have been created asynchronously.
-	// --------------- Render Thread --------------- //
-	void engine::tupdate() {
-		double t1, t2;
-		double wt, ht;
-		double t, dt;
-		double ts = 0.01;
-		dt = 0.0;
-		
+	//void engine::tupdate() {
+	//	double t1, t2;
+	//	double wt, ht;
+	//	double t, dt;
+	//	double ts = 0.01;
+	//	dt = 0.0;
+	//	
+	//
+	//	std::vector<std::vector<VkSubmitInfo>> TransferSubmission;
+	//	std::vector<std::vector<VkSubmitInfo>> ComputeSubmission;
+	//
+	//	//uint32_t TransferSubmissionCount = 0;
+	//	//VkSubmitInfo *TransferSubmission = NULL;
+	//
+	//	//core::object::window::prop TempProperty = core::object::window::prop();
+	//	//glfwWindowHint(GLFW_RESIZABLE,			TempProperty.Resizable);
+	//	//glfwWindowHint(GLFW_DECORATED,			TempProperty.Decorated);
+	//	//glfwWindowHint(GLFW_FOCUSED,			TempProperty.UserFocused);
+	//	//glfwWindowHint(GLFW_AUTO_ICONIFY,		TempProperty.AutoMinimize);
+	//	//glfwWindowHint(GLFW_FLOATING,			TempProperty.Floating);
+	//	//glfwWindowHint(GLFW_MAXIMIZED,			TempProperty.Maximized);
+	//	//glfwWindowHint(GLFW_VISIBLE,			TempProperty.Visible);
+	//	//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	TempProperty.ScaleToMonitor);
+	//	//glfwWindowHint(GLFW_CENTER_CURSOR,		TempProperty.CenterCursor);
+	//	//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		TempProperty.FocusOnShow);
+	//	//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+	//	//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+	//
+	//	//GLFWwindow* TempWindow = glfwCreateWindow(640, 480, "thread", NULL, NULL);
+	//
+	//
+	//	while (!this->Shutdown.load()) {
+	//		this->RenderUpdateTrap.door();
+	//
+	//		// So fucking dumb...
+	//		this->ut_create_window_handle_call();
+	//		glfwPollEvents();
+	//
+	//		t1 = this->get_time();
+	//		// Update object list.
+	//		for (size_t i = 0; i < this->Object.size(); i++) {
+	//			this->Object[i]->update(dt);
+	//		}
+	//
+	//		// Update stage logic.
+	//		for (size_t i = 0; i < this->Stage.size(); i++) {
+	//			this->Stage[i]->update(dt);
+	//		}
+	//
+	//		// Wait for render operations to complete before transfer.
+	//		//vkWaitForFences();
+	//
+	//		//// Execute all host to device transfer operations.
+	//		//for (size_t i = 0; i < this->Context.size(); i++) {
+	//		//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
+	//		//}
+	//		//
+	//		//// Execute all device compute operations.
+	//		//for (size_t i = 0; i < this->Context.size(); i++) {
+	//		//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
+	//		//}
+	//
+	//		t2 = this->get_time();
+	//		wt = t2 - t1;
+	//		if (wt < ts) {
+	//			ht = ts - wt;
+	//			this->tsleep(ht);
+	//		}
+	//		else {
+	//			ht = 0.0;
+	//		}
+	//		dt = wt + ht;
+	//	}
+	//	//std::cout << "Update Thread has exited." << std::endl;
+	//
+	//	//glfwDestroyWindow(TempWindow);
+	//}
 
-		std::vector<std::vector<VkSubmitInfo>> TransferSubmission;
-		std::vector<std::vector<VkSubmitInfo>> ComputeSubmission;
+	// --------------- System Terminal Thread --------------- //
+	// Will be used for runtime debugging of engine using terminal.
+	// --------------- System Terminal Thread --------------- //
+	void engine::tsterminal() {
 
-		//uint32_t TransferSubmissionCount = 0;
-		//VkSubmitInfo *TransferSubmission = NULL;
-
-		//core::object::window::prop TempProperty = core::object::window::prop();
-		//glfwWindowHint(GLFW_RESIZABLE,			TempProperty.Resizable);
-		//glfwWindowHint(GLFW_DECORATED,			TempProperty.Decorated);
-		//glfwWindowHint(GLFW_FOCUSED,			TempProperty.UserFocused);
-		//glfwWindowHint(GLFW_AUTO_ICONIFY,		TempProperty.AutoMinimize);
-		//glfwWindowHint(GLFW_FLOATING,			TempProperty.Floating);
-		//glfwWindowHint(GLFW_MAXIMIZED,			TempProperty.Maximized);
-		//glfwWindowHint(GLFW_VISIBLE,			TempProperty.Visible);
-		//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	TempProperty.ScaleToMonitor);
-		//glfwWindowHint(GLFW_CENTER_CURSOR,		TempProperty.CenterCursor);
-		//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		TempProperty.FocusOnShow);
-		//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-
-		//GLFWwindow* TempWindow = glfwCreateWindow(640, 480, "thread", NULL, NULL);
-
-
-		while (!this->Shutdown.load()) {
-			this->RenderUpdateTrap.door();
-
-			// So fucking dumb...
-			this->ut_create_window_handle_call();
-			glfwPollEvents();
-
-			t1 = this->get_time();
-			// Update object list.
-			for (size_t i = 0; i < this->Object.size(); i++) {
-				this->Object[i]->update(dt);
-			}
-
-			// Update stage logic.
-			for (size_t i = 0; i < this->Stage.size(); i++) {
-				this->Stage[i]->update(dt);
-			}
-
-			// Wait for render operations to complete before transfer.
-			//vkWaitForFences();
-
-			//// Execute all host to device transfer operations.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
-			//}
-			//
-			//// Execute all device compute operations.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
-			//}
-
-			t2 = this->get_time();
-			wt = t2 - t1;
-			if (wt < ts) {
-				ht = ts - wt;
-				this->tsleep(ht);
-			}
-			else {
-				ht = 0.0;
-			}
-			dt = wt + ht;
-		}
-		//std::cout << "Update Thread has exited." << std::endl;
-
-		//glfwDestroyWindow(TempWindow);
 	}
-
 
 	// --------------- Render Thread --------------- //
 	// The job of the render thread is to honor and schedule draw
@@ -547,7 +603,7 @@ namespace geodesuka {
 			}
 
 			// Alter submission size to match number of contexts.
-			Submission.resize(this->Context.size());
+			//Submission.resize(this->Context.size());
 
 
 			// Reverse order of aggregation.

@@ -141,7 +141,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="src\buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
@@ -333,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="src\desktop.cpp">
       <Filter>src\core\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app.cpp">
+      <Filter>src\core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -563,6 +565,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage\desktop.h">
       <Filter>inc\geodesuka\core\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\app.h">
+      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

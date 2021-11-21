@@ -4,7 +4,7 @@
 #include <geodesuka/engine.h>
 
 #include <geodesuka/builtin/object/triangle.h>
-#include <vulkan/vk_icd.h>
+//#include <vulkan/vk_icd.h>
 
 /*
 * This main file is just used for debugging library.

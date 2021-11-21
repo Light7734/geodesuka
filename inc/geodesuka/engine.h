@@ -119,6 +119,8 @@ C26451
 
 //#include "core/stage/desktop.h"
 
+#include "core/app.h"
+
 namespace geodesuka {
 
 	class engine {
@@ -144,6 +146,8 @@ namespace geodesuka {
 
 		engine(int argc, char* argv[]);
 		~engine();
+
+		int run(core::app* aApp);
 
 		// Gets current primary display.
 		core::object::system_display* get_primary_display();
@@ -257,13 +261,18 @@ namespace geodesuka {
 		// TODO: Maybe make update thread use multiple threads for fast processing?
 		core::logic::trap RenderUpdateTrap; // Used for stalling Update and Render Thread.
 
+		// Main thread does updates.
+		// These threads do side tasks.
 		std::thread SystemTerminalThread;
-		std::thread UpdateThread;
 		std::thread RenderThread;
 		std::thread AudioThread;
 		
-		//void tsterminal();		// Thread handles terminal input to the engine.
-		void tupdate();			// Thread manages updates on all objects and stages.
+		// App Thread.
+		std::thread AppThread;
+
+
+		void tsterminal();		// Thread handles terminal input to the engine.
+		//void tupdate();			// Thread manages updates on all objects and stages.
 		void trender();			// Thread honors frame rates of respective targets.
 		void taudio();			// Thread Handles audio streams.
 
