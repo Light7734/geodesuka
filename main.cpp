@@ -4,6 +4,7 @@
 #include <geodesuka/engine.h>
 
 #include <geodesuka/builtin/object/triangle.h>
+#include <vulkan/vk_icd.h>
 
 /*
 * This main file is just used for debugging library.
@@ -117,7 +118,7 @@ int main(int argc, char *argv[]) {
 		480,
 		"cock"
 	);
-
+	
 	while (true) {
 		//glfwPollEvents();
 	}
@@ -127,6 +128,7 @@ int main(int argc, char *argv[]) {
 	// Move this function somewhere else.
 	Engine.tsleep(3);
 
+	
 	//delete SystemWindow;
 
 	return 0;

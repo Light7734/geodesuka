@@ -2,6 +2,13 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
+/*
+* Windows API
+* Wayland
+* X11
+* Android
+*/
+
 #include <vector>
 
 #include "../math.h"
