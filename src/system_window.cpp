@@ -14,25 +14,26 @@ namespace geodesuka::core::object {
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 
 		this->Display = aSystemDisplay;
-		this->Property = prop();
+		this->Property = aWindowProperty;
 
 
-		glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
-		glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
-		glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
-		glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
-		glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
-		glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
-		glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
-		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
-		glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
-		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
-		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-		//glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
+		//glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
+		//glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
+		//glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
+		//glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
+		//glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
+		//glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
+		//glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
+		//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
+		//glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
+		//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
+		//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+		//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+		////glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
-		// Create Window Handle.
-		this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
+		//// Create Window Handle.
+		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
+		this->Handle = this->Engine->create_window_handle(aWindowProperty, aWidth, aHeight, aTitle, NULL, NULL);
 
 		// Check if handle is NULL.
 		if (this->Handle == NULL) return;
@@ -127,6 +128,8 @@ namespace geodesuka::core::object {
 	}
 
 	system_window::~system_window() {
+		this->Engine->remove(this);
+
 		// Clears swapchain images.
 		for (int i = 0; i < this->TextureCount; i++) {
 			this->Texture[i].CreateInfo = {};
@@ -141,10 +144,17 @@ namespace geodesuka::core::object {
 		delete this->Swapchain;
 		this->Swapchain = nullptr;
 
-		// Destroys suface.
-		vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
-		// Destroys window handle.
-		glfwDestroyWindow(this->Handle);
+		if ((this->Engine != nullptr) && (this->Surface != VK_NULL_HANDLE)) {
+			// Destroys suface.
+			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
+			this->Surface = VK_NULL_HANDLE;
+		}
+		if (this->Handle != NULL) {
+			// Destroys window handle.
+			glfwDestroyWindow(this->Handle);
+			//this->Engine->destroy_window_handle(this->Handle);
+			this->Handle = NULL;
+		}
 
 	}
 

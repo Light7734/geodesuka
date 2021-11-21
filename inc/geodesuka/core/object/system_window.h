@@ -48,6 +48,8 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
+		friend class engine;
+
 		struct create_info {
 			//system_display* Display;
 			window::prop WindowProperty;

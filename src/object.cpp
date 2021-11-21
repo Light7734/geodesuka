@@ -5,21 +5,7 @@
 namespace geodesuka::core {
 
 	object_t::~object_t() {
-		// Clear everything, then remove.
-
-		if (this->Engine != nullptr) {
-			// If parent engine exists and is not in desctruction state, clear from engine.
-			this->Engine->Mutex.lock();
-			if (this->Engine->State != engine::state::ENGINE_DESTRUCTION_STATE) {
-				for (size_t i = 0; i < this->Engine->Object.size(); i++) {
-					if (this == this->Engine->Object[i]) {
-						this->Engine->Object.erase(this->Engine->Object.begin() + i);
-					}
-				}
-			}
-			this->Engine->Mutex.unlock();
-		}
-		//std::cout << "Object Destroyed" << std::endl;
+		this->Engine->remove(this);
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {

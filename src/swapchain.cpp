@@ -20,7 +20,8 @@ namespace geodesuka::core::gcl {
 
 
 	swapchain::swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, int aPixelFormat, int aWidth, int aHeight, swapchain* aOldSwapchain) {
-
+		if (aContext == nullptr) return;
+		this->Context = aContext;
 
 		// Queries Available formats.
 		uint32_t lFormatCount;
@@ -124,8 +125,11 @@ namespace geodesuka::core::gcl {
 	}
 
 	swapchain::~swapchain() {
-		vkDestroySwapchainKHR(Context->handle(), this->Handle, NULL);
-		this->Handle = VK_NULL_HANDLE;
+		if ((this->Context != nullptr) && (this->Handle != VK_NULL_HANDLE)) {
+			vkDestroySwapchainKHR(Context->handle(), this->Handle, NULL);
+			this->Handle = VK_NULL_HANDLE;
+		}
+		this->Context = nullptr;
 	}
 
 	VkSwapchainKHR swapchain::handle() {

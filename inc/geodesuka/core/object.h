@@ -61,7 +61,7 @@ namespace geodesuka::core {
 		uint32_t DrawCommandCount;
 		VkCommandBuffer *DrawCommand;
 		
-		~object_t();
+		virtual ~object_t();
 		//virtual ~object_t() = default;
 
 		/*

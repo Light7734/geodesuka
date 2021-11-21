@@ -325,9 +325,6 @@
     <ClCompile Include="src\system_terminal.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\command_pool.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\trap.cpp">
       <Filter>src\core\logic</Filter>
     </ClCompile>
@@ -557,9 +554,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\system_terminal.h">
       <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\logic\trap.h">
       <Filter>inc\geodesuka\core\logic</Filter>

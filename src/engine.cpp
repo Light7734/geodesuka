@@ -319,15 +319,34 @@ namespace geodesuka {
 	}
 
 	void engine::submit(core::object_t* aObject) {
-		//this->Object.push_back(aObject);
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
+		this->Object.push_back(aObject);
+		this->RenderUpdateTrap.set(false);
 	}
 	// TODO: Fix these two methods.
 	void engine::remove(core::object_t* aObject) {
-		//for (size_t i = 0; i < this->Object.size(); i++) {
-		//	if (this->Object[i] == aObject) {
-		//		this->Object.erase(this->Object.begin() + i);
-		//	}
-		//}
+		// Should be fine?
+		if (this->State != ENGINE_ACTIVE_STATE) return;
+
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			if (this->Object[i] == aObject) {
+				this->Object.erase(this->Object.begin() + i);
+			}
+		}
+		this->RenderUpdateTrap.set(false);
+	}
+
+	void engine::submit(core::object::system_window *aSystemWindow) {
+		size_t Offset = 1 + this->Display.size() + this->SystemWindow.size();
+		this->RenderUpdateTrap.set(true);
+		this->RenderUpdateTrap.wait_until(2);
+		// Put at end of SystemWindow List.
+		this->SystemWindow.push_back(aSystemWindow);
+		this->Object.insert(this->Object.begin() + Offset, aSystemWindow);
+		this->RenderUpdateTrap.set(false);
 	}
 
 	VkInstance engine::handle() {
@@ -365,6 +384,56 @@ namespace geodesuka {
 #endif
 	}
 
+	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
+		GLFWwindow* Temp = NULL;
+		this->WindowTempData.Property = aProperty;
+		this->WindowTempData.Width = aWidth;
+		this->WindowTempData.Height = aHeight;
+		this->WindowTempData.Title = aTitle;
+		this->WindowTempData.Monitor = aMonitor;
+		this->WindowTempData.Window = aWindow;
+
+		this->WindowCreated.store(false);
+		this->SignalCreate.store(true);
+		while (!this->WindowCreated.load()) {}
+		Temp = this->ReturnWindow;
+		return Temp;
+	}
+
+	void engine::destroy_window_handle(GLFWwindow* aWindow) {
+		while (this->DestroyWindow.load() != NULL) {}
+		this->DestroyWindow.store(aWindow);
+	}
+
+	void engine::ut_create_window_handle_call() {
+		if (!this->SignalCreate.load()) return;
+
+		glfwWindowHint(GLFW_RESIZABLE,			WindowTempData.Property.Resizable);
+		glfwWindowHint(GLFW_DECORATED,			WindowTempData.Property.Decorated);
+		glfwWindowHint(GLFW_FOCUSED,			WindowTempData.Property.UserFocused);
+		glfwWindowHint(GLFW_AUTO_ICONIFY,		WindowTempData.Property.AutoMinimize);
+		glfwWindowHint(GLFW_FLOATING,			WindowTempData.Property.Floating);
+		glfwWindowHint(GLFW_MAXIMIZED,			WindowTempData.Property.Maximized);
+		glfwWindowHint(GLFW_VISIBLE,			WindowTempData.Property.Visible);
+		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	WindowTempData.Property.ScaleToMonitor);
+		glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
+		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
+		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+		glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+
+		this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
+		this->WindowCreated.store(true);
+		this->SignalCreate.store(false);
+	}
+
+	void engine::ut_destroy_window_handle_call() {
+		GLFWwindow *temp = this->DestroyWindow.load();
+		if (temp != NULL) {
+			glfwDestroyWindow(temp);
+			this->DestroyWindow.store(NULL);
+		}
+	}
+
 	// --------------- Render Thread --------------- //
 	// Updates all objects that have been created asynchronously.
 	// --------------- Render Thread --------------- //
@@ -372,7 +441,7 @@ namespace geodesuka {
 		double t1, t2;
 		double wt, ht;
 		double t, dt;
-		double ts = 1.0 / 2.0;
+		double ts = 0.01;
 		dt = 0.0;
 		
 
@@ -382,11 +451,31 @@ namespace geodesuka {
 		//uint32_t TransferSubmissionCount = 0;
 		//VkSubmitInfo *TransferSubmission = NULL;
 
+		//core::object::window::prop TempProperty = core::object::window::prop();
+		//glfwWindowHint(GLFW_RESIZABLE,			TempProperty.Resizable);
+		//glfwWindowHint(GLFW_DECORATED,			TempProperty.Decorated);
+		//glfwWindowHint(GLFW_FOCUSED,			TempProperty.UserFocused);
+		//glfwWindowHint(GLFW_AUTO_ICONIFY,		TempProperty.AutoMinimize);
+		//glfwWindowHint(GLFW_FLOATING,			TempProperty.Floating);
+		//glfwWindowHint(GLFW_MAXIMIZED,			TempProperty.Maximized);
+		//glfwWindowHint(GLFW_VISIBLE,			TempProperty.Visible);
+		//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	TempProperty.ScaleToMonitor);
+		//glfwWindowHint(GLFW_CENTER_CURSOR,		TempProperty.CenterCursor);
+		//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		TempProperty.FocusOnShow);
+		//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+		//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+
+		//GLFWwindow* TempWindow = glfwCreateWindow(640, 480, "thread", NULL, NULL);
+
+
 		while (!this->Shutdown.load()) {
 			this->RenderUpdateTrap.door();
 
-			t1 = this->get_time();
+			// So fucking dumb...
+			this->ut_create_window_handle_call();
+			glfwPollEvents();
 
+			t1 = this->get_time();
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
@@ -422,6 +511,8 @@ namespace geodesuka {
 			dt = wt + ht;
 		}
 		//std::cout << "Update Thread has exited." << std::endl;
+
+		//glfwDestroyWindow(TempWindow);
 	}
 
 

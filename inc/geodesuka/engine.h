@@ -63,7 +63,6 @@ C26451
 // Needed for all graphics/computation objects
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
-#include "core/gcl/command_pool.h"
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
@@ -88,6 +87,9 @@ C26451
 */
 #include "core/object.h"
 
+// Do not mistake with system window.
+#include "core/object/system_terminal.h"
+
 // Might change this later into something else.
 #include "core/object/render_target.h"
 
@@ -96,11 +98,6 @@ C26451
 #include "core/object/system_display.h"
 #include "core/object/system_window.h"
 #include "core/object/virtual_window.h"
-
-// Used for issuing commands to the engine
-//#include "core/object/terminal.h"
-#include "core/object/system_terminal.h"
-//#include "core/object/virtual_terminal.h"
 
 // camera.h is the base class for extendable cameras
 // that will perform deferred rendering. 
@@ -140,6 +137,7 @@ namespace geodesuka {
 		};
 
 		friend class core::gcl::context;
+		friend class core::object::system_window;
 
 		// Objects can interect with engine internals.
 		friend class core::object_t;
@@ -169,6 +167,7 @@ namespace geodesuka {
 		// objects in existence.
 		void submit(core::object_t* aObject);		// Submit created object to engine.
 		void remove(core::object_t* aObject);		// Remove object from engine.
+		void submit(core::object::system_window* aSystemWindow);
 
 		VkInstance handle();
 		bool is_ready();
@@ -207,6 +206,7 @@ namespace geodesuka {
 		// It is the job of the engine to query for physical devices
 		// and display from the system.
 		std::vector<core::gcl::device*> DeviceList;
+
 		core::object::system_terminal &SystemTerminal;
 		std::vector<core::object::system_display*> Display;
 		std::vector<core::object::system_window*> SystemWindow;
@@ -232,7 +232,26 @@ namespace geodesuka {
 		// sharing the same space, object interaction, rendering
 		std::vector<core::stage_t*> Stage;
 
-		
+		// Signals to update thread to create window handle
+		// because glfw is written by lobotomites.
+		std::atomic<bool> SignalCreate;
+		std::atomic<bool> WindowCreated;
+		struct {
+			core::object::window::prop Property;
+			int Width;
+			int Height;
+			const char* Title;
+			GLFWmonitor* Monitor;
+			GLFWwindow* Window;
+		} WindowTempData;
+		GLFWwindow* ReturnWindow;
+		std::atomic<GLFWwindow*> DestroyWindow;
+
+		GLFWwindow* create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow);
+		void destroy_window_handle(GLFWwindow* aWindow);
+		void ut_create_window_handle_call();
+		void ut_destroy_window_handle_call();
+
 		// ------------------------------ Back end runtime ------------------------------ //
 
 		// TODO: Maybe make update thread use multiple threads for fast processing?

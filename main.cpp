@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
 	SwapchainProperty.PresentMode		= swapchain::mode::FIFO;
 	SwapchainProperty.Clipped			= true;
 
-	system_window* SystemWindow = new system_window(
+	system_window* SystemWindow1 = new system_window(
 		&Engine,
 		Context,
 		SystemDisplay,
@@ -94,10 +94,41 @@ int main(int argc, char *argv[]) {
 		"cock"
 	);
 
+	system_window* SystemWindow2 = new system_window(
+		&Engine,
+		Context,
+		SystemDisplay,
+		WindowProperty,
+		SwapchainProperty,
+		VkFormat::VK_FORMAT_B8G8R8A8_SRGB,
+		640,
+		480,
+		"cock"
+	);
+
+	system_window* SystemWindow3 = new system_window(
+		&Engine,
+		Context,
+		SystemDisplay,
+		WindowProperty,
+		SwapchainProperty,
+		VkFormat::VK_FORMAT_B8G8R8A8_SRGB,
+		640,
+		480,
+		"cock"
+	);
+
+	while (true) {
+		//glfwPollEvents();
+	}
+
 	//all_unit_tests(Context);
 
 	// Move this function somewhere else.
 	Engine.tsleep(3);
+
+	//delete SystemWindow;
+
 	return 0;
 }
 
