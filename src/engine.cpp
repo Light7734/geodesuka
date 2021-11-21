@@ -3,8 +3,6 @@
 /* --------------- Standard C Libraries --------------- */
 
 /* --------------- Standard C++ Libraries --------------- */
-#include <iostream>
-std::mutex IOMutex;
 
 #include <vector>
 #include <chrono>
@@ -34,16 +32,31 @@ namespace geodesuka {
 
 	engine::engine(int argc, char* argv[]) : SystemTerminal(*(new core::object::system_terminal(this, nullptr))) {
 		this->State = state::ENGINE_CREATION_STATE;
-		this->isGLSLANGReady = false;
-		this->isGLFWReady = false;
-		this->isVulkanReady = false;
-		this->isSystemDisplayAvailable = false;
-		this->isGCDeviceAvailable = false;
-
 		this->isReady = false;
 		this->Shutdown.store(false);
+		this->ThreadsLaunched.store(false);
+
+		this->Handle = VK_NULL_HANDLE;
+
+		// First initialized object is the system terminal.
+		this->Object.push_back(&SystemTerminal);
 
 		this->PrimaryDisplay = nullptr;
+
+		this->SignalCreate.store(false);
+		this->WindowCreated.store(false);
+
+		// Store main thread ID.
+		this->MainThreadID = std::this_thread::get_id();
+
+
+		bool isGLSLANGReady				= false;
+		bool isGLFWReady				= false;
+		bool isVulkanReady				= false;
+		bool isSystemDisplayAvailable	= false;
+		bool isGCDeviceAvailable		= false;
+
+
 
 		// --------------- Initialization Process --------------- //
 
@@ -56,13 +69,13 @@ namespace geodesuka {
 		//
 
 		// (GLSLang)
-		this->isGLSLANGReady = glslang::InitializeProcess();
+		isGLSLANGReady = glslang::InitializeProcess();
 
 		// (GLFW) Must be initialized first for OS extensions.
-		this->isGLFWReady = glfwInit();
+		isGLFWReady = glfwInit();
 
 		// (Vulkan) Load required window extensions.
-		if (this->isGLFWReady) {
+		if (isGLFWReady) {
 			// Validation Layers.
 			this->EnabledLayer.push_back("VK_LAYER_KHRONOS_validation");
 
@@ -75,40 +88,37 @@ namespace geodesuka {
 			}
 			//this->RequiredExtension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);		
 
-			for (size_t i = 0; i < this->RequiredExtension.size(); i++) {
-				std::cout << this->RequiredExtension[i] << std::endl;
-			}
+			//for (size_t i = 0; i < this->RequiredExtension.size(); i++) {
+			//	std::cout << this->RequiredExtension[i] << std::endl;
+			//}
 
-			this->AppProp.sType							= VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
-			this->AppProp.pNext							= NULL;
-			this->AppProp.pApplicationName				= "No Name";
-			this->AppProp.applicationVersion			= VK_MAKE_VERSION(0, 0, 1);
-			this->AppProp.pEngineName					= "Geodesuka Engine";
-			this->AppProp.engineVersion					= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
-			this->AppProp.apiVersion					= VK_MAKE_VERSION(1, 2, 0);
+			this->AppInfo.sType							= VkStructureType::VK_STRUCTURE_TYPE_APPLICATION_INFO;
+			this->AppInfo.pNext							= NULL;
+			this->AppInfo.pApplicationName				= "No Name";
+			this->AppInfo.applicationVersion			= VK_MAKE_VERSION(0, 0, 1);
+			this->AppInfo.pEngineName					= "Geodesuka Engine";
+			this->AppInfo.engineVersion					= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
+			this->AppInfo.apiVersion					= VK_MAKE_VERSION(1, 2, 0);
 
-			this->InstProp.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-			this->InstProp.pNext						= NULL;
-			this->InstProp.flags						= 0;
-			this->InstProp.pApplicationInfo				= &this->AppProp;
-			this->InstProp.enabledLayerCount			= (uint32_t)this->EnabledLayer.size();
-			this->InstProp.ppEnabledLayerNames			= this->EnabledLayer.data();
-			this->InstProp.enabledExtensionCount		= (uint32_t)this->RequiredExtension.size();
-			this->InstProp.ppEnabledExtensionNames		= this->RequiredExtension.data();
+			this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+			this->CreateInfo.pNext						= NULL;
+			this->CreateInfo.flags						= 0;
+			this->CreateInfo.pApplicationInfo			= &this->AppInfo;
+			this->CreateInfo.enabledLayerCount			= (uint32_t)this->EnabledLayer.size();
+			this->CreateInfo.ppEnabledLayerNames		= this->EnabledLayer.data();
+			this->CreateInfo.enabledExtensionCount		= (uint32_t)this->RequiredExtension.size();
+			this->CreateInfo.ppEnabledExtensionNames	= this->RequiredExtension.data();
 
-			VkResult Result = vkCreateInstance(&InstProp, NULL, &this->Instance);
+			VkResult Result = vkCreateInstance(&this->CreateInfo, NULL, &this->Handle);
 			if (Result == VK_SUCCESS) {
-				this->isVulkanReady = true;
+				isVulkanReady = true;
 			}
 			else {
-				this->isVulkanReady = false;
+				isVulkanReady = false;
 			}
 		}
 
-		// First initialized object is the system terminal.
-		this->Object.push_back(&SystemTerminal);
-
-		if (this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady) {
+		if (isGLSLANGReady && isGLFWReady && isVulkanReady) {
 
 			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
@@ -127,76 +137,28 @@ namespace geodesuka {
 						this->Object.push_back(tmpDisplay);
 					}
 				}
-				this->isSystemDisplayAvailable = true;
+				isSystemDisplayAvailable = true;
 			}
 
 			// Query for gcl devices
 			uint32_t PhysicalDeviceCount = 0;
-			vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, NULL);
+			vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, NULL);
 			if (PhysicalDeviceCount > 0) {
 				std::vector<VkPhysicalDevice> PhysicalDeviceList(PhysicalDeviceCount);
-				vkEnumeratePhysicalDevices(Instance, &PhysicalDeviceCount, PhysicalDeviceList.data());
+				vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, PhysicalDeviceList.data());
 				for (size_t i = 0; i < PhysicalDeviceList.size(); i++) {
-					this->DeviceList.push_back(new core::gcl::device(this->Instance, PhysicalDeviceList[i]));
+					this->DeviceList.push_back(new core::gcl::device(this->Handle, PhysicalDeviceList[i]));
 				}
-				this->isGCDeviceAvailable = true;
+				isGCDeviceAvailable = true;
 			}
 
 		}
 
-		this->isReady = this->isGLSLANGReady && this->isGLFWReady && this->isVulkanReady && this->isSystemDisplayAvailable && this->isGCDeviceAvailable;
+		this->isReady = isGLSLANGReady && isGLFWReady && isVulkanReady && isSystemDisplayAvailable && isGCDeviceAvailable;
 
 		//std::cout << "Geodesuka Engine";
 		//std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
 		//std::cout << " - Date: " << this->Date << std::endl;
-
-
-		// ------------------------- Debug Print Info ------------------------- //
-
-		//// Will print out display info.
-		//for (size_t i = 0; i < Display.size(); i++) {
-		//	std::cout << "Display Name:\t\t" << Display[i]->Name.str() << std::endl;
-		//	std::cout << "Display Size:\t\t" << Display[i]->Size.x << ", " << Display[i]->Size.y << "\t[m]" << std::endl;
-		//	std::cout << "Display Resolution:\t" << Display[i]->Resolution.x << ", " << Display[i]->Resolution.y << "\t[pixels]" << std::endl;
-		//	std::cout << "Display Refresh Rate:\t" << Display[i]->Property.RefreshRate << "\t\t[1/s]" << std::endl;
-		//	std::cout << std::endl;
-		//}
-		//
-		//// Just simply prints out device info.
-		//for (size_t i = 0; i < this->DeviceList.size(); i++) {
-		//	std::cout << "Device ID:\t" << this->DeviceList[i]->Properties.deviceID << std::endl;
-		//	std::cout << "Device Name:\t" << this->DeviceList[i]->Properties.deviceName << std::endl;
-		//	std::cout << "Device Type:\t";
-		//	switch (this->DeviceList[i]->Properties.deviceType) {
-		//	case VK_PHYSICAL_DEVICE_TYPE_OTHER:
-		//		std::cout << "Unknown" << std::endl;
-		//		break;
-		//	case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-		//		std::cout << "Integrated GPU" << std::endl;
-		//		break;
-		//	case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-		//		std::cout << "Discrete GPU" << std::endl;
-		//		break;
-		//	case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-		//		std::cout << "Virtual GPU" << std::endl;
-		//		break;
-		//	case VK_PHYSICAL_DEVICE_TYPE_CPU:
-		//		std::cout << "CPU" << std::endl;
-		//		break;
-		//	}
-		//	std::cout << std::endl;
-		//	for (size_t j = 0; j < this->DeviceList[i]->QueueFamilyProperties.size(); j++) {
-		//		std::cout << "Family Index:\t" << j << std::endl;
-		//		std::cout << "Queue Count:\t" << this->DeviceList[i]->QueueFamilyProperties[j].queueCount << std::endl;
-		//		std::cout << "Graphics:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) >> 0) << std::endl;
-		//		std::cout << "Compute:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) >> 1) << std::endl;
-		//		std::cout << "Transfer:\t" << ((this->DeviceList[i]->QueueFamilyProperties[j].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) >> 2) << std::endl;
-		//		// No idea what sparse binding is..
-		//		//std::cout << "Sparse Binding:\t" << ((QueueFamilyPropList[i].queueFlags & VkQueueFlagBits::VK_QUEUE_SPARSE_BINDING_BIT) >> 3) << std::endl << std::endl;
-		//		std::cout << std::endl;
-		//	}
-		//	std::cout << std::endl;
-		//}
 
 		this->State = state::ENGINE_ACTIVE_STATE;
 	}
@@ -248,7 +210,7 @@ namespace geodesuka {
 		}
 		this->File.clear();
 
-		vkDestroyInstance(this->Instance, NULL);
+		vkDestroyInstance(this->Handle, NULL);
 
 		glfwTerminate();
 
@@ -256,10 +218,11 @@ namespace geodesuka {
 	}
 
 	int engine::run(core::app* aApp) {
-		// Initialize update thread for all objects.
-		//this->UpdateThread = std::thread(&engine::tupdate, this);
 
-		//this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
+		// Store main thread ID.
+		this->MainThreadID				= std::this_thread::get_id();
+
+		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
 		this->RenderThread				= std::thread(&engine::trender, this);
 		this->AppThread					= std::thread(&core::app::run, aApp);
 
@@ -269,14 +232,16 @@ namespace geodesuka {
 		double ts = 0.01;
 		dt = 0.0;
 
-		while (this->Shutdown.load()) {
+		// The update thread is the main thread.
+		while (!this->Shutdown.load()) {
 			this->RenderUpdateTrap.door();
 
 			// So fucking dumb...
-			this->ut_create_window_handle_call();
+			this->mtcd_process_window_handle_call();
+
 			glfwPollEvents();
 
-			t1 = this->get_time();
+			t1 = core::logic::get_time();
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
@@ -300,11 +265,11 @@ namespace geodesuka {
 			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
 			//}
 
-			t2 = this->get_time();
+			t2 = core::logic::get_time();
 			wt = t2 - t1;
 			if (wt < ts) {
 				ht = ts - wt;
-				this->tsleep(ht);
+				core::logic::waitfor(ht);
 			}
 			else {
 				ht = 0.0;
@@ -315,7 +280,7 @@ namespace geodesuka {
 
 		this->Shutdown.store(true);
 
-		//this->SystemTerminalThread.join();
+		this->SystemTerminalThread.join();
 		this->RenderThread.join();
 		this->AppThread.join();
 
@@ -351,59 +316,105 @@ namespace geodesuka {
 	}
 
 	void engine::submit(core::gcl::context* aContext) {
-		this->RenderUpdateTrap.set(true);
-		this->RenderUpdateTrap.wait_until(2);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
 		this->Context.push_back(aContext);
-		this->RenderUpdateTrap.set(false);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
 	}
 
 	void engine::remove(core::gcl::context* aContext) {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		this->RenderUpdateTrap.set(true);
-		this->RenderUpdateTrap.wait_until(2);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
 		for (size_t i = 0; i < this->Context.size(); i++) {
 			if (this->Context[i] == aContext) {
 				this->Context.erase(this->Context.begin() + i);
 			}
 		}
-		this->RenderUpdateTrap.set(false);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
 	}
 
 	void engine::submit(core::object_t* aObject) {
-		this->RenderUpdateTrap.set(true);
-		this->RenderUpdateTrap.wait_until(2);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
 		this->Object.push_back(aObject);
-		this->RenderUpdateTrap.set(false);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
 	}
 	// TODO: Fix these two methods.
 	void engine::remove(core::object_t* aObject) {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		this->RenderUpdateTrap.set(true);
-		this->RenderUpdateTrap.wait_until(2);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
 		for (size_t i = 0; i < this->Object.size(); i++) {
 			if (this->Object[i] == aObject) {
 				this->Object.erase(this->Object.begin() + i);
 			}
 		}
-		this->RenderUpdateTrap.set(false);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
 	}
 
 	void engine::submit(core::object::system_window *aSystemWindow) {
 		size_t Offset = 1 + this->Display.size() + this->SystemWindow.size();
-		this->RenderUpdateTrap.set(true);
-		this->RenderUpdateTrap.wait_until(2);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
 		// Put at end of SystemWindow List.
 		this->SystemWindow.push_back(aSystemWindow);
 		this->Object.insert(this->Object.begin() + Offset, aSystemWindow);
-		this->RenderUpdateTrap.set(false);
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::remove(core::object::system_window* aSystemWindow) {
+		// Should be fine?
+		if (this->State != ENGINE_ACTIVE_STATE) return;
+
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			if (this->Object[i] == aSystemWindow) {
+				this->Object.erase(this->Object.begin() + i);
+			}
+		}
+
+		for (size_t i = 0; i < this->SystemWindow.size(); i++) {
+			if (this->SystemWindow[i] == aSystemWindow) {
+				this->SystemWindow.erase(this->SystemWindow.begin() + i);
+			}
+		}
+
+		if (this->ThreadsLaunched.load()) {
+			this->RenderUpdateTrap.set(false);
+		}
 	}
 
 	VkInstance engine::handle() {
-		return this->Instance;
+		return this->Handle;
 	}
 
 	bool engine::is_ready() {
@@ -414,77 +425,77 @@ namespace geodesuka {
 		return this->Version;
 	}
 
-	double engine::get_time() {
-		this->Mutex.lock();
-		double temp = glfwGetTime();
-		this->Mutex.unlock();
-		return temp;
-	}
-
-	// TODO: Maybe move to another section of core?
-	void engine::tsleep(double aSeconds) {
-		double Microseconds = 1000.0 * aSeconds;
-#if defined(_WIN32) || defined(_WIN64)
-		DWORD Duration = (DWORD)std::floor(Microseconds);
-		Sleep(Duration);
-#elif defined(__APPLE__) || defined(MACOSX)
-
-#elif defined(__linux__) && !defined(__ANDROID__)
-		int Duration = (int)std::floor(Microseconds);
-		usleep(Duration);
-#elif defined(__ANDROID__)
-
-#endif
-	}
-
 	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
 		GLFWwindow* Temp = NULL;
-		this->WindowTempData.Property = aProperty;
-		this->WindowTempData.Width = aWidth;
-		this->WindowTempData.Height = aHeight;
-		this->WindowTempData.Title = aTitle;
-		this->WindowTempData.Monitor = aMonitor;
-		this->WindowTempData.Window = aWindow;
+		if (this->MainThreadID == std::this_thread::get_id()) {
+			glfwWindowHint(GLFW_RESIZABLE,			aProperty.Resizable);
+			glfwWindowHint(GLFW_DECORATED,			aProperty.Decorated);
+			glfwWindowHint(GLFW_FOCUSED,			aProperty.UserFocused);
+			glfwWindowHint(GLFW_AUTO_ICONIFY,		aProperty.AutoMinimize);
+			glfwWindowHint(GLFW_FLOATING,			aProperty.Floating);
+			glfwWindowHint(GLFW_MAXIMIZED,			aProperty.Maximized);
+			glfwWindowHint(GLFW_VISIBLE,			aProperty.Visible);
+			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	aProperty.ScaleToMonitor);
+			glfwWindowHint(GLFW_CENTER_CURSOR,		aProperty.CenterCursor);
+			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		aProperty.FocusOnShow);
+			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
-		this->WindowCreated.store(false);
-		this->SignalCreate.store(true);
-		while (!this->WindowCreated.load()) {}
-		Temp = this->ReturnWindow;
+			Temp = glfwCreateWindow(aWidth, aHeight, aTitle, aMonitor, aWindow);
+		}
+		else {
+			this->WindowTempData.Property = aProperty;
+			this->WindowTempData.Width = aWidth;
+			this->WindowTempData.Height = aHeight;
+			this->WindowTempData.Title = aTitle;
+			this->WindowTempData.Monitor = aMonitor;
+			this->WindowTempData.Window = aWindow;
+
+			this->WindowCreated.store(false);
+			this->SignalCreate.store(true);
+			// Wait for window to be created.
+			while (!this->WindowCreated.load()) {}
+			Temp = this->ReturnWindow;
+		}
 		return Temp;
 	}
 
 	void engine::destroy_window_handle(GLFWwindow* aWindow) {
-		while (this->DestroyWindow.load() != NULL) {}
-		this->DestroyWindow.store(aWindow);
+		if (this->MainThreadID == std::this_thread::get_id()) {
+			glfwDestroyWindow(aWindow);
+		}
+		else {
+			while (this->DestroyWindow.load() != NULL) {}
+			this->DestroyWindow.store(aWindow);
+		}
 	}
 
-	void engine::ut_create_window_handle_call() {
-		if (!this->SignalCreate.load()) return;
+	void engine::mtcd_process_window_handle_call() {
+		if (this->SignalCreate.load()) {
+			glfwWindowHint(GLFW_RESIZABLE,			WindowTempData.Property.Resizable);
+			glfwWindowHint(GLFW_DECORATED,			WindowTempData.Property.Decorated);
+			glfwWindowHint(GLFW_FOCUSED,			WindowTempData.Property.UserFocused);
+			glfwWindowHint(GLFW_AUTO_ICONIFY,		WindowTempData.Property.AutoMinimize);
+			glfwWindowHint(GLFW_FLOATING,			WindowTempData.Property.Floating);
+			glfwWindowHint(GLFW_MAXIMIZED,			WindowTempData.Property.Maximized);
+			glfwWindowHint(GLFW_VISIBLE,			WindowTempData.Property.Visible);
+			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	WindowTempData.Property.ScaleToMonitor);
+			glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
+			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
+			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
-		glfwWindowHint(GLFW_RESIZABLE,			WindowTempData.Property.Resizable);
-		glfwWindowHint(GLFW_DECORATED,			WindowTempData.Property.Decorated);
-		glfwWindowHint(GLFW_FOCUSED,			WindowTempData.Property.UserFocused);
-		glfwWindowHint(GLFW_AUTO_ICONIFY,		WindowTempData.Property.AutoMinimize);
-		glfwWindowHint(GLFW_FLOATING,			WindowTempData.Property.Floating);
-		glfwWindowHint(GLFW_MAXIMIZED,			WindowTempData.Property.Maximized);
-		glfwWindowHint(GLFW_VISIBLE,			WindowTempData.Property.Visible);
-		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	WindowTempData.Property.ScaleToMonitor);
-		glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
-		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
-		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-
-		this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
-		this->WindowCreated.store(true);
-		this->SignalCreate.store(false);
-	}
-
-	void engine::ut_destroy_window_handle_call() {
-		GLFWwindow *temp = this->DestroyWindow.load();
+			this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
+			this->WindowCreated.store(true);
+			this->SignalCreate.store(false);
+		}
+		
+		// Check if window needs to be destroyed.
+		GLFWwindow* temp = this->DestroyWindow.load();
 		if (temp != NULL) {
 			glfwDestroyWindow(temp);
 			this->DestroyWindow.store(NULL);
-		}
+		}		
 	}
 
 	//void engine::tupdate() {
@@ -570,6 +581,9 @@ namespace geodesuka {
 	// --------------- System Terminal Thread --------------- //
 	void engine::tsterminal() {
 
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1.0);
+		}
 	}
 
 	// --------------- Render Thread --------------- //
@@ -595,7 +609,7 @@ namespace geodesuka {
 		while (!this->Shutdown.load()) {
 			this->RenderUpdateTrap.door();
 
-			t1 = this->get_time();
+			t1 = core::logic::get_time();
 
 			// Generates Submissions per stage.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
@@ -639,9 +653,9 @@ namespace geodesuka {
 			//	//vkAcquireNextImageKHR()
 			//}
 
-			t2 = this->get_time();
+			t2 = core::logic::get_time();
 			dt = t2 - t1;
-			this->tsleep(0.6);
+			core::logic::waitfor(0.6);
 		}
 	}
 

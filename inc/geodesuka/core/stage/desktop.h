@@ -2,8 +2,6 @@
 #ifndef GEODESUKA_CORE_STAGE_DESKTOP_H
 #define GEODESUKA_CORE_STAGE_DESKTOP_H
 
-
-
 #include "../stage.h"
 #include "canvas.h"
 

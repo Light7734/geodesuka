@@ -24,6 +24,10 @@ namespace geodesuka::core::logic {
 
 	};
 
+	double get_time();
+	void set_time(double aTime);
+	void waitfor(double aSeconds);
+
 }
 
 #endif // !GEODESUKA_CORE_LOGIC_TIMER_H

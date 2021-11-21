@@ -50,8 +50,6 @@ namespace geodesuka::core {
 
 	object_t::object_t(engine* aEngine, gcl::context* aContext) {
 
-
-
 		// Internal API.
 		this->Engine = aEngine;
 		this->Context = aContext;
@@ -60,13 +58,13 @@ namespace geodesuka::core {
 		this->InputForce = math::real3(0.0, 0.0, 0.0);
 
 		this->Mass = 1.0;
-		this->Time = aEngine->get_time();
+		this->Time = core::logic::get_time();
 		this->Position = math::real3(0.0, 0.0, 0.0);
 		this->Momentum = math::real3(0.0, 0.0, 0.0);
 		this->Force = math::real3(0.0, 0.0, 0.0);
-		this->DirectionX = math::real3(0.0, 0.0, 0.0);
-		this->DirectionY = math::real3(0.0, 0.0, 0.0);
-		this->DirectionZ = math::real3(0.0, 0.0, 0.0);
+		this->DirectionX = math::real3(1.0, 0.0, 0.0);
+		this->DirectionY = math::real3(0.0, 1.0, 0.0);
+		this->DirectionZ = math::real3(0.0, 0.0, 1.0);
 
 		//std::cout << "Object Created" << std::endl;
 	}

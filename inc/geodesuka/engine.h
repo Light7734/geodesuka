@@ -49,7 +49,7 @@ C26451
 #include "core/util/text.h"
 #include "core/util/variable.h"
 
-
+#include "core/logic/timer.h"
 #include "core/logic/trap.h"
 
 // ------------------------- File System Manager ------------------------- //
@@ -108,16 +108,12 @@ C26451
 // This section is for GUI sh... stuff!
 #include "core/object/vtext.h"
 
-// Cube is supposed to be a simple template
-// example for extending object.h
-//#include "core/object/cube.h"
-
 #include "core/stage.h"
 #include "core/stage/canvas.h"
 #include "core/stage/scene2d.h"
 #include "core/stage/scene3d.h"
 
-//#include "core/stage/desktop.h"
+#include "core/stage/desktop.h"
 
 #include "core/app.h"
 
@@ -143,6 +139,8 @@ namespace geodesuka {
 
 		// Objects can interect with engine internals.
 		friend class core::object_t;
+
+		std::atomic<bool> Shutdown;
 
 		engine(int argc, char* argv[]);
 		~engine();
@@ -171,41 +169,34 @@ namespace geodesuka {
 		// objects in existence.
 		void submit(core::object_t* aObject);		// Submit created object to engine.
 		void remove(core::object_t* aObject);		// Remove object from engine.
+
 		void submit(core::object::system_window* aSystemWindow);
+		void remove(core::object::system_window* aSystemWindow);
 
 		VkInstance handle();
 		bool is_ready();
 		version get_version();
-		double get_time();
-		void tsleep(double aSeconds);
 
 	private:
-		
-		state State;
 
 		std::vector<const char*> RequiredExtension;
 		std::vector<const char*> EnabledLayer;
-
-		// Engine Mutex
-		std::mutex Mutex;
 
 		// Maintain versioning system.
 		const version Version = { 0, 0, 17 };
 		const int Date = 20211120;
 
-		// Engine Startup Conditions
-		bool isGLSLANGReady;
-		bool isGLFWReady;
-		bool isVulkanReady;
-		bool isSystemDisplayAvailable;
-		bool isGCDeviceAvailable;
+		// Engine Mutex
+		std::mutex Mutex;
 
+		state State;
 		bool isReady;
-		std::atomic<bool> Shutdown;
+		//std::atomic<bool> Shutdown;
+		std::atomic<bool> ThreadsLaunched;
 
-		VkApplicationInfo AppProp{};
-		VkInstanceCreateInfo InstProp{};
-		VkInstance Instance;
+		VkApplicationInfo AppInfo{};
+		VkInstanceCreateInfo CreateInfo{};
+		VkInstance Handle;
 
 		// It is the job of the engine to query for physical devices
 		// and display from the system.
@@ -253,13 +244,14 @@ namespace geodesuka {
 
 		GLFWwindow* create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow);
 		void destroy_window_handle(GLFWwindow* aWindow);
-		void ut_create_window_handle_call();
-		void ut_destroy_window_handle_call();
+		void mtcd_process_window_handle_call();
 
 		// ------------------------------ Back end runtime ------------------------------ //
 
 		// TODO: Maybe make update thread use multiple threads for fast processing?
 		core::logic::trap RenderUpdateTrap; // Used for stalling Update and Render Thread.
+
+		std::thread::id MainThreadID;
 
 		// Main thread does updates.
 		// These threads do side tasks.
@@ -270,9 +262,7 @@ namespace geodesuka {
 		// App Thread.
 		std::thread AppThread;
 
-
 		void tsterminal();		// Thread handles terminal input to the engine.
-		//void tupdate();			// Thread manages updates on all objects and stages.
 		void trender();			// Thread honors frame rates of respective targets.
 		void taudio();			// Thread Handles audio streams.
 
