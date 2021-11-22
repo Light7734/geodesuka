@@ -3,6 +3,7 @@
 /* --------------- Standard C Libraries --------------- */
 
 /* --------------- Standard C++ Libraries --------------- */
+#include <iostream>
 
 #include <vector>
 #include <chrono>
@@ -220,11 +221,18 @@ namespace geodesuka {
 	int engine::run(core::app* aApp) {
 
 		// Store main thread ID.
-		this->MainThreadID				= std::this_thread::get_id();
 
+		this->MainThreadID				= std::this_thread::get_id();
 		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
 		this->RenderThread				= std::thread(&engine::trender, this);
 		this->AppThread					= std::thread(&core::app::run, aApp);
+
+		std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
+		std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
+		std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
+		std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
+
+		this->ThreadsLaunched.store(true);
 
 		double t1, t2;
 		double wt, ht;
@@ -236,12 +244,10 @@ namespace geodesuka {
 		while (!this->Shutdown.load()) {
 			this->RenderUpdateTrap.door();
 
-			// So fucking dumb...
+			t1 = core::logic::get_time();
 			this->mtcd_process_window_handle_call();
-
 			glfwPollEvents();
 
-			t1 = core::logic::get_time();
 			// Update object list.
 			for (size_t i = 0; i < this->Object.size(); i++) {
 				this->Object[i]->update(dt);
@@ -316,12 +322,12 @@ namespace geodesuka {
 	}
 
 	void engine::submit(core::gcl::context* aContext) {
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
 		this->Context.push_back(aContext);
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
@@ -330,7 +336,7 @@ namespace geodesuka {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
@@ -339,18 +345,18 @@ namespace geodesuka {
 				this->Context.erase(this->Context.begin() + i);
 			}
 		}
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
 
 	void engine::submit(core::object_t* aObject) {
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
 		this->Object.push_back(aObject);
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
@@ -359,7 +365,7 @@ namespace geodesuka {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
@@ -368,21 +374,21 @@ namespace geodesuka {
 				this->Object.erase(this->Object.begin() + i);
 			}
 		}
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
 
 	void engine::submit(core::object::system_window *aSystemWindow) {
 		size_t Offset = 1 + this->Display.size() + this->SystemWindow.size();
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
 		// Put at end of SystemWindow List.
 		this->SystemWindow.push_back(aSystemWindow);
 		this->Object.insert(this->Object.begin() + Offset, aSystemWindow);
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
@@ -391,7 +397,7 @@ namespace geodesuka {
 		// Should be fine?
 		if (this->State != ENGINE_ACTIVE_STATE) return;
 
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(true);
 			this->RenderUpdateTrap.wait_until(2);
 		}
@@ -408,7 +414,7 @@ namespace geodesuka {
 			}
 		}
 
-		if (this->ThreadsLaunched.load()) {
+		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
 			this->RenderUpdateTrap.set(false);
 		}
 	}
@@ -498,84 +504,6 @@ namespace geodesuka {
 		}		
 	}
 
-	//void engine::tupdate() {
-	//	double t1, t2;
-	//	double wt, ht;
-	//	double t, dt;
-	//	double ts = 0.01;
-	//	dt = 0.0;
-	//	
-	//
-	//	std::vector<std::vector<VkSubmitInfo>> TransferSubmission;
-	//	std::vector<std::vector<VkSubmitInfo>> ComputeSubmission;
-	//
-	//	//uint32_t TransferSubmissionCount = 0;
-	//	//VkSubmitInfo *TransferSubmission = NULL;
-	//
-	//	//core::object::window::prop TempProperty = core::object::window::prop();
-	//	//glfwWindowHint(GLFW_RESIZABLE,			TempProperty.Resizable);
-	//	//glfwWindowHint(GLFW_DECORATED,			TempProperty.Decorated);
-	//	//glfwWindowHint(GLFW_FOCUSED,			TempProperty.UserFocused);
-	//	//glfwWindowHint(GLFW_AUTO_ICONIFY,		TempProperty.AutoMinimize);
-	//	//glfwWindowHint(GLFW_FLOATING,			TempProperty.Floating);
-	//	//glfwWindowHint(GLFW_MAXIMIZED,			TempProperty.Maximized);
-	//	//glfwWindowHint(GLFW_VISIBLE,			TempProperty.Visible);
-	//	//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	TempProperty.ScaleToMonitor);
-	//	//glfwWindowHint(GLFW_CENTER_CURSOR,		TempProperty.CenterCursor);
-	//	//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		TempProperty.FocusOnShow);
-	//	//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-	//	//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-	//
-	//	//GLFWwindow* TempWindow = glfwCreateWindow(640, 480, "thread", NULL, NULL);
-	//
-	//
-	//	while (!this->Shutdown.load()) {
-	//		this->RenderUpdateTrap.door();
-	//
-	//		// So fucking dumb...
-	//		this->ut_create_window_handle_call();
-	//		glfwPollEvents();
-	//
-	//		t1 = this->get_time();
-	//		// Update object list.
-	//		for (size_t i = 0; i < this->Object.size(); i++) {
-	//			this->Object[i]->update(dt);
-	//		}
-	//
-	//		// Update stage logic.
-	//		for (size_t i = 0; i < this->Stage.size(); i++) {
-	//			this->Stage[i]->update(dt);
-	//		}
-	//
-	//		// Wait for render operations to complete before transfer.
-	//		//vkWaitForFences();
-	//
-	//		//// Execute all host to device transfer operations.
-	//		//for (size_t i = 0; i < this->Context.size(); i++) {
-	//		//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
-	//		//}
-	//		//
-	//		//// Execute all device compute operations.
-	//		//for (size_t i = 0; i < this->Context.size(); i++) {
-	//		//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
-	//		//}
-	//
-	//		t2 = this->get_time();
-	//		wt = t2 - t1;
-	//		if (wt < ts) {
-	//			ht = ts - wt;
-	//			this->tsleep(ht);
-	//		}
-	//		else {
-	//			ht = 0.0;
-	//		}
-	//		dt = wt + ht;
-	//	}
-	//	//std::cout << "Update Thread has exited." << std::endl;
-	//
-	//	//glfwDestroyWindow(TempWindow);
-	//}
-
 	// --------------- System Terminal Thread --------------- //
 	// Will be used for runtime debugging of engine using terminal.
 	// --------------- System Terminal Thread --------------- //
@@ -613,12 +541,11 @@ namespace geodesuka {
 
 			// Generates Submissions per stage.
 			for (size_t i = 0; i < this->Stage.size(); i++) {
-				//this->Stage[i]->render();
+				this->Stage[i]->render();
 			}
 
 			// Alter submission size to match number of contexts.
-			//Submission.resize(this->Context.size());
-
+			Submission.resize(this->Context.size());
 
 			// Reverse order of aggregation.
 			// Gather all submissions by stages.
@@ -627,7 +554,7 @@ namespace geodesuka {
 					if (this->Stage[i]->parent_context() == this->Context[j]) {
 						// When matching context is found, extract all submissions.
 						for (size_t k = 0; k < this->Stage[i]->Submission.size(); k++) {
-							//Submission[j].push_back(this->Stage[i]->Submission[k]);
+							Submission[j].push_back(this->Stage[i]->Submission[k]);
 						}
 					}
 				}
@@ -655,7 +582,7 @@ namespace geodesuka {
 
 			t2 = core::logic::get_time();
 			dt = t2 - t1;
-			core::logic::waitfor(0.6);
+			core::logic::waitfor(0.1);
 		}
 	}
 

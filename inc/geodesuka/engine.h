@@ -136,11 +136,10 @@ namespace geodesuka {
 
 		friend class core::gcl::context;
 		friend class core::object::system_window;
+		friend class core::app;
 
 		// Objects can interect with engine internals.
 		friend class core::object_t;
-
-		std::atomic<bool> Shutdown;
 
 		engine(int argc, char* argv[]);
 		~engine();
@@ -191,7 +190,7 @@ namespace geodesuka {
 
 		state State;
 		bool isReady;
-		//std::atomic<bool> Shutdown;
+		std::atomic<bool> Shutdown;
 		std::atomic<bool> ThreadsLaunched;
 
 		VkApplicationInfo AppInfo{};
@@ -252,6 +251,9 @@ namespace geodesuka {
 		core::logic::trap RenderUpdateTrap; // Used for stalling Update and Render Thread.
 
 		std::thread::id MainThreadID;
+		std::thread::id SystemTerminalThreadID;
+		std::thread::id RenderThreadID;
+		std::thread::id AudioThreadID;
 
 		// Main thread does updates.
 		// These threads do side tasks.

@@ -10,9 +10,13 @@ namespace geodesuka::core {
 	class app {
 	public:
 
+		friend class engine;
+
+		std::atomic<bool> ExitApp;
+
 		virtual ~app() = default;
 
-		virtual void run() = 0;
+		virtual void gameloop() = 0;
 
 
 	protected:
@@ -21,8 +25,10 @@ namespace geodesuka::core {
 
 		app(engine *aEngine, int argc, char* argv[]);
 
-	//private:
 
+	private:
+
+		void run();
 
 	};
 
