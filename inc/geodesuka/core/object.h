@@ -53,78 +53,21 @@ namespace geodesuka::core {
 	class object_t {
 	public:
 
-		//friend class engine;
+		friend class engine;
+
+		friend class object::system_display;
+		friend class object::system_window;
+		friend class object::virtual_window;
+
+		friend class object::camera2d;
+		friend class object::camera3d;
+
 
 		std::mutex Mutex;
 		VkSubmitInfo TransferSubmit{};
 		VkSubmitInfo ComputeSubmit{};
-		uint32_t DrawCommandCount;
-		VkCommandBuffer *DrawCommand;
 		
-		virtual ~object_t();
-		//virtual ~object_t() = default;
-
-		/*
-		* If input stream is being forwarded to a particular instance of an object,
-		* this method will be called depending on input recieved by the engine. This
-		* method is effectively a forwarded callback stream for the particular instance
-		* of the object.
-		*/
-		virtual void input(const hid::keyboard& aKeyboard);
-
-		/*
-		* Basically a call back as well, but uses mouse info instead.
-		*/
-		virtual void input(const hid::mouse& aMouse);
-
-		/*
-		* The implementation of this method will allow the object to internally time evolve
-		* itself with a provided time step. It will be the responsibility of the engine
-		* to insure that the time step remains stable.
-		*/
-		virtual void update(double aDeltaTime);
-
-		/*
-		* To insure that how an object is rendered is left up to the implementation
-		* of the derivative class of object.h. These will be the primary draw methods
-		* for object.h which must be implemented by the derivative class.
-		*/
-
-		/*
-		* As of right now, there is no method for direct draw of object to
-		* a system_display, maybe in further updates this will be extended.
-		* Does nothing as of right now. The framebuffer provided will not
-		* be displayed anywhere.
-		*/
-		virtual void draw(object::system_display* aTargetSystemDisplay);
-
-		/*
-		* This method implementation must specify how the object in question
-		* will be rendered to an operating system_window.h. This will be
-		* mostly be used for GUI stuff since direct window draw.
-		*/
-		virtual void draw(object::system_window* aTargetSystemWindow);
-
-		/*
-		* An implementation of this method must define how the object in question
-		* will be drawn to a virtual_window.h, which may exist in its own right
-		* as an object in 3d space.
-		*/
-		virtual void draw(object::virtual_window* aTargetVirtualWindow);
-
-		/*
-		* This method will be called when the an object has been requested to be
-		* drawn to a camera2d object.
-		*/
-		virtual void draw(object::camera2d* aTargetCamera2D);
-
-		/*
-		* Same as above, but with a 3D camera, will provide internals of
-		* camera so extended object can decide how it will be drawn.
-		*/
-		virtual void draw(object::camera3d* aTargetCamera3D);
-
-		// ------------------------- Utilities ------------------------- //
+		virtual ~object_t() /*= default*/;
 
 		virtual void set_position(math::real3 aPosition);
 		math::real3 get_position() const;
@@ -165,7 +108,78 @@ namespace geodesuka::core {
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
 
+		VkRenderPass RenderPass;
+
+
 		object_t(engine *aEngine, gcl::context *aContext);
+
+		/*
+		* If input stream is being forwarded to a particular instance of an object,
+		* this method will be called depending on input recieved by the engine. This
+		* method is effectively a forwarded callback stream for the particular instance
+		* of the object.
+		*/
+		virtual void input(const hid::keyboard& aKeyboard);
+
+		/*
+		* Basically a call back as well, but uses mouse info instead.
+		*/
+		virtual void input(const hid::mouse& aMouse);
+
+		/*
+		* The implementation of this method will allow the object to internally time evolve
+		* itself with a provided time step. It will be the responsibility of the engine
+		* to insure that the time step remains stable.
+		*/
+		virtual VkSubmitInfo update(double aDeltaTime);
+
+		/*
+		* Will produce compute operation submissions.
+		*/
+		virtual VkSubmitInfo compute();
+
+		/*
+		* To insure that how an object is rendered is left up to the implementation
+		* of the derivative class of object.h. These will be the primary draw methods
+		* for object.h which must be implemented by the derivative class.
+		*/
+
+		/*
+		* As of right now, there is no method for direct draw of object to
+		* a system_display, maybe in further updates this will be extended.
+		* Does nothing as of right now. The framebuffer provided will not
+		* be displayed anywhere.
+		*/
+		virtual VkCommandBuffer draw(object::system_display* aTargetSystemDisplay);
+
+		/*
+		* This method implementation must specify how the object in question
+		* will be rendered to an operating system_window.h. This will be
+		* mostly be used for GUI stuff since direct window draw.
+		*/
+		virtual VkCommandBuffer draw(object::system_window* aTargetSystemWindow);
+
+		/*
+		* An implementation of this method must define how the object in question
+		* will be drawn to a virtual_window.h, which may exist in its own right
+		* as an object in 3d space.
+		*/
+		virtual VkCommandBuffer draw(object::virtual_window* aTargetVirtualWindow);
+
+		/*
+		* This method will be called when the an object has been requested to be
+		* drawn to a camera2d object.
+		*/
+		virtual VkCommandBuffer draw(object::camera2d* aTargetCamera2D);
+
+		/*
+		* Same as above, but with a 3D camera, will provide internals of
+		* camera so extended object can decide how it will be drawn.
+		*/
+		virtual VkCommandBuffer draw(object::camera3d* aTargetCamera3D);
+
+		// Submits to parent engine. Used by derived classes to pass to engine.
+		void submit();
 
 	};
 

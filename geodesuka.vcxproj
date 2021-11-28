@@ -189,6 +189,7 @@
     <ClCompile Include="src\device.cpp" />
     <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\file.cpp" />
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\framebuffer.cpp" />
@@ -207,6 +208,7 @@
     <ClCompile Include="src\natural3.cpp" />
     <ClCompile Include="src\natural4.cpp" />
     <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\pipeline.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\real.cpp" />
     <ClCompile Include="src\real2.cpp" />
@@ -221,6 +223,7 @@
     <ClCompile Include="src\real4x2.cpp" />
     <ClCompile Include="src\real4x3.cpp" />
     <ClCompile Include="src\real4x4.cpp" />
+    <ClCompile Include="src\renderpass.cpp" />
     <ClCompile Include="src\render_target.cpp" />
     <ClCompile Include="src\scene2d.cpp" />
     <ClCompile Include="src\scene3d.cpp" />
@@ -257,11 +260,14 @@
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\builtin\object\cube.h" />
     <ClInclude Include="inc\geodesuka\builtin\object\triangle.h" />
+    <ClInclude Include="inc\geodesuka\builtin\stage\example.h" />
     <ClInclude Include="inc\geodesuka\core\app.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />

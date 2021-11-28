@@ -60,15 +60,16 @@ C26451
 
 // ------------------------- Graphics & Computation API ------------------------- //
 
-// Needed for all graphics/computation objects
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
+
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
-//#include "core/gcl/renderpass.h"
+
+#include "core/gcl/renderpass.h"
 #include "core/gcl/framebuffer.h"
-//#include "core/gcl/pipeline.h"
+#include "core/gcl/pipeline.h"
 
 // ------------------------- Human Interface Devices ------------------------- //
 
@@ -122,11 +123,11 @@ namespace geodesuka {
 	class engine {
 	public:
 
-		enum state {
-			ENGINE_CREATION_STATE,			// Engine instance is being constructed.
-			ENGINE_ACTIVE_STATE,			// Engine instance is active, and ready to be used.
-			ENGINE_DESTRUCTION_STATE		// Engine is currently in destruction phase.
-		};
+		friend class core::gcl::context;
+		friend class core::object_t;
+		friend class core::object::system_window;
+		friend class core::stage_t;
+		friend class core::app;
 
 		struct version {
 			int Major;
@@ -134,97 +135,128 @@ namespace geodesuka {
 			int Patch;
 		};
 
-		friend class core::gcl::context;
-		friend class core::object::system_window;
-		friend class core::app;
-
-		// Objects can interect with engine internals.
-		friend class core::object_t;
-
-		engine(int argc, char* argv[]);
+		engine(int argc, char* argv[]/*, int aExtensionCount, const char** aExtension*/);
 		~engine();
 
 		int run(core::app* aApp);
 
-		// Gets current primary display.
+		core::io::file* open(const char* aFilePath);
+		void close(core::io::file* aFile);
+
+		core::gcl::device** get_device_list(int* aListSize);
+		core::object::system_display** get_display_list(int* aListSize);
 		core::object::system_display* get_primary_display();
-
-		// Gets list of all currently available displays.
-		core::object::system_display** get_display_list(size_t* aListSize);
-
-		// Gets list of all currently available gpus.
-		core::gcl::device** get_device_list(size_t* aListSize);
-
-		// When an engine instance is passed into an object
-		// constructor, it uses these methods to load required
-		// assets.
-		core::io::file* open(const char* aFilePath);		// Opens file using provided path string.
-		void close(core::io::file* aFile);				// Closes previously loaded file held by engine.
-
-		void submit(core::gcl::context* aContext);
-		void remove(core::gcl::context* aContext);
-
-		// These calls are neccesary for time scheduled update of all active
-		// objects in existence.
-		void submit(core::object_t* aObject);		// Submit created object to engine.
-		void remove(core::object_t* aObject);		// Remove object from engine.
-
-		void submit(core::object::system_window* aSystemWindow);
-		void remove(core::object::system_window* aSystemWindow);
 
 		VkInstance handle();
 		bool is_ready();
 		version get_version();
+		int get_date();
 
 	private:
 
+		enum state {
+			CREATION,						// Engine instance is being constructed.
+			READY,							// Engine instance is active, and ready to be used.
+			RUNNING,
+			DESTRUCTION						// Engine is currently in destruction phase.
+		};
+
+		struct workload {
+			core::gcl::context*		Context;
+			//core::stage_t::batch	TransferBatch;
+			VkFence					TransferFence;
+			//core::stage_t::batch	ComputeBatch;
+			VkFence					ComputeFence;
+			//core::stage_t::batch	GraphicsBatch;
+			VkFence					GraphicsFence;
+			workload(core::gcl::context* aContext);
+			~workload();
+		};
+
+		const version			Version = { 0, 0, 17 };
+		const int				Date = 20211120;
+
+		std::mutex				Mutex;
+
+		// I hate std::vector
 		std::vector<const char*> RequiredExtension;
 		std::vector<const char*> EnabledLayer;
 
-		// Maintain versioning system.
-		const version Version = { 0, 0, 17 };
-		const int Date = 20211120;
+		state					State;
+		bool					isReady;
+		std::atomic<bool>		Shutdown;
+		//std::atomic<bool>		ThreadsLaunched;
 
-		// Engine Mutex
-		std::mutex Mutex;
+		VkApplicationInfo		AppInfo{};
+		VkInstanceCreateInfo	CreateInfo{};
+		VkInstance				Handle;
 
-		state State;
-		bool isReady;
-		std::atomic<bool> Shutdown;
-		std::atomic<bool> ThreadsLaunched;
+		// -------------------------------------------------- //
 
-		VkApplicationInfo AppInfo{};
-		VkInstanceCreateInfo CreateInfo{};
-		VkInstance Handle;
+		core::object::system_terminal*		SystemTerminal;
+		core::object::system_display*		PrimaryDisplay;
 
-		// It is the job of the engine to query for physical devices
-		// and display from the system.
-		std::vector<core::gcl::device*> DeviceList;
+		// -------------------------------------------------- //
 
-		core::object::system_terminal &SystemTerminal;
-		std::vector<core::object::system_display*> Display;
-		std::vector<core::object::system_window*> SystemWindow;
-		// Find a way to map devices to system_displays.
+		int									DeviceCount;
+		core::gcl::device*					Device[512];
 
-		// Keeps track of important System and OS objects.
-		core::object::system_display* PrimaryDisplay;
+		int									DisplayCount;
+		core::object::system_display*		Display[512];
 
-		// Reduce redundant file loading by matching paths.
-		// If current working directory changes, 
-		std::vector<core::io::file*> File;
+		int									SystemWindowCount;
+		core::object::system_window*		SystemWindow[512];
 
-		// All created device contexts are held by engine. Needed for graphics/compute.
-		//std::mutex CtxMtx;
-		std::vector<core::gcl::context*> Context;
+		int									DesktopCount;
+		core::stage::desktop*				Desktop[512];
 
-		// All objects are managed by engine regardless of stage.
-		//std::mutex ObjMtx;
-		std::vector<core::object_t*> Object;
+		// -------------------------------------------------- //
 
+		int						FileCount;
+		core::io::file**		File;
 
-		// Active stage represent a collection of objects
-		// sharing the same space, object interaction, rendering
-		std::vector<core::stage_t*> Stage;
+		int						ContextCount;
+		core::gcl::context*		Context[512];
+		workload*				Workload[512];
+
+		int						ObjectCount;
+		core::object_t**		Object;
+
+		int						StageCount;
+		core::stage_t**			Stage;
+
+		// ----------------------------------------------------------------- //
+
+		void submit(core::gcl::context* aContext);
+		void remove(core::gcl::context* aContext);
+
+		void submit(core::object_t* aObject);
+		void remove(core::object_t* aObject);
+
+		void submit(core::object::system_window* aSystemWindow);
+		void remove(core::object::system_window* aSystemWindow);
+
+		void submit(core::stage_t* aStage);
+		void remove(core::stage_t* aStage);
+
+		// ------------------------------ Back end runtime ------------------------------ //
+
+		std::thread::id MainThreadID;
+		std::thread::id SystemTerminalThreadID;
+		std::thread::id RenderThreadID;
+		std::thread::id AudioThreadID;
+		std::thread::id AppThreadID;
+
+		std::thread SystemTerminalThread;
+		std::thread RenderThread;
+		std::thread AudioThread;
+		std::thread AppThread;
+
+		core::logic::trap RenderUpdateTrap;
+
+		void tsterminal();		// Thread handles terminal input to the engine.
+		void trender();			// Thread honors frame rates of respective targets.
+		void taudio();			// Thread Handles audio streams.
 
 		// Signals to update thread to create window handle
 		// because glfw is written by lobotomites.
@@ -245,28 +277,12 @@ namespace geodesuka {
 		void destroy_window_handle(GLFWwindow* aWindow);
 		void mtcd_process_window_handle_call();
 
-		// ------------------------------ Back end runtime ------------------------------ //
-
-		// TODO: Maybe make update thread use multiple threads for fast processing?
-		core::logic::trap RenderUpdateTrap; // Used for stalling Update and Render Thread.
-
-		std::thread::id MainThreadID;
-		std::thread::id SystemTerminalThreadID;
-		std::thread::id RenderThreadID;
-		std::thread::id AudioThreadID;
-
-		// Main thread does updates.
-		// These threads do side tasks.
-		std::thread SystemTerminalThread;
-		std::thread RenderThread;
-		std::thread AudioThread;
-		
-		// App Thread.
-		std::thread AppThread;
-
-		void tsterminal();		// Thread handles terminal input to the engine.
-		void trender();			// Thread honors frame rates of respective targets.
-		void taudio();			// Thread Handles audio streams.
+		// Returns index of of pointer, -1 if doesn't exist. 
+		int filidx(core::io::file* aFile);
+		int ctxidx(core::gcl::context* aCtx);
+		int objidx(core::object_t* aObj);
+		int winidx(core::object::system_window* aWin);
+		int stgidx(core::stage_t* aStg);
 
 	};
 

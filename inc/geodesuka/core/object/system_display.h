@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 
+#include <GLFW/glfw3.h>
+
 #include "../gcl/framebuffer.h"
 
 #include "../object.h"
@@ -22,7 +24,10 @@ namespace geodesuka::core::object {
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
 
-		virtual void draw(object_t* aObject) override;
+
+	protected:
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	private:
 

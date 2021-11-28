@@ -3,60 +3,32 @@
 
 #include <vulkan/vulkan.h>
 
-#include <GLFW/glfw3.h>
-
 #include "../math.h"
 
 #include "device.h"
 #include "context.h"
-// Holds no data, only references.
+#include "texture.h"
+#include "renderpass.h"
 
 namespace geodesuka::core::gcl {
 
 	class framebuffer {
 	public:
 
-		// Enums go here
-
-		struct prop {
-			int ColorBits[4];
-			int DepthBits;
-			int StencilBits;
-			int AccumColorBits[4];
-			int AuxBuffers;
-			int Stereo;
-			int DoubleBuffer;
-			int Transparent;
-			int Samples;
-			int sRGBCapable;
-
-			uint32_t Count;
-			VkFormat Format;
-			VkColorSpaceKHR ColorSpace;
-			VkExtent2D Extent2D;
-			VkImageUsageFlags Usage;
-			//uint32_t Layers; // Per Image
-
-			// Default Contstructor
-			prop();
-		};
-
-		math::natural2 Resolution;
-
-		context* Context;
-		struct prop Property;
-
 		framebuffer();
-		framebuffer(context* aDeviceContext);
+		framebuffer(context* aContext, renderpass& aRenderPass, uint32_t aAttachmentCount, texture* aAttachment, uint32_t aWidth, uint32_t aHeight, uint32_t aLayers);
 
 		~framebuffer();
 
-		//int set_output(const variable& Target, const texture& Variable);
-
 	private:
 
-		VkFramebufferCreateInfo CreateInfo;
+		context* Context;
+		VkFramebufferCreateInfo CreateInfo{};
 		VkFramebuffer Handle;
+
+		uint32_t AttachmentCount;
+		texture* Attachment;
+		VkImageView* View;
 
 	};
 

@@ -17,7 +17,10 @@ namespace geodesuka::core::object {
 		camera2d(engine *aEngine, gcl::context *aContext);
 		~camera2d();
 
-		virtual void draw(object_t* aObject) override;
+
+	protected:
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	};
 

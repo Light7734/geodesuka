@@ -822,6 +822,55 @@ namespace geodesuka::core::gcl {
 		return CommandBuffer;
 	}
 
+	VkImageView texture::view() {
+		// Change later after screwing with.
+		VkImageView temp = VK_NULL_HANDLE;
+		VkImageViewCreateInfo ImageViewCreateInfo{};
+		ImageViewCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		ImageViewCreateInfo.pNext				= NULL;
+		ImageViewCreateInfo.flags				= 0;
+		ImageViewCreateInfo.image				= this->Handle;
+		switch (this->CreateInfo.imageType) {
+		default:
+			break;
+		case VkImageType::VK_IMAGE_TYPE_1D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_1D;
+			break;
+		case VkImageType::VK_IMAGE_TYPE_2D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_2D;
+			break;
+		case VkImageType::VK_IMAGE_TYPE_3D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_3D;
+			break;
+		}
+		ImageViewCreateInfo.format				= this->CreateInfo.format;
+		ImageViewCreateInfo.components.r		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.g		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.b		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.a		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.subresourceRange.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+		ImageViewCreateInfo.subresourceRange.baseMipLevel		= 0;
+		ImageViewCreateInfo.subresourceRange.levelCount			= this->CreateInfo.mipLevels;
+		ImageViewCreateInfo.subresourceRange.baseArrayLayer		= 0;
+		ImageViewCreateInfo.subresourceRange.layerCount			= this->CreateInfo.arrayLayers;
+		VkResult Result = vkCreateImageView(this->Context->handle(), &ImageViewCreateInfo, NULL, &temp);
+		return temp;
+	}
+
+	VkAttachmentDescription texture::description(loadop aLoadOp, storeop aStoreOp, loadop aStencilLoadOp, storeop aStencilStoreOp, layout aInitialLayout, layout aFinalLayout) {
+		VkAttachmentDescription temp;
+		temp.flags					= 0;
+		temp.format					= this->CreateInfo.format;
+		temp.samples				= this->CreateInfo.samples;
+		temp.loadOp					= (VkAttachmentLoadOp)aLoadOp;
+		temp.storeOp				= (VkAttachmentStoreOp)aStoreOp;
+		temp.stencilLoadOp			= (VkAttachmentLoadOp)aStencilLoadOp;
+		temp.stencilStoreOp			= (VkAttachmentStoreOp)aStencilStoreOp;
+		temp.initialLayout			= (VkImageLayout)aInitialLayout;
+		temp.finalLayout			= (VkImageLayout)aFinalLayout;
+		return temp;
+	}
+
 	/*
 	0 = 640, 480
 	1 = 320, 240

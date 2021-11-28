@@ -1,6 +1,9 @@
 #include <geodesuka/engine.h>
 
 /* --------------- Standard C Libraries --------------- */
+#include <cstdlib>
+#include <cstring>
+#include <cassert>
 
 /* --------------- Standard C++ Libraries --------------- */
 #include <iostream>
@@ -23,33 +26,20 @@
 
 #include <glslang/Public/ShaderLang.h>
 
+
 namespace geodesuka {
 
-	/*
-	* Initializes the whole engine, and all backend APIs.
-	* needed for context creation. Will manage all created objects
-	* and loaded assets.
-	*/
+	using namespace core;
+	using namespace gcl;
+	using namespace object;
 
-	engine::engine(int argc, char* argv[]) : SystemTerminal(*(new core::object::system_terminal(this, nullptr))) {
-		this->State = state::ENGINE_CREATION_STATE;
+	engine::engine(int argc, char* argv[]) {
+
+		this->State = state::CREATION;
 		this->isReady = false;
 		this->Shutdown.store(false);
-		this->ThreadsLaunched.store(false);
-
+		//this->ThreadsLaunched.store(false);
 		this->Handle = VK_NULL_HANDLE;
-
-		// First initialized object is the system terminal.
-		this->Object.push_back(&SystemTerminal);
-
-		this->PrimaryDisplay = nullptr;
-
-		this->SignalCreate.store(false);
-		this->WindowCreated.store(false);
-
-		// Store main thread ID.
-		this->MainThreadID = std::this_thread::get_id();
-
 
 		bool isGLSLANGReady				= false;
 		bool isGLFWReady				= false;
@@ -68,6 +58,8 @@ namespace geodesuka {
 		// Query for Monitors (No primary monitor = Start up failure)
 		// Query for gcl devices (No discrete gpu = Start up failure)
 		//
+
+		this->SystemTerminal = new system_terminal(this, nullptr);
 
 		// (GLSLang)
 		isGLSLANGReady = glslang::InitializeProcess();
@@ -121,95 +113,112 @@ namespace geodesuka {
 
 		if (isGLSLANGReady && isGLFWReady && isVulkanReady) {
 
-			// Queries for monitors.
 			if (glfwGetPrimaryMonitor() != NULL) {
-				// Get System displays.
-				core::object::system_display* tmpDisplay = new core::object::system_display(this, nullptr, glfwGetPrimaryMonitor());
-				this->PrimaryDisplay = tmpDisplay;
-				this->Display.push_back(tmpDisplay);
-				this->Object.push_back(tmpDisplay);
-				int lCount;
-				GLFWmonitor** lMon = glfwGetMonitors(&lCount);
-				for (int i = 0; i < lCount; i++) {
-					if (PrimaryDisplay->Handle != lMon[i]) {
-						// Excludes already cached primary monitor.
-						tmpDisplay = new core::object::system_display(this, nullptr, lMon[i]);
-						this->Display.push_back(tmpDisplay);
-						this->Object.push_back(tmpDisplay);
+				this->PrimaryDisplay = new system_display(this, nullptr, glfwGetPrimaryMonitor());
+				int MonitorCount;
+				GLFWmonitor** Monitors = glfwGetMonitors(&MonitorCount);
+				for (int i = 0; i < MonitorCount; i++) {
+					if (Monitors[i] != glfwGetPrimaryMonitor()) {
+						this->Display[i] = new system_display(this, nullptr, Monitors[i]);
+					}
+					else {
+						this->Display[i] = this->PrimaryDisplay;
 					}
 				}
+
+
 				isSystemDisplayAvailable = true;
 			}
 
-			// Query for gcl devices
 			uint32_t PhysicalDeviceCount = 0;
 			vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, NULL);
 			if (PhysicalDeviceCount > 0) {
-				std::vector<VkPhysicalDevice> PhysicalDeviceList(PhysicalDeviceCount);
-				vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, PhysicalDeviceList.data());
-				for (size_t i = 0; i < PhysicalDeviceList.size(); i++) {
-					this->DeviceList.push_back(new core::gcl::device(this->Handle, PhysicalDeviceList[i]));
+				VkPhysicalDevice* PhysicalDevice = (VkPhysicalDevice*)malloc(PhysicalDeviceCount * sizeof(VkPhysicalDevice));
+				this->DeviceCount = PhysicalDeviceCount;
+				vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, PhysicalDevice);
+				for (uint32_t i = 0; i < PhysicalDeviceCount; i++) {
+					this->Device[i] = new device(this->Handle, PhysicalDevice[i]);
 				}
+				free(PhysicalDevice);
 				isGCDeviceAvailable = true;
 			}
 
 		}
 
+		this->FileCount = 0;
+		this->File = NULL;
+
+		this->ContextCount = 0;
+		memset(this->Context, 0x00, 512 * sizeof(context*));
+		memset(this->Workload, 0x00, 512 * sizeof(workload*));
+
+		this->ObjectCount = 1 + this->DisplayCount;
+		this->Object = (object_t**)malloc(this->ObjectCount * sizeof(object_t*));
+		this->Object[0] = this->SystemTerminal;
+		for (int i = 1; i < this->ObjectCount; i++) {
+			this->Object[i] = this->Display[i - 1];
+		}
+
+		this->StageCount = 0;
+		this->Stage = NULL;
+
+		// Store main thread ID.
+		this->MainThreadID = std::this_thread::get_id();
+
+		this->SignalCreate.store(false);
+		this->WindowCreated.store(false);
+		// Window Temp Data?
+		this->ReturnWindow = NULL;
+		this->DestroyWindow.store(NULL);
+
 		this->isReady = isGLSLANGReady && isGLFWReady && isVulkanReady && isSystemDisplayAvailable && isGCDeviceAvailable;
+		this->State = state::READY;
 
-		//std::cout << "Geodesuka Engine";
-		//std::cout << " - Version: " << this->Version.Major << "." << this->Version.Minor << "." << this->Version.Patch;
-		//std::cout << " - Date: " << this->Date << std::endl;
-
-		this->State = state::ENGINE_ACTIVE_STATE;
 	}
 
-	/*
-	* Since the engine manages all created objects, it is the responsibility of the engine.
-	* Also must shut down backend API. 
-	*/
 	engine::~engine() {
 
-		this->State = state::ENGINE_DESTRUCTION_STATE;
+		this->State = state::DESTRUCTION;
 
-		// Destroys all active stages.
-		for (size_t i = 1; i <= this->Stage.size(); i++) {
-			size_t Index = this->Stage.size() - i;
-			if (this->Stage[Index] != nullptr) {
-				delete this->Stage[Index];
-				this->Stage[Index] = nullptr;
-			}
+		for (int i = 0; i < this->StageCount; i++) {
+			int Index = (this->StageCount - 1) - i;
+			delete this->Stage[Index];
 		}
-		this->Stage.clear();
+		free(this->Stage);
+		this->Stage = NULL;
+		this->StageCount = 0;
 
-		// Clears all objects from memory.
-		for (size_t i = 1; i <= this->Object.size(); i++) {
-			size_t Index = this->Object.size() - i;
-			if (this->Object[Index] != nullptr) {
-				delete this->Object[Index];
-				this->Object[Index] = nullptr;
-			}
+		for (int i = 0; i < this->ObjectCount; i++) {
+			int Index = (this->ObjectCount - 1) - i;
+			delete this->Object[Index];
 		}
-		this->Object.clear();
+		free(this->Object);
+		this->Object = NULL;
+		this->ObjectCount = 0;
 
-		// Destroys all device contexts.
-		for (size_t i = 1; i <= this->Context.size(); i++) {
-			size_t Index = this->Context.size() - i;
-			if (this->Context[Index] != nullptr) {
-				delete this->Context[Index];
-				this->Context[Index] = nullptr;
-			}
+		for (int i = 0; i < this->ContextCount; i++) {
+			int Index = (this->ContextCount - 1) - i;
+			delete this->Workload[Index];
+			delete this->Context[Index];
 		}
-		this->Context.clear();
+		this->ContextCount = 0;
 
-		// Clears all loaded resources from memory.
-		for (size_t i = 0; i < this->File.size(); i++) {
-			if (this->File[i] != nullptr) {
-				delete this->File[i];
-				this->File[i] = nullptr;
-			}
+		for (int i = 0; i < this->FileCount; i++) {
+			int Index = (this->FileCount - 1) - i;
+			delete this->File[Index];
 		}
-		this->File.clear();
+		free(this->File);
+		this->File = NULL;
+		this->FileCount = 0;
+
+		for (int i = 0; i < this->DeviceCount; i++) {
+			delete this->Device[i];
+		}
+		this->DeviceCount = 0;
+
+		this->PrimaryDisplay = nullptr;
+		this->SystemTerminal = nullptr;
+
 
 		vkDestroyInstance(this->Handle, NULL);
 
@@ -218,10 +227,338 @@ namespace geodesuka {
 		glslang::FinalizeProcess();
 	}
 
+	core::io::file* engine::open(const char* aFilePath) {
+		// utilizes singleton.
+		core::io::file* lFileHandle = core::io::file::open(aFilePath);
+		if (lFileHandle != nullptr) {
+
+		}
+
+		return nullptr;
+	}
+
+	void engine::close(core::io::file* aFile) {
+
+	}
+
+	core::gcl::device** engine::get_device_list(int* aListSize) {
+		*aListSize = this->DeviceCount;
+		return this->Device;
+	}
+
+	core::object::system_display** engine::get_display_list(int* aListSize) {
+		*aListSize = this->DisplayCount;
+		return this->Display;
+	}
+
+	core::object::system_display* engine::get_primary_display() {
+		return this->PrimaryDisplay;
+	}
+
+	VkInstance engine::handle() {
+		return this->Handle;
+	}
+
+	bool engine::is_ready() {
+		return this->isReady;
+	}
+
+	engine::version engine::get_version() {
+		return this->Version;
+	}
+
+	int engine::get_date() {
+		return this->Date;
+	}
+
+	engine::workload::workload(core::gcl::context* aContext) {
+		this->Context = aContext;
+		this->TransferFence = VK_NULL_HANDLE;
+		this->ComputeFence = VK_NULL_HANDLE;
+		this->GraphicsFence = VK_NULL_HANDLE;
+
+		if (this->Context != nullptr) {
+			VkFenceCreateInfo CreateInfo{};
+			CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			CreateInfo.pNext = NULL;
+			CreateInfo.flags = 0;
+			VkResult Result = VkResult::VK_SUCCESS;
+			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &TransferFence);
+			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &ComputeFence);
+			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &GraphicsFence);
+			if ((this->TransferFence == VK_NULL_HANDLE) || (this->ComputeFence == VK_NULL_HANDLE) || (this->GraphicsFence == VK_NULL_HANDLE)) {
+				if (this->TransferFence != VK_NULL_HANDLE) {
+					vkDestroyFence(this->Context->handle(), this->TransferFence, NULL);
+					this->TransferFence = VK_NULL_HANDLE;
+				}
+				if (this->ComputeFence != VK_NULL_HANDLE) {
+					vkDestroyFence(this->Context->handle(), this->ComputeFence, NULL);
+					this->ComputeFence = VK_NULL_HANDLE;
+				}
+				if (this->GraphicsFence != VK_NULL_HANDLE) {
+					vkDestroyFence(this->Context->handle(), this->GraphicsFence, NULL);
+					this->GraphicsFence = VK_NULL_HANDLE;
+				}
+			}
+		}
+	}
+
+	engine::workload::~workload() {
+		if (this->Context != nullptr) {
+			if (this->TransferFence != VK_NULL_HANDLE) {
+				vkDestroyFence(this->Context->handle(), this->TransferFence, NULL);
+				this->TransferFence = VK_NULL_HANDLE;
+			}
+			if (this->ComputeFence != VK_NULL_HANDLE) {
+				vkDestroyFence(this->Context->handle(), this->ComputeFence, NULL);
+				this->ComputeFence = VK_NULL_HANDLE;
+			}
+			if (this->GraphicsFence != VK_NULL_HANDLE) {
+				vkDestroyFence(this->Context->handle(), this->GraphicsFence, NULL);
+				this->GraphicsFence = VK_NULL_HANDLE;
+			}
+		}
+		this->Context = nullptr;
+	}
+
+	void engine::submit(core::gcl::context* aContext) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		this->Context[this->ContextCount] = aContext;
+		this->Workload[this->ContextCount] = new workload(aContext);
+		this->ContextCount += 1;
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::remove(core::gcl::context* aContext) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		int CtxIdx = this->ctxidx(aContext);
+		int MoveCount = (this->ContextCount - 1) - CtxIdx;
+
+		delete this->Workload[CtxIdx];
+		this->Context[CtxIdx] = nullptr;
+		this->Workload[CtxIdx] = nullptr;
+
+		memmove(&this->Context[CtxIdx], &this->Context[CtxIdx + 1], MoveCount * sizeof(context*));
+		memmove(&this->Workload[CtxIdx], &this->Workload[CtxIdx + 1], MoveCount * sizeof(context*));
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::submit(core::object_t* aObject) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		void *nptr = NULL;
+
+		if (this->Object == NULL) {
+			nptr = malloc(sizeof(object_t*));
+		}
+		else {
+			nptr = realloc(this->Object, (this->ObjectCount + 1) * sizeof(object_t*));
+		}
+
+		assert(!(nptr == NULL));
+
+		this->Object = (object_t**)nptr;
+		this->Object[this->ObjectCount] = aObject;
+		this->ObjectCount += 1;
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::remove(core::object_t* aObject) {
+		// Should be fine?
+		//if (this->State != state::READY) return;
+
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		int ObjIdx = this->objidx(aObject);
+		if (ObjIdx >= 0) {
+			if (this->ObjectCount == 1) {
+				free(this->Object);
+				this->Object = NULL;
+				this->ObjectCount = 0;
+			}
+			else {
+				this->Object[ObjIdx] = nullptr;
+				int MoveCount = (this->ObjectCount - 1) - ObjIdx;
+				if (MoveCount > 0) {
+					memmove(&this->Object[ObjIdx], &this->Object[ObjIdx + 1], MoveCount * sizeof(object_t*));
+				}
+				void* nptr = realloc(this->Object, (this->ObjectCount - 1) * sizeof(object_t*));
+				assert(!(nptr == NULL));
+				this->Object = (object_t**)nptr;
+				this->ObjectCount -= 1;
+			}
+		}
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::submit(core::object::system_window* aSystemWindow) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		// Put at end of SystemWindow List.
+		int Offset = 1 + this->DisplayCount + this->SystemWindowCount;
+		int MoveCount = (this->ObjectCount - 1) - Offset;
+
+		void* nptr = NULL;
+
+		if (this->Object == NULL) {
+			nptr = malloc(sizeof(object_t*));
+		}
+		else {
+			nptr = realloc(this->Object, (this->ObjectCount + 1)*sizeof(object_t*));
+		}
+
+		// If this dereferences a null pointer, oh well.
+		assert(!(nptr == NULL));
+
+		this->Object = (object_t**)nptr;
+
+		this->SystemWindow[this->SystemWindowCount] = aSystemWindow;
+		if (MoveCount > 0) {
+			memmove(&this->Object[Offset], &this->Object[Offset + 1], MoveCount * sizeof(object_t*));
+		}
+		this->Object[Offset] = aSystemWindow;
+
+		this->SystemWindowCount += 1;
+		this->ObjectCount += 1;
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::remove(core::object::system_window* aSystemWindow) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		int WinIdx = this->winidx(aSystemWindow);
+		if (WinIdx >= 0) {
+			int MoveCount = (this->SystemWindowCount - 1) - WinIdx;
+			this->SystemWindow[WinIdx] = nullptr;
+			if (MoveCount > 0) {
+				memmove(&this->SystemWindow[WinIdx], &this->SystemWindow[WinIdx + 1], MoveCount * sizeof(system_window*));
+			}
+			this->SystemWindow[this->SystemWindowCount - 1] = nullptr;
+			this->SystemWindowCount -= 1;
+		}
+
+		int ObjIdx = this->objidx(aSystemWindow);
+		if (ObjIdx >= 0) {
+			int MoveCount = (this->ObjectCount - 1) - ObjIdx;
+			this->Object[ObjIdx] = nullptr;
+			if (MoveCount > 0) {
+				memmove(&this->Object[ObjIdx], &this->Object[ObjIdx + 1], MoveCount * sizeof(object_t*));
+			}
+			this->Object[this->ObjectCount - 1] = nullptr;
+			this->ObjectCount -= 1;
+		}
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::submit(core::stage_t* aStage) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		void *nptr = NULL;
+		if (this->Stage == NULL) {
+			nptr = malloc(sizeof(stage_t*));
+		}
+		else {
+			nptr = realloc(this->Stage, (this->StageCount + 1) * sizeof(stage_t*));
+		}
+
+		assert(!(nptr == NULL));
+
+		this->Stage[this->StageCount] = aStage;
+		this->StageCount += 1;
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	void engine::remove(core::stage_t* aStage) {
+		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(true);
+			this->RenderUpdateTrap.wait_until(2);
+		}
+
+		int StgIdx = this->stgidx(aStage);
+		if (StgIdx >= 0) {
+			if (this->StageCount == 1) {
+				free(this->Stage);
+				this->Stage = NULL;
+				this->StageCount = 0;
+			}
+			else {
+				int MoveCount = (this->StageCount - 1) - StgIdx;
+				if (MoveCount) {
+					memmove(&this->Stage[StgIdx], &this->Stage[StgIdx + 1], MoveCount * sizeof(stage_t*));
+				}
+				void* nptr = realloc(this->Stage, (this->StageCount - 1) * sizeof(stage_t*));
+				assert(!(nptr == NULL));
+				this->Stage = (stage_t**)nptr;
+				this->StageCount -= 1;
+			}
+		}
+
+		if (this->State == state::RUNNING) {
+			this->RenderUpdateTrap.set(false);
+		}
+	}
+
+	// --------------- Engine Main Thread --------------- //
+	// The main thread is used to spawn backend threads along
+	// with the app thread.
+	// --------------- Engine Main Thread --------------- //
 	int engine::run(core::app* aApp) {
 
 		// Store main thread ID.
 
+		this->State = state::RUNNING;
 		this->MainThreadID				= std::this_thread::get_id();
 		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
 		this->RenderThread				= std::thread(&engine::trender, this);
@@ -232,13 +569,17 @@ namespace geodesuka {
 		std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
 		std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
 
-		this->ThreadsLaunched.store(true);
+		//this->ThreadsLaunched.store(true);
 
 		double t1, t2;
 		double wt, ht;
 		double t, dt;
 		double ts = 0.01;
 		dt = 0.0;
+
+		stage_t::batch TransferBatch[512];
+		stage_t::batch ComputeBatch[512];
+		VkResult Result = VkResult::VK_SUCCESS;
 
 		// The update thread is the main thread.
 		while (!this->Shutdown.load()) {
@@ -248,28 +589,27 @@ namespace geodesuka {
 			this->mtcd_process_window_handle_call();
 			glfwPollEvents();
 
-			// Update object list.
-			for (size_t i = 0; i < this->Object.size(); i++) {
-				this->Object[i]->update(dt);
+			// Poll for Object Updates.
+			for (int i = 0; i < this->ObjectCount; i++) {
+				int CtxIdx = this->ctxidx(this->Object[i]->Context);
+				if (CtxIdx >= 0) {
+					TransferBatch[CtxIdx] += this->Object[i]->update(dt);
+				}
 			}
 
-			// Update stage logic.
-			for (size_t i = 0; i < this->Stage.size(); i++) {
-				this->Stage[i]->update(dt);
+			// Poll for Stage Updates and 
+			for (int i = 0; i < this->StageCount; i++) {
+				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
+				if (CtxIdx >= 0) {
+					TransferBatch[CtxIdx] += this->Stage[i]->update(dt);
+				}
 			}
 
-			// Wait for render operations to complete before transfer.
-			//vkWaitForFences();
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (TransferBatch[i].count() == 0) continue;
+				this->Context[i]->submit(device::qfs::TRANSFER, TransferBatch[i].count(), TransferBatch[i].ptr(), this->Workload[i]->TransferFence);
+			}
 
-			//// Execute all host to device transfer operations.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	this->Context[i]->submit(core::gcl::device::qfs::TRANSFER, 0, NULL, VK_NULL_HANDLE);
-			//}
-			//
-			//// Execute all device compute operations.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	this->Context[i]->submit(core::gcl::device::qfs::COMPUTE, 0, NULL, VK_NULL_HANDLE);
-			//}
 
 			t2 = core::logic::get_time();
 			wt = t2 - t1;
@@ -283,152 +623,48 @@ namespace geodesuka {
 			dt = wt + ht;
 		}
 
-
+		// This is redundant. Only the App thread can shutdown all other threads.
 		this->Shutdown.store(true);
 
 		this->SystemTerminalThread.join();
 		this->RenderThread.join();
 		this->AppThread.join();
+		this->State = state::READY;
 
 		return 0;
 	}
 
-	core::object::system_display* engine::get_primary_display() {
-		return this->PrimaryDisplay;
-	}
+	// --------------- System Terminal Thread --------------- //
+	// Will be used for runtime debugging of engine using terminal.
+	// --------------- System Terminal Thread --------------- //
+	void engine::tsterminal() {
 
-	core::object::system_display** engine::get_display_list(size_t* aListSize) {
-		*aListSize = this->Display.size();
-		return this->Display.data();
-	}
-
-	core::gcl::device** engine::get_device_list(size_t* aListSize) {
-		*aListSize = this->DeviceList.size();
-		return this->DeviceList.data();
-	}
-
-	core::io::file* engine::open(const char* aFilePath) {
-		// utilizes singleton.
-		core::io::file* lFileHandle = core::io::file::open(aFilePath);
-		if (lFileHandle != nullptr) {
-			
-		}
-
-		return nullptr;
-	}
-
-	void engine::close(core::io::file* aFile) {
-
-	}
-
-	void engine::submit(core::gcl::context* aContext) {
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-		this->Context.push_back(aContext);
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1.0);
 		}
 	}
 
-	void engine::remove(core::gcl::context* aContext) {
-		// Should be fine?
-		if (this->State != ENGINE_ACTIVE_STATE) return;
+	// --------------- Render Thread --------------- //
+	// The job of the render thread is to honor and schedule draw
+	// calls of respective render targets stored in memory.
+	// --------------- Render Thread --------------- //
+	void engine::trender() {
 
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-		for (size_t i = 0; i < this->Context.size(); i++) {
-			if (this->Context[i] == aContext) {
-				this->Context.erase(this->Context.begin() + i);
-			}
-		}
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
+		// A context can create multiple windows, and since
+		// the present queue belongs to a specific context,
+		// it would be wise to group presentation updates
+		stage_t::batch GraphicsBatch[512];
+		std::vector<VkPresentInfoKHR> Presentation;
+
+		while (!this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
+			core::logic::waitfor(0.001);
 		}
 	}
 
-	void engine::submit(core::object_t* aObject) {
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-		this->Object.push_back(aObject);
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
-		}
-	}
-	// TODO: Fix these two methods.
-	void engine::remove(core::object_t* aObject) {
-		// Should be fine?
-		if (this->State != ENGINE_ACTIVE_STATE) return;
-
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aObject) {
-				this->Object.erase(this->Object.begin() + i);
-			}
-		}
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
-		}
-	}
-
-	void engine::submit(core::object::system_window *aSystemWindow) {
-		size_t Offset = 1 + this->Display.size() + this->SystemWindow.size();
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-		// Put at end of SystemWindow List.
-		this->SystemWindow.push_back(aSystemWindow);
-		this->Object.insert(this->Object.begin() + Offset, aSystemWindow);
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
-		}
-	}
-
-	void engine::remove(core::object::system_window* aSystemWindow) {
-		// Should be fine?
-		if (this->State != ENGINE_ACTIVE_STATE) return;
-
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(true);
-			this->RenderUpdateTrap.wait_until(2);
-		}
-
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aSystemWindow) {
-				this->Object.erase(this->Object.begin() + i);
-			}
-		}
-
-		for (size_t i = 0; i < this->SystemWindow.size(); i++) {
-			if (this->SystemWindow[i] == aSystemWindow) {
-				this->SystemWindow.erase(this->SystemWindow.begin() + i);
-			}
-		}
-
-		if ((this->ThreadsLaunched.load()) && (this->AppThread.get_id() == std::this_thread::get_id())) {
-			this->RenderUpdateTrap.set(false);
-		}
-	}
-
-	VkInstance engine::handle() {
-		return this->Handle;
-	}
-
-	bool engine::is_ready() {
-		return this->isReady;
-	}
-
-	engine::version engine::get_version() {
-		return this->Version;
+	void engine::taudio() {
+		// Does nothing currently.
 	}
 
 	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
@@ -504,93 +740,39 @@ namespace geodesuka {
 		}		
 	}
 
-	// --------------- System Terminal Thread --------------- //
-	// Will be used for runtime debugging of engine using terminal.
-	// --------------- System Terminal Thread --------------- //
-	void engine::tsterminal() {
-
-		while (!this->Shutdown.load()) {
-			core::logic::waitfor(1.0);
+	int engine::filidx(core::io::file* aFile) {
+		for (int i = 0; i < this->FileCount; i++) {
+			if (this->File[i] == aFile) return i;
 		}
+		return -1;
 	}
 
-	// --------------- Render Thread --------------- //
-	// The job of the render thread is to honor and schedule draw
-	// calls of respective render targets stored in memory.
-	// --------------- Render Thread --------------- //
-	void engine::trender() {
-		//bool ExitCondition = false;
-		double t1, t2;
-		double dt;
-
-
-		// Represents gathered submissions per context.
-		// Insure that all render operations to system_window
-		// images wait for Acquire semaphore to be signalled.
-		std::vector<std::vector<VkSubmitInfo>> Submission;
-
-		// A context can create multiple windows, and since
-		// the present queue belongs to a specific context,
-		// it would be wise to group presentation updates
-		std::vector<VkPresentInfoKHR> Presentation;
-
-		while (!this->Shutdown.load()) {
-			this->RenderUpdateTrap.door();
-
-			t1 = core::logic::get_time();
-
-			// Generates Submissions per stage.
-			for (size_t i = 0; i < this->Stage.size(); i++) {
-				this->Stage[i]->render();
-			}
-
-			// Alter submission size to match number of contexts.
-			Submission.resize(this->Context.size());
-
-			// Reverse order of aggregation.
-			// Gather all submissions by stages.
-			for (size_t i = 0; i < this->Stage.size(); i++) {
-				for (size_t j = 0; j < this->Context.size(); j++) {
-					if (this->Stage[i]->parent_context() == this->Context[j]) {
-						// When matching context is found, extract all submissions.
-						for (size_t k = 0; k < this->Stage[i]->Submission.size(); k++) {
-							Submission[j].push_back(this->Stage[i]->Submission[k]);
-						}
-					}
-				}
-			}
-
-			// Wait for transfer and compute operations to complete.
-			//vkWaitForFences()
-			
-			//// Execute all draw commands per context.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	//this->Context[i]->submit(core::gcl::context::qid::GRAPHICS, Submission[i].size(), Submission[i].data(), VK_NULL_HANDLE);
-			//	this->Context[i]->submit(core::gcl::device::qfs::GRAPHICS, 0, NULL, VK_NULL_HANDLE);
-			//}
-			//
-			//// Wait for render operations to complete for system_window presentation.
-			//
-			//// Present aggregated image indices.
-			//for (size_t i = 0; i < this->Context.size(); i++) {
-			//	this->Context[i]->present(/*&Presentation[i]*/NULL);
-			//
-			//	// After presentation has been called for system_windows, update
-			//	// image indices ready to be acquired.
-			//	//vkAcquireNextImageKHR()
-			//}
-
-			t2 = core::logic::get_time();
-			dt = t2 - t1;
-			core::logic::waitfor(0.1);
+	int engine::ctxidx(core::gcl::context* aCtx) {
+		for (int i = 0; i < this->ContextCount; i++) {
+			if (this->Context[i] == aCtx) return i;
 		}
+		return -1;
 	}
 
-	void engine::taudio() {
-
+	int engine::objidx(core::object_t* aObj) {
+		for (int i = 0; i < this->ObjectCount; i++) {
+			if (this->Object[i] == aObj) return i;
+		}
+		return -1;
 	}
 
+	int engine::winidx(core::object::system_window* aWin) {
+		for (int i = 0; i < this->SystemWindowCount; i++) {
+			if (this->SystemWindow[i] == aWin) return i;
+		}
+		return 0;
+	}
 
-
+	int engine::stgidx(core::stage_t* aStg) {
+		for (int i = 0; i < this->StageCount; i++) {
+			if (this->Stage[i] == aStg) return i;
+		}
+		return -1;
+	}
 
 }

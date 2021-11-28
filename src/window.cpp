@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <GLFW/glfw3.h>
+
 #include <geodesuka/core/math.h>
 
 //#include "../hid/mouse.h"

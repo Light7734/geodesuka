@@ -19,6 +19,9 @@ namespace geodesuka::core::object {
 	public:
 
 
+	protected:
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	};
 

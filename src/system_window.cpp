@@ -2,6 +2,9 @@
 
 #include <algorithm>
 
+#include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
+
 #include <geodesuka/engine.h>
 
 
@@ -158,25 +161,53 @@ namespace geodesuka::core::object {
 
 	}
 
-	void system_window::update(double aDeltaTime) {
+	VkSubmitInfo system_window::update(double aDeltaTime) {
+		VkSubmitInfo TransferBatch{};
+		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		TransferBatch.pNext					= NULL;
+		TransferBatch.waitSemaphoreCount	= 0;
+		TransferBatch.pWaitSemaphores		= NULL;
+		TransferBatch.pWaitDstStageMask		= NULL;
+		TransferBatch.commandBufferCount	= 0;
+		TransferBatch.pCommandBuffers		= NULL;
+		TransferBatch.signalSemaphoreCount	= 0;
+		TransferBatch.pSignalSemaphores		= NULL;
 		this->Mutex.lock();
 		this->Time += aDeltaTime;
 		this->Mutex.unlock();
+		return TransferBatch;
 	}
 
-	void system_window::draw(system_display* aTargetDisplay) {
+	VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
 		// This method is responsible for rendering window to display.
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
 		this->Mutex.lock();
 
 		if (this->Property.RefreshRate) {
 
 		}
 		this->Mutex.unlock();
+
+		return DrawCommand;
 	}
 
-	void system_window::draw(object_t* aObject) {
-		if ((object_t*)this == aObject) return;
-		aObject->draw(this);
+	//void system_window::draw(object_t* aObject) {
+	//	if ((object_t*)this == aObject) return;
+	//	aObject->draw(this);
+	//}
+
+	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext					= NULL;
+		DrawBatch.waitSemaphoreCount	= 0;
+		DrawBatch.pWaitSemaphores		= NULL;
+		DrawBatch.pWaitDstStageMask		= NULL;
+		DrawBatch.commandBufferCount	= 0;
+		DrawBatch.pCommandBuffers		= NULL;
+		DrawBatch.signalSemaphoreCount	= 0;
+		DrawBatch.pSignalSemaphores		= NULL;
+		return DrawBatch;
 	}
 
 	void system_window::set_position(math::real3 aPosition) {

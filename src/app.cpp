@@ -16,8 +16,6 @@ namespace geodesuka::core {
 		this->gameloop();
 		// Forces all threads to finish.
 		this->Engine->Shutdown.store(true);
-		// This is to disable thread trapping.
-		this->Engine->ThreadsLaunched.store(false);
 	}
 
 }

@@ -7,9 +7,6 @@
 
 #include <GLFW/glfw3.h>
 
-//#include <iostream>
-//std::mutex gsIOMutex;
-
 namespace geodesuka::core::gcl {
 
 	context::context(engine* aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList) {
@@ -355,6 +352,7 @@ namespace geodesuka::core::gcl {
 		VkCommandBuffer* MatchBuffer = NULL;
 		VkCommandBuffer* NewBuffer = NULL;
 
+		this->Mutex.lock();
 		// Count number of matches.
 		for (uint32_t i = 0; i < this->CommandBufferCount[Index]; i++) {
 			for (uint32_t j = 0; j < aCommandBufferCount; j++) {
@@ -365,7 +363,10 @@ namespace geodesuka::core::gcl {
 		}
 
 		// No command buffers matched.
-		if (MatchCount == 0) return;
+		if (MatchCount == 0) {
+			this->Mutex.unlock();
+			return;
+		}
 
 		// Clears all command buffer with family in question.
 		if (MatchCount == this->CommandBufferCount[Index]) {
@@ -376,7 +377,6 @@ namespace geodesuka::core::gcl {
 					}
 				}
 			}
-			this->Mutex.lock();
 			vkFreeCommandBuffers(this->Handle, this->Pool[Index], aCommandBufferCount, aCommandBuffer);
 			free(this->CommandBuffer[Index]);
 			this->CommandBuffer[Index] = NULL;
@@ -394,10 +394,10 @@ namespace geodesuka::core::gcl {
 			MatchBuffer = NULL;
 			free(NewBuffer);
 			NewBuffer = NULL;
+			this->Mutex.unlock();
 			return;
 		}
 
-		this->Mutex.lock();
 		int m = 0;
 		int n = 0;
 		// Iterate through pre existing buffers and compare.

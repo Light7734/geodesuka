@@ -37,8 +37,6 @@ namespace geodesuka::core::object {
 
 		~camera();
 
-		//virtual void draw(object_t* aObject) = 0;
-
 	protected:
 
 		// Generates the Perspective Projection Matrix.

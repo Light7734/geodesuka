@@ -2,10 +2,18 @@
 
 namespace geodesuka::core::stage {
 
+    canvas::canvas(engine* aEngine, gcl::context* aContext) {
+        this->Engine = aEngine;
+        this->Context = aContext;
+    }
 
+    canvas::~canvas() {
+        // Will be used to clear out all windows.
+    }
 
-	void canvas::render() {
-		// Generates public draw submissions.
-	}
+    stage_t::batch canvas::render() {
+        stage_t::batch DrawBatch;
+        return DrawBatch;
+    }
 
 }

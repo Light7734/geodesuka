@@ -18,12 +18,23 @@
 
 namespace geodesuka::core::logic {
 
+	timer::timer() {
+		this->Duration = 0.0;
+		this->ElapsedTime = 0.0;
+	}
+
 	timer::timer(double aDuration) {
 		this->Duration = aDuration;
 		this->ElapsedTime = 0.0;
 	}
 
 	timer::~timer() {}
+
+	void timer::set(double aDuration) {
+		this->Mutex.lock();
+		this->Duration = aDuration;
+		this->Mutex.unlock();
+	}
 
 	bool timer::check(double aDeltaTime) {
 		bool temp = false;

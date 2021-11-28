@@ -5,21 +5,27 @@
 #include <vector>
 
 #include "../object.h"
+#include "../object/render_target.h"
 #include "../object/camera3d.h"
 
 #include "../stage.h"
 
 namespace geodesuka::core::stage {
 
-	class scene3d {
+	class scene3d : public stage_t {
 	public:
+
+		~scene3d();
 
 	protected:
 
-		std::vector<object::camera3d*> Camera;
-
 		//object::skybox* Skybox;
 		//std::vector<object::light*> Light;
+		std::vector<object::camera3d*> Camera;
+
+		scene3d(engine* aEngine, gcl::context* aContext);
+
+		virtual batch render() override;
 
 	private:
 

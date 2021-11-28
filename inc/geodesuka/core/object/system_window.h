@@ -11,6 +11,9 @@
 
 #include <vector>
 
+#include <vulkan/vulkan.h>
+#include <GLFW/glfw3.h>
+
 #include "../math.h"
 
 #include "../gcl/device.h"
@@ -57,13 +60,6 @@ namespace geodesuka::core::object {
 
 		friend class engine;
 
-		struct create_info {
-			//system_display* Display;
-			window::prop WindowProperty;
-			gcl::swapchain::prop SwapchainProperty;
-			//math::real3 Position;
-		};
-
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
 
@@ -73,21 +69,19 @@ namespace geodesuka::core::object {
 
 		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle);
 
-		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, create_info* aCreateInfo, int aWidth, int aHeight, const char* aTitle);
-
 		~system_window();
-
-
-		virtual void update(double aDeltaTime);
-		
-		virtual void draw(system_display* aTargetDisplay) override;
-
-		// Mandatory implementation required by window.h
-		virtual void draw(object_t* aObject) override;
 
 		virtual void set_position(math::real3 aPosition) override;
 		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(math::natural2 aResolution) override;
+
+	protected:
+
+		virtual VkSubmitInfo update(double aDeltaTime);
+
+		virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	private:
 
