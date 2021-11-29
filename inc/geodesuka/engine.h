@@ -163,14 +163,17 @@ namespace geodesuka {
 
 		struct workload {
 			core::gcl::context*		Context;
-			//core::stage_t::batch	TransferBatch;
+			std::mutex				Mutex;
+			core::stage_t::batch	TransferBatch;
 			VkFence					TransferFence;
-			//core::stage_t::batch	ComputeBatch;
+			core::stage_t::batch	ComputeBatch;
 			VkFence					ComputeFence;
-			//core::stage_t::batch	GraphicsBatch;
+			core::stage_t::batch	GraphicsBatch;
 			VkFence					GraphicsFence;
 			workload(core::gcl::context* aContext);
 			~workload();
+			VkResult waitfor(core::gcl::device::qfs aQFS);
+			VkResult reset(core::gcl::device::qfs aQFS);
 		};
 
 		const version			Version = { 0, 0, 17 };

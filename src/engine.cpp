@@ -321,6 +321,48 @@ namespace geodesuka {
 		this->Context = nullptr;
 	}
 
+	VkResult engine::workload::waitfor(core::gcl::device::qfs aQFS) {
+		VkResult temp = VkResult::VK_SUCCESS;
+		this->Mutex.lock();
+		switch (aQFS) {
+		default:
+			break;
+		case device::qfs::TRANSFER:
+			temp = vkWaitForFences(this->Context->handle(), 1, &this->TransferFence, VK_TRUE, UINT64_MAX);
+			break;
+		case device::qfs::COMPUTE:
+			temp = vkWaitForFences(this->Context->handle(), 1, &this->ComputeFence, VK_TRUE, UINT64_MAX);
+			break;
+		case device::qfs::GRAPHICS:
+			temp = vkWaitForFences(this->Context->handle(), 1, &this->GraphicsFence, VK_TRUE, UINT64_MAX);
+			break;
+		case device::qfs::PRESENT:
+			break;
+		}
+		this->Mutex.unlock();
+		return temp;
+	}
+
+	VkResult engine::workload::reset(core::gcl::device::qfs aQFS) {
+		VkResult temp = VkResult::VK_SUCCESS;
+		switch (aQFS) {
+		default:
+			break;
+		case device::qfs::TRANSFER:
+			temp = vkResetFences(this->Context->handle(), 1, &this->TransferFence);
+			break;
+		case device::qfs::COMPUTE:
+			temp = vkResetFences(this->Context->handle(), 1, &this->ComputeFence);
+			break;
+		case device::qfs::GRAPHICS:
+			temp = vkResetFences(this->Context->handle(), 1, &this->GraphicsFence);
+			break;
+		case device::qfs::PRESENT:
+			break;
+		}
+		return temp;
+	}
+
 	void engine::submit(core::gcl::context* aContext) {
 		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
 		if (this->State == state::RUNNING) {
@@ -564,11 +606,10 @@ namespace geodesuka {
 		this->RenderThread				= std::thread(&engine::trender, this);
 		this->AppThread					= std::thread(&core::app::run, aApp);
 
-		std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
-		std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
-		std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
-		std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
-
+		//std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
+		//std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
+		//std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
+		//std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
 		//this->ThreadsLaunched.store(true);
 
 		double t1, t2;
@@ -593,7 +634,7 @@ namespace geodesuka {
 			for (int i = 0; i < this->ObjectCount; i++) {
 				int CtxIdx = this->ctxidx(this->Object[i]->Context);
 				if (CtxIdx >= 0) {
-					TransferBatch[CtxIdx] += this->Object[i]->update(dt);
+					this->Workload[CtxIdx]->TransferBatch += this->Object[i]->update(dt);
 				}
 			}
 
@@ -601,13 +642,24 @@ namespace geodesuka {
 			for (int i = 0; i < this->StageCount; i++) {
 				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
 				if (CtxIdx >= 0) {
-					TransferBatch[CtxIdx] += this->Stage[i]->update(dt);
+					this->Workload[CtxIdx]->TransferBatch += this->Stage[i]->update(dt);
 				}
 			}
 
+			// Wait for all submissions to finish before presentation.
 			for (int i = 0; i < this->ContextCount; i++) {
-				if (TransferBatch[i].count() == 0) continue;
-				this->Context[i]->submit(device::qfs::TRANSFER, TransferBatch[i].count(), TransferBatch[i].ptr(), this->Workload[i]->TransferFence);
+				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				Result = this->Workload[i]->waitfor(device::qfs::GRAPHICS);
+			}
+
+			// Submit all transfer operations.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->TransferBatch.count() == 0) continue;
+				this->Context[i]->submit(
+					device::qfs::TRANSFER, 
+					this->Workload[i]->TransferBatch.count(),
+					this->Workload[i]->TransferBatch.ptr(),
+					this->Workload[i]->TransferFence);
 			}
 
 
@@ -653,11 +705,44 @@ namespace geodesuka {
 		// A context can create multiple windows, and since
 		// the present queue belongs to a specific context,
 		// it would be wise to group presentation updates
-		stage_t::batch GraphicsBatch[512];
 		std::vector<VkPresentInfoKHR> Presentation;
+		VkResult Result = VkResult::VK_SUCCESS;
 
 		while (!this->Shutdown.load()) {
 			this->RenderUpdateTrap.door();
+
+			// Poll for all render operations.
+			for (int i = 0; this->StageCount; i++) {
+				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
+				if (CtxIdx >= 0) {
+					this->Workload[CtxIdx]->GraphicsBatch += this->Stage[i]->render();
+				}
+			}
+
+			// Reset fences for work submission.
+			for (int i = 0; i < this->ContextCount; i++) {
+				//if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence);
+				Result = this->Workload[i]->reset(device::qfs::GRAPHICS);
+			}
+
+			// Submit all render operations.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				this->Context[i]->submit(
+					device::qfs::GRAPHICS, 
+					this->Workload[i]->GraphicsBatch.count(),
+					this->Workload[i]->GraphicsBatch.ptr(), 
+					this->Workload[i]->GraphicsFence
+				);
+			}
+
+			// Wait for all submissions to finish before presentation.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence, VK_TRUE, UINT64_MAX);
+			}
+
 
 			core::logic::waitfor(0.001);
 		}
@@ -665,6 +750,9 @@ namespace geodesuka {
 
 	void engine::taudio() {
 		// Does nothing currently.
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1);
+		}
 	}
 
 	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
