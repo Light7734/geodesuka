@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_GCL_DEVICE_H
 #define GEODESUKA_CORE_GCL_DEVICE_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 namespace geodesuka::core::gcl {
 

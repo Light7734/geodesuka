@@ -2,13 +2,10 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_DISPLAY_H
 
-#include <GLFW/glfw3.h>
-
-#include "../gcl/framebuffer.h"
-
 #include "../object.h"
-
 #include "window.h"
+
+#include <GLFW/glfw3.h>
 
 namespace geodesuka::core::object {
 

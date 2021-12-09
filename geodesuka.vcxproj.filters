@@ -342,7 +342,7 @@
     <ClCompile Include="src\example.cpp">
       <Filter>src\builtin\stage</Filter>
     </ClCompile>
-    <ClCompile Include="src\render_target.cpp">
+    <ClCompile Include="src\rendertarget.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -554,9 +554,6 @@
     <ClInclude Include="inc\geodesuka\core\stage\scene3d.h">
       <Filter>inc\geodesuka\core\stage</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\render_target.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\builtin\object\triangle.h">
       <Filter>inc\geodesuka\builtin\object</Filter>
     </ClInclude>
@@ -586,6 +583,12 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\builtin\stage\example.h">
       <Filter>inc\geodesuka\builtin\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\rendertarget.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl.h">
+      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

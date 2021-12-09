@@ -35,11 +35,6 @@ C26451
 #include <mutex>
 #include <atomic>
 
-/* --------------- Third Party Libraries --------------- */
-
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
-
 // ------------------------- Mathematics Library ------------------------- //
 #include "core/math.h"
 
@@ -59,14 +54,12 @@ C26451
 //#include "core/io/font.h"
 
 // ------------------------- Graphics & Computation API ------------------------- //
-
+#include "core/gcl.h"
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
-
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
 #include "core/gcl/texture.h"
-
 #include "core/gcl/renderpass.h"
 #include "core/gcl/framebuffer.h"
 #include "core/gcl/pipeline.h"
@@ -92,7 +85,7 @@ C26451
 #include "core/object/system_terminal.h"
 
 // Might change this later into something else.
-#include "core/object/render_target.h"
+#include "core/object/rendertarget.h"
 
 // Includes window primitives which can be drawn to.
 #include "core/object/window.h"
@@ -162,14 +155,15 @@ namespace geodesuka {
 		};
 
 		struct workload {
-			core::gcl::context*		Context;
-			std::mutex				Mutex;
-			core::stage_t::batch	TransferBatch;
-			VkFence					TransferFence;
-			core::stage_t::batch	ComputeBatch;
-			VkFence					ComputeFence;
-			core::stage_t::batch	GraphicsBatch;
-			VkFence					GraphicsFence;
+			core::gcl::context*						Context;
+			std::mutex								Mutex;
+			core::stage_t::batch					TransferBatch;
+			VkFence									TransferFence;
+			core::stage_t::batch					ComputeBatch;
+			VkFence									ComputeFence;
+			core::stage_t::batch					GraphicsBatch;
+			VkFence									GraphicsFence;
+			core::object::system_window::present	Presentation;
 			workload(core::gcl::context* aContext);
 			~workload();
 			VkResult waitfor(core::gcl::device::qfs aQFS);
@@ -242,25 +236,6 @@ namespace geodesuka {
 		void submit(core::stage_t* aStage);
 		void remove(core::stage_t* aStage);
 
-		// ------------------------------ Back end runtime ------------------------------ //
-
-		std::thread::id MainThreadID;
-		std::thread::id SystemTerminalThreadID;
-		std::thread::id RenderThreadID;
-		std::thread::id AudioThreadID;
-		std::thread::id AppThreadID;
-
-		std::thread SystemTerminalThread;
-		std::thread RenderThread;
-		std::thread AudioThread;
-		std::thread AppThread;
-
-		core::logic::trap RenderUpdateTrap;
-
-		void tsterminal();		// Thread handles terminal input to the engine.
-		void trender();			// Thread honors frame rates of respective targets.
-		void taudio();			// Thread Handles audio streams.
-
 		// Signals to update thread to create window handle
 		// because glfw is written by lobotomites.
 		std::atomic<bool> SignalCreate;
@@ -286,6 +261,26 @@ namespace geodesuka {
 		int objidx(core::object_t* aObj);
 		int winidx(core::object::system_window* aWin);
 		int stgidx(core::stage_t* aStg);
+
+		// ------------------------------ Back end runtime ------------------------------ //
+
+		std::thread::id MainThreadID;
+		std::thread::id RenderThreadID;
+		std::thread::id AudioThreadID;
+		std::thread::id SystemTerminalThreadID;
+		std::thread::id AppThreadID;
+
+		std::thread RenderThread;
+		std::thread AudioThread;
+		std::thread SystemTerminalThread;
+		std::thread AppThread;
+
+		core::logic::trap RenderUpdateTrap;
+
+		void trender();			// Thread honors frame rates of respective targets.
+		void taudio();			// Thread Handles audio streams.
+		void tsterminal();		// Thread handles terminal input to the engine.
+
 
 	};
 

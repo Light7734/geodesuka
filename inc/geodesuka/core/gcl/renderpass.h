@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_GCL_RENDERPASS_H
 #define GEODESUKA_CORE_GCL_RENDERPASS_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 #include "device.h"
 #include "context.h"

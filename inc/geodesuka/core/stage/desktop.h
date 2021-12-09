@@ -2,7 +2,9 @@
 #ifndef GEODESUKA_CORE_STAGE_DESKTOP_H
 #define GEODESUKA_CORE_STAGE_DESKTOP_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
+
+#include "../object/system_window.h"
 
 #include "../stage.h"
 #include "canvas.h"
@@ -17,9 +19,12 @@ namespace geodesuka::core::stage {
 
 	protected:
 
+
 		virtual VkSubmitInfo update(double aDeltaTime) override;
 
 		virtual batch render() override;
+
+		//system_window::present present();
 
 	private:
 

@@ -11,18 +11,13 @@
 
 #include <vector>
 
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
-
 #include "../math.h"
 
+#include "../gcl.h"
 #include "../gcl/device.h"
 #include "../gcl/context.h"
-
 #include "../gcl/texture.h"
-
 #include "../gcl/framebuffer.h"
-
 #include "../gcl/swapchain.h"
 
 //#include "../hid/mouse.h"
@@ -36,7 +31,8 @@
 //#include "virtual_window.h"
 //#include "camera.h"
 
-
+// Interact with windowing system.
+#include <GLFW/glfw3.h>
 
 // system_window: This object exists in the display space exclusively.
 // It interfaces with the operating system and holds the context for for
@@ -59,11 +55,35 @@ namespace geodesuka::core::object {
 	public:
 
 		friend class engine;
+		//friend class system_display;
+
+		// Will be used to aggregate presentation.
+		struct present {
+
+			present();
+			present(VkSwapchainKHR aSwapchain, uint32_t aPresentImageIndex);
+			~present();
+
+			// Use to 
+			uint32_t count();
+			VkPresentInfoKHR handle();
+			VkResult *results();
+
+		private:
+			uint32_t Count;
+			VkSwapchainKHR* Swapchains;
+			uint32_t* ImageIndices;
+			VkResult* Results;
+		};
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
 
-		//friend class system_display;
+		// Attachments
+		int TextureCount;
+		gcl::texture* Texture;
+		int CurrentDrawTargetIndex;
+
 
 		//math::boolean CloseMe;
 
@@ -76,6 +96,7 @@ namespace geodesuka::core::object {
 		virtual void set_resolution(math::natural2 aResolution) override;
 
 	protected:
+		// Only accessible to engine backend.
 
 		virtual VkSubmitInfo update(double aDeltaTime);
 
@@ -84,6 +105,7 @@ namespace geodesuka::core::object {
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	private:
+		// Local variables only accessed by instance of class.
 
 		system_display* Display;			// Parent Display of this system_window.
 

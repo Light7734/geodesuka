@@ -22,7 +22,7 @@ namespace geodesuka::core::object {
 
 	//void camera::draw(object_t* aObject) {}
 
-	camera::camera(engine* aEngine, gcl::context* aContext) : render_target(aEngine, aContext) {
+	camera::camera(engine* aEngine, gcl::context* aContext) : rendertarget(aEngine, aContext) {
 
 	}
 

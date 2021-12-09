@@ -592,170 +592,7 @@ namespace geodesuka {
 		}
 	}
 
-	// --------------- Engine Main Thread --------------- //
-	// The main thread is used to spawn backend threads along
-	// with the app thread.
-	// --------------- Engine Main Thread --------------- //
-	int engine::run(core::app* aApp) {
-
-		// Store main thread ID.
-
-		this->State = state::RUNNING;
-		this->MainThreadID				= std::this_thread::get_id();
-		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
-		this->RenderThread				= std::thread(&engine::trender, this);
-		this->AppThread					= std::thread(&core::app::run, aApp);
-
-		//std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
-		//std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
-		//std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
-		//std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
-		//this->ThreadsLaunched.store(true);
-
-		double t1, t2;
-		double wt, ht;
-		double t, dt;
-		double ts = 0.01;
-		dt = 0.0;
-
-		stage_t::batch TransferBatch[512];
-		stage_t::batch ComputeBatch[512];
-		VkResult Result = VkResult::VK_SUCCESS;
-
-		// The update thread is the main thread.
-		while (!this->Shutdown.load()) {
-			this->RenderUpdateTrap.door();
-
-			t1 = core::logic::get_time();
-			this->mtcd_process_window_handle_call();
-			glfwPollEvents();
-
-			// Poll for Object Updates.
-			for (int i = 0; i < this->ObjectCount; i++) {
-				int CtxIdx = this->ctxidx(this->Object[i]->Context);
-				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->TransferBatch += this->Object[i]->update(dt);
-				}
-			}
-
-			// Poll for Stage Updates and 
-			for (int i = 0; i < this->StageCount; i++) {
-				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
-				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->TransferBatch += this->Stage[i]->update(dt);
-				}
-			}
-
-			// Wait for all submissions to finish before presentation.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				Result = this->Workload[i]->waitfor(device::qfs::GRAPHICS);
-			}
-
-			// Submit all transfer operations.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->TransferBatch.count() == 0) continue;
-				this->Context[i]->submit(
-					device::qfs::TRANSFER, 
-					this->Workload[i]->TransferBatch.count(),
-					this->Workload[i]->TransferBatch.ptr(),
-					this->Workload[i]->TransferFence);
-			}
-
-
-			t2 = core::logic::get_time();
-			wt = t2 - t1;
-			if (wt < ts) {
-				ht = ts - wt;
-				core::logic::waitfor(ht);
-			}
-			else {
-				ht = 0.0;
-			}
-			dt = wt + ht;
-		}
-
-		// This is redundant. Only the App thread can shutdown all other threads.
-		this->Shutdown.store(true);
-
-		this->SystemTerminalThread.join();
-		this->RenderThread.join();
-		this->AppThread.join();
-		this->State = state::READY;
-
-		return 0;
-	}
-
-	// --------------- System Terminal Thread --------------- //
-	// Will be used for runtime debugging of engine using terminal.
-	// --------------- System Terminal Thread --------------- //
-	void engine::tsterminal() {
-
-		while (!this->Shutdown.load()) {
-			core::logic::waitfor(1.0);
-		}
-	}
-
-	// --------------- Render Thread --------------- //
-	// The job of the render thread is to honor and schedule draw
-	// calls of respective render targets stored in memory.
-	// --------------- Render Thread --------------- //
-	void engine::trender() {
-
-		// A context can create multiple windows, and since
-		// the present queue belongs to a specific context,
-		// it would be wise to group presentation updates
-		std::vector<VkPresentInfoKHR> Presentation;
-		VkResult Result = VkResult::VK_SUCCESS;
-
-		while (!this->Shutdown.load()) {
-			this->RenderUpdateTrap.door();
-
-			// Poll for all render operations.
-			for (int i = 0; this->StageCount; i++) {
-				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
-				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->GraphicsBatch += this->Stage[i]->render();
-				}
-			}
-
-			// Reset fences for work submission.
-			for (int i = 0; i < this->ContextCount; i++) {
-				//if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence);
-				Result = this->Workload[i]->reset(device::qfs::GRAPHICS);
-			}
-
-			// Submit all render operations.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				this->Context[i]->submit(
-					device::qfs::GRAPHICS, 
-					this->Workload[i]->GraphicsBatch.count(),
-					this->Workload[i]->GraphicsBatch.ptr(), 
-					this->Workload[i]->GraphicsFence
-				);
-			}
-
-			// Wait for all submissions to finish before presentation.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence, VK_TRUE, UINT64_MAX);
-			}
-
-
-			core::logic::waitfor(0.001);
-		}
-	}
-
-	void engine::taudio() {
-		// Does nothing currently.
-		while (!this->Shutdown.load()) {
-			core::logic::waitfor(1);
-		}
-	}
-
-	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
+		GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
 		GLFWwindow* Temp = NULL;
 		if (this->MainThreadID == std::this_thread::get_id()) {
 			glfwWindowHint(GLFW_RESIZABLE,			aProperty.Resizable);
@@ -861,6 +698,182 @@ namespace geodesuka {
 			if (this->Stage[i] == aStg) return i;
 		}
 		return -1;
+	}
+
+	// --------------- Engine Main Thread --------------- //
+	// The main thread is used to spawn backend threads along
+	// with the app thread.
+	// --------------- Engine Main Thread --------------- //
+	int engine::run(core::app* aApp) {
+
+		// Store main thread ID.
+
+		this->State = state::RUNNING;
+		this->MainThreadID				= std::this_thread::get_id();
+		this->RenderThread				= std::thread(&engine::trender, this);
+		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
+		this->AppThread					= std::thread(&core::app::run, aApp);
+
+		//std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
+		//std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
+		//std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
+		//std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
+		//this->ThreadsLaunched.store(true);
+
+		double t1, t2;
+		double wt, ht;
+		double t, dt;
+		double ts = 0.01;
+		dt = 0.0;
+
+		stage_t::batch TransferBatch[512];
+		stage_t::batch ComputeBatch[512];
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		// The update thread is the main thread.
+		while (!this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
+			t1 = core::logic::get_time();
+			this->mtcd_process_window_handle_call();
+			glfwPollEvents();
+
+			// Poll for Object Updates.
+			for (int i = 0; i < this->ObjectCount; i++) {
+				int CtxIdx = this->ctxidx(this->Object[i]->Context);
+				if (CtxIdx >= 0) {
+					this->Workload[CtxIdx]->TransferBatch += this->Object[i]->update(dt);
+				}
+			}
+
+			// Poll for Stage Updates and 
+			for (int i = 0; i < this->StageCount; i++) {
+				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
+				if (CtxIdx >= 0) {
+					this->Workload[CtxIdx]->TransferBatch += this->Stage[i]->update(dt);
+				}
+			}
+
+			// Wait for all submissions to finish before presentation.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() > 0) {
+					Result = this->Workload[i]->waitfor(device::qfs::GRAPHICS);
+				}
+				else {
+
+				}
+			}
+
+			// Submit all transfer operations.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->TransferBatch.count() == 0) continue;
+				this->Context[i]->submit(
+					device::qfs::TRANSFER, 
+					this->Workload[i]->TransferBatch.count(),
+					this->Workload[i]->TransferBatch.ptr(),
+					this->Workload[i]->TransferFence
+				);
+			}
+
+
+			t2 = core::logic::get_time();
+			wt = t2 - t1;
+			if (wt < ts) {
+				ht = ts - wt;
+				core::logic::waitfor(ht);
+			}
+			else {
+				ht = 0.0;
+			}
+			dt = wt + ht;
+		}
+
+		// This is redundant. Only the App thread can shutdown all other threads.
+		this->Shutdown.store(true);
+
+		this->RenderThread.join();
+		this->SystemTerminalThread.join();
+		this->AppThread.join();
+		this->State = state::READY;
+
+		return 0;
+	}
+
+	// --------------- Render Thread --------------- //
+	// The job of the render thread is to honor and schedule draw
+	// calls of respective render targets stored in memory.
+	// --------------- Render Thread --------------- //
+	void engine::trender() {
+
+		// A context can create multiple windows, and since
+		// the present queue belongs to a specific context,
+		// it would be wise to group presentation updates
+		std::vector<VkPresentInfoKHR> Presentation;
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		while (!this->Shutdown.load()) {
+			this->RenderUpdateTrap.door();
+
+			// Aggregate all render operations from stages.
+			for (int i = 0; this->StageCount; i++) {
+				//int j = (this->StageCount - 1) - i;
+				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
+				if (CtxIdx >= 0) {
+					this->Workload[CtxIdx]->GraphicsBatch += this->Stage[i]->render();
+				}
+			}
+
+			// Reset fences for work submission.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				Result = this->Workload[i]->reset(device::qfs::GRAPHICS);
+			}
+
+			// Submit all render operations.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
+				this->Context[i]->submit(
+					device::qfs::GRAPHICS, 
+					this->Workload[i]->GraphicsBatch.count(),
+					this->Workload[i]->GraphicsBatch.ptr(), 
+					this->Workload[i]->GraphicsFence
+				);
+			}
+
+			// Wait for all submissions to finish before presentation.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->GraphicsBatch.count() > 0) {
+					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence, VK_TRUE, UINT64_MAX);
+				}
+			}
+
+			// Present image indices.
+			for (int i = 0; i < this->ContextCount; i++) {
+				if (this->Workload[i]->Presentation.count() > 0) {
+
+				}
+			}
+
+
+			core::logic::waitfor(0.001);
+		}
+	}
+
+	void engine::taudio() {
+		// Does nothing currently.
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1);
+		}
+	}
+
+	// --------------- System Terminal Thread --------------- //
+	// Will be used for runtime debugging of engine using terminal.
+	// --------------- System Terminal Thread --------------- //
+	void engine::tsterminal() {
+
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1.0);
+		}
 	}
 
 }

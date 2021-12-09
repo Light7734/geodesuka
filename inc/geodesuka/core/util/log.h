@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_UTIL_LOG_H
 #define GEODESUKA_CORE_UTIL_LOG_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 namespace geodesuka::core::util {
 

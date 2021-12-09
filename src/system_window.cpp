@@ -1,18 +1,43 @@
+#include <geodesuka/engine.h>
 #include <geodesuka/core/object/system_window.h>
 
 #include <algorithm>
-
-#include <vulkan/vulkan.h>
-#include <GLFW/glfw3.h>
-
-#include <geodesuka/engine.h>
-
 
 namespace geodesuka::core::object {
 
 	using namespace gcl;
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
+	system_window::present::present() {
+		this->Count = 0;
+		this->Swapchains = NULL;
+		this->ImageIndices = NULL;
+		this->Results = NULL;
+	}
+
+	//system_window::present::present(VkSwapchainKHR aSwapchain, uint32_t )
+
+	uint32_t system_window::present::count() {
+		return this->Count;
+	}
+
+	VkPresentInfoKHR system_window::present::handle() {
+		VkPresentInfoKHR Presentation{};
+		Presentation.sType					= VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		Presentation.pNext					= NULL;
+		Presentation.waitSemaphoreCount		= 0;
+		Presentation.pWaitSemaphores		= NULL;
+		Presentation.swapchainCount			= this->Count;
+		Presentation.pSwapchains			= this->Swapchains;
+		Presentation.pImageIndices			= this->ImageIndices;
+		Presentation.pResults				= this->Results;
+		return Presentation;
+	}
+
+	VkResult* system_window::present::results() {
+		return this->Results;
+	}
 
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 

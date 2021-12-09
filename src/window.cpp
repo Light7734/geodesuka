@@ -52,7 +52,7 @@ namespace geodesuka::core::object {
 		return false;
 	}
 
-	window::window(engine *aEngine, gcl::context *aContext) : render_target(aEngine, aContext) {
+	window::window(engine *aEngine, gcl::context *aContext) : rendertarget(aEngine, aContext) {
 		// Perhaps setup backend frame.
 		this->Title = "";
 		//this->Resolution = math::natural2(0.0, 0.0);

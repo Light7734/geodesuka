@@ -1,7 +1,7 @@
 #ifndef GEODESUKA_CORE_GCL_FRAMEBUFFER_H
 #define GEODESUKA_CORE_GCL_FRAMEBUFFER_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 #include "../math.h"
 

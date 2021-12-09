@@ -64,8 +64,6 @@ namespace geodesuka::core {
 
 
 		std::mutex Mutex;
-		VkSubmitInfo TransferSubmit{};
-		VkSubmitInfo ComputeSubmit{};
 		
 		virtual ~object_t() /*= default*/;
 

@@ -2,8 +2,6 @@
 
 #include <algorithm>
 
-#include <vulkan/vulkan.h>
-
 namespace geodesuka::core::gcl {
 
 

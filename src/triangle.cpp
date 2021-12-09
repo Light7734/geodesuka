@@ -323,7 +323,6 @@ namespace geodesuka::builtin::object {
 
 	VkCommandBuffer triangle::draw(core::object::system_window* aTargetSystemWindow) {
 
-
 		// Draw Triangle to window.
 		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
 		VkResult Result = VkResult::VK_SUCCESS;
