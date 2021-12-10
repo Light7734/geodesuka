@@ -9,36 +9,6 @@ namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	system_window::present::present() {
-		this->Count = 0;
-		this->Swapchains = NULL;
-		this->ImageIndices = NULL;
-		this->Results = NULL;
-	}
-
-	//system_window::present::present(VkSwapchainKHR aSwapchain, uint32_t )
-
-	uint32_t system_window::present::count() {
-		return this->Count;
-	}
-
-	VkPresentInfoKHR system_window::present::handle() {
-		VkPresentInfoKHR Presentation{};
-		Presentation.sType					= VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		Presentation.pNext					= NULL;
-		Presentation.waitSemaphoreCount		= 0;
-		Presentation.pWaitSemaphores		= NULL;
-		Presentation.swapchainCount			= this->Count;
-		Presentation.pSwapchains			= this->Swapchains;
-		Presentation.pImageIndices			= this->ImageIndices;
-		Presentation.pResults				= this->Results;
-		return Presentation;
-	}
-
-	VkResult* system_window::present::results() {
-		return this->Results;
-	}
-
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 
 		this->Display = aSystemDisplay;
@@ -123,28 +93,28 @@ namespace geodesuka::core::object {
 		Image = (VkImage*)malloc(ImageCount * sizeof(VkImage));
 		Result = vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain->Handle, &ImageCount, Image);
 		
-		this->TextureCount = ImageCount;
-		this->Texture = new texture[TextureCount];
+		this->FrameCount = ImageCount;
+		this->FrameTexture = new texture[FrameCount];
 
 		// Load images into texture class.
 		for (uint32_t i = 0; i < ImageCount; i++) {
 
-			this->Texture[i].CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-			this->Texture[i].CreateInfo.pNext					= NULL;
-			this->Texture[i].CreateInfo.flags					= 0;
-			this->Texture[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
-			this->Texture[i].CreateInfo.format					= this->Swapchain->CreateInfo.imageFormat;
-			this->Texture[i].CreateInfo.extent					= { this->Swapchain->CreateInfo.imageExtent.width, this->Swapchain->CreateInfo.imageExtent.height, 1u };
-			this->Texture[i].CreateInfo.mipLevels				= 1;
-			this->Texture[i].CreateInfo.arrayLayers				= this->Swapchain->CreateInfo.imageArrayLayers;
-			this->Texture[i].CreateInfo.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
-			this->Texture[i].CreateInfo.tiling					; // Unknown.
-			this->Texture[i].CreateInfo.usage					= this->Swapchain->CreateInfo.imageUsage;
-			this->Texture[i].CreateInfo.sharingMode				= this->Swapchain->CreateInfo.imageSharingMode;
-			this->Texture[i].CreateInfo.queueFamilyIndexCount	= 0;
-			this->Texture[i].CreateInfo.pQueueFamilyIndices		= NULL;
-			this->Texture[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
-			this->Texture[i].Handle								= Image[i];
+			this->FrameTexture[i].CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			this->FrameTexture[i].CreateInfo.pNext					= NULL;
+			this->FrameTexture[i].CreateInfo.flags					= 0;
+			this->FrameTexture[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+			this->FrameTexture[i].CreateInfo.format					= this->Swapchain->CreateInfo.imageFormat;
+			this->FrameTexture[i].CreateInfo.extent					= { this->Swapchain->CreateInfo.imageExtent.width, this->Swapchain->CreateInfo.imageExtent.height, 1u };
+			this->FrameTexture[i].CreateInfo.mipLevels				= 1;
+			this->FrameTexture[i].CreateInfo.arrayLayers			= this->Swapchain->CreateInfo.imageArrayLayers;
+			this->FrameTexture[i].CreateInfo.samples				= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
+			this->FrameTexture[i].CreateInfo.tiling					; // Unknown.
+			this->FrameTexture[i].CreateInfo.usage					= this->Swapchain->CreateInfo.imageUsage;
+			this->FrameTexture[i].CreateInfo.sharingMode			= this->Swapchain->CreateInfo.imageSharingMode;
+			this->FrameTexture[i].CreateInfo.queueFamilyIndexCount	= 0;
+			this->FrameTexture[i].CreateInfo.pQueueFamilyIndices	= NULL;
+			this->FrameTexture[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
+			this->FrameTexture[i].Handle							= Image[i];
 
 		}
 
@@ -159,14 +129,14 @@ namespace geodesuka::core::object {
 		this->Engine->remove(this);
 
 		// Clears swapchain images.
-		for (int i = 0; i < this->TextureCount; i++) {
-			this->Texture[i].CreateInfo = {};
-			this->Texture[i].Handle = VK_NULL_HANDLE;
+		for (int i = 0; i < this->FrameCount; i++) {
+			this->FrameTexture[i].CreateInfo = {};
+			this->FrameTexture[i].Handle = VK_NULL_HANDLE;
 		}
 
-		this->TextureCount = 0;
-		delete[] this->Texture;
-		this->Texture = nullptr;
+		this->FrameCount = 0;
+		delete[] this->FrameTexture;
+		this->FrameTexture = nullptr;
 
 		// Destroys swapchain.
 		delete this->Swapchain;

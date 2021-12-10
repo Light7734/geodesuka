@@ -847,12 +847,12 @@ namespace geodesuka {
 				}
 			}
 
-			// Present image indices.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->Presentation.count() > 0) {
+			//// Present image indices.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	if (this->Workload[i]->Presentation.count() > 0) {
 
-				}
-			}
+			//	}
+			//}
 
 
 			core::logic::waitfor(0.001);

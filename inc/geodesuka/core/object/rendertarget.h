@@ -35,6 +35,7 @@ namespace geodesuka::core::object {
 		friend class stage::scene2d;
 		friend class stage::scene3d;
 
+		// Might move this somewhere else.
 		struct submission {
 
 			submission();
@@ -60,15 +61,15 @@ namespace geodesuka::core::object {
 
 
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
-		double FramesPerSecond;			// The rate at which the frames will be cycles through by the engine.
-		unsigned int Resolution[2];		// The grid resolution of every frame and frame attachment of the rendertarget.
+		double FramesPerSecond;			// The rate at which the frames will be cycled through by the engine.
+		math::natural2 Resolution;		// The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.
-		VkImageView** FrameAttachment;								// The image view handles of each 
+		VkImageView** FrameAttachment;								// The image view handles of each frame attachment.
 
 		int FrameDrawIndex;
-		int FrameReadIndex;
+		//int FrameReadIndex;
 
 
 		~rendertarget();
@@ -83,7 +84,7 @@ namespace geodesuka::core::object {
 
 		// Propose a collection of objects (Most likely from a stage), to 
 		// draw those objects to the render target. The objects will
-		// produce user implemented draw commands to the render_target
+		// produce user implemented draw commands to the rendertarget
 		// for aggregation and eventual execution by the geodesuka engine.
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) = 0;
 

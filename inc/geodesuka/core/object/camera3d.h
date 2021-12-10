@@ -10,12 +10,35 @@ namespace geodesuka::core::object {
 	class camera3d : public camera {
 	public:
 
+		/*
+		* The output of a pixel shader using this as a render target
+		* must use the following form.
+		* layout (location = 0) out vec3 PixelColor;
+		* layout (location = 1) out vec3 PixelPosition;
+		* layout (location = 2) out vec3 PixelNormal;
+		*/
+
 		//camera3d(engine *aEngine, gcl::context *aContext);
 		//~camera3d();
 
 
 
 	protected:
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
+
+	private:
+
+		// The structure of each frame.
+		struct frame {
+			// Depth Attachments.
+			gcl::texture DepthBuffer;
+			// Color Attachments
+			gcl::texture PixelColor;		// R32G32B32
+			gcl::texture PixelPosition;		// R32G32B32
+			gcl::texture PixelNormal;		// R32G32B32
+
+		};
 
 		// DepthList:
 		// The depth list is a list of sorted objects based
@@ -28,10 +51,6 @@ namespace geodesuka::core::object {
 		// (i.e. Alpha != 1.0) will be drawn where the furthest objects
 		// are rendered first for appropriate ordering.
 		std::vector<object_t> TranslucentObject;
-
-		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
-
-	private:
 
 
 	};

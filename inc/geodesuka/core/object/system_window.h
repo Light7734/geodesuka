@@ -57,32 +57,29 @@ namespace geodesuka::core::object {
 		friend class engine;
 		//friend class system_display;
 
-		// Will be used to aggregate presentation.
-		struct present {
-
-			present();
-			present(VkSwapchainKHR aSwapchain, uint32_t aPresentImageIndex);
-			~present();
-
-			// Use to 
-			uint32_t count();
-			VkPresentInfoKHR handle();
-			VkResult *results();
-
-		private:
-			uint32_t Count;
-			VkSwapchainKHR* Swapchains;
-			uint32_t* ImageIndices;
-			VkResult* Results;
-		};
+		//// TODO: Abandoned Idea.
+		//// Will be used to aggregate presentation.
+		//struct present {
+		//
+		//	present();
+		//	present(VkSwapchainKHR aSwapchain, uint32_t aPresentImageIndex);
+		//	~present();
+		//
+		//	// Use to 
+		//	uint32_t count();
+		//	VkPresentInfoKHR handle();
+		//	VkResult *results();
+		//
+		//private:
+		//	uint32_t Count;
+		//	VkSwapchainKHR* Swapchains;
+		//	uint32_t* ImageIndices;
+		//	VkResult* Results;
+		//};
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
-
-		// Attachments
-		int TextureCount;
-		gcl::texture* Texture;
-		int CurrentDrawTargetIndex;
+		gcl::texture* FrameTexture;
 
 
 		//math::boolean CloseMe;

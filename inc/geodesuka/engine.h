@@ -163,7 +163,7 @@ namespace geodesuka {
 			VkFence									ComputeFence;
 			core::stage_t::batch					GraphicsBatch;
 			VkFence									GraphicsFence;
-			core::object::system_window::present	Presentation;
+			//core::object::system_window::present	Presentation;
 			workload(core::gcl::context* aContext);
 			~workload();
 			VkResult waitfor(core::gcl::device::qfs aQFS);
