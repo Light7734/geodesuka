@@ -74,6 +74,7 @@ namespace geodesuka::core::object {
 		~rendertarget();
 
 		void set_framerate(double aFPS);
+
 		double framerate();
 
 	protected:
