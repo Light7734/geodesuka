@@ -6,7 +6,7 @@
 
 #include <vector>
 
-#include "../util/text.h"
+#include "../util/str.h"
 
 /*
 Maybe this should maintain of all accessed files and directories
@@ -124,30 +124,30 @@ namespace geodesuka::core::io {
 
 		static struct built_in_type {
 			extension Type;
-			std::vector<util::text> Extension;
+			std::vector<util::str> Extension;
 		} BuiltInTypes[];
 
-		static extension str2type(util::text aString);
-		static util::text type2str(extension aType);
+		static extension str2type(util::str aString);
+		static util::str type2str(extension aType);
 
 		static file* open(const char* aFilePath);
 		static void close(file* aFile);
 
 		~file();
 
-		util::text get_path();
-		util::text get_dir();
-		util::text get_name();
-		util::text get_ext();
+		util::str get_path();
+		util::str get_dir();
+		util::str get_name();
+		util::str get_ext();
 		void* get_data(size_t& ReturnSize);
 
 	protected:
 
 		file();
 		file(const char* aFilePath);
-		file(util::text& aFilePath);
+		file(util::str& aFilePath);
 
-		bool mset_path(util::text aFilePath);
+		bool mset_path(util::str aFilePath);
 
 	private:
 
@@ -160,10 +160,10 @@ namespace geodesuka::core::io {
 		* Path = Dir + '/' + Name + '.' + Ext
 		*/
 
-		util::text Path;
-		util::text Dir;
-		util::text Name;
-		util::text Ext;
+		util::str Path;
+		util::str Dir;
+		util::str Name;
+		util::str Ext;
 		extension ID;
 
 		/*

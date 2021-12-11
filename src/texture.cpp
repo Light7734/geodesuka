@@ -545,7 +545,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext					= NULL;
-		BeginInfo.flags					= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags					= 0;
 		BeginInfo.pInheritanceInfo		= NULL;
 
 		// Use Barrier layout transitions for al
@@ -661,7 +661,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType									= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext									= NULL;
-		BeginInfo.flags									= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags									= 0;
 		BeginInfo.pInheritanceInfo						= NULL;
 
 		for (uint32_t i = 0; i < this->CreateInfo.arrayLayers; i++) {
@@ -732,7 +732,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType									= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext									= NULL;
-		BeginInfo.flags									= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags									= 0;
 		BeginInfo.pInheritanceInfo						= NULL;
 
 		//Result = this->Context->create(context::cmdtype::GRAPHICS, 1, &CommandBuffer);

@@ -9,7 +9,7 @@
 * Most likely to extend object.h
 */
 
-#include "../util/text.h"
+#include "../util/str.h"
 
 #include "file.h"
 

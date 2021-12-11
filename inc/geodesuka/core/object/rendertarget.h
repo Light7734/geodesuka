@@ -35,39 +35,16 @@ namespace geodesuka::core::object {
 		friend class stage::scene2d;
 		friend class stage::scene3d;
 
-		// Might move this somewhere else.
-		struct submission {
-
-			submission();
-			submission(VkCommandBuffer aCommandBuffer);
-			submission(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
-			submission(const submission& aInput);
-			submission(submission&& aInput);
-			~submission();
-
-			submission& operator=(const submission& aRhs);
-			submission& operator=(submission&& aRhs);
-
-			submission& operator+=(const submission& aRhs);
-			submission& operator+=(submission&& aRhs);
-			submission& operator+=(VkCommandBuffer aRhs);
-
-
-			VkSubmitInfo info();
-		private:
-			uint32_t CommandBufferCount;
-			VkCommandBuffer *CommandBuffer;
-		};
-
 
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
 		double FramesPerSecond;			// The rate at which the frames will be cycled through by the engine.
-		math::natural2 Resolution;		// The grid resolution of every frame and frame attachment of the rendertarget.
+		math::natural2 Resolution;		// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.
 		VkImageView** FrameAttachment;								// The image view handles of each frame attachment.
 
+		// This index specifies the 
 		int FrameDrawIndex;
 		//int FrameReadIndex;
 

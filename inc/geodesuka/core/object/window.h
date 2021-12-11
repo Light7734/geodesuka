@@ -52,7 +52,7 @@ PS = Physical Screen Coordinates
 
 //class object;
 
-#include "../util/text.h"
+#include "../util/str.h"
 
 #include "../math.h"
 
@@ -94,7 +94,7 @@ namespace geodesuka::core::object {
 		// This is to discern what type of target is being drawn to, referenced by object.h
 		//virtual void draw(object_t* aObject) = 0;
 
-		virtual void set_title(util::text aTitle);
+		virtual void set_title(util::str aTitle);
 		virtual void set_size(math::real2 aSize);
 		virtual void set_resolution(math::natural2 aResolution);
 		virtual math::boolean should_close();
@@ -105,9 +105,8 @@ namespace geodesuka::core::object {
 
 	protected:
 
-		util::text Title;
+		util::str Title;
 		math::real2 Size;				// [m]
-		math::natural2 Resolution;		// [pixels]
 		struct prop Property;
 
 		window(engine *aEngine, gcl::context* aContext);

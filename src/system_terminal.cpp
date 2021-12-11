@@ -13,7 +13,7 @@ namespace geodesuka::core::object {
 
 	}
 
-	bool system_terminal::operator>>(util::text& aRhs) {
+	bool system_terminal::operator>>(util::str& aRhs) {
 		bool temp = false;
 		this->Mutex.lock();
 
@@ -21,8 +21,8 @@ namespace geodesuka::core::object {
 		return temp;
 	}
 
-	bool system_terminal::operator<<(util::text& aRhs) {
-		(*this) << aRhs.str();
+	bool system_terminal::operator<<(util::str& aRhs) {
+		(*this) << aRhs.ptr();
 		return false;
 	}
 

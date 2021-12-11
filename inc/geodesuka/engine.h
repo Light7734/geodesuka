@@ -41,7 +41,7 @@ C26451
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.
 #include "core/util/log.h"
-#include "core/util/text.h"
+#include "core/util/str.h"
 #include "core/util/variable.h"
 
 #include "core/logic/timer.h"

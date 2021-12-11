@@ -1,4 +1,4 @@
-#include <geodesuka/core/util/text.h>
+#include <geodesuka/core/util/str.h>
 
 // Standard C Library.
 //#include <limits.h>
@@ -17,7 +17,7 @@
 
 namespace geodesuka::core::util {
 
-	text::text() {
+	str::str() {
 		this->n = 0;
 		this->hptr = NULL;
 	}
@@ -33,7 +33,7 @@ namespace geodesuka::core::util {
 		va_end(ArgList);
 	}
 	*/
-	text::text(const char* Str) {
+	str::str(const char* Str) {
 		this->n = 0;
 		this->hptr = NULL;
 		if (Str != NULL) {
@@ -47,7 +47,7 @@ namespace geodesuka::core::util {
 		}
 	}
 
-	text::text(const text& Arg) {
+	str::str(const str& Arg) {
 		this->n = 0;
 		this->hptr = NULL;
 		if (Arg.hptr != NULL) {
@@ -68,12 +68,12 @@ namespace geodesuka::core::util {
 		Arg.hptr = NULL;
 	}
 	*/
-	text::~text() {
+	str::~str() {
 		free(this->hptr);
 		this->hptr = NULL;
 		this->n = 0;
 	}
-	text& text::operator=(const char* Rhs) {
+	str& str::operator=(const char* Rhs) {
 		if (this->hptr == Rhs) return *this;
 		if (Rhs == NULL) {
 			this->clear();
@@ -100,7 +100,7 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 
-	text& text::operator=(const text& Rhs) {
+	str& str::operator=(const str& Rhs) {
 		return (*this = Rhs.hptr);
 	}
 	/*
@@ -113,8 +113,8 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 	*/
-	text text::operator+(const char* Rhs) {
-		text temp;
+	str str::operator+(const char* Rhs) {
+		str temp;
 		if (Rhs == NULL) return *this;
 		size_t StrLength = strlen(Rhs);
 		temp.n = this->n + StrLength;
@@ -134,35 +134,35 @@ namespace geodesuka::core::util {
 		return temp;
 	}
 
-	text text::operator+(const text& Rhs) {
+	str str::operator+(const str& Rhs) {
 		return (*this + Rhs.hptr);
 	}
 
-	text& text::operator+=(const char* Rhs) {
+	str& str::operator+=(const char* Rhs) {
 		this->push(Rhs);
 		return *this;
 	}
 
-	text& text::operator+=(const text& Rhs) {
+	str& str::operator+=(const str& Rhs) {
 		this->push(Rhs.hptr);
 		return *this;
 	}
 
-	bool text::operator==(const char* Rhs) const {
+	bool str::operator==(const char* Rhs) const {
 		if (Rhs == NULL) return this->n == 0;
 		if (this->n != strlen(Rhs)) return false;
 		return (memcmp(this->hptr, Rhs, this->n * sizeof(char)) == 0);
 	}
 
-	bool text::operator==(const text& Rhs) const {
+	bool str::operator==(const str& Rhs) const {
 		return *this == Rhs.hptr;
 	}
 
-	char& text::operator[](int Index) {
+	char& str::operator[](int Index) {
 		return this->hptr[Index];
 	}
 
-	char text::operator[](int Index) const {
+	char str::operator[](int Index) const {
 		if ((Index >= 0) && (Index < this->n)) {
 			return this->hptr[Index];
 		}
@@ -171,7 +171,7 @@ namespace geodesuka::core::util {
 		}
 	}
 
-	bool text::push(const char* Str) {
+	bool str::push(const char* Str) {
 		if (Str == NULL) return false;
 		size_t StrLength = strlen(Str);
 		if (StrLength == 0) return false;
@@ -192,7 +192,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::pop(int Count) {
+	bool str::pop(int Count) {
 		if (Count <= 0) return false;
 		if (Count > this->n) {
 			this->clear();
@@ -208,7 +208,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::insert(int Index, const char* Str) {
+	bool str::insert(int Index, const char* Str) {
 		if (Str == NULL) return false;
 		size_t StrLength = strlen(Str);
 		if (StrLength == 0) return false;
@@ -231,7 +231,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::remove(int Index, int Count) {
+	bool str::remove(int Index, int Count) {
 		if (Count <= 0) return false;
 		size_t TruncatedCount = 0;
 		if (Count <= (this->n - Index)) {
@@ -254,7 +254,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::exchange(int I, int J, int Count) {
+	bool str::exchange(int I, int J, int Count) {
 		for (int i = 0; i < Count; i++) {
 			char temp = this->hptr[I + i];
 			this->hptr[I + i] = this->hptr[J + i];
@@ -263,7 +263,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::permute(int Count) {
+	bool str::permute(int Count) {
 		if ((hptr == NULL) || (n == 0)) { return true; }
 		void* nptr = NULL;
 		int a = abs(Count);
@@ -288,7 +288,7 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::reverse(int Index, int Count) {
+	bool str::reverse(int Index, int Count) {
 		int HalfCount = (Count - Count % 2) / 2;
 		for (int i = 0; i < HalfCount; i++) {
 			char temp = this->hptr[i + Index];
@@ -298,53 +298,53 @@ namespace geodesuka::core::util {
 		return false;
 	}
 
-	bool text::reverse() {
+	bool str::reverse() {
 		return this->reverse(0, this->n);
 	}
 
-	bool text::push(text& Str) {
+	bool str::push(str& Str) {
 		return this->push(Str.hptr);
 	}
 
-	bool text::insert(int Index, text& Str) {
+	bool str::insert(int Index, str& Str) {
 		return this->insert(Index, Str.hptr);
 	}
 
-	bool text::push(char Character) {
+	bool str::push(char Character) {
 		char temp[2];
 		temp[0] = Character;
 		temp[1] = '\0';
 		return this->push(temp);
 	}
 
-	bool text::pop() {
+	bool str::pop() {
 		return this->pop(1);
 	}
 
-	bool text::insert(int Index, char Character) {
+	bool str::insert(int Index, char Character) {
 		char temp[2];
 		temp[0] = Character;
 		temp[1] = '\0';
 		return this->insert(Index, temp);
 	}
 
-	bool text::remove(int Index) {
+	bool str::remove(int Index) {
 		return this->remove(Index, 1);
 	}
 
-	bool text::exchange(int I, int J) {
+	bool str::exchange(int I, int J) {
 		return this->exchange(I, J, 1);
 	}
 
-	text text::split_at(char Character) {
+	str str::split_at(char Character) {
 		char S[2];
 		S[0] = Character;
 		S[1] = '\0';
 		return this->split_at(S);
 	}
 
-	text text::split_at(const char* Pattern) {
-		text temp;
+	str str::split_at(const char* Pattern) {
+		str temp;
 		int Location = -1;
 		int MatchCount = 0;
 		int StrLength = strlen(Pattern);
@@ -373,7 +373,7 @@ namespace geodesuka::core::util {
 		return temp;
 	}
 
-	const char* text::str() const {
+	const char* str::ptr() const {
 		if (this->hptr != NULL) {
 			return this->hptr;
 		}
@@ -382,30 +382,30 @@ namespace geodesuka::core::util {
 		}
 	}
 
-	size_t text::size() const {
+	size_t str::size() const {
 		return this->n;
 	}
 
-	bool text::clear() {
+	bool str::clear() {
 		free(this->hptr);
 		this->hptr = NULL;
 		this->n = 0;
 		return false;
 	}
 
-	float text::to_float(const char* Arg) {
+	float str::to_float(const char* Arg) {
 		return (float)atof(Arg);
 	}
 
-	double text::to_double(const char* Arg) {
+	double str::to_double(const char* Arg) {
 		return atof(Arg);
 	}
 
 #ifdef TEXT_DEBUG
 	void text_unit_test() {
-		text Str1("hello");
-		text Str2 = "World";
-		text Str = "The quick brown fox chased the little rabbit!";
+		str Str1("hello");
+		str Str2 = "World";
+		str Str = "The quick brown fox chased the little rabbit!";
 		std::cout << "Str1 = " << Str1.hptr << std::endl;
 		std::cout << "Str2 = " << Str2.hptr << std::endl;
 
@@ -431,13 +431,13 @@ namespace geodesuka::core::util {
 		std::cout << "Str = " << Str.hptr << std::endl;
 		Str.push(" wabbit!");
 		std::cout << "Str = " << Str.hptr << std::endl;
-		text StrTemp = Str.split_at("brown");
+		str StrTemp = Str.split_at("brown");
 		std::cout << "StrTemp = " << StrTemp.hptr << std::endl;
 		std::cout << "Str = " << Str.hptr << std::endl;
 		Str.permute(-4);
 		std::cout << "Str = " << Str.hptr << std::endl;
 
-		text Str3 = "";
+		str Str3 = "";
 		Str3.push('a');
 		Str3.push('b');
 		std::cout << "Str3 = " << Str3.hptr << std::endl;
@@ -455,18 +455,18 @@ namespace geodesuka::core::util {
 
 		float Simple = FLT_MAX;
 		printf("Original Float:   %f\n", Simple);
-		text Txt = text("%f", Simple);
-		printf("String Float:    \"%s\"\n", Txt.str());
-		float NewSimple = (float)atof(Txt.str());
+		str Txt = str("%f", Simple);
+		printf("String Float:    \"%s\"\n", Txt.ptr());
+		float NewSimple = (float)atof(Txt.ptr());
 		printf("Converted Float:  %f\n", NewSimple);
 
 		float LeftMotor = 3.14;
 		const char* Name = "Left Motor";
-		text Send = text("%s|%+4.3e", Name, LeftMotor);
-		printf("Send Message: \"%s\"\n", Send.str());
-		text RecvName = Send.split_at('|');
-		printf("\"%s\"\t\"%s\"\n", RecvName.str(), Send.str());
-		printf("%s Value: %f\n", RecvName.str(), (float)atof(Send.str()));
+		str Send = str("%s|%+4.3e", Name, LeftMotor);
+		printf("Send Message: \"%s\"\n", Send.ptr());
+		str RecvName = Send.split_at('|');
+		printf("\"%s\"\t\"%s\"\n", RecvName.ptr(), Send.ptr());
+		printf("%s Value: %f\n", RecvName.ptr(), (float)atof(Send.ptr()));
 
 	}
 #endif // TEXT_DEBUG

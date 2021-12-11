@@ -1,20 +1,17 @@
+#pragma once
 #ifndef GEODESUKA_CORE_UTIL_STR_H
 #define GEODESUKA_CORE_UTIL_STR_H
-
-//#include <stdlib.h>
-//#include <stdarg.h>
-
 //#define TEXT_DEBUG
-// Essentially boiler plate code, was not satisfied with the functionality of <string>
 
 /// <summary>
 /// text.h is simply a class to replace char * arrays for memory
-/// management. will be extended for graphical rendering.
+/// management. will be extended for graphical rendering. Essentially 
+/// boiler plate code, was not satisfied with the functionality of <string>
 /// </summary>
 
 namespace geodesuka::core::util {
 
-	class text {
+	class str {
 	public:
 
 		//TODO: Update internals to size_t.
@@ -22,29 +19,29 @@ namespace geodesuka::core::util {
 		char* hptr;
 
 		// Default Constructor.
-		text();
+		str();
 
 		//text(const char* Format, ...);
 
-		text(const char* Arg);
-		text(const text& Arg);
+		str(const char* Arg);
+		str(const str& Arg);
 		//text(text&& Arg);
 
 		// Destructor.
-		~text();
+		~str();
 
-		text& operator=(const char* Rhs);
-		text& operator=(const text& Rhs);
+		str& operator=(const char* Rhs);
+		str& operator=(const str& Rhs);
 		//text& operator=(text&& Rhs);
 
-		text operator+(const char* Rhs);
-		text operator+(const text& Rhs);
+		str operator+(const char* Rhs);
+		str operator+(const str& Rhs);
 
-		text& operator+=(const char* Rhs);
-		text& operator+=(const text& Rhs);
+		str& operator+=(const char* Rhs);
+		str& operator+=(const str& Rhs);
 
 		bool operator==(const char* Rhs) const;
-		bool operator==(const text& Rhs) const;
+		bool operator==(const str& Rhs) const;
 
 		//bool operator!=(const char* Rhs) const;
 		//bool operator!=(const text& Rhs) const;
@@ -62,8 +59,8 @@ namespace geodesuka::core::util {
 		bool reverse(int Index, int Count);
 		bool reverse();
 
-		bool push(text& Str);
-		bool insert(int Index, text& Str);
+		bool push(str& Str);
+		bool insert(int Index, str& Str);
 
 		// Single Character Modifiers
 		bool push(char Character);
@@ -72,10 +69,10 @@ namespace geodesuka::core::util {
 		bool remove(int Index);
 		bool exchange(int I, int J);
 
-		text split_at(char Character);
-		text split_at(const char* Pattern);
+		str split_at(char Character);
+		str split_at(const char* Pattern);
 
-		const char* str() const;
+		const char* ptr() const;
 		size_t size() const;
 		bool clear();
 

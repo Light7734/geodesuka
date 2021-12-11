@@ -301,7 +301,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext						= NULL;
-		BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags						= 0;
 		BeginInfo.pInheritanceInfo			= NULL;
 
 		Region.srcOffset					= 0;
@@ -340,7 +340,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext						= NULL;
-		BeginInfo.flags						= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags						= 0;
 		BeginInfo.pInheritanceInfo			= NULL;
 
 		for (uint32_t i = 0; i < aRhs.CreateInfo.arrayLayers; i++) {

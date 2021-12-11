@@ -112,4 +112,8 @@ namespace geodesuka::core {
 		this->Engine->submit(this);
 	}
 
+	void object_t::remove() {
+		this->Engine->remove(this);
+	}
+
 }

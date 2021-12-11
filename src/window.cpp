@@ -35,7 +35,7 @@ namespace geodesuka::core::object {
 	window::~window() {
 	}
 
-	void window::set_title(util::text aTitle) {
+	void window::set_title(util::str aTitle) {
 
 	}
 

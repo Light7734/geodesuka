@@ -62,6 +62,30 @@ namespace geodesuka::core {
 		friend class object::camera2d;
 		friend class object::camera3d;
 
+		// Might move this somewhere else.
+		struct submission {
+
+			submission();
+			submission(VkCommandBuffer aCommandBuffer);
+			submission(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+			submission(const submission& aInput);
+			submission(submission&& aInput);
+			~submission();
+
+			submission& operator=(const submission& aRhs);
+			submission& operator=(submission&& aRhs);
+
+			submission& operator+=(const submission& aRhs);
+			submission& operator+=(submission&& aRhs);
+			submission& operator+=(VkCommandBuffer aRhs);
+
+
+			VkSubmitInfo info();
+		private:
+			uint32_t CommandBufferCount;
+			VkCommandBuffer* CommandBuffer;
+		};
+
 
 		std::mutex Mutex;
 		
@@ -178,6 +202,7 @@ namespace geodesuka::core {
 
 		// Submits to parent engine. Used by derived classes to pass to engine.
 		void submit();
+		void remove();
 
 	};
 
