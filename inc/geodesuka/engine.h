@@ -100,13 +100,12 @@ C26451
 #include "core/object/camera3d.h"
 
 // This section is for GUI sh... stuff!
-#include "core/object/vtext.h"
+#include "core/object/text.h"
 
 #include "core/stage.h"
 #include "core/stage/canvas.h"
 #include "core/stage/scene2d.h"
 #include "core/stage/scene3d.h"
-
 #include "core/stage/desktop.h"
 
 #include "core/app.h"
@@ -150,7 +149,7 @@ namespace geodesuka {
 		enum state {
 			CREATION,						// Engine instance is being constructed.
 			READY,							// Engine instance is active, and ready to be used.
-			RUNNING,
+			RUNNING,						// Threads are launched and running backend.
 			DESTRUCTION						// Engine is currently in destruction phase.
 		};
 

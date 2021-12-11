@@ -238,13 +238,13 @@
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_terminal.cpp" />
     <ClCompile Include="src\system_window.cpp" />
+    <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\trap.cpp" />
     <ClCompile Include="src\triangle.cpp" />
     <ClCompile Include="src\variable.cpp" />
     <ClCompile Include="src\virtual_window.cpp" />
-    <ClCompile Include="src\vtext.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -326,8 +326,8 @@
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_terminal.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
+    <ClInclude Include="inc\geodesuka\core\object\text.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
-    <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />

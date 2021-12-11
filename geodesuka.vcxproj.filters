@@ -282,9 +282,6 @@
     <ClCompile Include="src\window.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\vtext.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\script.cpp">
       <Filter>src\core\io</Filter>
     </ClCompile>
@@ -359,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="src\str.cpp">
       <Filter>src\core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\text.cpp">
+      <Filter>src\core\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -509,9 +509,6 @@
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\vtext.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\window.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
@@ -613,6 +610,9 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\str.h">
       <Filter>inc\geodesuka\core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\text.h">
+      <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
