@@ -9,4 +9,8 @@ namespace geodesuka::core::object {
 		return DrawBatch;
 	}
 
+	void virtual_window::swap() {
+
+	}
+
 }

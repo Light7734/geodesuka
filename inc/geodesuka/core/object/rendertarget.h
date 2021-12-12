@@ -19,45 +19,68 @@
 * engine API.
 */
 
-namespace geodesuka::core::stage {
-	class canvas;
-	class scene2d;
-	class scene3d;
-}
+VkPresentInfoKHR;
+
+/*
+
+// Gets next frame.
+vkAcquireNextImageKHR(SignalSemaphore, Index);
+
+Result = vkAcquireNextImageKHR(
+	Context->handle(), 
+	this->Swapchain->handle(), 
+	0,
+	FrameDrawIndexSemaphore, 
+	VkFence fence, 
+	&this->FrameDrawIndex
+);
+
+// 
+vkQueueSubmit(SubmissionList, SignalSemaphore);
+
+PresentInfo.sType				;
+PresentInfo.pNext				;
+PresentInfo.waitSemaphoreCount	;
+PresentInfo.pWaitSemaphores		= ;
+PresentInfo.swapchainCount		= 1;
+PresentInfo.pSwapchains			= &this->Swapchain;
+PresentInfo.pImageIndices		= &this->FrameDrawIndex;
+PresentInfo.pResults			= &Result;
+
+vkQueuePresentKHR(Present Image)
+
+*/
 
 namespace geodesuka::core::object {
 
 	class rendertarget : public object_t {
 	public:
 
-		//friend class stage_t;
-		friend class stage::canvas;
-		friend class stage::scene2d;
-		friend class stage::scene3d;
+		//friend class engine;
+		friend class stage_t;
 
 
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
-		double FramesPerSecond;			// The rate at which the frames will be cycled through by the engine.
+		double FrameRate;				// The rate at which the frames will be cycled through by the engine per second.
+		logic::timer FPSTimer;
 		math::natural2 Resolution;		// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.
 		VkImageView** FrameAttachment;								// The image view handles of each frame attachment.
 
+		// Must be used 
+		VkSemaphore FrameDrawIndexSemaphore;
 		// This index specifies the 
-		int FrameDrawIndex;
+		uint32_t FrameDrawIndex;
 		//int FrameReadIndex;
 
 
 		~rendertarget();
 
-		void set_framerate(double aFPS);
-
-		double framerate();
-
-	protected:
-
-		rendertarget(engine* aEngine, gcl::context* aContext);
+		// Will acquire next frame index, if semephore is not VK_NULL_HANDLE, 
+		// use as wait semaphore for render operations.
+		virtual VkSemaphore next_frame();
 
 		// Propose a collection of objects (Most likely from a stage), to 
 		// draw those objects to the render target. The objects will
@@ -65,11 +88,22 @@ namespace geodesuka::core::object {
 		// for aggregation and eventual execution by the geodesuka engine.
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) = 0;
 
-		//virtual void swap() = 0;
+		// This will present
+		virtual void present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
+
+	protected:
+
+		// Derived classes can use this aggregate draw commands from objects.
+		submission* Submission;
+
+		rendertarget(engine* aEngine, gcl::context* aContext);
+
+
+		// Will update to new draw index for rendering operations.
+		virtual void swap() = 0;
 
 	private:
 
-		logic::timer RefreshTimer;
 
 	};
 }

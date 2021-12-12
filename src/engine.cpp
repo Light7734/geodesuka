@@ -32,6 +32,7 @@ namespace geodesuka {
 	using namespace core;
 	using namespace gcl;
 	using namespace object;
+	using namespace logic;
 
 	engine::engine(int argc, char* argv[]) {
 
@@ -271,97 +272,79 @@ namespace geodesuka {
 		return this->Date;
 	}
 
-	engine::workload::workload(core::gcl::context* aContext) {
-		this->Context = aContext;
-		this->TransferFence = VK_NULL_HANDLE;
-		this->ComputeFence = VK_NULL_HANDLE;
-		this->GraphicsFence = VK_NULL_HANDLE;
-
-		if (this->Context != nullptr) {
-			VkFenceCreateInfo CreateInfo{};
-			CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-			CreateInfo.pNext = NULL;
-			CreateInfo.flags = 0;
-			VkResult Result = VkResult::VK_SUCCESS;
-			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &TransferFence);
-			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &ComputeFence);
-			Result = vkCreateFence(this->Context->handle(), &CreateInfo, NULL, &GraphicsFence);
-			if ((this->TransferFence == VK_NULL_HANDLE) || (this->ComputeFence == VK_NULL_HANDLE) || (this->GraphicsFence == VK_NULL_HANDLE)) {
-				if (this->TransferFence != VK_NULL_HANDLE) {
-					vkDestroyFence(this->Context->handle(), this->TransferFence, NULL);
-					this->TransferFence = VK_NULL_HANDLE;
-				}
-				if (this->ComputeFence != VK_NULL_HANDLE) {
-					vkDestroyFence(this->Context->handle(), this->ComputeFence, NULL);
-					this->ComputeFence = VK_NULL_HANDLE;
-				}
-				if (this->GraphicsFence != VK_NULL_HANDLE) {
-					vkDestroyFence(this->Context->handle(), this->GraphicsFence, NULL);
-					this->GraphicsFence = VK_NULL_HANDLE;
-				}
-			}
-		}
-	}
-
-	engine::workload::~workload() {
-		if (this->Context != nullptr) {
-			if (this->TransferFence != VK_NULL_HANDLE) {
-				vkDestroyFence(this->Context->handle(), this->TransferFence, NULL);
-				this->TransferFence = VK_NULL_HANDLE;
-			}
-			if (this->ComputeFence != VK_NULL_HANDLE) {
-				vkDestroyFence(this->Context->handle(), this->ComputeFence, NULL);
-				this->ComputeFence = VK_NULL_HANDLE;
-			}
-			if (this->GraphicsFence != VK_NULL_HANDLE) {
-				vkDestroyFence(this->Context->handle(), this->GraphicsFence, NULL);
-				this->GraphicsFence = VK_NULL_HANDLE;
-			}
-		}
+	engine::batchutil::batchutil(core::gcl::context* aContext) {
+		VkResult Result = VkResult::VK_SUCCESS;
 		this->Context = nullptr;
+		this->Fence = VK_NULL_HANDLE;
+		this->Semaphore = VK_NULL_HANDLE;
+		this->inFlight.store(false);
+		if (aContext != nullptr) {
+			VkFenceCreateInfo FenceCreateInfo{};
+			VkSemaphoreCreateInfo SemaphoreCreateInfo{};
+			this->Context = aContext;
+			FenceCreateInfo.sType		= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			FenceCreateInfo.pNext		= NULL;
+			FenceCreateInfo.flags		= 0;
+			SemaphoreCreateInfo.sType	= VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+			SemaphoreCreateInfo.pNext	= NULL;
+			SemaphoreCreateInfo.flags	= 0;
+			Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &this->Fence);
+			Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &this->Semaphore);
+		}
 	}
 
-	VkResult engine::workload::waitfor(core::gcl::device::qfs aQFS) {
-		VkResult temp = VkResult::VK_SUCCESS;
-		this->Mutex.lock();
-		switch (aQFS) {
-		default:
-			break;
-		case device::qfs::TRANSFER:
-			temp = vkWaitForFences(this->Context->handle(), 1, &this->TransferFence, VK_TRUE, UINT64_MAX);
-			break;
-		case device::qfs::COMPUTE:
-			temp = vkWaitForFences(this->Context->handle(), 1, &this->ComputeFence, VK_TRUE, UINT64_MAX);
-			break;
-		case device::qfs::GRAPHICS:
-			temp = vkWaitForFences(this->Context->handle(), 1, &this->GraphicsFence, VK_TRUE, UINT64_MAX);
-			break;
-		case device::qfs::PRESENT:
-			break;
+	engine::batchutil::~batchutil() {
+		if (this->Context != nullptr) {
+			vkDestroyFence(this->Context->handle(), this->Fence, NULL);
+			this->Fence = VK_NULL_HANDLE;
 		}
-		this->Mutex.unlock();
-		return temp;
 	}
 
-	VkResult engine::workload::reset(core::gcl::device::qfs aQFS) {
-		VkResult temp = VkResult::VK_SUCCESS;
-		switch (aQFS) {
-		default:
-			break;
-		case device::qfs::TRANSFER:
-			temp = vkResetFences(this->Context->handle(), 1, &this->TransferFence);
-			break;
-		case device::qfs::COMPUTE:
-			temp = vkResetFences(this->Context->handle(), 1, &this->ComputeFence);
-			break;
-		case device::qfs::GRAPHICS:
-			temp = vkResetFences(this->Context->handle(), 1, &this->GraphicsFence);
-			break;
-		case device::qfs::PRESENT:
-			break;
-		}
-		return temp;
-	}
+	engine::workload::workload(core::gcl::context* aContext) : Transfer(aContext), Compute(aContext), Graphics(aContext) {}
+
+	engine::workload::~workload() {}
+
+	//VkResult engine::workload::waitfor(core::gcl::device::qfs aQFS) {
+	//	VkResult temp = VkResult::VK_SUCCESS;
+	//	this->Mutex.lock();
+	//	switch (aQFS) {
+	//	default:
+	//		break;
+	//	case device::qfs::TRANSFER:
+	//		temp = vkWaitForFences(this->Context->handle(), 1, &this->TransferFence, VK_TRUE, UINT64_MAX);
+	//		break;
+	//	case device::qfs::COMPUTE:
+	//		temp = vkWaitForFences(this->Context->handle(), 1, &this->ComputeFence, VK_TRUE, UINT64_MAX);
+	//		break;
+	//	case device::qfs::GRAPHICS:
+	//		temp = vkWaitForFences(this->Context->handle(), 1, &this->GraphicsFence, VK_TRUE, UINT64_MAX);
+	//		break;
+	//	case device::qfs::PRESENT:
+	//		break;
+	//	}
+	//	this->Mutex.unlock();
+	//	return temp;
+	//}
+
+	//VkResult engine::workload::reset(core::gcl::device::qfs aQFS) {
+	//	VkResult temp = VkResult::VK_SUCCESS;
+	//	switch (aQFS) {
+	//	default:
+	//		break;
+	//	case device::qfs::TRANSFER:
+	//		temp = vkResetFences(this->Context->handle(), 1, &this->TransferFence);
+	//		break;
+	//	case device::qfs::COMPUTE:
+	//		temp = vkResetFences(this->Context->handle(), 1, &this->ComputeFence);
+	//		break;
+	//	case device::qfs::GRAPHICS:
+	//		temp = vkResetFences(this->Context->handle(), 1, &this->GraphicsFence);
+	//		break;
+	//	case device::qfs::PRESENT:
+	//		break;
+	//	}
+	//	return temp;
+	//}
 
 	void engine::submit(core::gcl::context* aContext) {
 		if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
@@ -545,10 +528,10 @@ namespace geodesuka {
 
 		void *nptr = NULL;
 		if (this->Stage == NULL) {
-			nptr = malloc(sizeof(stage_t*));
+			nptr = malloc(sizeof(core::stage_t*));
 		}
 		else {
-			nptr = realloc(this->Stage, (this->StageCount + 1) * sizeof(stage_t*));
+			nptr = realloc(this->Stage, (this->StageCount + 1) * sizeof(core::stage_t*));
 		}
 
 		assert(!(nptr == NULL));
@@ -578,11 +561,11 @@ namespace geodesuka {
 			else {
 				int MoveCount = (this->StageCount - 1) - StgIdx;
 				if (MoveCount) {
-					memmove(&this->Stage[StgIdx], &this->Stage[StgIdx + 1], MoveCount * sizeof(stage_t*));
+					memmove(&this->Stage[StgIdx], &this->Stage[StgIdx + 1], MoveCount * sizeof(core::stage_t*));
 				}
-				void* nptr = realloc(this->Stage, (this->StageCount - 1) * sizeof(stage_t*));
+				void* nptr = realloc(this->Stage, (this->StageCount - 1) * sizeof(core::stage_t*));
 				assert(!(nptr == NULL));
-				this->Stage = (stage_t**)nptr;
+				this->Stage = (core::stage_t**)nptr;
 				this->StageCount -= 1;
 			}
 		}
@@ -592,7 +575,7 @@ namespace geodesuka {
 		}
 	}
 
-		GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
+	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
 		GLFWwindow* Temp = NULL;
 		if (this->MainThreadID == std::this_thread::get_id()) {
 			glfwWindowHint(GLFW_RESIZABLE,			aProperty.Resizable);
@@ -700,6 +683,55 @@ namespace geodesuka {
 		return -1;
 	}
 
+	/*
+	
+	update and render thread pseudo code.
+
+	// Rules.
+
+	// Graphics DEPENDS ON Transfer & Compute to finish.
+	// Compute DEPENDS ON Transfer.
+
+	update() {
+		
+		// GPU Context State Transfer -> Compute -> Graphics -> Transfer -> .. (Repeat)
+
+		// step 1
+		// Wait for all context transfer operations to complete before 
+		// doing host updates and transfer and compute command polling
+
+		// step 2
+		// update all host objects and host stages, then aggregate next
+		// transfer and compute operations.
+
+		// step 3
+		// Use semaphores to make gpu dependency on
+
+		// step 4 
+		// Wait for all graphics and compute operations to finish executing
+		// on all contexts before the submission of transfer operation commands.
+		
+		// step 5
+		// (Mutual Exclusion) begin transfer operations 
+
+	}
+
+	render() {
+		
+		// step 1
+		// Aggregate all draw commands from ready rendertargets.
+
+		// step 2
+		// wait for graphics operations to complete for previous draw.
+
+		// step 3
+		// 
+
+	}
+
+	*/
+
+
 	// --------------- Engine Main Thread --------------- //
 	// The main thread is used to spawn backend threads along
 	// with the app thread.
@@ -708,17 +740,11 @@ namespace geodesuka {
 
 		// Store main thread ID.
 
-		this->State = state::RUNNING;
+		this->State						= state::RUNNING;
 		this->MainThreadID				= std::this_thread::get_id();
 		this->RenderThread				= std::thread(&engine::trender, this);
 		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
 		this->AppThread					= std::thread(&core::app::run, aApp);
-
-		//std::cout << "Main Thread ID:   " << std::this_thread::get_id() << std::endl;
-		//std::cout << "ST Thread ID:     " << this->SystemTerminalThread.get_id() << std::endl;
-		//std::cout << "Render Thread ID: " << this->RenderThread.get_id() << std::endl;
-		//std::cout << "App Thread ID:    " << this->AppThread.get_id() << std::endl;
-		//this->ThreadsLaunched.store(true);
 
 		double t1, t2;
 		double wt, ht;
@@ -726,8 +752,12 @@ namespace geodesuka {
 		double ts = 0.01;
 		dt = 0.0;
 
-		stage_t::batch TransferBatch[512];
-		stage_t::batch ComputeBatch[512];
+		// Used for scheduling compute operations dependent on transfer operations.
+		uint32_t WaitSemaphoreCount;
+		VkSemaphore* WaitSemaphore = NULL;
+		VkPipelineStageFlags* WaitSemaphoreStage = NULL;
+
+
 		VkResult Result = VkResult::VK_SUCCESS;
 
 		// The update thread is the main thread.
@@ -738,11 +768,27 @@ namespace geodesuka {
 			this->mtcd_process_window_handle_call();
 			glfwPollEvents();
 
+			// Insure transfer operations are complete before performing object and stage updates to host memory.
+			for (int i = 0; i < this->ContextCount; i++) {
+				this->Workload[i]->Transfer.Mutex.lock();
+				// If previous batch is currently in flight, wait for finish.
+				if (this->Workload[i]->Transfer.inFlight.load()) {
+					// Batch is in flight, wait for finish.
+					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
+					// Reset fences for batch.
+					Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence);
+					// Signify no longer in flight.
+					this->Workload[i]->Transfer.inFlight.store(false);
+				}
+				this->Workload[i]->Transfer.Mutex.unlock();
+			}
+
 			// Poll for Object Updates.
 			for (int i = 0; i < this->ObjectCount; i++) {
 				int CtxIdx = this->ctxidx(this->Object[i]->Context);
 				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->TransferBatch += this->Object[i]->update(dt);
+					this->Workload[CtxIdx]->Transfer.FwdBatch += this->Object[i]->update(dt);
+					this->Workload[CtxIdx]->Compute.FwdBatch += this->Object[i]->compute();
 				}
 			}
 
@@ -750,31 +796,61 @@ namespace geodesuka {
 			for (int i = 0; i < this->StageCount; i++) {
 				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
 				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->TransferBatch += this->Stage[i]->update(dt);
+					this->Workload[CtxIdx]->Transfer.FwdBatch += this->Stage[i]->update(dt);
+					this->Workload[CtxIdx]->Compute.FwdBatch += this->Stage[i]->compute();
 				}
 			}
 
-			// Wait for all submissions to finish before presentation.
 			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() > 0) {
-					Result = this->Workload[i]->waitfor(device::qfs::GRAPHICS);
+				// Set all transfer operations to signal their own semaphore.
+				for (int j = 0; j < this->Workload[i]->Transfer.FwdBatch.count(); j++) {
+					this->Workload[i]->Transfer.FwdBatch[j].signalSemaphoreCount = 1;
+					this->Workload[i]->Transfer.FwdBatch[j].pSignalSemaphores = &this->Workload[i]->Transfer.Semaphore;
 				}
-				else {
+				// Make all compute batches wait on transfers to be complete.
+				for (int j = 0; j < this->Workload[i]->Compute.FwdBatch.count(); j++) {
+					this->Workload[i]->Compute.FwdBatch[j].waitSemaphoreCount = 1;
+					this->Workload[i]->Compute.FwdBatch[j].pWaitSemaphores = &this->Workload[i]->Transfer.Semaphore;
+					this->Workload[i]->Compute.FwdBatch[j].pWaitDstStageMask = &this->Workload[i]->Transfer.PipelineStage;
+				}
+			}
 
+			// Load new transfer and compute batches.
+			for (int i = 0; i < this->ContextCount; i++) {
+				this->Workload[i]->Transfer.Mutex.lock();
+				//this->Workload[i]->Transfer.Batch.clear();
+				this->Workload[i]->Transfer.Batch = this->Workload[i]->Transfer.FwdBatch;
+				this->Workload[i]->Transfer.FwdBatch.clear();
+
+				if (this->Workload[i]->Transfer.Batch.count() > 0) {
+					this->Workload[i]->Transfer.inFlight.store(true);
 				}
+				this->Workload[i]->Transfer.Mutex.unlock();
 			}
 
 			// Submit all transfer operations.
 			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->TransferBatch.count() == 0) continue;
-				this->Context[i]->submit(
-					device::qfs::TRANSFER, 
-					this->Workload[i]->TransferBatch.count(),
-					this->Workload[i]->TransferBatch.ptr(),
-					this->Workload[i]->TransferFence
-				);
-			}
+				this->Workload[i]->Transfer.Mutex.lock();
+				this->Workload[i]->Compute.Mutex.lock();
+				this->Workload[i]->Graphics.Mutex.lock();
+				if (this->Workload[i]->Transfer.Batch.count() > 0) {
 
+					if (this->Workload[i]->Graphics.inFlight.load()) {
+						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
+					}
+
+					this->Workload[i]->Transfer.inFlight.store(true);
+					this->Context[i]->submit(
+						device::qfs::TRANSFER,
+						this->Workload[i]->Transfer.Batch.count(),
+						this->Workload[i]->Transfer.Batch.ptr(),
+						this->Workload[i]->Transfer.Fence
+					);
+				}
+				this->Workload[i]->Graphics.Mutex.unlock();
+				this->Workload[i]->Compute.Mutex.unlock();
+				this->Workload[i]->Transfer.Mutex.unlock();
+			}
 
 			t2 = core::logic::get_time();
 			wt = t2 - t1;
@@ -805,10 +881,14 @@ namespace geodesuka {
 	// --------------- Render Thread --------------- //
 	void engine::trender() {
 
+		/*
+		Check for rendertargets that need to be updated.
+
+		*/
+
 		// A context can create multiple windows, and since
 		// the present queue belongs to a specific context,
 		// it would be wise to group presentation updates
-		std::vector<VkPresentInfoKHR> Presentation;
 		VkResult Result = VkResult::VK_SUCCESS;
 
 		while (!this->Shutdown.load()) {
@@ -816,46 +896,76 @@ namespace geodesuka {
 
 			// Aggregate all render operations from stages.
 			for (int i = 0; this->StageCount; i++) {
-				//int j = (this->StageCount - 1) - i;
-				int CtxIdx = this->ctxidx(this->Stage[i]->Context);
+				int j = (this->StageCount - 1) - i;
+				int CtxIdx = this->ctxidx(this->Stage[j]->Context);
 				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->GraphicsBatch += this->Stage[i]->render();
+					this->Workload[CtxIdx]->Graphics.FwdBatch += this->Stage[j]->render();
 				}
 			}
 
-			// Reset fences for work submission.
+			// Check if workload detected. If not, start over.
+			bool NoWorkloadDetected = true;
 			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				Result = this->Workload[i]->reset(device::qfs::GRAPHICS);
+				NoWorkloadDetected &= (this->Workload[i]->Graphics.FwdBatch.count() == 0);
+			}
+
+			// No workload detected, start over.
+			if (NoWorkloadDetected) {
+				waitfor(0.005); // Wait for 5 miliseconds.
+				continue;
+			}
+
+			// Prepare new batches for execution.
+			for (int i = 0; i < this->ContextCount; i++) {
+				this->Workload[i]->Graphics.Mutex.lock();
+				if (this->Workload[i]->Graphics.inFlight.load()) {
+					// If workload is in flight and currently being executed, wait for batch to complete.
+					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
+					// Reset fence if execution is finished.
+					Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence);
+					// No longer in flight.
+					this->Workload[i]->Graphics.inFlight.store(false);
+				}
+				this->Workload[i]->Graphics.Batch = this->Workload[i]->Graphics.FwdBatch;
+				this->Workload[i]->Graphics.FwdBatch.clear();
+				this->Workload[i]->Graphics.Mutex.unlock();
+			}
+
+			// Swap previously drawn frames
+			for (int i = 0; i < this->StageCount; i++) {
+				//this->Stage[i]->present();
 			}
 
 			// Submit all render operations.
 			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() == 0) continue;
-				this->Context[i]->submit(
-					device::qfs::GRAPHICS, 
-					this->Workload[i]->GraphicsBatch.count(),
-					this->Workload[i]->GraphicsBatch.ptr(), 
-					this->Workload[i]->GraphicsFence
-				);
-			}
+				this->Workload[i]->Transfer.Mutex.lock();
+				this->Workload[i]->Compute.Mutex.lock();
+				this->Workload[i]->Graphics.Mutex.lock();
+				if (this->Workload[i]->Graphics.Batch.count() > 0) {
 
-			// Wait for all submissions to finish before presentation.
-			for (int i = 0; i < this->ContextCount; i++) {
-				if (this->Workload[i]->GraphicsBatch.count() > 0) {
-					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->GraphicsFence, VK_TRUE, UINT64_MAX);
+					// Wait for transfer fences to be signalled before submission.
+					if (this->Workload[i]->Transfer.inFlight.load()) {
+						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
+					}
+
+					// Wait for compute fences to be signalled before submission.
+					if (this->Workload[i]->Compute.inFlight.load()) {
+						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Compute.Fence, VK_TRUE, UINT64_MAX);
+					}
+
+					this->Workload[i]->Graphics.inFlight.store(true);
+					this->Context[i]->submit(
+						device::qfs::GRAPHICS,
+						this->Workload[i]->Graphics.Batch.count(),
+						this->Workload[i]->Graphics.Batch.ptr(),
+						this->Workload[i]->Graphics.Fence
+					);
 				}
+				this->Workload[i]->Graphics.Mutex.unlock();
+				this->Workload[i]->Compute.Mutex.unlock();
+				this->Workload[i]->Transfer.Mutex.unlock();
 			}
 
-			//// Present image indices.
-			//for (int i = 0; i < this->ContextCount; i++) {
-			//	if (this->Workload[i]->Presentation.count() > 0) {
-
-			//	}
-			//}
-
-
-			core::logic::waitfor(0.001);
 		}
 	}
 

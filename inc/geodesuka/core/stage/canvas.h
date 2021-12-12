@@ -20,9 +20,6 @@ namespace geodesuka::core::stage {
 
 	protected:
 
-		// Render targets of the stage.
-		std::vector<object::window*> Window;
-
 		canvas(engine* aEngine, gcl::context* aContext);
 
 		virtual batch render() override;

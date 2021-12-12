@@ -1,4 +1,4 @@
-#include <geodesuka/core/object/vtext.h>
+#include <geodesuka/core/object/text.h>
 
 namespace geodesuka::core::object {
 

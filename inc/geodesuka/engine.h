@@ -153,20 +153,27 @@ namespace geodesuka {
 			DESTRUCTION						// Engine is currently in destruction phase.
 		};
 
+		struct batchutil {
+			core::gcl::context*		Context;
+			std::mutex				Mutex;			// Mutex to prevent 
+			core::stage_t::batch	Batch;			// Aggregated batch of submissions.
+			VkFence					Fence;			// Fence which will be signalled when execution is complete.
+			VkSemaphore				Semaphore;		// Only really used by
+			VkPipelineStageFlags	PipelineStage;	// 
+			std::atomic<bool>		inFlight;		// Batch has been submitted to a Queue and is being executed.
+			core::stage_t::batch	FwdBatch;		// Will be used to aggregate commands in advance.
+
+			batchutil(core::gcl::context* aContext);
+			~batchutil();
+		};
+
 		struct workload {
-			core::gcl::context*						Context;
-			std::mutex								Mutex;
-			core::stage_t::batch					TransferBatch;
-			VkFence									TransferFence;
-			core::stage_t::batch					ComputeBatch;
-			VkFence									ComputeFence;
-			core::stage_t::batch					GraphicsBatch;
-			VkFence									GraphicsFence;
-			//core::object::system_window::present	Presentation;
+			core::gcl::context*		Context;
+			batchutil				Transfer;
+			batchutil				Compute;
+			batchutil				Graphics;
 			workload(core::gcl::context* aContext);
 			~workload();
-			VkResult waitfor(core::gcl::device::qfs aQFS);
-			VkResult reset(core::gcl::device::qfs aQFS);
 		};
 
 		const version			Version = { 0, 0, 17 };
@@ -174,14 +181,12 @@ namespace geodesuka {
 
 		std::mutex				Mutex;
 
-		// I hate std::vector
 		std::vector<const char*> RequiredExtension;
 		std::vector<const char*> EnabledLayer;
 
 		state					State;
 		bool					isReady;
 		std::atomic<bool>		Shutdown;
-		//std::atomic<bool>		ThreadsLaunched;
 
 		VkApplicationInfo		AppInfo{};
 		VkInstanceCreateInfo	CreateInfo{};
@@ -203,14 +208,15 @@ namespace geodesuka {
 		int									SystemWindowCount;
 		core::object::system_window*		SystemWindow[512];
 
-		int									DesktopCount;
-		core::stage::desktop*				Desktop[512];
+		//int									DesktopCount;
+		//core::stage::desktop*				Desktop[512];
 
 		// -------------------------------------------------- //
 
 		int						FileCount;
 		core::io::file**		File;
 
+		//std::mutex				ExecutionMutex;
 		int						ContextCount;
 		core::gcl::context*		Context[512];
 		workload*				Workload[512];
@@ -236,7 +242,6 @@ namespace geodesuka {
 		void remove(core::stage_t* aStage);
 
 		// Signals to update thread to create window handle
-		// because glfw is written by lobotomites.
 		std::atomic<bool> SignalCreate;
 		std::atomic<bool> WindowCreated;
 		struct {
@@ -279,7 +284,6 @@ namespace geodesuka {
 		void trender();			// Thread honors frame rates of respective targets.
 		void taudio();			// Thread Handles audio streams.
 		void tsterminal();		// Thread handles terminal input to the engine.
-
 
 	};
 

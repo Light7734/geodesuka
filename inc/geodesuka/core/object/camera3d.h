@@ -27,6 +27,8 @@ namespace geodesuka::core::object {
 
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
+		virtual void swap() override;
+
 	private:
 
 		// The structure of each frame.

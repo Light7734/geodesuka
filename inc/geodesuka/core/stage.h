@@ -42,6 +42,8 @@ namespace geodesuka::core {
 			batch(batch&& aInput) noexcept;
 			~batch();
 
+			VkSubmitInfo& operator[](int aIndex);
+
 			batch& operator=(batch& aRhs);
 			batch& operator=(batch&& aRhs) noexcept;
 
@@ -71,13 +73,23 @@ namespace geodesuka::core {
 		int ObjectCount;
 		object_t** Object;
 
+		int RenderTargetCount;
+		object::rendertarget** RenderTarget;
+
+		stage_t(engine* aEngine, gcl::context* aContext);
+
 		virtual VkSubmitInfo update(double aDeltaTime);
 
 		virtual VkSubmitInfo compute();
 
+		// Will generate a batch of rendering commands per render target
+		// if the 
 		virtual batch render() = 0;
 
+		void present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
+
 		void submit();
+		//void remove();
 
 	//private:
 

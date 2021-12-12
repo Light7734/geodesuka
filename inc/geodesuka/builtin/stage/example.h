@@ -8,7 +8,7 @@
 
 namespace geodesuka::builtin::stage {
 
-	class example : core::stage::canvas {
+	class example /*: core::stage::canvas*/ {
 	public:
 
 		example(engine* aEngine, core::gcl::context* aContext);

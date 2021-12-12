@@ -40,4 +40,8 @@ namespace geodesuka::core::object {
 		return DrawBatch;
 	}
 
+	void system_display::swap() {
+
+	}
+
 }

@@ -205,6 +205,39 @@ namespace geodesuka::core::object {
 		return DrawBatch;
 	}
 
+	void system_window::swap() {
+		if (this->FPSTimer.check()) {
+			VkResult Result = VkResult::VK_SUCCESS;
+			uint32_t NextIndex = UINT32_MAX;
+			VkPresentInfoKHR Presentation;
+
+			Presentation.sType = VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+			Presentation.pNext = NULL;
+			Presentation.waitSemaphoreCount = 0;
+			Presentation.pWaitSemaphores = NULL;
+			Presentation.swapchainCount = 1;
+			Presentation.pSwapchains = &this->Swapchain->Handle;
+			Presentation.pImageIndices = &this->FrameDrawIndex;
+			Presentation.pResults = &Result;
+
+			// Present image to display.
+			this->Context->present(&Presentation);
+
+			// Acquire next image and wait for availability.
+			Result = vkAcquireNextImageKHR(
+				this->Context->handle(),
+				this->Swapchain->handle(),
+				UINT64_MAX,
+				VK_NULL_HANDLE,
+				VK_NULL_HANDLE,
+				&this->FrameDrawIndex
+			);
+
+			// Reset refresh update timer.
+			this->FPSTimer.reset();
+		}
+	}
+
 	void system_window::set_position(math::real3 aPosition) {
 		//tex:
 		// Centers system_display and system_window.

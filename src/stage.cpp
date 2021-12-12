@@ -71,6 +71,10 @@ namespace geodesuka::core {
 		this->clear();
 	}
 
+	VkSubmitInfo& stage_t::batch::operator[](int aIndex) {
+		this->Submission[aIndex];
+	}
+
 	stage_t::batch& stage_t::batch::operator=(batch& aRhs) {
 		this->clear();
 		if (aRhs.SubmissionCount > 0) {
@@ -149,7 +153,16 @@ namespace geodesuka::core {
 
     }
 
-    VkSubmitInfo stage_t::update(double aDeltaTime) {
+	stage_t::stage_t(engine* aEngine, gcl::context* aContext) {
+		this->Engine = aEngine;
+		this->Context = aContext;
+		this->ObjectCount = 0;
+		this->Object = NULL;
+		this->RenderTargetCount = 0;
+		this->RenderTarget = NULL;
+	}
+
+	VkSubmitInfo stage_t::update(double aDeltaTime) {
         VkSubmitInfo TransferBatch{};
 		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		TransferBatch.pNext					= NULL;
@@ -160,7 +173,11 @@ namespace geodesuka::core {
 		TransferBatch.pCommandBuffers		= NULL;
 		TransferBatch.signalSemaphoreCount	= 0;
 		TransferBatch.pSignalSemaphores		= NULL;
-
+		this->Mutex.lock();
+		for (int i = 0; i < this->RenderTargetCount; i++) {
+			this->RenderTarget[i]->FPSTimer.update(aDeltaTime);
+		}
+		this->Mutex.unlock();
         return TransferBatch;
     }
 
@@ -177,6 +194,16 @@ namespace geodesuka::core {
 		ComputeBatch.pSignalSemaphores		= NULL;
 
         return ComputeBatch;
+	}
+
+	void stage_t::present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList) {
+		for (int i = 0; i < this->RenderTargetCount; i++) {
+			if (this->RenderTarget[i]->FPSTimer.check()) {
+				//this->RenderTarget[i]->swap();
+				this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
+				this->RenderTarget[i]->FPSTimer.reset();
+			}
+		}
 	}
 
 	void stage_t::submit() {

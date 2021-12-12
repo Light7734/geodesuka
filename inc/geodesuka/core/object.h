@@ -18,6 +18,7 @@
 */
 
 #include <mutex>
+#include <map>
 
 #include "./math.h"
 
@@ -129,9 +130,6 @@ namespace geodesuka::core {
 
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
-
-		VkRenderPass RenderPass;
-
 
 		object_t(engine *aEngine, gcl::context *aContext);
 

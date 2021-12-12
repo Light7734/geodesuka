@@ -17,8 +17,18 @@ namespace geodesuka::core::logic {
 		// Set signal wait duration.
 		void set(double aDuration);
 
+		// Update Timer.
+		void update(double aDeltaTime);
+
+		// Check if duration has ellapsed.
+		bool check();
+
+		// Resets ellapsed time.
+		void reset();
+
 		// Will update and check if condition has been met.
 		bool check(double aDeltaTime);
+
 
 	private:
 

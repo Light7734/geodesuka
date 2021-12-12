@@ -36,6 +36,31 @@ namespace geodesuka::core::logic {
 		this->Mutex.unlock();
 	}
 
+	void timer::update(double aDeltaTime) {
+		this->Mutex.lock();
+		this->ElapsedTime += aDeltaTime;
+		this->Mutex.unlock();
+	}
+
+	bool timer::check() {
+		bool temp = false;
+		this->Mutex.lock();
+		if (this->ElapsedTime >= this->Duration) {
+			temp = true;
+		}
+		else {
+			temp = false;
+		}
+		this->Mutex.unlock();
+		return temp;
+	}
+
+	void timer::reset() {
+		this->Mutex.lock();
+		this->ElapsedTime = 0.0;
+		this->Mutex.unlock();
+	}
+
 	bool timer::check(double aDeltaTime) {
 		bool temp = false;
 		this->Mutex.lock();
