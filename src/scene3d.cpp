@@ -11,9 +11,9 @@ namespace geodesuka::core::stage {
 
 	}
 
-	stage_t::batch scene3d::render() {
-		batch DrawBatch;
-		return DrawBatch;
-	}
+	//stage_t::batch scene3d::render() {
+	//	batch DrawBatch;
+	//	return DrawBatch;
+	//}
 
 }

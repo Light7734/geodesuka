@@ -24,7 +24,7 @@ namespace geodesuka::core::stage {
 
 		scene2d(engine* aEngine, gcl::context* aContext);
 
-		virtual batch render() override;
+		//virtual batch render() override;
 
 	private:
 

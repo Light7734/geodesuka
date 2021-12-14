@@ -768,20 +768,20 @@ namespace geodesuka {
 			this->mtcd_process_window_handle_call();
 			glfwPollEvents();
 
-			// Insure transfer operations are complete before performing object and stage updates to host memory.
-			for (int i = 0; i < this->ContextCount; i++) {
-				this->Workload[i]->Transfer.Mutex.lock();
-				// If previous batch is currently in flight, wait for finish.
-				if (this->Workload[i]->Transfer.inFlight.load()) {
-					// Batch is in flight, wait for finish.
-					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
-					// Reset fences for batch.
-					Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence);
-					// Signify no longer in flight.
-					this->Workload[i]->Transfer.inFlight.store(false);
-				}
-				this->Workload[i]->Transfer.Mutex.unlock();
-			}
+			//// Insure transfer operations are complete before performing object and stage updates to host memory.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	this->Workload[i]->Transfer.Mutex.lock();
+			//	// If previous batch is currently in flight, wait for finish.
+			//	if (this->Workload[i]->Transfer.inFlight.load()) {
+			//		// Batch is in flight, wait for finish.
+			//		Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
+			//		// Reset fences for batch.
+			//		Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence);
+			//		// Signify no longer in flight.
+			//		this->Workload[i]->Transfer.inFlight.store(false);
+			//	}
+			//	this->Workload[i]->Transfer.Mutex.unlock();
+			//}
 
 			// Poll for Object Updates.
 			for (int i = 0; i < this->ObjectCount; i++) {
@@ -801,56 +801,56 @@ namespace geodesuka {
 				}
 			}
 
-			for (int i = 0; i < this->ContextCount; i++) {
-				// Set all transfer operations to signal their own semaphore.
-				for (int j = 0; j < this->Workload[i]->Transfer.FwdBatch.count(); j++) {
-					this->Workload[i]->Transfer.FwdBatch[j].signalSemaphoreCount = 1;
-					this->Workload[i]->Transfer.FwdBatch[j].pSignalSemaphores = &this->Workload[i]->Transfer.Semaphore;
-				}
-				// Make all compute batches wait on transfers to be complete.
-				for (int j = 0; j < this->Workload[i]->Compute.FwdBatch.count(); j++) {
-					this->Workload[i]->Compute.FwdBatch[j].waitSemaphoreCount = 1;
-					this->Workload[i]->Compute.FwdBatch[j].pWaitSemaphores = &this->Workload[i]->Transfer.Semaphore;
-					this->Workload[i]->Compute.FwdBatch[j].pWaitDstStageMask = &this->Workload[i]->Transfer.PipelineStage;
-				}
-			}
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	// Set all transfer operations to signal their own semaphore.
+			//	for (int j = 0; j < this->Workload[i]->Transfer.FwdBatch.count(); j++) {
+			//		this->Workload[i]->Transfer.FwdBatch[j].signalSemaphoreCount = 1;
+			//		this->Workload[i]->Transfer.FwdBatch[j].pSignalSemaphores = &this->Workload[i]->Transfer.Semaphore;
+			//	}
+			//	// Make all compute batches wait on transfers to be complete.
+			//	for (int j = 0; j < this->Workload[i]->Compute.FwdBatch.count(); j++) {
+			//		this->Workload[i]->Compute.FwdBatch[j].waitSemaphoreCount = 1;
+			//		this->Workload[i]->Compute.FwdBatch[j].pWaitSemaphores = &this->Workload[i]->Transfer.Semaphore;
+			//		this->Workload[i]->Compute.FwdBatch[j].pWaitDstStageMask = &this->Workload[i]->Transfer.PipelineStage;
+			//	}
+			//}
 
-			// Load new transfer and compute batches.
-			for (int i = 0; i < this->ContextCount; i++) {
-				this->Workload[i]->Transfer.Mutex.lock();
-				//this->Workload[i]->Transfer.Batch.clear();
-				this->Workload[i]->Transfer.Batch = this->Workload[i]->Transfer.FwdBatch;
-				this->Workload[i]->Transfer.FwdBatch.clear();
+			//// Load new transfer and compute batches.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	this->Workload[i]->Transfer.Mutex.lock();
+			//	//this->Workload[i]->Transfer.Batch.clear();
+			//	this->Workload[i]->Transfer.Batch = this->Workload[i]->Transfer.FwdBatch;
+			//	this->Workload[i]->Transfer.FwdBatch.clear();
 
-				if (this->Workload[i]->Transfer.Batch.count() > 0) {
-					this->Workload[i]->Transfer.inFlight.store(true);
-				}
-				this->Workload[i]->Transfer.Mutex.unlock();
-			}
+			//	if (this->Workload[i]->Transfer.Batch.count() > 0) {
+			//		this->Workload[i]->Transfer.inFlight.store(true);
+			//	}
+			//	this->Workload[i]->Transfer.Mutex.unlock();
+			//}
 
-			// Submit all transfer operations.
-			for (int i = 0; i < this->ContextCount; i++) {
-				this->Workload[i]->Transfer.Mutex.lock();
-				this->Workload[i]->Compute.Mutex.lock();
-				this->Workload[i]->Graphics.Mutex.lock();
-				if (this->Workload[i]->Transfer.Batch.count() > 0) {
+			//// Submit all transfer operations.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	this->Workload[i]->Transfer.Mutex.lock();
+			//	this->Workload[i]->Compute.Mutex.lock();
+			//	this->Workload[i]->Graphics.Mutex.lock();
+			//	if (this->Workload[i]->Transfer.Batch.count() > 0) {
 
-					if (this->Workload[i]->Graphics.inFlight.load()) {
-						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
-					}
+			//		if (this->Workload[i]->Graphics.inFlight.load()) {
+			//			Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
+			//		}
 
-					this->Workload[i]->Transfer.inFlight.store(true);
-					this->Context[i]->submit(
-						device::qfs::TRANSFER,
-						this->Workload[i]->Transfer.Batch.count(),
-						this->Workload[i]->Transfer.Batch.ptr(),
-						this->Workload[i]->Transfer.Fence
-					);
-				}
-				this->Workload[i]->Graphics.Mutex.unlock();
-				this->Workload[i]->Compute.Mutex.unlock();
-				this->Workload[i]->Transfer.Mutex.unlock();
-			}
+			//		this->Workload[i]->Transfer.inFlight.store(true);
+			//		this->Context[i]->submit(
+			//			device::qfs::TRANSFER,
+			//			this->Workload[i]->Transfer.Batch.count(),
+			//			this->Workload[i]->Transfer.Batch.ptr(),
+			//			this->Workload[i]->Transfer.Fence
+			//		);
+			//	}
+			//	this->Workload[i]->Graphics.Mutex.unlock();
+			//	this->Workload[i]->Compute.Mutex.unlock();
+			//	this->Workload[i]->Transfer.Mutex.unlock();
+			//}
 
 			t2 = core::logic::get_time();
 			wt = t2 - t1;
@@ -899,72 +899,73 @@ namespace geodesuka {
 				int j = (this->StageCount - 1) - i;
 				int CtxIdx = this->ctxidx(this->Stage[j]->Context);
 				if (CtxIdx >= 0) {
-					this->Workload[CtxIdx]->Graphics.FwdBatch += this->Stage[j]->render();
+					//this->Workload[CtxIdx]->Graphics.FwdBatch += this->Stage[j]->render();
+					this->Stage[j]->render();
 				}
 			}
 
-			// Check if workload detected. If not, start over.
-			bool NoWorkloadDetected = true;
-			for (int i = 0; i < this->ContextCount; i++) {
-				NoWorkloadDetected &= (this->Workload[i]->Graphics.FwdBatch.count() == 0);
-			}
+			//// Check if workload detected. If not, start over.
+			//bool NoWorkloadDetected = true;
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	NoWorkloadDetected &= (this->Workload[i]->Graphics.FwdBatch.count() == 0);
+			//}
 
-			// No workload detected, start over.
-			if (NoWorkloadDetected) {
-				waitfor(0.005); // Wait for 5 miliseconds.
-				continue;
-			}
+			//// No workload detected, start over.
+			//if (NoWorkloadDetected) {
+			//	waitfor(0.005); // Wait for 5 miliseconds.
+			//	continue;
+			//}
 
-			// Prepare new batches for execution.
-			for (int i = 0; i < this->ContextCount; i++) {
-				this->Workload[i]->Graphics.Mutex.lock();
-				if (this->Workload[i]->Graphics.inFlight.load()) {
-					// If workload is in flight and currently being executed, wait for batch to complete.
-					Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
-					// Reset fence if execution is finished.
-					Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence);
-					// No longer in flight.
-					this->Workload[i]->Graphics.inFlight.store(false);
-				}
-				this->Workload[i]->Graphics.Batch = this->Workload[i]->Graphics.FwdBatch;
-				this->Workload[i]->Graphics.FwdBatch.clear();
-				this->Workload[i]->Graphics.Mutex.unlock();
-			}
+			//// Prepare new batches for execution.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	this->Workload[i]->Graphics.Mutex.lock();
+			//	if (this->Workload[i]->Graphics.inFlight.load()) {
+			//		// If workload is in flight and currently being executed, wait for batch to complete.
+			//		Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
+			//		// Reset fence if execution is finished.
+			//		Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence);
+			//		// No longer in flight.
+			//		this->Workload[i]->Graphics.inFlight.store(false);
+			//	}
+			//	this->Workload[i]->Graphics.Batch = this->Workload[i]->Graphics.FwdBatch;
+			//	this->Workload[i]->Graphics.FwdBatch.clear();
+			//	this->Workload[i]->Graphics.Mutex.unlock();
+			//}
 
-			// Swap previously drawn frames
-			for (int i = 0; i < this->StageCount; i++) {
-				//this->Stage[i]->present();
-			}
+			//// Swap previously drawn frames
+			//for (int i = 0; i < this->StageCount; i++) {
+			//	//this->Stage[i]->present();
+			//}
 
-			// Submit all render operations.
-			for (int i = 0; i < this->ContextCount; i++) {
-				this->Workload[i]->Transfer.Mutex.lock();
-				this->Workload[i]->Compute.Mutex.lock();
-				this->Workload[i]->Graphics.Mutex.lock();
-				if (this->Workload[i]->Graphics.Batch.count() > 0) {
+			//// Submit all render operations.
+			//for (int i = 0; i < this->ContextCount; i++) {
+			//	this->Workload[i]->Transfer.Mutex.lock();
+			//	this->Workload[i]->Compute.Mutex.lock();
+			//	this->Workload[i]->Graphics.Mutex.lock();
+			//	if (this->Workload[i]->Graphics.Batch.count() > 0) {
 
-					// Wait for transfer fences to be signalled before submission.
-					if (this->Workload[i]->Transfer.inFlight.load()) {
-						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
-					}
+			//		// Wait for transfer fences to be signalled before submission.
+			//		if (this->Workload[i]->Transfer.inFlight.load()) {
+			//			Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
+			//		}
 
-					// Wait for compute fences to be signalled before submission.
-					if (this->Workload[i]->Compute.inFlight.load()) {
-						Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Compute.Fence, VK_TRUE, UINT64_MAX);
-					}
+			//		// Wait for compute fences to be signalled before submission.
+			//		if (this->Workload[i]->Compute.inFlight.load()) {
+			//			Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Compute.Fence, VK_TRUE, UINT64_MAX);
+			//		}
 
-					this->Workload[i]->Graphics.inFlight.store(true);
-					this->Context[i]->submit(
-						device::qfs::GRAPHICS,
-						this->Workload[i]->Graphics.Batch.count(),
-						this->Workload[i]->Graphics.Batch.ptr(),
-						this->Workload[i]->Graphics.Fence
-					);
-				}
-				this->Workload[i]->Graphics.Mutex.unlock();
-				this->Workload[i]->Compute.Mutex.unlock();
-				this->Workload[i]->Transfer.Mutex.unlock();
-			}
+			//		this->Workload[i]->Graphics.inFlight.store(true);
+			//		this->Context[i]->submit(
+			//			device::qfs::GRAPHICS,
+			//			this->Workload[i]->Graphics.Batch.count(),
+			//			this->Workload[i]->Graphics.Batch.ptr(),
+			//			this->Workload[i]->Graphics.Fence
+			//		);
+			//	}
+			//	this->Workload[i]->Graphics.Mutex.unlock();
+			//	this->Workload[i]->Compute.Mutex.unlock();
+			//	this->Workload[i]->Transfer.Mutex.unlock();
+			//}
 
 		}
 	}

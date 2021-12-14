@@ -59,6 +59,18 @@ namespace geodesuka::core::object {
 		//friend class engine;
 		friend class stage_t;
 
+		//VkPresentInfoKHR;
+		class presentation {
+
+			// Will generate 
+			VkPresentInfoKHR info(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
+
+		private:
+			uint32_t Count;
+			VkSwapchainKHR *Swapchain;
+			uint32_t *ImageIndex;
+			VkResult *Result;
+		};
 
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
 		double FrameRate;				// The rate at which the frames will be cycled through by the engine per second.

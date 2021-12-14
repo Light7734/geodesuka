@@ -211,4 +211,26 @@ namespace geodesuka::core {
 		this->Engine->submit(this);
 	}
 
+	stage_t::renderop stage_t::render() {
+		renderop RenderOperations;
+		this->Mutex.lock();
+		for (int i = 0; i < this->RenderTargetCount; i++) {
+			// Check if render target is ready for new draw.
+			if (this->RenderTarget[i]->FPSTimer.check()) {
+				// Reset timer loop.
+				this->RenderTarget[i]->FPSTimer.reset();
+				
+				// Get Next Frame (system_window will get new image).
+				this->RenderTarget[i]->next_frame();
+
+				// Get all render operations.
+				RenderOperations;
+
+				this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
+			}
+		}
+		this->Mutex.unlock();
+		return RenderOperations;
+	}
+
 }

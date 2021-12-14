@@ -22,7 +22,7 @@ namespace geodesuka::core::stage {
 
 		canvas(engine* aEngine, gcl::context* aContext);
 
-		virtual batch render() override;
+		//virtual batch render() override;
 
 	private:
 

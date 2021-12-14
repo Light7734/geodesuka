@@ -22,7 +22,7 @@ namespace geodesuka::core::stage {
 
 		virtual VkSubmitInfo update(double aDeltaTime) override;
 
-		virtual batch render() override;
+		//virtual batch render() override;
 
 		//system_window::present present();
 

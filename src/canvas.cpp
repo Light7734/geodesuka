@@ -11,15 +11,15 @@ namespace geodesuka::core::stage {
         // Will be used to clear out all windows.
     }
 
-    stage_t::batch canvas::render() {
-        stage_t::batch DrawBatch;
-        this->Mutex.lock();
-        //for (size_t i = 0; i < this->Window.size(); i++) {
-        //    object::rendertarget* RT = this->Window[i];
-        //    DrawBatch += RT->draw(this->ObjectCount, this->Object);
-        //}
-        this->Mutex.unlock();
-        return DrawBatch;
-    }
+    //stage_t::batch canvas::render() {
+    //    stage_t::batch DrawBatch;
+    //    this->Mutex.lock();
+    //    //for (size_t i = 0; i < this->Window.size(); i++) {
+    //    //    object::rendertarget* RT = this->Window[i];
+    //    //    DrawBatch += RT->draw(this->ObjectCount, this->Object);
+    //    //}
+    //    this->Mutex.unlock();
+    //    return DrawBatch;
+    //}
 
 }

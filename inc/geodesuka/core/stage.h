@@ -61,6 +61,14 @@ namespace geodesuka::core {
 			VkSubmitInfo* Submission;
 		};
 
+		// Will be used for generalized render operations.
+		class renderop {
+
+		private:
+			batch RenderBatch;
+			//object::rendertarget::presentation PresentBatch;
+		};
+
 		std::mutex Mutex;
 
 		~stage_t();
@@ -84,14 +92,17 @@ namespace geodesuka::core {
 
 		// Will generate a batch of rendering commands per render target
 		// if the 
-		virtual batch render() = 0;
+		//virtual batch render() = 0;
 
 		void present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
 
 		void submit();
 		//void remove();
 
-	//private:
+	private:
+
+		// Generates render and presentation operations per rendertarget.
+		renderop render();
 
 	};
 
