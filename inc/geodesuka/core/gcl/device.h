@@ -9,15 +9,15 @@ namespace geodesuka::core::gcl {
 	class device {
 	public:
 
-
 		friend class context;
 
 		// Queue Family Support Options
 		enum qfs {
-			TRANSFER	= 0x00000001,
-			COMPUTE		= 0x00000002,
-			GRAPHICS	= 0x00000004,
-			PRESENT		= 0x00000008
+			TRANSFER				= 0x00000001,
+			COMPUTE					= 0x00000002,
+			GRAPHICS				= 0x00000004,
+			//GRAPHICS_AND_COMPUTE	= GRAPHICS | COMPUTE,
+			PRESENT					= 0x00000008
 		};
 
 		enum memory {
