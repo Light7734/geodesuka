@@ -10,7 +10,14 @@ namespace geodesuka::core::object {
 
     }
 
-    void camera2d::draw(object_t* aObject) {
+    VkSubmitInfo camera2d::draw(size_t aObjectCount, object_t** aObject) {
+        VkSubmitInfo DrawBatch{};
+        DrawBatch.sType = VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        DrawBatch.pNext = NULL;
+        return DrawBatch;
+    }
+
+    void camera2d::swap() {
 
     }
 

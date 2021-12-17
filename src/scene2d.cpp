@@ -2,22 +2,18 @@
 
 namespace geodesuka::core::stage {
 
-
-
-	scene2d::scene2d() {
-
+	scene2d::scene2d(engine* aEngine, gcl::context* aContext) : stage_t(aEngine, aContext) {
+		this->Engine = aEngine;
+		this->Context = aContext;
 	}
 
 	scene2d::~scene2d() {
 
 	}
 
-	void scene2d::render() {
-		for (size_t i = 0; i < this->Camera.size(); i++) {
-			for (size_t j = 0; j < this->Object.size(); j++) {
-				this->Camera[i]->draw(this->Object[j]);
-			}
-		}
-	}
+	//stage_t::batch scene2d::render() {
+	//	batch DrawBatch;
+	//	return DrawBatch;
+	//}
 
 }

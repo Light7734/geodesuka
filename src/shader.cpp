@@ -103,6 +103,18 @@ namespace geodesuka::core::gcl {
 		return this->Handle;
 	}
 
+	VkPipelineShaderStageCreateInfo shader::stageci() {
+		VkPipelineShaderStageCreateInfo Temp;
+		Temp.sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		Temp.pNext					= NULL;
+		Temp.flags					= 0;
+		Temp.stage					= this->VkStage;
+		Temp.module					= this->Handle;
+		Temp.pName					= "main";  // Entry Point function name
+		Temp.pSpecializationInfo	= NULL;
+		return Temp;
+	}
+
 }
 
 

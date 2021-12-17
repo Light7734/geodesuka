@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_TERMINAL_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_TERMINAL_H
 
-#include "../util/text.h"
+#include "../util/str.h"
 
 #include "../gcl/context.h"
 
@@ -25,10 +25,10 @@ namespace geodesuka::core::object {
 		~system_terminal();
 
 		// Returns true if input is gathered. Returns false if empty line.
-		bool operator>>(util::text &aRhs);
+		bool operator>>(util::str &aRhs);
 
 		// Prints output to terminal.
-		bool operator<<(util::text& aRhs);
+		bool operator<<(util::str& aRhs);
 
 		// Same as above, but good for string literals.
 		bool operator<<(const char* aRhs);

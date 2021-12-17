@@ -1,115 +1,241 @@
+#include <geodesuka/engine.h>
 #include <geodesuka/core/object/system_window.h>
 
 #include <algorithm>
 
-#include <geodesuka/engine.h>
-
 namespace geodesuka::core::object {
+
+	using namespace gcl;
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
+	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 
-		this->ParentEngine = aEngine;
-		this->ParentDisplay = aCreateInfo->Display;
-		this->ParentContext = aContext;
+		this->Display = aSystemDisplay;
+		this->Property = aWindowProperty;
 
-		// ------------------------- System Window Creation ------------------------- //
 
-		this->Property = prop();
-		glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
-		glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
-		glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
-		glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
-		glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
-		glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
-		glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
-		glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
-		glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
-		glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
-		glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
+		//glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
+		//glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
+		//glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
+		//glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
+		//glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
+		//glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
+		//glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
+		//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
+		//glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
+		//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
+		//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
+		//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+		////glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
-		//this->SizeSC = this->phys2scrn(this->Size);
-		this->Handle = glfwCreateWindow(640, 480, "", NULL, NULL);
+		//// Create Window Handle.
+		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
+		this->Handle = this->Engine->create_window_handle(aWindowProperty, aWidth, aHeight, aTitle, NULL, NULL);
 
-		// Post Creation Options
+		// Check if handle is NULL.
+		if (this->Handle == NULL) return;
 
-		if (this->Handle != NULL) {
-			// Get frame_buffer size. Will be same as SizeSC except on retina display. (Mac is Garbage)
+		// User pointer to forward input stream.
+		glfwSetWindowUserPointer(this->Handle, (void*)this);
 
-			// User pointer to forward input stream.
-			glfwSetWindowUserPointer(this->Handle, (void*)this);
+		// system_window callbacks
+		glfwSetWindowPosCallback(this->Handle,			system_window::position_callback);
+		glfwSetWindowSizeCallback(this->Handle,			system_window::size_callback);
+		glfwSetWindowCloseCallback(this->Handle,		system_window::close_callback);
+		glfwSetWindowRefreshCallback(this->Handle,		system_window::refresh_callback);
+		glfwSetWindowFocusCallback(this->Handle,		system_window::focus_callback);
+		glfwSetWindowIconifyCallback(this->Handle,		system_window::iconify_callback);
+		glfwSetWindowMaximizeCallback(this->Handle,		system_window::maximize_callback);
+		glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
 
-			// system_window callbacks
-			glfwSetWindowPosCallback(this->Handle,			system_window::position_callback);
-			glfwSetWindowSizeCallback(this->Handle,			system_window::size_callback);
-			glfwSetWindowCloseCallback(this->Handle,		system_window::close_callback);
-			glfwSetWindowRefreshCallback(this->Handle,		system_window::refresh_callback);
-			glfwSetWindowFocusCallback(this->Handle,		system_window::focus_callback);
-			glfwSetWindowIconifyCallback(this->Handle,		system_window::iconify_callback);
-			glfwSetWindowMaximizeCallback(this->Handle,		system_window::maximize_callback);
-			glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+		// framebuffer callbacks
+		glfwSetFramebufferSizeCallback(this->Handle,	system_window::framebuffer_size_callback);
 
-			// framebuffer callbacks
-			glfwSetFramebufferSizeCallback(this->Handle,	system_window::framebuffer_size_callback);
+		// Mouse callbacks
+		glfwSetMouseButtonCallback(this->Handle,		system_window::mouse_button_callback);
+		glfwSetCursorPosCallback(this->Handle,			system_window::cursor_position_callback);
+		glfwSetCursorEnterCallback(this->Handle,		system_window::cursor_enter_callback);
+		glfwSetScrollCallback(this->Handle,				system_window::scroll_callback);
 
-			// Mouse callbacks
-			glfwSetMouseButtonCallback(this->Handle,		system_window::mouse_button_callback);
-			glfwSetCursorPosCallback(this->Handle,			system_window::cursor_position_callback);
-			glfwSetCursorEnterCallback(this->Handle,		system_window::cursor_enter_callback);
-			glfwSetScrollCallback(this->Handle,				system_window::scroll_callback);
+		// Keyboard callbacks
+		glfwSetKeyCallback(this->Handle,				system_window::key_callback);
+		glfwSetCharCallback(this->Handle,				system_window::character_callback);
 
-			// Keyboard callbacks
-			glfwSetKeyCallback(this->Handle,				system_window::key_callback);
-			glfwSetCharCallback(this->Handle,				system_window::character_callback);
+		// File drop
+		glfwSetDropCallback(this->Handle,				system_window::file_drop_callback);
 
-			// File drop
-			glfwSetDropCallback(this->Handle,				system_window::file_drop_callback);
+		//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
 
-			//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
+		// Create Surface Handle.
+		VkResult Result = VkResult::VK_SUCCESS;
+		Result = glfwCreateWindowSurface(this->Engine->handle(), this->Handle, NULL, &this->Surface);
+
+		// Check for presentation support for new window.
+		VkBool32 isSupported = VK_FALSE;
+		Result = vkGetPhysicalDeviceSurfaceSupportKHR(this->Context->parent()->handle(), this->Context->qfi(device::qfs::PRESENT), this->Surface, &isSupported);
+
+		if (isSupported == VK_FALSE) {
+			// Destroys suface.
+			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
+			// Destroys window handle.
+			glfwDestroyWindow(this->Handle);
+			return;
+		}
+
+		// Create swapchain.
+		this->Swapchain = new swapchain(aContext, this->Surface, aSwapchainProperty, aPixelFormat, aWidth, aHeight, nullptr);
+
+		// These images belong to the swapchain, do not delete these.
+		uint32_t ImageCount = 0;
+		VkImage* Image = NULL;
+		Result = vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain->Handle, &ImageCount, NULL);
+		Image = (VkImage*)malloc(ImageCount * sizeof(VkImage));
+		Result = vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain->Handle, &ImageCount, Image);
+		
+		this->FrameCount = ImageCount;
+		this->FrameTexture = new texture[FrameCount];
+
+		// Load images into texture class.
+		for (uint32_t i = 0; i < ImageCount; i++) {
+
+			this->FrameTexture[i].CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			this->FrameTexture[i].CreateInfo.pNext					= NULL;
+			this->FrameTexture[i].CreateInfo.flags					= 0;
+			this->FrameTexture[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+			this->FrameTexture[i].CreateInfo.format					= this->Swapchain->CreateInfo.imageFormat;
+			this->FrameTexture[i].CreateInfo.extent					= { this->Swapchain->CreateInfo.imageExtent.width, this->Swapchain->CreateInfo.imageExtent.height, 1u };
+			this->FrameTexture[i].CreateInfo.mipLevels				= 1;
+			this->FrameTexture[i].CreateInfo.arrayLayers			= this->Swapchain->CreateInfo.imageArrayLayers;
+			this->FrameTexture[i].CreateInfo.samples				= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
+			this->FrameTexture[i].CreateInfo.tiling					; // Unknown.
+			this->FrameTexture[i].CreateInfo.usage					= this->Swapchain->CreateInfo.imageUsage;
+			this->FrameTexture[i].CreateInfo.sharingMode			= this->Swapchain->CreateInfo.imageSharingMode;
+			this->FrameTexture[i].CreateInfo.queueFamilyIndexCount	= 0;
+			this->FrameTexture[i].CreateInfo.pQueueFamilyIndices	= NULL;
+			this->FrameTexture[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
+			this->FrameTexture[i].Handle							= Image[i];
 
 		}
 
-		// ------------------------- Surface Creation ------------------------- //
-		VkResult Result = VkResult::VK_SUCCESS;
-		Result = glfwCreateWindowSurface(aEngine->handle(), this->Handle, NULL, &this->Surface);
+		free(Image);
+		Image = NULL;
 
-		this->Swapchain = new gcl::swapchain(aContext, this->Surface, aCreateInfo->SwapchainProperty, aWidth, aHeight, nullptr);
+		this->Engine->submit(this);
+
 	}
-
-	//system_window::system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, float aSizeX, int aSizeY, const char* aTitle) : window(aEngine, aContext) {}
 
 	system_window::~system_window() {
-		// Destroys swapchain.
-		delete Swapchain;
-		// Destroys suface.
-		vkDestroySurfaceKHR(this->ParentEngine->handle(), this->Surface, NULL);
-		// Destroys window handle.
-		glfwDestroyWindow(this->Handle);
+		this->Engine->remove(this);
 
-		//std::cout << "System Window Destroyed" << std::endl;
+		// Clears swapchain images.
+		for (int i = 0; i < this->FrameCount; i++) {
+			this->FrameTexture[i].CreateInfo = {};
+			this->FrameTexture[i].Handle = VK_NULL_HANDLE;
+		}
+
+		this->FrameCount = 0;
+		delete[] this->FrameTexture;
+		this->FrameTexture = nullptr;
+
+		// Destroys swapchain.
+		delete this->Swapchain;
+		this->Swapchain = nullptr;
+
+		if ((this->Engine != nullptr) && (this->Surface != VK_NULL_HANDLE)) {
+			// Destroys suface.
+			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
+			this->Surface = VK_NULL_HANDLE;
+		}
+		if (this->Handle != NULL) {
+			// Destroys window handle.
+			glfwDestroyWindow(this->Handle);
+			//this->Engine->destroy_window_handle(this->Handle);
+			this->Handle = NULL;
+		}
+
 	}
 
-	void system_window::update(double aDeltaTime) {
+	VkSubmitInfo system_window::update(double aDeltaTime) {
+		VkSubmitInfo TransferBatch{};
+		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		TransferBatch.pNext					= NULL;
+		TransferBatch.waitSemaphoreCount	= 0;
+		TransferBatch.pWaitSemaphores		= NULL;
+		TransferBatch.pWaitDstStageMask		= NULL;
+		TransferBatch.commandBufferCount	= 0;
+		TransferBatch.pCommandBuffers		= NULL;
+		TransferBatch.signalSemaphoreCount	= 0;
+		TransferBatch.pSignalSemaphores		= NULL;
 		this->Mutex.lock();
 		this->Time += aDeltaTime;
 		this->Mutex.unlock();
+		return TransferBatch;
 	}
 
-	void system_window::draw(system_display* aTargetDisplay) {
+	VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
 		// This method is responsible for rendering window to display.
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
 		this->Mutex.lock();
 
 		if (this->Property.RefreshRate) {
 
 		}
 		this->Mutex.unlock();
+
+		return DrawCommand;
 	}
 
-	void system_window::draw(object_t* aObject) {
-		if ((object_t*)this == aObject) return;
-		aObject->draw(this);
+	//void system_window::draw(object_t* aObject) {
+	//	if ((object_t*)this == aObject) return;
+	//	aObject->draw(this);
+	//}
+
+	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext					= NULL;
+		DrawBatch.waitSemaphoreCount	= 0;
+		DrawBatch.pWaitSemaphores		= NULL;
+		DrawBatch.pWaitDstStageMask		= NULL;
+		DrawBatch.commandBufferCount	= 0;
+		DrawBatch.pCommandBuffers		= NULL;
+		DrawBatch.signalSemaphoreCount	= 0;
+		DrawBatch.pSignalSemaphores		= NULL;
+		return DrawBatch;
+	}
+
+	void system_window::swap() {
+		if (this->FPSTimer.check()) {
+			VkResult Result = VkResult::VK_SUCCESS;
+			uint32_t NextIndex = UINT32_MAX;
+			VkPresentInfoKHR Presentation;
+
+			Presentation.sType = VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+			Presentation.pNext = NULL;
+			Presentation.waitSemaphoreCount = 0;
+			Presentation.pWaitSemaphores = NULL;
+			Presentation.swapchainCount = 1;
+			Presentation.pSwapchains = &this->Swapchain->Handle;
+			Presentation.pImageIndices = &this->FrameDrawIndex;
+			Presentation.pResults = &Result;
+
+			// Present image to display.
+			this->Context->present(&Presentation);
+
+			// Acquire next image and wait for availability.
+			Result = vkAcquireNextImageKHR(
+				this->Context->handle(),
+				this->Swapchain->handle(),
+				UINT64_MAX,
+				VK_NULL_HANDLE,
+				VK_NULL_HANDLE,
+				&this->FrameDrawIndex
+			);
+
+			// Reset refresh update timer.
+			this->FPSTimer.reset();
+		}
 	}
 
 	void system_window::set_position(math::real3 aPosition) {
@@ -121,31 +247,31 @@ namespace geodesuka::core::object {
 		// Converts Direction and length.
 		this->Position = aPosition;
 		math::integer2 r_tmp = math::integer2(
-			(math::integer)(this->Position.x * (((math::real)(ParentDisplay->Resolution.x)) / (ParentDisplay->Size.x))),
-			(math::integer)(-this->Position.y * (((math::real)(ParentDisplay->Resolution.y)) / (ParentDisplay->Size.y)))
+			(math::integer)(this->Position.x * (((math::real)(Display->Resolution.x)) / (Display->Size.x))),
+			(math::integer)(-this->Position.y * (((math::real)(Display->Resolution.y)) / (Display->Size.y)))
 		);
 
 		// Compensate for shift.
 		this->PositionSC =
 			r_tmp
 			- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
-			+ ParentDisplay->PositionSC
-			+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
+			+ Display->PositionSC
+			+ math::integer2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
 
 		glfwSetWindowPos(this->Handle, this->PositionSC.x, this->PositionSC.y);
 	}
 
 	void system_window::set_size(math::real2 aSize) {
-		this->Resolution.x = aSize.x * ((double)this->ParentDisplay->Resolution.x / (double)this->ParentDisplay->Size.x);
-		this->Resolution.y = aSize.y * ((double)this->ParentDisplay->Resolution.y / (double)this->ParentDisplay->Size.y);
+		this->Resolution.x = aSize.x * ((double)this->Display->Resolution.x / (double)this->Display->Size.x);
+		this->Resolution.y = aSize.y * ((double)this->Display->Resolution.y / (double)this->Display->Size.y);
 		glfwSetWindowSize(this->Handle, this->Resolution.x, this->Resolution.y);
 		// TODO: make more efficient
 		this->set_position(this->Position);
 	}
 
 	void system_window::set_resolution(math::natural2 aResolution) {
-		this->Size.x = aResolution.x * ((double)this->ParentDisplay->Size.x / (double)this->ParentDisplay->Resolution.x);
-		this->Size.y = aResolution.y * ((double)this->ParentDisplay->Size.y / (double)this->ParentDisplay->Resolution.y);
+		this->Size.x = aResolution.x * ((double)this->Display->Size.x / (double)this->Display->Resolution.x);
+		this->Size.y = aResolution.y * ((double)this->Display->Size.y / (double)this->Display->Resolution.y);
 		glfwSetWindowSize(this->Handle, aResolution.x, aResolution.y);
 		// TODO: make more efficient
 		this->set_position(this->Position);
@@ -190,13 +316,13 @@ namespace geodesuka::core::object {
 		math::integer2 r_tmp =
 			math::integer2(PosX, PosY)
 			+ math::integer2((double)Win->Resolution.x / 2.0, (double)Win->Resolution.y / 2.0)
-			- Win->ParentDisplay->PositionSC
-			- math::integer2((double)Win->ParentDisplay->Resolution.x / 2.0, (double)Win->ParentDisplay->Resolution.y / 2.0);
+			- Win->Display->PositionSC
+			- math::integer2((double)Win->Display->Resolution.x / 2.0, (double)Win->Display->Resolution.y / 2.0);
 
 		// Converts to physical position on display (meters)
 		Win->Position = math::real3(
-			(double)r_tmp.x * ((double)Win->ParentDisplay->Size.x / (double)Win->ParentDisplay->Resolution.x),
-			-(double)r_tmp.y * ((double)Win->ParentDisplay->Size.y / (double)Win->ParentDisplay->Resolution.y),
+			(double)r_tmp.x * ((double)Win->Display->Size.x / (double)Win->Display->Resolution.x),
+			-(double)r_tmp.y * ((double)Win->Display->Size.y / (double)Win->Display->Resolution.y),
 			0.0
 		);
 

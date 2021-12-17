@@ -4,7 +4,7 @@
 
 #include <mutex>
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 #include "device.h"
 

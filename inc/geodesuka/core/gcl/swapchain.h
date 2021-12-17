@@ -13,6 +13,27 @@ namespace geodesuka::core::gcl {
 	class swapchain {
 	public:
 
+		friend class object::system_window;
+
+		enum colorspace {
+			SRGB_NONLINEAR			= 0,
+			DISPLAY_P3_NONLINEAR	= 1000104001,
+			EXTENDED_SRGB_LINEAR	= 1000104002,
+			DISPLAY_P3_LINEAR		= 1000104003,
+			DCI_P3_NONLINEAR		= 1000104004,
+			BT709_LINEAR			= 1000104005,
+			BT709_NONLINEAR			= 1000104006,
+			BT2020_LINEAR			= 1000104007,
+			HDR10_ST2084			= 1000104008,
+			DOLBYVISION				= 1000104009,
+			HDR10_HLG				= 1000104010,
+			ADOBERGB_LINEAR			= 1000104011,
+			ADOBERGB_NONLINEAR		= 1000104012,
+			PASS_THROUGH			= 1000104013,
+			EXTENDED_SRGB_NONLINEAR = 1000104014,
+			DISPLAY_NATIVE_AMD		= 1000213000,
+		};
+
 		enum composite {
 			ALPHA_OPAQUE			= 0x00000001,
 			ALPHA_PRE_MULTIPLIED	= 0x00000002,
@@ -29,10 +50,7 @@ namespace geodesuka::core::gcl {
 
 		struct prop {
 			int Count;
-			int Format;
 			int ColorSpace;
-			//VkExtent2D Resolution;
-			//int Layers;
 			int Usage;
 			int CompositeAlpha;
 			int PresentMode;
@@ -41,14 +59,16 @@ namespace geodesuka::core::gcl {
 			prop();
 		};
 
-		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, uint32_t aWidth, uint32_t aHeight, swapchain* aOldSwapchain);
+		std::vector<gcl::texture*> Texture;
+
+		swapchain(context* aContext, VkSurfaceKHR aSurface, prop aProperty, int aPixelFormat, int aWidth, int aHeight, swapchain* aOldSwapchain);
 		~swapchain();
+
+		VkSwapchainKHR handle();
 
 	private:
 
 		context* Context;
-
-		std::vector<gcl::texture*> Texture;
 
 		VkSwapchainCreateInfoKHR CreateInfo{};
 		VkSwapchainKHR Handle;

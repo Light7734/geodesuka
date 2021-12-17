@@ -2,22 +2,22 @@
 #ifndef GEODESUKA_CORE_GCL_DEVICE_H
 #define GEODESUKA_CORE_GCL_DEVICE_H
 
-#include <vulkan/vulkan.h>
+#include "../gcl.h"
 
 namespace geodesuka::core::gcl {
 
 	class device {
 	public:
 
-
 		friend class context;
 
 		// Queue Family Support Options
 		enum qfs {
-			TRANSFER	= 0x00000001,
-			COMPUTE		= 0x00000002,
-			GRAPHICS	= 0x00000004,
-			PRESENT		= 0x00000008
+			TRANSFER				= 0x00000001,
+			COMPUTE					= 0x00000002,
+			GRAPHICS				= 0x00000004,
+			//GRAPHICS_AND_COMPUTE	= GRAPHICS | COMPUTE,
+			PRESENT					= 0x00000008
 		};
 
 		enum memory {
@@ -55,9 +55,13 @@ namespace geodesuka::core::gcl {
 		VkPhysicalDeviceFeatures get_features() const;
 		VkPhysicalDeviceMemoryProperties get_memory_properties() const;
 		const VkExtensionProperties* get_extensions(uint32_t* aExtensionCount) const;
+		int get_memory_type_index(VkMemoryRequirements aMemoryRequirements, int aMemoryType) const;
+		int get_memory_type(int aMemoryTypeIndex);
 
 		const VkQueueFamilyProperties* get_queue_families(uint32_t* aQueueFamilyCount) const;
 		const queue_family_capability* get_capability(uint32_t* aQueueFamilyCount) const;
+
+
 
 		// Checks if device has queue support bit.
 		bool available(unsigned int aQSB) const;
@@ -92,6 +96,7 @@ namespace geodesuka::core::gcl {
 		VkExtensionProperties* Extension;
 		VkPhysicalDeviceProperties Properties{};
 		VkPhysicalDeviceFeatures Features{};
+		VkPhysicalDeviceMemoryProperties MemoryProperties{};
 
 	};
 

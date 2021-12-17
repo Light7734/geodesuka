@@ -44,15 +44,15 @@ namespace geodesuka::core::gcl {
 		};
 
 		buffer();
-		buffer(context* aContext, int aMemType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
+		buffer(context* aContext, int aMemoryType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
 		buffer(context* aContext, int aMemoryType, int aUsage, size_t aMemorySize, void* aBufferData);
 		~buffer();
 
-		buffer(const buffer& aInp);																					// Copy Constructor
-		buffer(buffer&& aInp);																						// Move Constructor
+		buffer(buffer& aInp);																					// Copy Constructor
+		buffer(buffer&& aInp) noexcept;																			// Move Constructor
 
-		buffer& operator=(const buffer& aRhs);																		// Copy Assign
-		buffer& operator=(buffer&& aRhs);																			// Move Assign
+		buffer& operator=(buffer& aRhs);																		// Copy Assign
+		buffer& operator=(buffer&& aRhs) noexcept;																// Move Assign
 
 		// The following four commands will produce command buffers to be
 		// used for transfer operations. 
@@ -85,17 +85,8 @@ namespace geodesuka::core::gcl {
 
 		int Count;
 		util::variable MemoryLayout;
-		
-		// Make staging buffer optional. Trade off.
-		// Faster Transfer of Data at the cost of double mem usage.
-		// Only device mem usage, but slower transfers.
 
-		// To keep a staging buffer, or not to keep?
-		// To keep a staging buffer means that twice the memory
-		// usage on both host and device memory, or not to keep a
-		// staging buffer would imply that every transfer operation
-		// will have a new allocation.
-		//buffer* StagingBuffer;
+		void pmclearall();
 
 	};
 

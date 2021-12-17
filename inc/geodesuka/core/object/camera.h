@@ -28,16 +28,14 @@
 //#include "../graphical/frame_buffer.h"
 
 #include "../object.h"
-#include "render_target.h"
+#include "rendertarget.h"
 
 namespace geodesuka::core::object {
 
-	class camera : public render_target {
+	class camera : public rendertarget {
 	public:
 
 		~camera();
-
-		//virtual void draw(object_t* aObject) = 0;
 
 	protected:
 

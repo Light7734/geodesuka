@@ -5,11 +5,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/11/04
+Branch Birth Date: 2021/11/20
 
-Branch Pull Date: 2021/11/20
+Branch Pull Date: 2021/12/17
 
-Version: 0.0.16
+Version: 0.0.17
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
@@ -90,32 +90,32 @@ macro def collision and interference.
 
 # To Do List:
 
-- Create System Terminal Class for engine debug commands.
+- Create System Terminal Class for engine debug commands in engine backend.
 
-- Add proper constructors to natural vectors.
-
-- Finish texture.h staging buffer backend now that
-context.h is complete for command buffer submission.
+- Rewrite math library for more coherent primitive data types, then construct
+natural, integer, and real types from it.
 
 - Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
-
-- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
-
-- Add lua support for runtime scripting.
-
-- Add built in extension types for file.h to recognize file types
-and forward to proper objects.
-
-- Add engine asset manager to prevent double loading.
 
 - Add layering system for window objects, for huds, system stats and so
 on. (Will be done with canvas class, and window as target.)
 
+- Resolve issue with object being used in multiple stages simultaneously.
+
 # Back Burner:
 
-- Add Dynamic Library compilation options.
+- File System stuff.
 
-- Change render_target to new name that makes more sense.
+- Add built in extension types for file.h to recognize file types
+and forward to proper objects.
+
+- Add lua support for runtime scripting.
+
+- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
+
+- Add engine asset manager to prevent double loading.
+
+- Add Dynamic Library compilation options.
 
 - Change Texture class to image class? The reasoning behind this change
 along with how vulkan does it, is that a texture describes the texture

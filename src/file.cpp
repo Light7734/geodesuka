@@ -47,7 +47,7 @@ namespace geodesuka::core::io {
 		{ file::extension::SPV,		{"spv"}						},
 	};
 
-	file::extension file::str2type(util::text aString) {
+	file::extension file::str2type(util::str aString) {
 		extension temp = UNK;
 		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
 			for (size_t j = 0; j < BuiltInTypes[i].Extension.size(); j++)
@@ -58,20 +58,20 @@ namespace geodesuka::core::io {
 		return temp;
 	}
 
-	util::text file::type2str(extension aType) {
+	util::str file::type2str(extension aType) {
 		const char* temp = "";
 		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
 			if (BuiltInTypes[i].Type == aType) {
-				return BuiltInTypes[i].Extension[0].str();
+				return BuiltInTypes[i].Extension[0].ptr();
 			}
 		}
 		return temp;
 	}
 
 	file* file::open(const char* aFilePath) {
-		util::text temp = aFilePath;
+		util::str temp = aFilePath;
 		temp.reverse();
-		util::text Extension = temp.split_at('.');
+		util::str Extension = temp.split_at('.');
 		Extension.reverse();
 		extension ExtID = str2type(Extension);
 
@@ -97,19 +97,19 @@ namespace geodesuka::core::io {
 		this->DataSize = 0;
 	}
 
-	util::text file::get_path() {
+	util::str file::get_path() {
 		return this->Path;
 	}
 
-	util::text file::get_dir() {
+	util::str file::get_dir() {
 		return this->Dir;
 	}
 
-	util::text file::get_name() {
+	util::str file::get_name() {
 		return this->Name;
 	}
 
-	util::text file::get_ext() {
+	util::str file::get_ext() {
 		return this->Ext;
 	}
 
@@ -132,13 +132,13 @@ namespace geodesuka::core::io {
 		this->mset_path(aFilePath);
 	}
 
-	file::file(util::text& aFilePath) {
+	file::file(util::str& aFilePath) {
 		this->mset_path(aFilePath);
 	}
 
-	bool file::mset_path(util::text aFilePath) {
+	bool file::mset_path(util::str aFilePath) {
 		this->Path = aFilePath;
-		util::text temp = aFilePath;
+		util::str temp = aFilePath;
 		temp.reverse();
 		this->Ext = temp.split_at('.');
 		this->Ext.reverse();

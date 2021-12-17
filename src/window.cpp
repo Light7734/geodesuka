@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <GLFW/glfw3.h>
+
 #include <geodesuka/core/math.h>
 
 //#include "../hid/mouse.h"
@@ -33,7 +35,7 @@ namespace geodesuka::core::object {
 	window::~window() {
 	}
 
-	void window::set_title(util::text aTitle) {
+	void window::set_title(util::str aTitle) {
 
 	}
 
@@ -50,7 +52,7 @@ namespace geodesuka::core::object {
 		return false;
 	}
 
-	window::window(engine *aEngine, gcl::context *aContext) : render_target(aEngine, aContext) {
+	window::window(engine *aEngine, gcl::context *aContext) : rendertarget(aEngine, aContext) {
 		// Perhaps setup backend frame.
 		this->Title = "";
 		//this->Resolution = math::natural2(0.0, 0.0);

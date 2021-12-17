@@ -10,11 +10,25 @@ namespace geodesuka::core::logic {
 	public:
 
 		// Enter in a desired duration.
+		timer();
 		timer(double aDuration);
 		~timer();
 
+		// Set signal wait duration.
+		void set(double aDuration);
+
+		// Update Timer.
+		void update(double aDeltaTime);
+
+		// Check if duration has ellapsed.
+		bool check();
+
+		// Resets ellapsed time.
+		void reset();
+
 		// Will update and check if condition has been met.
 		bool check(double aDeltaTime);
+
 
 	private:
 
@@ -23,6 +37,10 @@ namespace geodesuka::core::logic {
 		double Duration;
 
 	};
+
+	double get_time();
+	void set_time(double aTime);
+	void waitfor(double aSeconds);
 
 }
 

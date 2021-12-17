@@ -1,25 +1,35 @@
-#include <geodesuka/core/object.h>
-
 #include <geodesuka/engine.h>
+#include <geodesuka/core/object.h>
 
 namespace geodesuka::core {
 
 	object_t::~object_t() {
-		// Clear everything, then remove.
+		this->Engine->remove(this);
+	}
 
-		if (this->ParentEngine != nullptr) {
-			// If parent engine exists and is not in desctruction state, clear from engine.
-			this->ParentEngine->Mutex.lock();
-			if (this->ParentEngine->State != engine::state::ENGINE_DESTRUCTION_STATE) {
-				for (size_t i = 0; i < this->ParentEngine->Object.size(); i++) {
-					if (this == this->ParentEngine->Object[i]) {
-						this->ParentEngine->Object.erase(this->ParentEngine->Object.begin() + i);
-					}
-				}
-			}
-			this->ParentEngine->Mutex.unlock();
-		}
-		//std::cout << "Object Destroyed" << std::endl;
+	void object_t::set_position(math::real3 aPosition) {}
+
+	math::real3 object_t::get_position() const {
+		return this->Position;
+	}
+
+	object_t::object_t(engine* aEngine, gcl::context* aContext) {
+
+		// Internal API.
+		this->Engine = aEngine;
+		this->Context = aContext;
+
+		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
+		this->InputForce	= math::real3(0.0, 0.0, 0.0);
+
+		this->Mass			= 1.0;
+		this->Time			= core::logic::get_time();
+		this->Position		= math::real3(0.0, 0.0, 0.0);
+		this->Momentum		= math::real3(0.0, 0.0, 0.0);
+		this->Force			= math::real3(0.0, 0.0, 0.0);
+		this->DirectionX	= math::real3(1.0, 0.0, 0.0);
+		this->DirectionY	= math::real3(0.0, 1.0, 0.0);
+		this->DirectionZ	= math::real3(0.0, 0.0, 1.0);
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {
@@ -30,7 +40,18 @@ namespace geodesuka::core {
 
 	}
 
-	void object_t::update(double aDeltaTime) {
+	VkSubmitInfo object_t::update(double aDeltaTime) {
+		VkSubmitInfo TransferBatch{};
+		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		TransferBatch.pNext					= NULL;
+		TransferBatch.waitSemaphoreCount	= 0;
+		TransferBatch.pWaitSemaphores		= NULL;
+		TransferBatch.pWaitDstStageMask		= NULL;
+		TransferBatch.commandBufferCount	= 0;
+		TransferBatch.pCommandBuffers		= NULL;
+		TransferBatch.signalSemaphoreCount	= 0;
+		TransferBatch.pSignalSemaphores		= NULL;
+
 		//tex:
 		// Update equations for generic object type with applied forces.
 		// $$ d\vec{p} = \big( \vec{F}_{\text{applied}} + \vec{F}_{user} \big) dt $$ 
@@ -44,45 +65,55 @@ namespace geodesuka::core {
 
 
 		this->Mutex.unlock();
+		return TransferBatch;
 	}
 
-	void object_t::draw(object::system_display* aTargetSystemDisplay) {}
+	VkSubmitInfo object_t::compute() {
+		VkSubmitInfo ComputeBatch{};
+		ComputeBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		ComputeBatch.pNext					= NULL;
+		ComputeBatch.waitSemaphoreCount		= 0;
+		ComputeBatch.pWaitSemaphores		= NULL;
+		ComputeBatch.pWaitDstStageMask		= NULL;
+		ComputeBatch.commandBufferCount		= 0;
+		ComputeBatch.pCommandBuffers		= NULL;
+		ComputeBatch.signalSemaphoreCount	= 0;
+		ComputeBatch.pSignalSemaphores		= NULL;
 
-	void object_t::draw(object::system_window* aTargetSystemWindow) {}
-
-	void object_t::draw(object::virtual_window* aTargetVirtualWindow) {}
-
-	void object_t::draw(object::camera2d* aTargetCamera2D) {}
-
-	void object_t::draw(object::camera3d* aTargetCamera3D) {}
-
-	void object_t::set_position(math::real3 aPosition) {}
-
-	math::real3 object_t::get_position() const {
-		return this->Position;
+		return ComputeBatch;
 	}
 
-	object_t::object_t(engine* aEngine, gcl::context* aContext) {
+	VkCommandBuffer object_t::draw(object::system_display* aTargetSystemDisplay) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
 
+	VkCommandBuffer object_t::draw(object::system_window* aTargetSystemWindow) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
 
+	VkCommandBuffer object_t::draw(object::virtual_window* aTargetVirtualWindow) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
 
-		// Internal API.
-		this->ParentEngine = aEngine;
-		this->ParentContext = aContext;
+	VkCommandBuffer object_t::draw(object::camera2d* aTargetCamera2D) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
 
-		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
-		this->InputForce = math::real3(0.0, 0.0, 0.0);
+	VkCommandBuffer object_t::draw(object::camera3d* aTargetCamera3D) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
 
-		this->Mass = 1.0;
-		this->Time = aEngine->get_time();
-		this->Position = math::real3(0.0, 0.0, 0.0);
-		this->Momentum = math::real3(0.0, 0.0, 0.0);
-		this->Force = math::real3(0.0, 0.0, 0.0);
-		this->DirectionX = math::real3(0.0, 0.0, 0.0);
-		this->DirectionY = math::real3(0.0, 0.0, 0.0);
-		this->DirectionZ = math::real3(0.0, 0.0, 0.0);
+	void object_t::submit() {
+		this->Engine->submit(this);
+	}
 
-		//std::cout << "Object Created" << std::endl;
+	void object_t::remove() {
+		this->Engine->remove(this);
 	}
 
 }

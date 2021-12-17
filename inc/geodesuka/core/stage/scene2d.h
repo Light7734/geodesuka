@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "../object.h"
+#include "../object/rendertarget.h"
 #include "../object/camera2d.h"
 
 #include "../stage.h"
@@ -14,14 +15,16 @@ namespace geodesuka::core::stage {
 	class scene2d : public stage_t {
 	public:
 
-		scene2d();
 		~scene2d();
 
-		virtual void render() override;
 
 	protected:
 
 		std::vector<object::camera2d*> Camera;
+
+		scene2d(engine* aEngine, gcl::context* aContext);
+
+		//virtual batch render() override;
 
 	private:
 

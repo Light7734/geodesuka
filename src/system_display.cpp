@@ -33,5 +33,15 @@ namespace geodesuka::core::object {
 
 	}
 
-	void system_display::draw(object_t* aObject) {}
+	VkSubmitInfo system_display::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType = VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext = NULL;
+		return DrawBatch;
+	}
+
+	void system_display::swap() {
+
+	}
+
 }

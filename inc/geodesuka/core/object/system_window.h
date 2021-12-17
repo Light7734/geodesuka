@@ -2,17 +2,22 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
+/*
+* Windows API
+* Wayland
+* X11
+* Android
+*/
+
 #include <vector>
 
 #include "../math.h"
 
+#include "../gcl.h"
 #include "../gcl/device.h"
 #include "../gcl/context.h"
-
 #include "../gcl/texture.h"
-
 #include "../gcl/framebuffer.h"
-
 #include "../gcl/swapchain.h"
 
 //#include "../hid/mouse.h"
@@ -26,7 +31,8 @@
 //#include "virtual_window.h"
 //#include "camera.h"
 
-
+// Interact with windowing system.
+#include <GLFW/glfw3.h>
 
 // system_window: This object exists in the display space exclusively.
 // It interfaces with the operating system and holds the context for for
@@ -48,49 +54,50 @@ namespace geodesuka::core::object {
 	class system_window : public window {
 	public:
 
-		struct create_info {
-			system_display* Display;
-			window::prop WindowProperty;
-			gcl::swapchain::prop SwapchainProperty;
-			math::real3 Position;
-		};
+		friend class engine;
+		//friend class system_display;
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
+		gcl::texture* FrameTexture;
 
-		//friend class system_display;
 
 		//math::boolean CloseMe;
 
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle);
 
-		system_window(engine *aEngine, gcl::context *aContext, create_info *aCreateInfo, int aWidth, int aHeight, const char* aTitle);
-		//system_window(engine* aEngine, gcl::context* aContext, create_info* aCreateInfo, float aSizeX, int aSizeY, const char* aTitle);
-		// Clears entire window out.
 		~system_window();
-
-
-		virtual void update(double aDeltaTime);
-		
-		virtual void draw(system_display* aTargetDisplay) override;
-
-		// Mandatory implementation required by window.h
-		virtual void draw(object_t* aObject) override;
 
 		virtual void set_position(math::real3 aPosition) override;
 		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(math::natural2 aResolution) override;
 
+	protected:
+		// Only accessible to engine backend.
+
+		virtual VkSubmitInfo update(double aDeltaTime);
+
+		virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
+
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
+
+		virtual void swap() override;
+
 	private:
+		// Local variables only accessed by instance of class.
 
-		math::integer2 PositionSC;
-		//math::integer2 SizeSC;
-
-		system_display* ParentDisplay;			// Parent Display of this system_window.
+		system_display* Display;			// Parent Display of this system_window.
 
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 
 		gcl::swapchain* Swapchain;
+
+
+		math::integer2 PositionSC;
+		//math::integer2 SizeSC;
+
+
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		math::integer2 phys2scrn(math::real2 R);

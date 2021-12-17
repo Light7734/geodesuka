@@ -19,7 +19,6 @@
 namespace geodesuka::core::gcl {
 
 	texture::prop::prop() {
-		//this->MipLevelCount			= 1;
 		this->ArrayLayerCount	= 1;
 		this->SampleCounts		= sample::COUNT_1;
 		this->Tiling			= tiling::OPTIMAL;
@@ -226,245 +225,8 @@ namespace geodesuka::core::gcl {
 		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
 		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
 		vkDestroySemaphore(this->Context->handle(), Semaphore, NULL);
-		//this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
-		//this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
 		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer[0]);
 		this->Context->destroy(device::qfs::GRAPHICS, CommandBuffer[1]);
-
-
-		/*
-		// Disgusting code, tmi.
-		VkSubmitInfo Submission[2] = { {}, {} };
-		VkCommandBufferBeginInfo BeginInfo[2] = { {}, {} };
-		VkCommandBuffer CommandBuffer[2] = { VK_NULL_HANDLE, VK_NULL_HANDLE };
-		VkSemaphoreCreateInfo SemaphoreCreateInfo{};
-		VkSemaphore Semaphore = VK_NULL_HANDLE;
-		VkPipelineStageFlags StageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT;
-		VkFenceCreateInfo FenceCreateInfo{};
-		VkFence Fence[2];
-		VkImageMemoryBarrier Barrier{};
-		VkBufferImageCopy BufferImageRegion{};
-
-		// Transfer Submission.
-		Submission[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		Submission[0].pNext							= NULL;
-		Submission[0].waitSemaphoreCount			= 0;
-		Submission[0].pWaitSemaphores				= NULL;
-		Submission[0].pWaitDstStageMask				= 0;
-		Submission[0].commandBufferCount			= 1;
-		Submission[0].pCommandBuffers				= &CommandBuffer[0];
-		Submission[0].signalSemaphoreCount			= 1;
-		Submission[0].pSignalSemaphores				= &Semaphore;
-
-		// Graphics Submission
-		Submission[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		Submission[1].pNext							= NULL;
-		Submission[1].waitSemaphoreCount			= 1;
-		Submission[1].pWaitSemaphores				= &Semaphore;
-		Submission[1].pWaitDstStageMask				= &StageFlags;
-		Submission[1].commandBufferCount			= 1;
-		Submission[1].pCommandBuffers				= &CommandBuffer[1];
-		Submission[1].signalSemaphoreCount			= 0;
-		Submission[1].pSignalSemaphores				= NULL;
-
-		BeginInfo[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		BeginInfo[0].pNext							= NULL;
-		BeginInfo[0].flags							= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		BeginInfo[0].pInheritanceInfo				= NULL;
-
-		BeginInfo[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		BeginInfo[1].pNext							= NULL;
-		BeginInfo[1].flags							= 0;// VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		BeginInfo[1].pInheritanceInfo				= NULL;
-
-		SemaphoreCreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-		SemaphoreCreateInfo.pNext					= NULL;
-		SemaphoreCreateInfo.flags					= 0;
-
-		FenceCreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-		FenceCreateInfo.pNext						= NULL;
-		FenceCreateInfo.flags						= 0;
-
-		Barrier.sType								= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		Barrier.pNext								= NULL;
-		Barrier.srcAccessMask						= 0;
-		Barrier.dstAccessMask						= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
-		Barrier.oldLayout							= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED;
-		Barrier.newLayout							= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		Barrier.srcQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
-		Barrier.dstQueueFamilyIndex					= VK_QUEUE_FAMILY_IGNORED;
-		Barrier.image								= this->Handle;
-		Barrier.subresourceRange.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-		Barrier.subresourceRange.baseMipLevel		= 0;
-		Barrier.subresourceRange.levelCount			= 1;
-		Barrier.subresourceRange.baseArrayLayer		= 0;
-		Barrier.subresourceRange.layerCount			= this->CreateInfo.arrayLayers;
-		// Track update to all elements.
-		for (uint32_t i = 0; i < this->CreateInfo.arrayLayers; i++) {
-			this->Layout[0][i] = Barrier.newLayout;
-		}
-
-		BufferImageRegion.bufferOffset						= 0;
-		BufferImageRegion.bufferRowLength					= 0;
-		BufferImageRegion.bufferImageHeight					= 0;
-		BufferImageRegion.imageSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-		BufferImageRegion.imageSubresource.mipLevel			= 0;
-		BufferImageRegion.imageSubresource.baseArrayLayer	= 0;
-		BufferImageRegion.imageSubresource.layerCount		= this->CreateInfo.arrayLayers;
-		BufferImageRegion.imageOffset						= { 0, 0, 0 };
-		BufferImageRegion.imageExtent						= this->CreateInfo.extent;
-
-		Result = vkCreateSemaphore(this->Context->handle(), &SemaphoreCreateInfo, NULL, &Semaphore);
-		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[0]);
-		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence[1]);
-		this->Context->create(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
-		this->Context->create(context::GRAPHICS, 1, &CommandBuffer[1]);
-		// Check allocation results before commencing.
-		
-		// Staging Buffer transfer operations.
-		Result = vkBeginCommandBuffer(CommandBuffer[0], &BeginInfo[0]);
-
-		// Waits for nothing, to transfer to mip 0 image.
-		vkCmdPipelineBarrier(
-			CommandBuffer[0], 
-			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-			VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT, 
-			0, 
-			0, NULL,
-			0, NULL, 
-			1, &Barrier);
-		vkCmdCopyBufferToImage(CommandBuffer[0], StagingBuffer.handle(), this->Handle, this->Layout[0][0], 1, &BufferImageRegion);
-
-		Result = vkEndCommandBuffer(CommandBuffer[0]);
-
-		// filling out this command buffer generates mip maps.
-		Result = vkBeginCommandBuffer(CommandBuffer[1], &BeginInfo[1]);
-
-		//Generating Mipmaps.
-		//0 -> 1 -> 2 -> 3 -> 4 ... N
-		//D -> U -> U -> U -> U ... U
-		//S -> D -> U -> U -> U ... U
-		//S -> S -> D -> U -> U ... U
-
-		// Generate Mip Level params to blit image.
-		for (uint32_t i = 0; i < this->CreateInfo.mipLevels - 1; i++) {
-
-
-			VkImageMemoryBarrier BlitBarrier[2] = { {}, {} };
-			VkImageBlit MipGen{};
-
-			// Changes previous mip level from dst to src, for blitting.
-			BlitBarrier[0].sType							= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			BlitBarrier[0].pNext							= NULL;
-			BlitBarrier[0].srcAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
-			BlitBarrier[0].dstAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_READ_BIT;
-			BlitBarrier[0].oldLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			BlitBarrier[0].newLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
-			BlitBarrier[0].srcQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			BlitBarrier[0].dstQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			BlitBarrier[0].image							= this->Handle;
-			BlitBarrier[0].subresourceRange.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			BlitBarrier[0].subresourceRange.baseMipLevel	= i;
-			BlitBarrier[0].subresourceRange.levelCount		= 1;
-			BlitBarrier[0].subresourceRange.baseArrayLayer	= 0;
-			BlitBarrier[0].subresourceRange.layerCount		= this->CreateInfo.arrayLayers;
-			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
-				this->Layout[i][j] = BlitBarrier[0].newLayout;
-			}
-
-			// Prepares next mip for writing
-			BlitBarrier[1].sType							= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			BlitBarrier[1].pNext							= NULL;
-			BlitBarrier[1].srcAccessMask					= 0;
-			BlitBarrier[1].dstAccessMask					= VkAccessFlagBits::VK_ACCESS_TRANSFER_WRITE_BIT;
-			BlitBarrier[1].oldLayout						= this->CreateInfo.initialLayout;
-			BlitBarrier[1].newLayout						= VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			BlitBarrier[1].srcQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			BlitBarrier[1].dstQueueFamilyIndex				= VK_QUEUE_FAMILY_IGNORED;
-			BlitBarrier[1].image							= this->Handle;
-			BlitBarrier[1].subresourceRange.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			BlitBarrier[1].subresourceRange.baseMipLevel	= i + 1;
-			BlitBarrier[1].subresourceRange.levelCount		= 1;
-			BlitBarrier[1].subresourceRange.baseArrayLayer	= 0;
-			BlitBarrier[1].subresourceRange.layerCount		= this->CreateInfo.arrayLayers;
-			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
-				this->Layout[i + 1][j] = BlitBarrier[1].newLayout;
-			}
-
-			// Uses bit shifts to generate mip maps.
-			// Source Description.
-			MipGen.srcSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			MipGen.srcSubresource.mipLevel			= i;
-			MipGen.srcSubresource.baseArrayLayer	= 0;
-			MipGen.srcSubresource.layerCount		= this->CreateInfo.arrayLayers;
-			MipGen.srcOffsets[0] = { 0, 0, 0 };
-			switch (this->CreateInfo.imageType) {
-			default:
-				return;
-			case VK_IMAGE_TYPE_1D:
-				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), 1, 1 };
-				break;
-			case VK_IMAGE_TYPE_2D:
-				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), 1 };
-				break;
-			case VK_IMAGE_TYPE_3D:
-				MipGen.srcOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> i), (int32_t)(this->CreateInfo.extent.height >> i), (int32_t)(this->CreateInfo.extent.depth >> i) };
-				break;
-			}
-
-			// Destination Description.
-			MipGen.dstSubresource.aspectMask		= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
-			MipGen.dstSubresource.mipLevel			= i + 1;
-			MipGen.dstSubresource.baseArrayLayer	= 0;
-			MipGen.dstSubresource.layerCount		= this->CreateInfo.arrayLayers;
-			MipGen.dstOffsets[0] = { 0, 0, 0 };
-			switch (this->CreateInfo.imageType) {
-			default:
-				return;
-			case VK_IMAGE_TYPE_1D:
-				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), 1, 1 };
-				break;
-			case VK_IMAGE_TYPE_2D:
-				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), 1 };
-				break;
-			case VK_IMAGE_TYPE_3D:
-				MipGen.dstOffsets[1] = { (int32_t)(this->CreateInfo.extent.width >> (i + 1)), (int32_t)(this->CreateInfo.extent.height >> (i + 1)), (int32_t)(this->CreateInfo.extent.depth >> (i + 1)) };
-				break;
-			}
-
-			vkCmdPipelineBarrier(
-				CommandBuffer[1],
-				VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-				VkPipelineStageFlagBits::VK_PIPELINE_STAGE_TRANSFER_BIT,
-				0,
-				0, NULL,
-				0, NULL,
-				2, BlitBarrier
-			);
-
-			vkCmdBlitImage(
-				CommandBuffer[1],
-				this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-				this->Handle, VkImageLayout::VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-				1,
-				&MipGen,
-				VkFilter::VK_FILTER_NEAREST
-			);
-
-		}
-
-		Result = vkEndCommandBuffer(CommandBuffer[1]);
-
-		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission[0], Fence[0]);
-		Result = this->Context->submit(device::qfs::GRAPHICS, 1, &Submission[1], Fence[1]);
-		//this->Context->submit(device::qfs::GRAPHICS, 1, &Submission, Fence);
-		Result = vkWaitForFences(this->Context->handle(), 1, &Fence[1], VK_TRUE, UINT64_MAX);
-		vkDestroyFence(this->Context->handle(), Fence[0], NULL);
-		vkDestroyFence(this->Context->handle(), Fence[1], NULL);
-		vkDestroySemaphore(this->Context->handle(), Semaphore, NULL);
-		this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer[0]);
-		this->Context->destroy(context::GRAPHICS, 1, &CommandBuffer[1]);
-		//*/
 
 	}
 
@@ -598,7 +360,6 @@ namespace geodesuka::core::gcl {
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
-		//this->Context->destroy(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 		vkDestroyFence(this->Context->handle(), Fence, NULL);
 
@@ -630,18 +391,14 @@ namespace geodesuka::core::gcl {
 
 	texture& texture::operator=(texture& aRhs) {
 		if (this == &aRhs) return *this;
-		if (this->Context != aRhs.Context) return *this;
+		this->pmclearall();
 
 		this->Context			= aRhs.Context;
 		this->CreateInfo		= aRhs.CreateInfo;
-		//this->Handle			= aRhs.Handle;
 		this->AllocateInfo		= aRhs.AllocateInfo;
-		//this->MemoryHandle		= aRhs.MemoryHandle;
 		this->MemoryType		= aRhs.MemoryType;
 		this->BytesPerPixel		= aRhs.BytesPerPixel;
 		this->MemorySize		= aRhs.MemorySize;
-		//this->Layout			= aRhs.Layout;
-		//this->MipExtent			= aRhs.MipExtent;
 
 		// Allocate Host memory.
 		this->Layout = (VkImageLayout**)malloc(this->CreateInfo.mipLevels * sizeof(VkImageLayout*));
@@ -674,6 +431,33 @@ namespace geodesuka::core::gcl {
 			return *this;
 		}
 
+		// Set initial layouts.
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			for (uint32_t j = 0; j < this->CreateInfo.arrayLayers; j++) {
+				this->Layout[i][j] = this->CreateInfo.initialLayout;
+			}
+		}
+
+		// Generate Mip resolutions.
+		// Mip Level resolutions.
+		this->MipExtent = (VkExtent3D*)malloc(this->CreateInfo.mipLevels * sizeof(VkExtent3D));
+		for (uint32_t i = 0; i < this->CreateInfo.mipLevels; i++) {
+			switch (this->CreateInfo.imageType) {
+			default: 
+				break;
+			case VK_IMAGE_TYPE_1D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), 1u, 1u };
+				break;
+			case VK_IMAGE_TYPE_2D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), 1u };
+				break;
+			case VK_IMAGE_TYPE_3D:
+				this->MipExtent[i] = { (this->CreateInfo.extent.width >> i), (this->CreateInfo.extent.height >> i), (this->CreateInfo.extent.depth >> i) };
+				break;
+			}
+		}
+
+
 		VkSubmitInfo Submission{};
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
 		VkFenceCreateInfo FenceCreateInfo{};
@@ -689,13 +473,16 @@ namespace geodesuka::core::gcl {
 		Submission.signalSemaphoreCount		= 0;
 		Submission.pSignalSemaphores		= NULL;
 
+		FenceCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		FenceCreateInfo.pNext				= NULL;
+		FenceCreateInfo.flags				= 0;
+
 		Result = vkCreateFence(this->Context->handle(), &FenceCreateInfo, NULL, &Fence);
 		CommandBuffer = (*this << aRhs);
-		this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
+		Result = this->Context->submit(device::qfs::TRANSFER, 1, &Submission, Fence);
 		Result = vkWaitForFences(this->Context->handle(), 1, &Fence, VK_TRUE, UINT64_MAX);
 
 		vkDestroyFence(this->Context->handle(), Fence, NULL);
-		//this->Context->destroy(context::TRANSFER_OTS, 1, &CommandBuffer);
 		this->Context->destroy(device::qfs::TRANSFER, CommandBuffer);
 
 		return *this;
@@ -758,7 +545,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext					= NULL;
-		BeginInfo.flags					= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags					= 0;
 		BeginInfo.pInheritanceInfo		= NULL;
 
 		// Use Barrier layout transitions for al
@@ -828,7 +615,6 @@ namespace geodesuka::core::gcl {
 			Region.push_back(SubRegion);
 		}
 
-		//Result = this->Context->create(context::cmdtype::TRANSFER_OTS, 1, &CommandBuffer);
 		CommandBuffer = this->Context->create(device::qfs::TRANSFER);
 		Result = vkBeginCommandBuffer(CommandBuffer, &BeginInfo);
 
@@ -875,7 +661,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType									= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext									= NULL;
-		BeginInfo.flags									= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags									= 0;
 		BeginInfo.pInheritanceInfo						= NULL;
 
 		for (uint32_t i = 0; i < this->CreateInfo.arrayLayers; i++) {
@@ -946,7 +732,7 @@ namespace geodesuka::core::gcl {
 
 		BeginInfo.sType									= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 		BeginInfo.pNext									= NULL;
-		BeginInfo.flags									= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		BeginInfo.flags									= 0;
 		BeginInfo.pInheritanceInfo						= NULL;
 
 		//Result = this->Context->create(context::cmdtype::GRAPHICS, 1, &CommandBuffer);
@@ -1034,6 +820,55 @@ namespace geodesuka::core::gcl {
 		Result = vkEndCommandBuffer(CommandBuffer);
 
 		return CommandBuffer;
+	}
+
+	VkImageView texture::view() {
+		// Change later after screwing with.
+		VkImageView temp = VK_NULL_HANDLE;
+		VkImageViewCreateInfo ImageViewCreateInfo{};
+		ImageViewCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		ImageViewCreateInfo.pNext				= NULL;
+		ImageViewCreateInfo.flags				= 0;
+		ImageViewCreateInfo.image				= this->Handle;
+		switch (this->CreateInfo.imageType) {
+		default:
+			break;
+		case VkImageType::VK_IMAGE_TYPE_1D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_1D;
+			break;
+		case VkImageType::VK_IMAGE_TYPE_2D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_2D;
+			break;
+		case VkImageType::VK_IMAGE_TYPE_3D:
+			ImageViewCreateInfo.viewType			= VkImageViewType::VK_IMAGE_VIEW_TYPE_3D;
+			break;
+		}
+		ImageViewCreateInfo.format				= this->CreateInfo.format;
+		ImageViewCreateInfo.components.r		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.g		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.b		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.components.a		= VkComponentSwizzle::VK_COMPONENT_SWIZZLE_IDENTITY;
+		ImageViewCreateInfo.subresourceRange.aspectMask			= VkImageAspectFlagBits::VK_IMAGE_ASPECT_COLOR_BIT;
+		ImageViewCreateInfo.subresourceRange.baseMipLevel		= 0;
+		ImageViewCreateInfo.subresourceRange.levelCount			= this->CreateInfo.mipLevels;
+		ImageViewCreateInfo.subresourceRange.baseArrayLayer		= 0;
+		ImageViewCreateInfo.subresourceRange.layerCount			= this->CreateInfo.arrayLayers;
+		VkResult Result = vkCreateImageView(this->Context->handle(), &ImageViewCreateInfo, NULL, &temp);
+		return temp;
+	}
+
+	VkAttachmentDescription texture::description(loadop aLoadOp, storeop aStoreOp, loadop aStencilLoadOp, storeop aStencilStoreOp, layout aInitialLayout, layout aFinalLayout) {
+		VkAttachmentDescription temp;
+		temp.flags					= 0;
+		temp.format					= this->CreateInfo.format;
+		temp.samples				= this->CreateInfo.samples;
+		temp.loadOp					= (VkAttachmentLoadOp)aLoadOp;
+		temp.storeOp				= (VkAttachmentStoreOp)aStoreOp;
+		temp.stencilLoadOp			= (VkAttachmentLoadOp)aStencilLoadOp;
+		temp.stencilStoreOp			= (VkAttachmentStoreOp)aStencilStoreOp;
+		temp.initialLayout			= (VkImageLayout)aInitialLayout;
+		temp.finalLayout			= (VkImageLayout)aFinalLayout;
+		return temp;
 	}
 
 	/*
@@ -1124,16 +959,26 @@ namespace geodesuka::core::gcl {
 	}
 
 	// So gross.
-	size_t texture::bitsperpixel(VkFormat aFormat) {
+	// Group these later based on spec.
+	// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#texel-block-size
 
-		/*
-		* UNORM : Unsigned Normalized
-		* SNORM : Signed Normalized
-		* USCALED : ?
-		* SSCALED : ?
-		* SRGB : ?
-		* 
-		*/
+	/*
+	Size table;
+
+	8
+	16
+	24
+	32
+	48
+	64
+	96
+	128
+	192
+	256
+
+	*/
+
+	size_t texture::bitsperpixel(VkFormat aFormat) {
 
 		switch (aFormat) {
 		default: return 0;

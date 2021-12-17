@@ -140,6 +140,7 @@ namespace geodesuka::core::gcl {
 
 		vkGetPhysicalDeviceProperties(this->Handle, &this->Properties);
 		vkGetPhysicalDeviceFeatures(this->Handle, &this->Features);
+		vkGetPhysicalDeviceMemoryProperties(this->Handle, &this->MemoryProperties);
 
 		// Clear up Dummy stuff.
 		vkDestroySurfaceKHR(aInstance, lDummySurface, NULL);
@@ -207,6 +208,39 @@ namespace geodesuka::core::gcl {
 	const VkExtensionProperties* device::get_extensions(uint32_t* aExtensionCount) const {
 		*aExtensionCount = this->ExtensionCount;
 		return this->Extension;
+	}
+
+	int device::get_memory_type_index(VkMemoryRequirements aMemoryRequirements, int aMemoryType) const {
+		int MemoryTypeIndex = -1;
+
+		//VkPhysicalDeviceMemoryProperties MemoryProperties = this->get_memory_properties();
+
+		// Search for exact memory type index.
+		for (uint32_t i = 0; i < this->MemoryProperties.memoryTypeCount; i++) {
+			if (((aMemoryRequirements.memoryTypeBits & (1 << i)) >> i) && (this->MemoryProperties.memoryTypes[i].propertyFlags == aMemoryType)) {
+				MemoryTypeIndex = i;
+				break;
+			}
+		}
+
+
+		// Search for approximate memory type index.
+		if (MemoryTypeIndex == -1) {
+			for (uint32_t i = 0; i < this->MemoryProperties.memoryTypeCount; i++) {
+				if (((aMemoryRequirements.memoryTypeBits & (1 << i)) >> i) && ((this->MemoryProperties.memoryTypes[i].propertyFlags & aMemoryType) == aMemoryType)) {
+					MemoryTypeIndex = i;
+					break;
+				}
+			}
+		}
+
+		// return -1 if no types exist.
+		return MemoryTypeIndex;
+	}
+
+	int device::get_memory_type(int aMemoryTypeIndex) {
+		if (aMemoryTypeIndex < 0) return 0;
+		return this->MemoryProperties.memoryTypes[aMemoryTypeIndex].propertyFlags;
 	}
 
 	const VkQueueFamilyProperties* device::get_queue_families(uint32_t* aQueueFamilyCount) const {

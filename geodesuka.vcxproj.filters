@@ -139,9 +139,14 @@
     <Filter Include="inc\geodesuka\builtin\stage">
       <UniqueIdentifier>{1a8d27a1-7d65-43fe-b543-767a8f99872e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="inc\geodesuka\core\graphics">
+      <UniqueIdentifier>{5f70e7f3-43ac-41bf-b9b8-149d07e8573b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\graphics">
+      <UniqueIdentifier>{e1344c19-b42f-4f97-a813-3946635d42ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="src\buffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
@@ -259,9 +264,6 @@
     <ClCompile Include="src\mouse.cpp">
       <Filter>src\core\hid</Filter>
     </ClCompile>
-    <ClCompile Include="src\text.cpp">
-      <Filter>src\core\util</Filter>
-    </ClCompile>
     <ClCompile Include="src\variable.cpp">
       <Filter>src\core\util</Filter>
     </ClCompile>
@@ -278,9 +280,6 @@
       <Filter>src\core\object</Filter>
     </ClCompile>
     <ClCompile Include="src\window.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\vtext.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
     <ClCompile Include="src\script.cpp">
@@ -313,9 +312,6 @@
     <ClCompile Include="src\scene3d.cpp">
       <Filter>src\core\stage</Filter>
     </ClCompile>
-    <ClCompile Include="src\render_target.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\triangle.cpp">
       <Filter>src\builtin\object</Filter>
     </ClCompile>
@@ -325,14 +321,44 @@
     <ClCompile Include="src\system_terminal.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
-    <ClCompile Include="src\command_pool.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\trap.cpp">
       <Filter>src\core\logic</Filter>
     </ClCompile>
     <ClCompile Include="src\timer.cpp">
       <Filter>src\core\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\desktop.cpp">
+      <Filter>src\core\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pipeline.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\renderpass.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\example.cpp">
+      <Filter>src\builtin\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendertarget.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\material.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\str.cpp">
+      <Filter>src\core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\text.cpp">
+      <Filter>src\core\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -483,14 +509,8 @@
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\vtext.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\object\window.h">
       <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\util\text.h">
-      <Filter>inc\geodesuka\core\util</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\engine.h">
       <Filter>inc\geodesuka</Filter>
@@ -543,9 +563,6 @@
     <ClInclude Include="inc\geodesuka\core\stage\scene3d.h">
       <Filter>inc\geodesuka\core\stage</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\render_target.h">
-      <Filter>inc\geodesuka\core\object</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\builtin\object\triangle.h">
       <Filter>inc\geodesuka\builtin\object</Filter>
     </ClInclude>
@@ -555,14 +572,47 @@
     <ClInclude Include="inc\geodesuka\core\object\system_terminal.h">
       <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\logic\trap.h">
       <Filter>inc\geodesuka\core\logic</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\logic\timer.h">
       <Filter>inc\geodesuka\core\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage\desktop.h">
+      <Filter>inc\geodesuka\core\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\app.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\builtin\stage\example.h">
+      <Filter>inc\geodesuka\builtin\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\rendertarget.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\material.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\mesh.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\model.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\util\str.h">
+      <Filter>inc\geodesuka\core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\text.h">
+      <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

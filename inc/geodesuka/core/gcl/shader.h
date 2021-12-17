@@ -44,6 +44,8 @@ namespace geodesuka::core::gcl {
 		VkShaderStageFlagBits get_stage();
 		VkShaderModule get_handle();
 
+		VkPipelineShaderStageCreateInfo stageci();
+
 	private:
 
 		io::file* FileHandle;						// Reference Asset File.

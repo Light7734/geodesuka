@@ -27,26 +27,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -72,22 +72,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <OutDir>$(ProjectDir)lib\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <OutDir>$(ProjectDir)lib\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <OutDir>$(ProjectDir)lib\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)bin\$(ConfigurationType)\$(Configuration)\$(PlatformShortName)\</OutDir>
+    <OutDir>$(ProjectDir)lib\$(Configuration)\$(PlatformShortName)\</OutDir>
     <IntDir>$(ProjectDir)obj\$(Configuration)\$(PlatformShortName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -175,20 +175,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\buffer.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\camera2d.cpp" />
     <ClCompile Include="src\camera3d.cpp" />
     <ClCompile Include="src\canvas.cpp" />
-    <ClCompile Include="src\command_pool.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\constants.cpp" />
     <ClCompile Include="src\context.cpp" />
     <ClCompile Include="src\cube.cpp" />
+    <ClCompile Include="src\desktop.cpp" />
     <ClCompile Include="src\device.cpp" />
     <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
+    <ClCompile Include="src\example.cpp" />
     <ClCompile Include="src\file.cpp" />
     <ClCompile Include="src\font.cpp" />
     <ClCompile Include="src\framebuffer.cpp" />
@@ -201,12 +202,16 @@
     <ClCompile Include="src\joystick.cpp" />
     <ClCompile Include="src\keyboard.cpp" />
     <ClCompile Include="src\log.cpp" />
+    <ClCompile Include="src\material.cpp" />
     <ClCompile Include="src\matrix_multiply.cpp" />
+    <ClCompile Include="src\mesh.cpp" />
+    <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\mouse.cpp" />
     <ClCompile Include="src\natural2.cpp" />
     <ClCompile Include="src\natural3.cpp" />
     <ClCompile Include="src\natural4.cpp" />
     <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\pipeline.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\real.cpp" />
     <ClCompile Include="src\real2.cpp" />
@@ -221,12 +226,14 @@
     <ClCompile Include="src\real4x2.cpp" />
     <ClCompile Include="src\real4x3.cpp" />
     <ClCompile Include="src\real4x4.cpp" />
-    <ClCompile Include="src\render_target.cpp" />
+    <ClCompile Include="src\renderpass.cpp" />
+    <ClCompile Include="src\rendertarget.cpp" />
     <ClCompile Include="src\scene2d.cpp" />
     <ClCompile Include="src\scene3d.cpp" />
     <ClCompile Include="src\script.cpp" />
     <ClCompile Include="src\shader.cpp" />
     <ClCompile Include="src\stage.cpp" />
+    <ClCompile Include="src\str.cpp" />
     <ClCompile Include="src\swapchain.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_terminal.cpp" />
@@ -238,7 +245,6 @@
     <ClCompile Include="src\triangle.cpp" />
     <ClCompile Include="src\variable.cpp" />
     <ClCompile Include="src\virtual_window.cpp" />
-    <ClCompile Include="src\vtext.cpp" />
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -257,14 +263,21 @@
   <ItemGroup>
     <ClInclude Include="inc\geodesuka\builtin\object\cube.h" />
     <ClInclude Include="inc\geodesuka\builtin\object\triangle.h" />
+    <ClInclude Include="inc\geodesuka\builtin\stage\example.h" />
+    <ClInclude Include="inc\geodesuka\core\app.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
+    <ClInclude Include="inc\geodesuka\core\graphics\material.h" />
+    <ClInclude Include="inc\geodesuka\core\graphics\mesh.h" />
+    <ClInclude Include="inc\geodesuka\core\graphics\model.h" />
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h" />
     <ClInclude Include="inc\geodesuka\core\hid\keyboard.h" />
     <ClInclude Include="inc\geodesuka\core\hid\mouse.h" />
@@ -309,19 +322,20 @@
     <ClInclude Include="inc\geodesuka\core\object\camera.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
-    <ClInclude Include="inc\geodesuka\core\object\render_target.h" />
+    <ClInclude Include="inc\geodesuka\core\object\rendertarget.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_terminal.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_window.h" />
+    <ClInclude Include="inc\geodesuka\core\object\text.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
-    <ClInclude Include="inc\geodesuka\core\object\vtext.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />
+    <ClInclude Include="inc\geodesuka\core\stage\desktop.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene2d.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene3d.h" />
     <ClInclude Include="inc\geodesuka\core\util\log.h" />
-    <ClInclude Include="inc\geodesuka\core\util\text.h" />
+    <ClInclude Include="inc\geodesuka\core\util\str.h" />
     <ClInclude Include="inc\geodesuka\core\util\variable.h" />
     <ClInclude Include="inc\geodesuka\engine.h" />
   </ItemGroup>

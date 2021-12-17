@@ -5,21 +5,24 @@
 #include <vector>
 
 #include "../object.h"
+#include "../object/rendertarget.h"
 #include "../object/window.h"
 
 #include "../stage.h"
+
 
 namespace geodesuka::core::stage {
 
 	class canvas : public stage_t {
 	public:
 
-		virtual void render() override;
+		~canvas();
 
 	protected:
 
-		// Render targets of the stage.
-		std::vector<object::window*> Window;
+		canvas(engine* aEngine, gcl::context* aContext);
+
+		//virtual batch render() override;
 
 	private:
 
