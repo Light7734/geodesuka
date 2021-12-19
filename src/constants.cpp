@@ -1,10 +1,8 @@
-#include <geodesuka/core/math/numbers/constants.h>
+#include <geodesuka/core/math/number/constants.h>
 
 #include <geodesuka/core/math/config.h>
 
-#include <geodesuka/core/math/numbers/natural.h>
-#include <geodesuka/core/math/numbers/integer.h>
-#include <geodesuka/core/math/numbers/real.h>
+#include <geodesuka/core/math/number/type.h>
 
 namespace geodesuka::core::math {
 #ifdef REAL_TYPE_FLOAT

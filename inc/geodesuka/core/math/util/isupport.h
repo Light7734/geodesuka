@@ -13,17 +13,8 @@
 */
 
 //TODO: Move to backend.
-
-namespace geodesuka::core::math {
-
-	//int sift_down(int* A, int Length, int i);
-	//int build_heap(int* A, int Length);
-	//int heap_sort(int* A, int Length);
-
-	int kronecker_delta(int I, int J);
-	int levi_civita(int aRank, const int* aIndex);
-	int levi_civita(int aRank, ...);
-
-}
+int kronecker_delta(int I, int J);
+int levi_civita(int aRank, const int* aIndex);
+int levi_civita(int aRank, ...);
 
 #endif // !GEODESUKA_CORE_MATH_GCLM_BASIC_UTIL_H
