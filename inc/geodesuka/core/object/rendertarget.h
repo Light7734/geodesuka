@@ -19,7 +19,7 @@
 * engine API.
 */
 
-VkPresentInfoKHR;
+
 
 /*
 

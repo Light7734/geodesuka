@@ -159,6 +159,14 @@ ShaderKitty#1696
 Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
 I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
 
+# Reference Specifications:
+
+Vulkan:
+https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html
+
+OpenCL:
+https://www.khronos.org/registry/OpenCL/specs/3.0-unified/html/OpenCL_API.html#_the_opencl_architecture
+
 # Donate
 
 Feel free to donate if you think this is something worth throwing money at.

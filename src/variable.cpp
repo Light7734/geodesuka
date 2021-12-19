@@ -16,46 +16,7 @@
 
 namespace geodesuka::core::util {
 
-	//// TODO: Maybe move this to a gconfig.h file so it can be shared with other objects?
-	//static struct {
-	//	type::id TypeID;
-	//	const char* TypeName;
-	//	type::id DataTypeID;
-	//	math::integer ElementCount;
-	//	math::integer Rows;
-	//	math::integer Columns;
-	//	size_t Size;
-	//} BuiltInType[BUILT_IN_TYPE_LIST_SIZE] = {
-	//	{	type::id::STRUCT		,		"struct"		,	type::id::STRUCT			,		0		  ,		0		,		0		,	0								},
-	//	{	type::id::UINT8			,		"ubyte"			,	type::id::UINT8				,		1		  ,		1		,		1		,	sizeof(unsigned char)			},
-	//	{	type::id::UINT16		,		"ushort"		,	type::id::UINT16			,		1		  ,		1		,		1		,	sizeof(unsigned short)			},
-	//	{	type::id::UINT32		,		"uint"			,	type::id::UINT32			,		1		  ,		1		,		1		,	sizeof(math::natural)			},
-	//	{	type::id::SINT8			,		"byte"			,	type::id::SINT8				,		1		  ,		1		,		1		,	sizeof(signed char)				},
-	//	{	type::id::SINT16		,		"short"			,	type::id::SINT16			,		1		  ,		1		,		1		,	sizeof(signed short)			},
-	//	{	type::id::SINT32		,		"int"			,	type::id::SINT32			,		1		  ,		1		,		1		,	sizeof(math::integer)			},
-	//	{	type::id::FLOAT16		,		"half"			,	type::id::FLOAT16			,		1		  ,		1		,		1		,	sizeof(unsigned short)			},
-	//	{	type::id::FLOAT32		,		"float"			,	type::id::FLOAT32			,		1		  ,		1		,		1		,	sizeof(math::real)				},
-	//	{	type::id::FLOAT64		,		"double"		,	type::id::FLOAT64			,		1		  ,		1		,		1		,	sizeof(double)					},
-	//	{	type::id::NATURAL2		,		"uvec2"			,	type::id::UINT32			,		2		  ,		2		,		1		,	sizeof(math::natural2)			},
-	//	{	type::id::NATURAL3		,		"uvec3"			,	type::id::UINT32			,		3		  ,		3		,		1		,	sizeof(math::natural3)			},
-	//	{	type::id::NATURAL4		,		"uvec4"			,	type::id::UINT32			,		4		  ,		4		,		1		,	sizeof(math::natural4)			},
-	//	{	type::id::INTEGER2		,		"ivec2"			,	type::id::SINT32			,		2		  ,		2		,		1		,	sizeof(math::integer2)			},
-	//	{	type::id::INTEGER3		,		"ivec3"			,	type::id::SINT32			,		3		  ,		3		,		1		,	sizeof(math::integer3)			},
-	//	{	type::id::INTEGER4		,		"ivec4"			,	type::id::SINT32			,		4		  ,		4		,		1		,	sizeof(math::integer4)			},
-	//	{	type::id::REAL2			,		"vec2"			,	type::id::FLOAT32			,		2		  ,		2		,		1		,	sizeof(math::real2)				},
-	//	{	type::id::REAL3			,		"vec3"			,	type::id::FLOAT32			,		3		  ,		3		,		1		,	sizeof(math::real3)				},
-	//	{	type::id::REAL4			,		"vec4"			,	type::id::FLOAT32			,		4		  ,		4		,		1		,	sizeof(math::real4)				},
-	//	{	type::id::REAL2X2		,		"mat2"			,	type::id::FLOAT32			,		4		  ,		2		,		2		,	sizeof(math::real2x2)			},
-	//	{	type::id::REAL2X3		,		"mat2x3"		,	type::id::FLOAT32			,		6		  ,		3		,		2		,	sizeof(math::real2x3)			},
-	//	{	type::id::REAL2X4		,		"mat2x4"		,	type::id::FLOAT32			,		8		  ,		4		,		2		,	sizeof(math::real2x4)			},
-	//	{	type::id::REAL3X2		,		"mat3x2"		,	type::id::FLOAT32			,		6		  ,		2		,		3		,	sizeof(math::real3x2)			},
-	//	{	type::id::REAL3X3		,		"mat3"			,	type::id::FLOAT32			,		9		  ,		3		,		3		,	sizeof(math::real3x3)			},
-	//	{	type::id::REAL3X4		,		"mat3x4"		,	type::id::FLOAT32			,		12		  ,		4		,		3		,	sizeof(math::real3x4)			},
-	//	{	type::id::REAL4X2		,		"mat4x2"		,	type::id::FLOAT32			,		8		  ,		2		,		4		,	sizeof(math::real4x2)			},
-	//	{	type::id::REAL4X3		,		"mat4x3"		,	type::id::FLOAT32			,		12		  ,		3		,		4		,	sizeof(math::real4x3)			},
-	//	{	type::id::REAL4X4		,		"mat4"			,	type::id::FLOAT32			,		16		  ,		4		,		4		,	sizeof(math::real4x4)			}
-	//};
-
+	// TODO: Maybe move this to a gconfig.h file so it can be shared with other objects?
 	static struct {
 		type::id TypeID;
 		const char* TypeName;
@@ -200,7 +161,7 @@ namespace geodesuka::core::util {
 		this->copy(Arg);
 	}
 
-	type::type(type&& Arg) {
+	type::type(type&& Arg) noexcept {
 		this->Master = nullptr;
 		this->ID = Arg.ID;
 		this->Size = Arg.Size;
@@ -253,7 +214,7 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 
-	type& type::operator=(type&& Rhs) {
+	type& type::operator=(type&& Rhs) noexcept {
 		this->ID = Rhs.ID;
 		this->Size = Rhs.Size;
 		this->MemberCount = Rhs.MemberCount;
@@ -962,7 +923,7 @@ namespace geodesuka::core::util {
 		this->copy(Arg);
 	}
 
-	variable::variable(variable&& Arg) {
+	variable::variable(variable&& Arg) noexcept {
 		this->Root = nullptr;
 		this->Parent = nullptr;
 		this->Offset = 0;
@@ -1017,7 +978,7 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 
-	variable& variable::operator=(variable&& Rhs) {
+	variable& variable::operator=(variable&& Rhs) noexcept {
 		this->clear();
 		this->swap(Rhs);
 		return *this;

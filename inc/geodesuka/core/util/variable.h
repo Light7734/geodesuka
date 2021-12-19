@@ -246,7 +246,7 @@ namespace geodesuka::core::util {
 		type(const type& Arg);
 
 		// Move Constructor: swaps the type. (Pointer swap)
-		type(type&& Arg);
+		type(type&& Arg) noexcept;
 
 		// Destructor: Clears all memory allocated for the object.
 		~type();
@@ -258,7 +258,7 @@ namespace geodesuka::core::util {
 		type& operator=(const type& Rhs);
 
 		// Move Assignment: Will swap left and right contents.
-		type& operator=(type&& Rhs);
+		type& operator=(type&& Rhs) noexcept;
 
 		// ---------- Member Variable Modifier ---------- //
 		// Options: push, pop, insert, remove, exchange, reverse, permute.
@@ -373,12 +373,12 @@ namespace geodesuka::core::util {
 		variable(const variable& Arg);
 
 		// Move Constructor: swap contents or what ever.
-		variable(variable&& Arg);
+		variable(variable&& Arg) noexcept;
 
 		~variable();
 
 		variable& operator=(const variable& Rhs);
-		variable& operator=(variable&& Rhs);
+		variable& operator=(variable&& Rhs) noexcept;
 
 		variable& operator[](int Index);
 		const variable& operator[](int Index) const;

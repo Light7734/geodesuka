@@ -42,6 +42,15 @@ namespace geodesuka {
 		//this->ThreadsLaunched.store(false);
 		this->Handle = VK_NULL_HANDLE;
 
+		this->WindowTempData.Property = window::prop();
+		this->WindowTempData.Width = 0;
+		this->WindowTempData.Height = 0;
+		this->WindowTempData.Title = NULL;
+		this->WindowTempData.Monitor = NULL;
+		this->WindowTempData.Window = NULL;
+		this->ReturnWindow = NULL;
+
+
 		bool isGLSLANGReady				= false;
 		bool isGLFWReady				= false;
 		bool isVulkanReady				= false;
@@ -748,12 +757,12 @@ namespace geodesuka {
 
 		double t1, t2;
 		double wt, ht;
-		double t, dt;
+		double /*t,*/ dt;
 		double ts = 0.01;
 		dt = 0.0;
 
 		// Used for scheduling compute operations dependent on transfer operations.
-		uint32_t WaitSemaphoreCount;
+		uint32_t WaitSemaphoreCount = 0;
 		VkSemaphore* WaitSemaphore = NULL;
 		VkPipelineStageFlags* WaitSemaphoreStage = NULL;
 
