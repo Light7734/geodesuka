@@ -27,6 +27,7 @@ namespace geodesuka::core::gcl {
 		this->QFI[1] = this->Device->qfi(device::qfs::COMPUTE);
 		this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS);
 		this->QFI[3] = this->Device->qfi(device::qfs::PRESENT);
+		//this->QFI[4] = this->Device->qfi(device::qfs::GRAPHICS_AND_COMPUTE);
 
 		// Register this with context.h
 		this->Support = 0;
@@ -242,11 +243,12 @@ namespace geodesuka::core::gcl {
 
 	int context::qfi(device::qfs aQFS) {
 		switch (aQFS) {			
-		default						: return -1;
-		case device::qfs::TRANSFER	: return this->QFI[0];
-		case device::qfs::COMPUTE	: return this->QFI[1];
-		case device::qfs::GRAPHICS	: return this->QFI[2];
-		case device::qfs::PRESENT	: return this->QFI[3];
+		default									: return -1;
+		case device::qfs::TRANSFER				: return this->QFI[0];
+		case device::qfs::COMPUTE				: return this->QFI[1];
+		case device::qfs::GRAPHICS				: return this->QFI[2];
+		//case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[3];
+		case device::qfs::PRESENT				: return this->QFI[3];
 		}
 		return 0;
 	}

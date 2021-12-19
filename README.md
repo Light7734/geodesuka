@@ -5,11 +5,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/11/20
+Branch Birth Date: 2021/12/17
 
-Branch Pull Date: 2021/12/17
+Branch Pull Date: ????/??/??
 
-Version: 0.0.17
+Version: 0.0.18
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
@@ -89,6 +89,12 @@ macro def collision and interference.
 - Added timer class.
 
 # To Do List:
+
+- context.h will support TRANSFER, GRAPHICS_AND_COMPUTE, and PRESENT operation
+queues. Graphics and Compute will be treated as the same operation, which is
+computational work being performed on the GPU.
+
+- math.h will be re worked to include fields.
 
 - Create System Terminal Class for engine debug commands in engine backend.
 

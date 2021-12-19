@@ -176,8 +176,8 @@ namespace geodesuka {
 			~workload();
 		};
 
-		const version			Version = { 0, 0, 17 };
-		const int				Date = 20211120;
+		const version			Version = { 0, 0, 18 };
+		const int				Date = 20211217;
 
 		std::mutex				Mutex;
 
