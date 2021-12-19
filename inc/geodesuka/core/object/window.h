@@ -95,9 +95,9 @@ namespace geodesuka::core::object {
 		//virtual void draw(object_t* aObject) = 0;
 
 		virtual void set_title(util::str aTitle);
-		virtual void set_size(math::real2 aSize);
-		virtual void set_resolution(math::natural2 aResolution);
-		virtual math::boolean should_close();
+		virtual void set_size(float2 aSize);
+		virtual void set_resolution(uint2 aResolution);
+		virtual bool should_close();
 
 		// Will forward input stream to target object. Can be set to null if
 		// no forwarding is chosen.
@@ -106,7 +106,7 @@ namespace geodesuka::core::object {
 	protected:
 
 		util::str Title;
-		math::real2 Size;				// [m]
+		float2 Size;				// [m]
 		struct prop Property;
 
 		window(engine *aEngine, gcl::context* aContext);

@@ -23,8 +23,8 @@ namespace geodesuka::builtin::object {
 
 
 		util::variable Variable(util::type::id::STRUCT, "Vertex");
-		Variable.Type.push(util::type::id::REAL2, "Position");
-		Variable.Type.push(util::type::id::REAL3, "Color");
+		Variable.Type.push(util::type::id::FLOAT2, "Position");
+		Variable.Type.push(util::type::id::FLOAT3, "Color");
 		//Variable.Type.push(util::type::id::REAL3, "Color");
 
 		buffer* VertexBuffer = new buffer(

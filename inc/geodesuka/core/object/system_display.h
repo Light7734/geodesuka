@@ -30,8 +30,8 @@ namespace geodesuka::core::object {
 
 	private:
 
-		math::integer2 PositionSC;
-		//math::integer2 SizeSC;
+		int2 PositionSC;
+		//int2 SizeSC;
 
 	};
 

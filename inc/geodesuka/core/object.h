@@ -92,16 +92,16 @@ namespace geodesuka::core {
 		
 		virtual ~object_t() /*= default*/;
 
-		virtual void set_position(math::real3 aPosition);
-		math::real3 get_position() const;
+		virtual void set_position(float3 aPosition);
+		float3 get_position() const;
 
 	protected:
 
 		engine* Engine;
 		gcl::context* Context;
 
-		math::real3 InputVelocity;
-		math::real3 InputForce;
+		float3 InputVelocity;
+		float3 InputForce;
 
 		/*
 		* Do not forget, position is in reference to a particular space
@@ -109,14 +109,14 @@ namespace geodesuka::core {
 		* interpret and use an objects position.
 		*/
 
-		math::real Mass;			// Kilogram		[kg]
-		math::real Time;			// Second 		[s]
-		math::real3 Position;		// Meter		[m]
-		math::real3 Momentum;		//				[kg*m/s]
-		math::real3 Force;			// Newton		[kg*m^2/s^2]
-		math::real3 DirectionX;		// Right		[Normalized]
-		math::real3 DirectionY;		// Up			[Normalized]
-		math::real3 DirectionZ;		// Forward		[Normalized]
+		float Mass;				// Kilogram		[kg]
+		float Time;				// Second 		[s]
+		float3 Position;		// Meter		[m]
+		float3 Momentum;		//				[kg*m/s]
+		float3 Force;			// Newton		[kg*m^2/s^2]
+		float3 DirectionX;		// Right		[Normalized]
+		float3 DirectionY;		// Up			[Normalized]
+		float3 DirectionZ;		// Forward		[Normalized]
 
 		//integer WorldID;				// Which world is this object in?
 		//integer LevelID;				// Which Level is this object in?

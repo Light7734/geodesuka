@@ -39,16 +39,16 @@ namespace geodesuka::core::object {
 
 	}
 
-	void window::set_size(math::real2 aSize) {
+	void window::set_size(float2 aSize) {
 		this->Size = aSize;
 	}
 
-	void window::set_resolution(math::natural2 aResolution) {
+	void window::set_resolution(uint2 aResolution) {
 		this->Resolution = aResolution;
 
 	}
 
-	math::boolean window::should_close() {
+	bool window::should_close() {
 		return false;
 	}
 
@@ -56,7 +56,7 @@ namespace geodesuka::core::object {
 		// Perhaps setup backend frame.
 		this->Title = "";
 		//this->Resolution = math::natural2(0.0, 0.0);
-		this->Size = math::real2(0.0, 0.0);
+		this->Size = float2(0.0, 0.0);
 		this->Property = prop();
 
 		//std::cout << "Window Created" << std::endl;

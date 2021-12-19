@@ -68,9 +68,9 @@ namespace geodesuka::core::object {
 
 		~system_window();
 
-		virtual void set_position(math::real3 aPosition) override;
-		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
-		virtual void set_resolution(math::natural2 aResolution) override;
+		virtual void set_position(float3 aPosition) override;
+		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
+		virtual void set_resolution(uint2 aResolution) override;
 
 	protected:
 		// Only accessible to engine backend.
@@ -94,14 +94,14 @@ namespace geodesuka::core::object {
 		gcl::swapchain* Swapchain;
 
 
-		math::integer2 PositionSC;
+		int2 PositionSC;
 		//math::integer2 SizeSC;
 
 
 
 		// Internal Utils, Physical coordinates to Screen coordinates
-		math::integer2 phys2scrn(math::real2 R);
-		math::real2 scrn2phys(math::integer2 R);
+		int2 phys2scrn(float2 R);
+		float2 scrn2phys(int2 R);
 
 		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 

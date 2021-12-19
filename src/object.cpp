@@ -7,9 +7,9 @@ namespace geodesuka::core {
 		this->Engine->remove(this);
 	}
 
-	void object_t::set_position(math::real3 aPosition) {}
+	void object_t::set_position(float3 aPosition) {}
 
-	math::real3 object_t::get_position() const {
+	float3 object_t::get_position() const {
 		return this->Position;
 	}
 
@@ -19,17 +19,17 @@ namespace geodesuka::core {
 		this->Engine = aEngine;
 		this->Context = aContext;
 
-		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
-		this->InputForce	= math::real3(0.0, 0.0, 0.0);
+		this->InputVelocity = float3(0.0, 0.0, 0.0);
+		this->InputForce	= float3(0.0, 0.0, 0.0);
 
 		this->Mass			= 1.0;
 		this->Time			= core::logic::get_time();
-		this->Position		= math::real3(0.0, 0.0, 0.0);
-		this->Momentum		= math::real3(0.0, 0.0, 0.0);
-		this->Force			= math::real3(0.0, 0.0, 0.0);
-		this->DirectionX	= math::real3(1.0, 0.0, 0.0);
-		this->DirectionY	= math::real3(0.0, 1.0, 0.0);
-		this->DirectionZ	= math::real3(0.0, 0.0, 1.0);
+		this->Position		= float3(0.0, 0.0, 0.0);
+		this->Momentum		= float3(0.0, 0.0, 0.0);
+		this->Force			= float3(0.0, 0.0, 0.0);
+		this->DirectionX	= float3(1.0, 0.0, 0.0);
+		this->DirectionY	= float3(0.0, 1.0, 0.0);
+		this->DirectionZ	= float3(0.0, 0.0, 1.0);
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {

@@ -33,21 +33,21 @@ namespace geodesuka::core::hid {
 		};
 
 		// Mouse Input
-		math::integer Action[8];
-		math::integer Modifier[8];
-		math::real2 Scroll;
+		int Action[8];
+		int Modifier[8];
+		float2 Scroll;
 
 		// Cursor Variables
-		math::integer Mode;
-		math::boolean InWindow;
-		math::real2 Position;
-		math::real2 Velocity;
-		math::real2 Acceleration;
+		int Mode;
+		bool InWindow;
+		float2 Position;
+		float2 Velocity;
+		float2 Acceleration;
 
 		mouse();
 		~mouse();
 
-		math::boolean operator[](math::integer buttonID);
+		bool operator[](int buttonID);
 
 	};
 

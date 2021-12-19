@@ -63,7 +63,7 @@ namespace geodesuka::core::object {
 			int Count;
 			double Rate;
 			logic::timer Timer;
-			math::natural2 Resolution;
+			uint2 Resolution;
 			int AttachmentCount;
 			VkAttachmentDescription* AttachmentDescription;
 			VkImageView** Attachment;
@@ -85,7 +85,7 @@ namespace geodesuka::core::object {
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
 		double FrameRate;				// The rate at which the frames will be cycled through by the engine per second.
 		logic::timer FPSTimer;
-		math::natural2 Resolution;		// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
+		uint2 Resolution;				// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.

@@ -36,7 +36,7 @@ C26451
 #include <atomic>
 
 // ------------------------- Mathematics Library ------------------------- //
-#include "core/math.h"
+//#include "core/math.h"
 
 // ------------------------- Utility Classes ------------------------- //
 // Simple replacement for std::string, extended functionality.

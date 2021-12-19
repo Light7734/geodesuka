@@ -226,7 +226,7 @@ namespace geodesuka::core {
 				// Get all render operations.
 				RenderOperations;
 
-				this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
+				//this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
 			}
 		}
 		this->Mutex.unlock();

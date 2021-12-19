@@ -4,9 +4,9 @@
 
 #include "config.h"
 
-#include "vector/ubyte2.h"
-#include "vector/ubyte3.h"
-#include "vector/ubyte4.h"
+#include "vector/uchar2.h"
+#include "vector/uchar3.h"
+#include "vector/uchar4.h"
 
 #include "vector/ushort2.h"
 #include "vector/ushort3.h"
@@ -16,9 +16,9 @@
 #include "vector/uint3.h"
 #include "vector/uint4.h"
 
-#include "vector/byte2.h"
-#include "vector/byte3.h"
-#include "vector/byte4.h"
+#include "vector/char2.h"
+#include "vector/char3.h"
+#include "vector/char4.h"
 
 #include "vector/short2.h"
 #include "vector/short3.h"

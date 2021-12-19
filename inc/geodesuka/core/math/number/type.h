@@ -2,12 +2,12 @@
 #ifndef GEODESUKA_CORE_MATH_NUMBER_TYPE_H
 #define GEODESUKA_CORE_MATH_NUMBER_TYPE_H
 
-typedef unsigned char uchar, ubyte;
+typedef unsigned char uchar/*, ubyte*/;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 //typedef unsigned long ulong;
 
-typedef char byte;
+//typedef char byte;
 
 //typedef ushort half;
 //typedef float;
