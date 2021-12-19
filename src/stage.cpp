@@ -72,7 +72,7 @@ namespace geodesuka::core {
 	}
 
 	VkSubmitInfo& stage_t::batch::operator[](int aIndex) {
-		this->Submission[aIndex];
+		return this->Submission[aIndex];
 	}
 
 	stage_t::batch& stage_t::batch::operator=(batch& aRhs) {
