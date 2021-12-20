@@ -11,19 +11,19 @@ short3& short3::operator=(short aRhs) {
 	return *this;
 }
 
-short3& short3::operator=(const short3& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
-
-short3& short3::operator=(short3&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
+//short3& short3::operator=(const short3& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
+//
+//short3& short3::operator=(short3&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
 
 short short3::operator[](int aIndex) const {
 	return this->ptr[aIndex];

@@ -21,8 +21,8 @@ union short3 {
 
 	// Vector Space Stuff.
 	short3& operator=(short aRhs);
-	short3& operator=(const short3& aRhs);
-	short3& operator=(short3&& aRhs) noexcept;
+	//short3& operator=(const short3& aRhs);
+	//short3& operator=(short3&& aRhs) noexcept;
 
 	// Access
 	short operator[](int aIndex) const;

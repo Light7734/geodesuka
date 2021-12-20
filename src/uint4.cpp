@@ -14,21 +14,21 @@ uint4& uint4::operator=(uint aRhs) {
 	return *this;
 }
 
-uint4& uint4::operator=(const uint4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-uint4& uint4::operator=(uint4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//uint4& uint4::operator=(const uint4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//uint4& uint4::operator=(uint4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 uint uint4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

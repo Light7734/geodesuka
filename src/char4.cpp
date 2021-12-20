@@ -14,21 +14,21 @@ char4& char4::operator=(char aRhs) {
 	return *this;
 }
 
-char4& char4::operator=(const char4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-char4& char4::operator=(char4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//char4& char4::operator=(const char4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//char4& char4::operator=(char4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 char char4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

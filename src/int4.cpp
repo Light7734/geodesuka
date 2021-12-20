@@ -12,21 +12,21 @@ int4& int4::operator=(int aRhs) {
 	return *this;
 }
 
-int4& int4::operator=(const int4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-int4& int4::operator=(int4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//int4& int4::operator=(const int4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//int4& int4::operator=(int4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 int int4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

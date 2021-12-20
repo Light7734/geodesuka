@@ -21,8 +21,9 @@ union int2 {
 
 	// Vector Space Stuff.
 	int2& operator=(int aRhs);
-	int2& operator=(const int2& aRhs);
-	int2& operator=(int2&& aRhs) noexcept;
+	//int2& operator=(int2 aRhs);
+	//int2& operator=(const int2& aRhs);
+	//int2& operator=(int2&& aRhs) noexcept;
 
 	// Access
 	int operator[](int aIndex) const;

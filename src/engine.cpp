@@ -28,7 +28,7 @@
 
 
 namespace geodesuka {
-
+	
 	using namespace core;
 	using namespace gcl;
 	using namespace object;

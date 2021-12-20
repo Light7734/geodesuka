@@ -13,17 +13,17 @@ ushort2& ushort2::operator=(ushort aRhs) {
 	return *this;
 }
 
-ushort2& ushort2::operator=(const ushort2& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
-
-ushort2& ushort2::operator=(ushort2&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
+//ushort2& ushort2::operator=(const ushort2& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
+//
+//ushort2& ushort2::operator=(ushort2&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
 
 ushort ushort2::operator[](int aIndex) const {
 	return this->ptr[aIndex];

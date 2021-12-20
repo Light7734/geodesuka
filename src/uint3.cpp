@@ -11,19 +11,19 @@ uint3& uint3::operator=(uint aRhs) {
 	return *this;
 }
 
-uint3& uint3::operator=(const uint3& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
-
-uint3& uint3::operator=(uint3&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
+//uint3& uint3::operator=(const uint3& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
+//
+//uint3& uint3::operator=(uint3&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
 
 uint uint3::operator[](int aIndex) const {
 	return this->ptr[aIndex];

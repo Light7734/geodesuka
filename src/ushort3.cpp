@@ -11,19 +11,19 @@ ushort3& ushort3::operator=(ushort aRhs) {
 	return *this;
 }
 
-ushort3& ushort3::operator=(const ushort3& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
-
-ushort3& ushort3::operator=(ushort3&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
+//ushort3& ushort3::operator=(const ushort3& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
+//
+//ushort3& ushort3::operator=(ushort3&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
 
 ushort ushort3::operator[](int aIndex) const {
 	return this->ptr[aIndex];

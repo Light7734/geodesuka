@@ -14,21 +14,21 @@ short4& short4::operator=(short aRhs) {
 	return *this;
 }
 
-short4& short4::operator=(const short4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-short4& short4::operator=(short4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//short4& short4::operator=(const short4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//short4& short4::operator=(short4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 short short4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

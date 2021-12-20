@@ -21,8 +21,8 @@ union uint3 {
 	
 	// Vector Space Stuff.
 	uint3&	operator=(uint aRhs);
-	uint3&	operator=(const uint3& aRhs);
-	uint3&	operator=(uint3&& aRhs) noexcept;
+	//uint3&	operator=(const uint3& aRhs);
+	//uint3&	operator=(uint3&& aRhs) noexcept;
 
 	// Access
 	uint	operator[](int aIndex) const;

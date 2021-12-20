@@ -21,8 +21,8 @@ union ushort3 {
 	
 	// Vector Space Stuff.
 	ushort3& operator=(ushort aRhs);
-	ushort3& operator=(const ushort3& aRhs);
-	ushort3& operator=(ushort3&& aRhs) noexcept;
+	//ushort3& operator=(const ushort3& aRhs);
+	//ushort3& operator=(ushort3&& aRhs) noexcept;
 
 	// Access
 	ushort	operator[](int aIndex) const;

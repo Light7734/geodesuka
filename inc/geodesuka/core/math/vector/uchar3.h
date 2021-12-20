@@ -21,8 +21,8 @@ union uchar3 {
 
 	// Vector Space Stuff.
 	uchar3& operator=(uchar aRhs);
-	uchar3& operator=(const uchar3& aRhs);
-	uchar3& operator=(uchar3&& aRhs) noexcept;
+	//uchar3& operator=(const uchar3& aRhs);
+	//uchar3& operator=(uchar3&& aRhs) noexcept;
 
 	// Access
 	uchar	operator[](int aIndex) const;

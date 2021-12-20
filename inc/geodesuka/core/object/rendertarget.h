@@ -59,16 +59,6 @@ namespace geodesuka::core::object {
 		//friend class engine;
 		friend class stage_t;
 
-		class frame {
-			int Count;
-			double Rate;
-			logic::timer Timer;
-			uint2 Resolution;
-			int AttachmentCount;
-			VkAttachmentDescription* AttachmentDescription;
-			VkImageView** Attachment;
-		};
-
 		//VkPresentInfoKHR;
 		class presentation {
 

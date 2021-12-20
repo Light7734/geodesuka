@@ -25,6 +25,10 @@
 #include "gcl/device.h"
 #include "gcl/context.h"
 
+#include "graphics/mesh.h"
+#include "graphics/material.h"
+#include "graphics/model.h"
+
 #include "hid/keyboard.h"
 #include "hid/mouse.h"
 #include "hid/joystick.h"

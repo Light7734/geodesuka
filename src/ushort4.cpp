@@ -14,21 +14,21 @@ ushort4& ushort4::operator=(ushort aRhs) {
 	return *this;
 }
 
-ushort4& ushort4::operator=(const ushort4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-ushort4& ushort4::operator=(ushort4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//ushort4& ushort4::operator=(const ushort4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//ushort4& ushort4::operator=(ushort4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 ushort ushort4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

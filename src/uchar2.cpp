@@ -12,17 +12,17 @@ uchar2& uchar2::operator=(uchar aRhs) {
 	return *this;
 }
 
-uchar2& uchar2::operator=(const uchar2& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
-
-uchar2& uchar2::operator=(uchar2&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
+//uchar2& uchar2::operator=(const uchar2& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
+//
+//uchar2& uchar2::operator=(uchar2&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
 
 uchar uchar2::operator[](int aIndex) const {
 	return this->ptr[aIndex];

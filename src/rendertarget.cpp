@@ -12,8 +12,7 @@ namespace geodesuka::core::object {
 		this->FrameRate = 0.0;
 		this->FPSTimer.set(1.0 / this->FrameRate);
 		//this->Resolution = math::natural2(0, 0);
-		this->Resolution.x = 0;
-		this->Resolution.y = 0;
+		this->Resolution = uint2(0, 0);
 
 		this->FrameAttachmentCount = 0;
 		this->FrameAttachmentDescription = NULL;
@@ -30,6 +29,7 @@ namespace geodesuka::core::object {
 	}
 
 	void rendertarget::present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList) {
+
 	}
 
 }

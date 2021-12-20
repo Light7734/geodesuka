@@ -12,17 +12,17 @@ short2& short2::operator=(short aRhs) {
 	return *this;
 }
 
-short2& short2::operator=(const short2& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
-
-short2& short2::operator=(short2&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
+//short2& short2::operator=(const short2& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
+//
+//short2& short2::operator=(short2&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
 
 short short2::operator[](int aIndex) const {
 	return this->ptr[aIndex];

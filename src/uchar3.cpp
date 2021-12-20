@@ -11,19 +11,19 @@ uchar3& uchar3::operator=(uchar aRhs) {
 	return *this;
 }
 
-uchar3& uchar3::operator=(const uchar3& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
-
-uchar3& uchar3::operator=(uchar3&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	return *this;
-}
+//uchar3& uchar3::operator=(const uchar3& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
+//
+//uchar3& uchar3::operator=(uchar3&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	return *this;
+//}
 
 uchar uchar3::operator[](int aIndex) const {
 	return this->ptr[aIndex];

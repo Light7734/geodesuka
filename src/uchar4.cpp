@@ -14,21 +14,21 @@ uchar4& uchar4::operator=(uchar aRhs) {
 	return *this;
 }
 
-uchar4& uchar4::operator=(const uchar4& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
-
-uchar4& uchar4::operator=(uchar4&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	this->z = aRhs.z;
-	this->t = aRhs.t;
-	return *this;
-}
+//uchar4& uchar4::operator=(const uchar4& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
+//
+//uchar4& uchar4::operator=(uchar4&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	this->z = aRhs.z;
+//	this->t = aRhs.t;
+//	return *this;
+//}
 
 uchar uchar4::operator[](int aIndex) const {
 	return this->ptr[aIndex];

@@ -14,17 +14,17 @@ int2& int2::operator=(int aRhs) {
 	return *this;
 }
 
-int2& int2::operator=(const int2& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
-
-int2& int2::operator=(int2&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
+//int2& int2::operator=(const int2& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
+//
+//int2& int2::operator=(int2&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
 
 int int2::operator[](int aIndex) const {
 	return this->ptr[aIndex];

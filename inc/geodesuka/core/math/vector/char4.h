@@ -21,8 +21,8 @@ union char4 {
 
 	// Vector Space Stuff.
 	char4& operator=(char aRhs);
-	char4& operator=(const char4& aRhs);
-	char4& operator=(char4&& aRhs) noexcept;
+	//char4& operator=(const char4& aRhs);
+	//char4& operator=(char4&& aRhs) noexcept;
 
 	// Access
 	char operator[](int aIndex) const;

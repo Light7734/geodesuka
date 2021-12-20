@@ -12,17 +12,17 @@ uint2& uint2::operator=(uint aRhs) {
 	return *this;
 }
 
-uint2& uint2::operator=(const uint2& aRhs) {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
-
-uint2& uint2::operator=(uint2&& aRhs) noexcept {
-	this->x = aRhs.x;
-	this->y = aRhs.y;
-	return *this;
-}
+//uint2& uint2::operator=(const uint2& aRhs) {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
+//
+//uint2& uint2::operator=(uint2&& aRhs) noexcept {
+//	this->x = aRhs.x;
+//	this->y = aRhs.y;
+//	return *this;
+//}
 
 uint uint2::operator[](int aIndex) const {
 	return this->ptr[aIndex];
