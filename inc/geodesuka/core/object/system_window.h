@@ -71,6 +71,10 @@ namespace geodesuka::core::object {
 		~system_window();
 
 		virtual int rtid() override;
+		virtual VkSemaphore next_frame() override;
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
+		
+
 
 		virtual void set_position(float3 aPosition) override;
 		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
@@ -83,7 +87,6 @@ namespace geodesuka::core::object {
 
 		virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
 
-		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 		virtual void swap() override;
 

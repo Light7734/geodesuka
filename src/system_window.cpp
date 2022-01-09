@@ -162,6 +162,38 @@ namespace geodesuka::core::object {
 		return RTID;
 	}
 
+	// Must return a semaphore for an image acquired.
+	VkSemaphore system_window::next_frame() {
+		VkSemaphore FrameAcquireSemaphore;
+		this->Mutex.lock();
+		// Uses a semaphore to schedule draw calls. Must be waited for to commence draw operations.
+		vkAcquireNextImageKHR(
+			this->Context->handle(), 
+			this->Swapchain->handle(), 
+			UINT64_MAX, 
+			FrameAcquireSemaphore,
+			VK_NULL_HANDLE, 
+			&this->FrameDrawIndex
+		);
+		this->Mutex.unlock();
+		// Return semaphore to be used in 
+		return FrameAcquireSemaphore;
+	}
+
+	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext					= NULL;
+		DrawBatch.waitSemaphoreCount	= 0;
+		DrawBatch.pWaitSemaphores		= NULL;
+		DrawBatch.pWaitDstStageMask		= NULL;
+		DrawBatch.commandBufferCount	= 0;
+		DrawBatch.pCommandBuffers		= NULL;
+		DrawBatch.signalSemaphoreCount	= 0;
+		DrawBatch.pSignalSemaphores		= NULL;
+		return DrawBatch;
+	}
+
 	VkSubmitInfo system_window::update(double aDeltaTime) {
 		VkSubmitInfo TransferBatch{};
 		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -196,20 +228,6 @@ namespace geodesuka::core::object {
 	//	if ((object_t*)this == aObject) return;
 	//	aObject->draw(this);
 	//}
-
-	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
-		VkSubmitInfo DrawBatch{};
-		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		DrawBatch.pNext					= NULL;
-		DrawBatch.waitSemaphoreCount	= 0;
-		DrawBatch.pWaitSemaphores		= NULL;
-		DrawBatch.pWaitDstStageMask		= NULL;
-		DrawBatch.commandBufferCount	= 0;
-		DrawBatch.pCommandBuffers		= NULL;
-		DrawBatch.signalSemaphoreCount	= 0;
-		DrawBatch.pSignalSemaphores		= NULL;
-		return DrawBatch;
-	}
 
 	void system_window::swap() {
 		if (this->FPSTimer.check()) {

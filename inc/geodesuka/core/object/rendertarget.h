@@ -103,7 +103,7 @@ namespace geodesuka::core::object {
 		// for aggregation and eventual execution by the geodesuka engine.
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) = 0;
 
-		// This will present
+		// This will present VKPresentInfoKHR.
 		virtual void present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
 
 	protected:
