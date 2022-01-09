@@ -15,7 +15,7 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
-		static const int ID;
+		static const int RTID;
 
 		GLFWmonitor* Handle;
 
@@ -23,7 +23,7 @@ namespace geodesuka::core::object {
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
 
-		virtual int id() override;
+		virtual int rtid() override;
 
 
 	protected:

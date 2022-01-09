@@ -59,7 +59,7 @@ namespace geodesuka::core::object {
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
-		static const int ID;
+		static const int RTID;
 
 		gcl::texture* FrameTexture;
 
@@ -70,7 +70,7 @@ namespace geodesuka::core::object {
 
 		~system_window();
 
-		virtual int id() override;
+		virtual int rtid() override;
 
 		virtual void set_position(float3 aPosition) override;
 		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.

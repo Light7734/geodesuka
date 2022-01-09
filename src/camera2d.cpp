@@ -2,7 +2,7 @@
 
 namespace geodesuka::core::object {
 
-    const int camera2d::ID = 4;
+    const int camera2d::RTID = 4;
 
     camera2d::camera2d(engine* aEngine, gcl::context* aContext) : camera(aEngine, aContext) {
 
@@ -12,8 +12,8 @@ namespace geodesuka::core::object {
 
     }
 
-    int camera2d::id() {
-        return ID;
+    int camera2d::rtid() {
+        return RTID;
     }
 
     VkSubmitInfo camera2d::draw(size_t aObjectCount, object_t** aObject) {

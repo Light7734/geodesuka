@@ -30,10 +30,10 @@ namespace geodesuka::core::object {
 	//
 	//}
 
-	const int camera3d::ID = 5;
+	const int camera3d::RTID = 5;
 
-	int camera3d::id() {
-		return ID;
+	int camera3d::rtid() {
+		return RTID;
 	}
 
 	VkSubmitInfo camera3d::draw(size_t aObjectCount, object_t** aObject) {

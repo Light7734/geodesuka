@@ -91,7 +91,7 @@ namespace geodesuka::core::object {
 		~rendertarget();
 
 		// Used for runtime rendertarget discrimination.
-		virtual int id() = 0;
+		virtual int rtid() = 0;
 
 		// Will acquire next frame index, if semephore is not VK_NULL_HANDLE, 
 		// use as wait semaphore for render operations.

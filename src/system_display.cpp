@@ -6,7 +6,7 @@
 
 namespace geodesuka::core::object {
 
-	const int system_display::ID = 1;
+	const int system_display::RTID = 1;
 
 	system_display::system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext) {
 		this->Property = window::prop();
@@ -35,8 +35,8 @@ namespace geodesuka::core::object {
 
 	}
 
-	int system_display::id() {
-		return ID;
+	int system_display::rtid() {
+		return RTID;
 	}
 
 	VkSubmitInfo system_display::draw(size_t aObjectCount, object_t** aObject) {
