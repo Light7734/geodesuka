@@ -2,12 +2,18 @@
 
 namespace geodesuka::core::object {
 
+    const int camera2d::ID = 4;
+
     camera2d::camera2d(engine* aEngine, gcl::context* aContext) : camera(aEngine, aContext) {
 
     }
 
     camera2d::~camera2d() {
 
+    }
+
+    int camera2d::id() {
+        return ID;
     }
 
     VkSubmitInfo camera2d::draw(size_t aObjectCount, object_t** aObject) {

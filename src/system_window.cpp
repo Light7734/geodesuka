@@ -9,6 +9,8 @@ namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+	const int system_window::ID = 2;
+
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 
 		this->Display = aSystemDisplay;
@@ -154,6 +156,10 @@ namespace geodesuka::core::object {
 			this->Handle = NULL;
 		}
 
+	}
+
+	int system_window::id() {
+		return ID;
 	}
 
 	VkSubmitInfo system_window::update(double aDeltaTime) {

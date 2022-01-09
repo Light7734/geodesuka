@@ -13,10 +13,12 @@ namespace geodesuka::core::object {
 	class camera2d : public camera {
 	public:
 
+		static const int ID;
 
 		camera2d(engine *aEngine, gcl::context *aContext);
 		~camera2d();
 
+		virtual int id() override;
 
 	protected:
 

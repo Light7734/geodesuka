@@ -15,11 +15,15 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
+		static const int ID;
+
 		GLFWmonitor* Handle;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
+
+		virtual int id() override;
 
 
 	protected:

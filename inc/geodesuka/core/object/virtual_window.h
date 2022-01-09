@@ -18,6 +18,8 @@ namespace geodesuka::core::object {
 	class virtual_window : public window {
 	public:
 
+		static const int ID;
+		virtual int id() override;
 
 	protected:
 
