@@ -66,6 +66,8 @@ namespace geodesuka::core::gcl {
 		// Will copy data from left to right.
 		VkCommandBuffer operator>>(texture& aRhs);
 
+		// Use Command Buffers to update. vkCmdUpdateBuffer() 64kB limit.
+		// Has to be host memory to be used.
 		void write(size_t aMemOffset, size_t aMemSize, void* aData);
 		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
 		void read(size_t aMemOffset, size_t aMemSize, void* aData);

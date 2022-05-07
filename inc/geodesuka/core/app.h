@@ -18,7 +18,6 @@ namespace geodesuka::core {
 
 		virtual void gameloop() = 0;
 
-
 	protected:
 
 		engine* Engine;

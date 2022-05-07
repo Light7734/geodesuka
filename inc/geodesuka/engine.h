@@ -18,6 +18,9 @@ Disabled Warnings:
 C4244
 C6386
 C26451
+
+Include: $(ProjectDir)..\glslang
+
 */
 
 // Disables Terminal Window, for windows only
@@ -136,6 +139,7 @@ namespace geodesuka {
 		void close(core::io::file* aFile);
 
 		core::gcl::device** get_device_list(int* aListSize);
+		//core::gcl::device* get_primary_device();
 		core::object::system_display** get_display_list(int* aListSize);
 		core::object::system_display* get_primary_display();
 

@@ -913,68 +913,15 @@ namespace geodesuka {
 				}
 			}
 
-			//// Check if workload detected. If not, start over.
-			//bool NoWorkloadDetected = true;
-			//for (int i = 0; i < this->ContextCount; i++) {
-			//	NoWorkloadDetected &= (this->Workload[i]->Graphics.FwdBatch.count() == 0);
-			//}
+			// Get Render Operations from Stages
+			for (int i = 0; i < this->ContextCount; i++) {
 
-			//// No workload detected, start over.
-			//if (NoWorkloadDetected) {
-			//	waitfor(0.005); // Wait for 5 miliseconds.
-			//	continue;
-			//}
 
-			//// Prepare new batches for execution.
-			//for (int i = 0; i < this->ContextCount; i++) {
-			//	this->Workload[i]->Graphics.Mutex.lock();
-			//	if (this->Workload[i]->Graphics.inFlight.load()) {
-			//		// If workload is in flight and currently being executed, wait for batch to complete.
-			//		Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence, VK_TRUE, UINT64_MAX);
-			//		// Reset fence if execution is finished.
-			//		Result = vkResetFences(this->Context[i]->handle(), 1, &this->Workload[i]->Graphics.Fence);
-			//		// No longer in flight.
-			//		this->Workload[i]->Graphics.inFlight.store(false);
-			//	}
-			//	this->Workload[i]->Graphics.Batch = this->Workload[i]->Graphics.FwdBatch;
-			//	this->Workload[i]->Graphics.FwdBatch.clear();
-			//	this->Workload[i]->Graphics.Mutex.unlock();
-			//}
+				//this->Context[i]->submit();
+				
+				//this->Context[i]->present();
+			}
 
-			//// Swap previously drawn frames
-			//for (int i = 0; i < this->StageCount; i++) {
-			//	//this->Stage[i]->present();
-			//}
-
-			//// Submit all render operations.
-			//for (int i = 0; i < this->ContextCount; i++) {
-			//	this->Workload[i]->Transfer.Mutex.lock();
-			//	this->Workload[i]->Compute.Mutex.lock();
-			//	this->Workload[i]->Graphics.Mutex.lock();
-			//	if (this->Workload[i]->Graphics.Batch.count() > 0) {
-
-			//		// Wait for transfer fences to be signalled before submission.
-			//		if (this->Workload[i]->Transfer.inFlight.load()) {
-			//			Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Transfer.Fence, VK_TRUE, UINT64_MAX);
-			//		}
-
-			//		// Wait for compute fences to be signalled before submission.
-			//		if (this->Workload[i]->Compute.inFlight.load()) {
-			//			Result = vkWaitForFences(this->Context[i]->handle(), 1, &this->Workload[i]->Compute.Fence, VK_TRUE, UINT64_MAX);
-			//		}
-
-			//		this->Workload[i]->Graphics.inFlight.store(true);
-			//		this->Context[i]->submit(
-			//			device::qfs::GRAPHICS,
-			//			this->Workload[i]->Graphics.Batch.count(),
-			//			this->Workload[i]->Graphics.Batch.ptr(),
-			//			this->Workload[i]->Graphics.Fence
-			//		);
-			//	}
-			//	this->Workload[i]->Graphics.Mutex.unlock();
-			//	this->Workload[i]->Compute.Mutex.unlock();
-			//	this->Workload[i]->Transfer.Mutex.unlock();
-			//}
 
 		}
 	}

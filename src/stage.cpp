@@ -219,9 +219,29 @@ namespace geodesuka::core {
 			if (this->RenderTarget[i]->FPSTimer.check()) {
 				// Reset timer loop.
 				this->RenderTarget[i]->FPSTimer.reset();
+				/*
 				
+				vkAcquireNextImageKHR();
+				VkResult vkAcquireNextImageKHR(
+					VkDevice                                    device,
+					VkSwapchainKHR                              swapchain,
+					uint64_t                                    timeout,
+					VkSemaphore                                 semaphore,
+					VkFence                                     fence,
+					uint32_t*                                   pImageIndex);
+
+				// Use semaphore to wait for next image before render operations.
+				vkQueueSubmit(Graphics & Compute Operations);
+
+				// Wait for G&C Ops to complete (Semaphore)
+				vkQueuePresentKHR(Present Newly rendered frame);
+
+				*/
+
 				// Get Next Frame (system_window will get new image).
 				this->RenderTarget[i]->next_frame();
+
+				VkSubmitInfo Submission = this->RenderTarget[i]->draw(this->ObjectCount, this->Object);
 
 				// Get all render operations.
 				RenderOperations;

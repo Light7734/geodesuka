@@ -96,7 +96,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -159,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_GLFW_USE_CONFIG_H;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc;$(ProjectDir)..\glslang</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(INTELOCLSDKROOT)include;$(VK_SDK_PATH)\Include;$(ProjectDir)inc;$(ProjectDir)..\glfw\inc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <DisableSpecificWarnings>4146;4244;6386;26451;26812;4703;6011;6385;%(DisableSpecificWarnings)</DisableSpecificWarnings>
