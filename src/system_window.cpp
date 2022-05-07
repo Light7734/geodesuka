@@ -164,17 +164,17 @@ namespace geodesuka::core::object {
 
 	// Must return a semaphore for an image acquired.
 	VkSemaphore system_window::next_frame() {
-		VkSemaphore FrameAcquireSemaphore;
+		VkSemaphore FrameAcquireSemaphore = VK_NULL_HANDLE;
 		this->Mutex.lock();
 		// Uses a semaphore to schedule draw calls. Must be waited for to commence draw operations.
-		vkAcquireNextImageKHR(
-			this->Context->handle(), 
-			this->Swapchain->handle(), 
-			UINT64_MAX, 
-			FrameAcquireSemaphore,
-			VK_NULL_HANDLE, 
-			&this->FrameDrawIndex
-		);
+		//vkAcquireNextImageKHR(
+		//	this->Context->handle(), 
+		//	this->Swapchain->handle(), 
+		//	UINT64_MAX, 
+		//	FrameAcquireSemaphore,
+		//	VK_NULL_HANDLE, 
+		//	&this->FrameDrawIndex
+		//);
 		this->Mutex.unlock();
 		// Return semaphore to be used in 
 		return FrameAcquireSemaphore;
