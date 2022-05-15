@@ -18,19 +18,26 @@ namespace geodesuka::core::object {
 		static const int RTID;
 
 		GLFWmonitor* Handle;
+		//VkDisplayKHR Handle;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
 
+		// ----- object_t ----- //
+
+		// ----- rendertarget ----- //
+
 		virtual int rtid() override;
+
+		// ----- window ----- //
+
+		// ----- system_display ----- //
 
 
 	protected:
 
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
-
-		virtual void swap() override;
 
 	private:
 

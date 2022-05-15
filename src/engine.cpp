@@ -57,6 +57,8 @@ namespace geodesuka {
 			}
 		}
 
+		vkGetPhysicalDeviceDisplayPropertiesKHR;
+
 		// Gathers current display setup
 		if (glfwGetPrimaryMonitor() != NULL) {
 			this->PrimaryDisplay = new system_display(aEngine, nullptr, glfwGetPrimaryMonitor());
@@ -71,6 +73,8 @@ namespace geodesuka {
 				}
 			}
 		}
+
+		// Associate devices with slave system_display. Can only be done with extension VK_KHR_display
 
 		// Construct Desktop Stages.
 		for (size_t i = 0; i < this->Display.size(); i++) {

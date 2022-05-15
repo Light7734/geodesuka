@@ -16,9 +16,9 @@ namespace geodesuka::core::gcl {
 		// Insures that object isn't accessed during construction.
 		this->isReady.store(false);
 		// Adds context to engine state. Cannot be accessed while not ready.
-		this->Engine->State.Mutex.lock();
-		this->Engine->State.Context.push_back(this);
-		this->Engine->State.Mutex.unlock();
+		//this->Engine->State.Mutex.lock();
+		//this->Engine->State.Context.push_back(this);
+		//this->Engine->State.Mutex.unlock();
 
 		// List of operations.
 		// Check for support of required extensions requested i

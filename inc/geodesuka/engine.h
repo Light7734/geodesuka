@@ -63,8 +63,8 @@ Include: $(ProjectDir)..\glslang
 #include "core/gcl.h"
 #include "core/gcl/device.h"
 #include "core/gcl/context.h"
-#include "core/gcl/command_list.h"
-//#include "core/gcl/command_pool.h"
+//#include "core/gcl/command_list.h"
+#include "core/gcl/command_pool.h"
 #include "core/gcl/command_batch.h"
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
@@ -163,11 +163,11 @@ namespace geodesuka {
 			core::gcl::context* Context;
 
 			// Update Thread Device Operations.
-			command_batch TransferOperations;
-			command_batch ComputeOperations;
+			core::gcl::command_batch TransferOperations;
+			core::gcl::command_batch ComputeOperations;
 
 			// Render Thread Device Operations.
-			command_batch GraphicsAndComputeOperations;
+			core::gcl::command_batch GraphicsAndComputeOperations;
 
 
 			workload(core::gcl::context* aContext);

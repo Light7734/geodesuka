@@ -46,15 +46,6 @@ namespace geodesuka::core {
 
 		stage_t(engine* aEngine, gcl::context* aContext);
 
-		// Will generate a batch of rendering commands per render target
-		// if the 
-		//virtual batch render() = 0;
-
-		void present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
-
-		void submit();
-		//void remove();
-
 	private:
 
 		virtual VkSubmitInfo update(double aDeltaTime);
@@ -62,7 +53,7 @@ namespace geodesuka::core {
 		virtual VkSubmitInfo compute();
 
 		// Will generate render operations per render target in scheduled manner.
-		void render();
+		virtual void render();
 
 	};
 

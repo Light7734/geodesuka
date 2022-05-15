@@ -4,6 +4,9 @@
 
 #include "../gcl.h"
 
+#include "../gcl/device.h"
+#include "../gcl/context.h"
+#include "../object/system_display.h"
 #include "../object/system_window.h"
 
 #include "../stage.h"
@@ -13,6 +16,8 @@ namespace geodesuka::core::stage {
 
 	class desktop : public stage_t {
 	public:
+
+		friend class engine;
 
 		~desktop();
 

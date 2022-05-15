@@ -26,10 +26,8 @@ namespace geodesuka::builtin::object {
 		//shader* VertexShader;
 		//shader* PixelShader;
 
-
-
-		cube(engine* aEngine, core::gcl::context* aContext);
-		~cube();
+		//cube(engine* aEngine, core::gcl::context* aContext, stage_t* aStage);
+		//~cube();
 
 		//virtual void input(const core::hid::keyboard& aKeyboard)					override;
 		//virtual void input(const core::hid::mouse& aMouse)							override;

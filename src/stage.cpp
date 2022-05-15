@@ -4,8 +4,6 @@
 namespace geodesuka::core {
 
 	stage_t::stage_t(engine* aEngine, gcl::context* aContext) {
-
-
 		this->Engine				= aEngine;
 		this->Context				= aContext;
 	}
@@ -29,7 +27,7 @@ namespace geodesuka::core {
 		TransferBatch.pSignalSemaphores		= NULL;
 		this->Mutex.lock();
 		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
-			this->RenderTarget[i]->FPSTimer.update(aDeltaTime);
+			this->RenderTarget[i]->FrameRateTimer.update(aDeltaTime);
 		}
 		this->Mutex.unlock();
         return TransferBatch;
@@ -50,61 +48,32 @@ namespace geodesuka::core {
         return ComputeBatch;
 	}
 
-	void stage_t::present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList) {
-		for (int i = 0; i < this->RenderTargetCount; i++) {
-			if (this->RenderTarget[i]->FPSTimer.check()) {
-				//this->RenderTarget[i]->swap();
-				this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
-				this->RenderTarget[i]->FPSTimer.reset();
-			}
-		}
-	}
-
-	void stage_t::submit() {
-		//this->Engine->submit(this);
-		this->Engine->submit(this);
-	}
-
-	stage_t::renderop stage_t::render() {
-		renderop RenderOperations;
+	void stage_t::render() {
+		gcl::command_batch Batch;
 		this->Mutex.lock();
-		for (int i = 0; i < this->RenderTargetCount; i++) {
-			// Check if render target is ready for new draw.
-			if (this->RenderTarget[i]->FPSTimer.check()) {
-				// Reset timer loop.
-				this->RenderTarget[i]->FPSTimer.reset();
-				/*
-				
-				vkAcquireNextImageKHR();
-				VkResult vkAcquireNextImageKHR(
-					VkDevice                                    device,
-					VkSwapchainKHR                              swapchain,
-					uint64_t                                    timeout,
-					VkSemaphore                                 semaphore,
-					VkFence                                     fence,
-					uint32_t*                                   pImageIndex);
+		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
+			// Check if time to perform render operations on render target.
+			if (this->RenderTarget[i]->FrameRateTimer.check()) {
+				// Reset ellapsed timer.
+				this->RenderTarget[i]->FrameRateTimer.reset();
 
-				// Use semaphore to wait for next image before render operations.
-				vkQueueSubmit(Graphics & Compute Operations);
+				// Two are only relevant to system_window
+				//vkAcquireNextImageKHR();
+				//vkQueueSubmit();
+				//vkQueuePresentKHR();
 
-				// Wait for G&C Ops to complete (Semaphore)
-				vkQueuePresentKHR(Present Newly rendered frame);
-
-				*/
-
-				// Get Next Frame (system_window will get new image).
+				// Acquire next available frame from target.
 				this->RenderTarget[i]->next_frame();
 
-				VkSubmitInfo Submission = this->RenderTarget[i]->draw(this->ObjectCount, this->Object);
+				// Use next_frame semaphore to pause render operations until
+				this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
 
-				// Get all render operations.
-				RenderOperations;
-
-				//this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
+				VkPresentInfoKHR;
+				// Use Submission Semaphore to hold present.
+				this->RenderTarget[i]->present_frame();
 			}
 		}
 		this->Mutex.unlock();
-		return RenderOperations;
 	}
 
 }

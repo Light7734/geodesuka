@@ -7,11 +7,15 @@ namespace geodesuka::core::object {
 
 	using namespace gcl;
 
-	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	const std::vector<const char*> system_window::RequiredContextExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	const int system_window::RTID = 2;
 
-	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
+	system_window::system_window(
+		engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay,
+		window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty,
+		int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext, aSystemDisplay->Stage)
+	{
 
 		this->Display = aSystemDisplay;
 		this->Property = aWindowProperty;
@@ -123,12 +127,9 @@ namespace geodesuka::core::object {
 		free(Image);
 		Image = NULL;
 
-		this->Engine->submit(this);
-
 	}
 
 	system_window::~system_window() {
-		this->Engine->remove(this);
 
 		// Clears swapchain images.
 		for (int i = 0; i < this->FrameCount; i++) {
@@ -156,110 +157,6 @@ namespace geodesuka::core::object {
 			this->Handle = NULL;
 		}
 
-	}
-
-	int system_window::rtid() {
-		return RTID;
-	}
-
-	// Must return a semaphore for an image acquired.
-	VkSemaphore system_window::next_frame() {
-		VkSemaphore FrameAcquireSemaphore = VK_NULL_HANDLE;
-		this->Mutex.lock();
-		// Uses a semaphore to schedule draw calls. Must be waited for to commence draw operations.
-		//vkAcquireNextImageKHR(
-		//	this->Context->handle(), 
-		//	this->Swapchain->handle(), 
-		//	UINT64_MAX, 
-		//	FrameAcquireSemaphore,
-		//	VK_NULL_HANDLE, 
-		//	&this->FrameDrawIndex
-		//);
-		this->Mutex.unlock();
-		// Return semaphore to be used in 
-		return FrameAcquireSemaphore;
-	}
-
-	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
-		VkSubmitInfo DrawBatch{};
-		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		DrawBatch.pNext					= NULL;
-		DrawBatch.waitSemaphoreCount	= 0;
-		DrawBatch.pWaitSemaphores		= NULL;
-		DrawBatch.pWaitDstStageMask		= NULL;
-		DrawBatch.commandBufferCount	= 0;
-		DrawBatch.pCommandBuffers		= NULL;
-		DrawBatch.signalSemaphoreCount	= 0;
-		DrawBatch.pSignalSemaphores		= NULL;
-		return DrawBatch;
-	}
-
-	VkSubmitInfo system_window::update(double aDeltaTime) {
-		VkSubmitInfo TransferBatch{};
-		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		TransferBatch.pNext					= NULL;
-		TransferBatch.waitSemaphoreCount	= 0;
-		TransferBatch.pWaitSemaphores		= NULL;
-		TransferBatch.pWaitDstStageMask		= NULL;
-		TransferBatch.commandBufferCount	= 0;
-		TransferBatch.pCommandBuffers		= NULL;
-		TransferBatch.signalSemaphoreCount	= 0;
-		TransferBatch.pSignalSemaphores		= NULL;
-		this->Mutex.lock();
-		this->Time += aDeltaTime;
-		this->Mutex.unlock();
-		return TransferBatch;
-	}
-
-	//VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
-	//	// This method is responsible for rendering window to display.
-	//	VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-	//	this->Mutex.lock();
-
-	//	if (this->Property.RefreshRate) {
-
-	//	}
-	//	this->Mutex.unlock();
-
-	//	return DrawCommand;
-	//}
-
-	//void system_window::draw(object_t* aObject) {
-	//	if ((object_t*)this == aObject) return;
-	//	aObject->draw(this);
-	//}
-
-	void system_window::swap() {
-		if (this->FPSTimer.check()) {
-			VkResult Result = VkResult::VK_SUCCESS;
-			uint32_t NextIndex = UINT32_MAX;
-			VkPresentInfoKHR Presentation;
-
-			Presentation.sType = VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-			Presentation.pNext = NULL;
-			Presentation.waitSemaphoreCount = 0;
-			Presentation.pWaitSemaphores = NULL;
-			Presentation.swapchainCount = 1;
-			Presentation.pSwapchains = &this->Swapchain->Handle;
-			Presentation.pImageIndices = &this->FrameDrawIndex;
-			Presentation.pResults = &Result;
-
-			// Present image to display.
-			this->Context->present(&Presentation);
-
-			// Acquire next image and wait for availability.
-			Result = vkAcquireNextImageKHR(
-				this->Context->handle(),
-				this->Swapchain->handle(),
-				UINT64_MAX,
-				VK_NULL_HANDLE,
-				VK_NULL_HANDLE,
-				&this->FrameDrawIndex
-			);
-
-			// Reset refresh update timer.
-			this->FPSTimer.reset();
-		}
 	}
 
 	void system_window::set_position(float3 aPosition) {
@@ -299,6 +196,85 @@ namespace geodesuka::core::object {
 		glfwSetWindowSize(this->Handle, aResolution.x, aResolution.y);
 		// TODO: make more efficient
 		this->set_position(this->Position);
+	}
+
+	int system_window::rtid() {
+		return RTID;
+	}
+
+	void system_window::next_frame() {
+		this->Mutex.lock();
+		// I hate this...
+		this->NextImageSemaphoreIndex = ((this->NextImageSemaphoreIndex == (this->FrameCount - 1)) ? 0 : (this->NextImageSemaphoreIndex + 1));
+		// This function is fucking retarded when it comes to semaphores. Because I cannot know that the next frame index is before setting a signal
+		// semaphore, I have iterate through an unmatched semaphore array to 
+		vkAcquireNextImageKHR(this->Context->handle(), this->Swapchain->handle(), UINT64_MAX, this->NextImageSemaphore[NextImageSemaphoreIndex], VK_NULL_HANDLE, &this->FrameDrawIndex);
+		this->Mutex.unlock();
+	}
+
+	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext					= NULL;
+		this->Mutex.lock();
+
+		void* nptr = NULL;
+		if (this->DrawCommandList[this->FrameDrawIndex] == NULL) {
+			nptr = malloc(aObjectCount * sizeof(VkCommandBuffer));
+		}
+		else if (this->DrawCommandCount[this->FrameDrawIndex] != aObjectCount) {
+			nptr = realloc(this->DrawCommandList[this->FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
+		}
+		
+		// Check if NULL.
+		if (nptr != this->DrawCommandList[this->FrameDrawIndex]) this->DrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
+
+		// Segfault anyways if mem alloc failure.
+		for (size_t i = 0; i < aObjectCount; i++) {
+			this->DrawCommandList[this->FrameDrawIndex][i] = aObject[i]->draw(this);
+		}
+
+		DrawBatch.waitSemaphoreCount	= 1;
+		DrawBatch.pWaitSemaphores		= &this->NextImageSemaphore[this->NextImageSemaphoreIndex];
+		DrawBatch.pWaitDstStageMask		= &this->PipelineStageFlags;
+		DrawBatch.commandBufferCount	= this->DrawCommandCount[this->FrameDrawIndex];
+		DrawBatch.pCommandBuffers		= this->DrawCommandList[this->FrameDrawIndex];
+		DrawBatch.signalSemaphoreCount	= 1;
+		DrawBatch.pSignalSemaphores		= &this->RenderOperationSemaphore[this->FrameDrawIndex];
+		this->Mutex.unlock();
+		return DrawBatch;
+	}
+
+	VkPresentInfoKHR system_window::present_frame() {
+		VkPresentInfoKHR PresentInfo{};
+		PresentInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		PresentInfo.pNext					= NULL;
+		this->Mutex.lock();
+		PresentInfo.waitSemaphoreCount		= 1;
+		PresentInfo.pWaitSemaphores			= &this->RenderOperationSemaphore[this->FrameDrawIndex];
+		PresentInfo.swapchainCount			= 1;
+		//PresentInfo.pSwapchains				= &this->Swapchain->handle();
+		PresentInfo.pImageIndices			= &this->FrameDrawIndex;
+		PresentInfo.pResults				= &this->PresentResult[this->FrameDrawIndex];
+		this->Mutex.unlock();
+		return PresentInfo;
+	}
+
+	VkSubmitInfo system_window::update(double aDeltaTime) {
+		VkSubmitInfo TransferBatch{};
+		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		TransferBatch.pNext					= NULL;
+		TransferBatch.waitSemaphoreCount	= 0;
+		TransferBatch.pWaitSemaphores		= NULL;
+		TransferBatch.pWaitDstStageMask		= NULL;
+		TransferBatch.commandBufferCount	= 0;
+		TransferBatch.pCommandBuffers		= NULL;
+		TransferBatch.signalSemaphoreCount	= 0;
+		TransferBatch.pSignalSemaphores		= NULL;
+		this->Mutex.lock();
+		this->Time += aDeltaTime;
+		this->Mutex.unlock();
+		return TransferBatch;
 	}
 
 	int2 system_window::phys2scrn(float2 R) {

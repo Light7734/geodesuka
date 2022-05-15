@@ -40,6 +40,11 @@ namespace geodesuka::core {
 		return this->Position;
 	}
 
+	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget) {
+		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		return DrawCommand;
+	}
+
 	void object_t::input(const hid::keyboard& aKeyboard) {
 
 	}
@@ -89,11 +94,6 @@ namespace geodesuka::core {
 		ComputeBatch.pSignalSemaphores		= NULL;
 
 		return ComputeBatch;
-	}
-
-	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget){
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		return DrawCommand;
 	}
 
 }

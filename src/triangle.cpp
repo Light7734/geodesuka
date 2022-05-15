@@ -11,7 +11,8 @@ using namespace util;
 
 namespace geodesuka::builtin::object {
 
-	triangle::triangle(engine* aEngine, core::gcl::context* aContext) : object_t(aEngine, aContext) {
+	/*
+	triangle::triangle(engine* aEngine, core::gcl::context* aContext, stage_t* aStage) : object_t(aEngine, aContext, aStage) {
 		return;
 
 		// Hard coded vertices
@@ -73,17 +74,17 @@ namespace geodesuka::builtin::object {
 		VkResult Result = VkResult::VK_SUCCESS;
 		VkAttachmentDescription AttachmentDescription[2] = { {}, {} };
 
-		// Subpass Description.
-		this->Subpass[0].flags						= 0;
-		this->Subpass[0].pipelineBindPoint			;
-		this->Subpass[0].inputAttachmentCount		;
-		this->Subpass[0].pInputAttachments			;
-		this->Subpass[0].colorAttachmentCount		;
-		this->Subpass[0].pColorAttachments			;
-		this->Subpass[0].pResolveAttachments		;
-		this->Subpass[0].pDepthStencilAttachment	;
-		this->Subpass[0].preserveAttachmentCount	;
-		this->Subpass[0].pPreserveAttachments		;
+		//// Subpass Description.
+		//this->Subpass[0].flags						= 0;
+		//this->Subpass[0].pipelineBindPoint			;
+		//this->Subpass[0].inputAttachmentCount		;
+		//this->Subpass[0].pInputAttachments			;
+		//this->Subpass[0].colorAttachmentCount		;
+		//this->Subpass[0].pColorAttachments			;
+		//this->Subpass[0].pResolveAttachments		;
+		//this->Subpass[0].pDepthStencilAttachment	;
+		//this->Subpass[0].preserveAttachmentCount	;
+		//this->Subpass[0].pPreserveAttachments		;
 
 		//AttachmentDescription[0].flags				= 0;
 		//AttachmentDescription[0].format				= VkFormat::VK_FORMAT_R8G8B8A8_SRGB;
@@ -313,63 +314,11 @@ namespace geodesuka::builtin::object {
 		//CreateInfo.basePipelineHandle		= VK_NULL_HANDLE;
 		//CreateInfo.basePipelineIndex		= 0;
 
-		// Submit to engine. Needed for update and render operations. 
-		this->submit();
 	}
 
 	triangle::~triangle() {
 
 	}
-
-	VkCommandBuffer triangle::draw(core::object::system_window* aTargetSystemWindow) {
-
-		// Draw Triangle to window.
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		VkResult Result = VkResult::VK_SUCCESS;
-		VkCommandBufferBeginInfo CommandBufferBeginInfo{};
-		VkRenderPassBeginInfo RenderPassBeginInfo{};
-
-		CommandBufferBeginInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		CommandBufferBeginInfo.pNext				= NULL;
-		CommandBufferBeginInfo.flags				= VkCommandBufferUsageFlagBits::VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-		CommandBufferBeginInfo.pInheritanceInfo		= NULL;
-
-		RenderPassBeginInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-		RenderPassBeginInfo.pNext				= NULL;
-		RenderPassBeginInfo.renderPass			= RenderPass;
-		RenderPassBeginInfo.framebuffer			= VK_NULL_HANDLE; // Select Framebuffer to be used here.
-		RenderPassBeginInfo.renderArea			= { { 0, 0 }, { 0, 0 } }; // Set window size here.
-		RenderPassBeginInfo.clearValueCount		= 0;
-		RenderPassBeginInfo.pClearValues		= NULL;
-
-		this->Mutex.lock();
-		DrawCommand = this->Context->create(device::qfs::GRAPHICS);	
-
-		Result = vkBeginCommandBuffer(DrawCommand, &CommandBufferBeginInfo);
-
-		//vkCmdSetViewport(DrawCommand, 0, 1, );
-
-		vkCmdBeginRenderPass(DrawCommand, &RenderPassBeginInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-
-		// Full draw details.
-		//vkCmdBindPipeline(DrawCommand, VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS, Pipeline);
-		//vkCmdBindDescriptorSets(DrawCommand, VkPipelineBindPoint::VK_PIPELINE_BIND_POINT_GRAPHICS, Layout, 0, 10, DescriptorSet, 0, NULL);
-		//vkCmdBindVertexBuffers(DrawCommand, 0, 10, NULL, NULL);
-		//vkCmdBindIndexBuffer(DrawCommand, VK_NULL_HANDLE, 0, VkIndexType::VK_INDEX_TYPE_UINT16);
-		//vkCmdDrawIndexed(DrawCommand, IndexCount, 1, 0, 0, 0);
-
-		// Next subpass.
-		//vkCmdNextSubpass(DrawCommand, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-
-		vkCmdEndRenderPass(DrawCommand);
-
-		Result = vkEndCommandBuffer(DrawCommand);
-
-
-		// Fill out command buffer.
-
-		this->Mutex.unlock();
-		return DrawCommand;
-	}
+	*/
 
 }

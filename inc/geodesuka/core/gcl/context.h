@@ -8,10 +8,6 @@
 #include "command_batch.h"
 #include "device.h"
 
-namespace geodesuka {
-	class engine;
-}
-
 namespace geodesuka::core::gcl {
 
 	class command_batch;

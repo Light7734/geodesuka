@@ -55,10 +55,9 @@ namespace geodesuka::core::object {
 	public:
 
 		friend class engine;
-		//friend class system_display;
 
 		// Required Extensions for the class
-		static const std::vector<const char*> RequiredExtension;
+		static const std::vector<const char*> RequiredContextExtension;
 		static const int RTID;
 
 		gcl::texture* FrameTexture;
@@ -74,35 +73,56 @@ namespace geodesuka::core::object {
 
 		~system_window();
 
-		virtual int rtid() override;
-		virtual VkSemaphore next_frame() override;
-		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
-		
-
+		// ----- object_t inheritance ----- //
 
 		virtual void set_position(float3 aPosition) override;
+		virtual VkCommandBuffer draw(rendertarget* aRenderTarget) override;
+
+		// ----- rendertarget inheritance ----- //
+
+		virtual int rtid() override;
+		virtual void next_frame() override;
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
+		virtual VkPresentInfoKHR present_frame() override;
+
+		// ----- window inheritance ----- //
+
+		// ----- system_window methods ----- //
+
 		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(uint2 aResolution) override;
+
+		// ----- Used in Stage Render Logic ----- //
+
 
 	protected:
 		// Only accessible to engine backend.
 
-		virtual VkSubmitInfo update(double aDeltaTime);
+		virtual VkSubmitInfo update(double aDeltaTime) override;
 
-		//virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
-
-
-		virtual void swap() override;
+		//virtual VkSubmitInfo compute() override;
 
 	private:
-		// Local variables only accessed by instance of class.
 
 		system_display* Display;			// Parent Display of this system_window.
 
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
+		//VkSwapchainCreateInfoKHR CreateInfo{};
+		//VkSwapchainKHR Swapchain;
+		VkImage* Frame;
 
 		gcl::swapchain* Swapchain;
+
+		// Fill out in constructor
+		int NextImageSemaphoreIndex;
+		VkSemaphore* NextImageSemaphore;
+		VkSemaphore* RenderOperationSemaphore;
+		VkResult* PresentResult;
+		VkPipelineStageFlags PipelineStageFlags;
+		//uint32_t* DrawCommandCount;
+		//VkCommandBuffer** DrawCommandList;
+		//VkPresentInfoKHR* PresentInfo;
 
 
 		int2 PositionSC;

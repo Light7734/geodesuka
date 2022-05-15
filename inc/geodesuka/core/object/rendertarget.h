@@ -8,7 +8,7 @@
 #include "../gcl/context.h"
 #include "../gcl/texture.h"
 
-#include "../gcl/command_list.h"
+//#include "../gcl/command_list.h"
 #include "../gcl/command_batch.h"
 
 #include "../logic/timer.h"
@@ -62,34 +62,17 @@ namespace geodesuka::core::object {
 		//friend class engine;
 		friend class stage_t;
 
-		//VkPresentInfoKHR;
-		class presentation {
-
-			// Will generate 
-			VkPresentInfoKHR info(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
-
-		private:
-			uint32_t Count;
-			VkSwapchainKHR *Swapchain;
-			uint32_t *ImageIndex;
-			VkResult *Result;
-		};
-
 		int FrameCount;					// The total number of back buffer frames of the rendertarget.
 		double FrameRate;				// The rate at which the frames will be cycled through by the engine per second.
-		logic::timer FPSTimer;
+		logic::timer FrameRateTimer;
 		uint2 Resolution;				// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.
 		VkImageView** FrameAttachment;								// The image view handles of each frame attachment.
 
-		// Must be used 
-		VkSemaphore FrameDrawIndexSemaphore;
-		// This index specifies the 
+		//uint32_t FrameReadIndex;
 		uint32_t FrameDrawIndex;
-		//int FrameReadIndex;
-
 
 		~rendertarget();
 
@@ -101,7 +84,7 @@ namespace geodesuka::core::object {
 		// Will acquire next frame index, if semephore is not VK_NULL_HANDLE, 
 		// use as wait semaphore for render operations. This really only applies
 		// to a system_window.
-		virtual VkSemaphore next_frame();
+		virtual void next_frame();
 
 		// Propose a collection of objects (Most likely from a stage), to 
 		// draw those objects to the render target. The objects will
@@ -111,20 +94,19 @@ namespace geodesuka::core::object {
 
 		// This will present VKPresentInfoKHR. Must use a semaphore to make presentation
 		// dependant on rendering operations to complete.
-		virtual VkPresentInfoKHR present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
+		virtual VkPresentInfoKHR present_frame();
 
 	protected:
 
-		// Derived classes can use this aggregate draw commands from objects.
-		//submission* Submission;
+		// Used to back store aggregated draw commands.
+		uint32_t* DrawCommandCount;
+		VkCommandBuffer** DrawCommandList;
 
-		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage);
-
-
-		// Will update to new draw index for rendering operations.
-		virtual void swap() = 0;
+		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/);
 
 	private:
+
+
 
 
 	};

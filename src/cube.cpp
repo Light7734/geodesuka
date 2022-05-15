@@ -11,7 +11,8 @@ using namespace util;
 
 namespace geodesuka::builtin::object {
 
-	cube::cube(engine* aEngine, core::gcl::context* aContext) : object_t(aEngine, aContext) {
+	/*
+	cube::cube(engine* aEngine, core::gcl::context* aContext, stage_t* aStage) : object_t(aEngine, aContext, aStage) {
 		// Compile time vertex data example.
 		math::real VertexData[] = {
 			-1.0, -1.0, -1.0,  0.0,  0.0,  0.0,	 // 0
@@ -41,10 +42,10 @@ namespace geodesuka::builtin::object {
 		};
 
 		// Specify Vertex Buffer
-		type temp(type::id::STRUCT, "");
-		temp.push(type::id::FLOAT3, "Pos");
-		temp.push(type::id::FLOAT3, "Color");
-		variable VertexLayout(temp, "VertexBuffer");
+		//type temp(type::id::STRUCT, "");
+		//temp.push(type::id::FLOAT3, "Pos");
+		//temp.push(type::id::FLOAT3, "Color");
+		//variable VertexLayout(temp, "VertexBuffer");
 
 		// Create VertexBuffer
 		//this->VertexBuffer = Context->create_buffer(buffer::id::ARRAY_BUFFER, 8, VertexLayout, VertexData);
@@ -56,5 +57,6 @@ namespace geodesuka::builtin::object {
 	cube::~cube() {
 
 	}
+	*/
 
 }
