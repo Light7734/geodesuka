@@ -1,0 +1,1 @@
+g++ -pthread -c *.cpp -lvulkan -lglfw -lGL -lXrandr -lX11 -lrt -ldl

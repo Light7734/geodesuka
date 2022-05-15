@@ -404,6 +404,7 @@
     <None Include="README.md" />
     <None Include="Makefile" />
     <None Include="LICENSE.md" />
+    <None Include="compile.bat" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\Notes.txt">
