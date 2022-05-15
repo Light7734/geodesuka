@@ -25,83 +25,43 @@
 #include "gcl/device.h"
 #include "gcl/context.h"
 
+#include "graphics/mesh.h"
+#include "graphics/material.h"
+#include "graphics/model.h"
+
 #include "hid/keyboard.h"
 #include "hid/mouse.h"
 #include "hid/joystick.h"
 
-namespace geodesuka {
-
-	namespace core {
-		namespace object {
-			/*
-			* These are forward declarations that will be used for render
-			* targets. I am not sure if I want to implement a super class
-			* render_target.h just yet. Seems pointless since no use.
-			*/
-			class system_display;
-			class system_window;
-			class virtual_window;
-
-			class camera2d;
-			class camera3d;
-		}
-	}
-}
-
-
 namespace geodesuka::core {
+
+	class stage_t;
+
+	namespace object {
+		class rendertarget;
+	}
 
 	class object_t {
 	public:
 
 		friend class engine;
-
-		friend class object::system_display;
-		friend class object::system_window;
-		friend class object::virtual_window;
-
-		friend class object::camera2d;
-		friend class object::camera3d;
-
-		// Might move this somewhere else.
-		struct submission {
-
-			submission();
-			submission(VkCommandBuffer aCommandBuffer);
-			submission(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
-			submission(const submission& aInput);
-			submission(submission&& aInput);
-			~submission();
-
-			submission& operator=(const submission& aRhs);
-			submission& operator=(submission&& aRhs);
-
-			submission& operator+=(const submission& aRhs);
-			submission& operator+=(submission&& aRhs);
-			submission& operator+=(VkCommandBuffer aRhs);
-
-
-			VkSubmitInfo info();
-		private:
-			uint32_t CommandBufferCount;
-			VkCommandBuffer* CommandBuffer;
-		};
-
-
-		std::mutex Mutex;
+		friend class object::rendertarget;
 		
 		virtual ~object_t() /*= default*/;
 
-		virtual void set_position(math::real3 aPosition);
-		math::real3 get_position() const;
+		virtual void set_position(float3 aPosition);
+		float3 get_position() const;
 
 	protected:
 
+		// Used for shared usage between Engine & App.
+		std::mutex Mutex;
+		std::atomic<bool> isReady;
+
+		// Parent Item References
 		engine* Engine;
 		gcl::context* Context;
-
-		math::real3 InputVelocity;
-		math::real3 InputForce;
+		stage_t* Stage;
 
 		/*
 		* Do not forget, position is in reference to a particular space
@@ -109,14 +69,17 @@ namespace geodesuka::core {
 		* interpret and use an objects position.
 		*/
 
-		math::real Mass;			// Kilogram		[kg]
-		math::real Time;			// Second 		[s]
-		math::real3 Position;		// Meter		[m]
-		math::real3 Momentum;		//				[kg*m/s]
-		math::real3 Force;			// Newton		[kg*m^2/s^2]
-		math::real3 DirectionX;		// Right		[Normalized]
-		math::real3 DirectionY;		// Up			[Normalized]
-		math::real3 DirectionZ;		// Forward		[Normalized]
+		float3 InputVelocity;
+		float3 InputForce;
+
+		float Mass;				// Kilogram		[kg]
+		float Time;				// Second 		[s]
+		float3 Position;		// Meter		[m]
+		float3 Momentum;		//				[kg*m/s]
+		float3 Force;			// Newton		[kg*m^2/s^2]
+		float3 DirectionX;		// Right		[Normalized]
+		float3 DirectionY;		// Up			[Normalized]
+		float3 DirectionZ;		// Forward		[Normalized]
 
 		//integer WorldID;				// Which world is this object in?
 		//integer LevelID;				// Which Level is this object in?
@@ -131,7 +94,7 @@ namespace geodesuka::core {
 		//boolean isCollisionActive;
 		//boolean isGraphicalActive;
 
-		object_t(engine *aEngine, gcl::context *aContext);
+		object_t(engine *aEngine, gcl::context *aContext, stage_t* aStage);
 
 		/*
 		* If input stream is being forwarded to a particular instance of an object,
@@ -159,48 +122,11 @@ namespace geodesuka::core {
 		virtual VkSubmitInfo compute();
 
 		/*
-		* To insure that how an object is rendered is left up to the implementation
-		* of the derivative class of object.h. These will be the primary draw methods
-		* for object.h which must be implemented by the derivative class.
+		* This function will be called by a particular rendertarget to gather Draw Commands
+		* from the object in question. Base object class must provide default render methods for generic
+		* runtime data.
 		*/
-
-		/*
-		* As of right now, there is no method for direct draw of object to
-		* a system_display, maybe in further updates this will be extended.
-		* Does nothing as of right now. The framebuffer provided will not
-		* be displayed anywhere.
-		*/
-		virtual VkCommandBuffer draw(object::system_display* aTargetSystemDisplay);
-
-		/*
-		* This method implementation must specify how the object in question
-		* will be rendered to an operating system_window.h. This will be
-		* mostly be used for GUI stuff since direct window draw.
-		*/
-		virtual VkCommandBuffer draw(object::system_window* aTargetSystemWindow);
-
-		/*
-		* An implementation of this method must define how the object in question
-		* will be drawn to a virtual_window.h, which may exist in its own right
-		* as an object in 3d space.
-		*/
-		virtual VkCommandBuffer draw(object::virtual_window* aTargetVirtualWindow);
-
-		/*
-		* This method will be called when the an object has been requested to be
-		* drawn to a camera2d object.
-		*/
-		virtual VkCommandBuffer draw(object::camera2d* aTargetCamera2D);
-
-		/*
-		* Same as above, but with a 3D camera, will provide internals of
-		* camera so extended object can decide how it will be drawn.
-		*/
-		virtual VkCommandBuffer draw(object::camera3d* aTargetCamera3D);
-
-		// Submits to parent engine. Used by derived classes to pass to engine.
-		void submit();
-		void remove();
+		virtual VkCommandBuffer draw(object::rendertarget* aRenderTarget);
 
 	};
 

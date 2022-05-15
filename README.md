@@ -5,11 +5,11 @@
 
 Project Start: 2021/06/01
 
-Branch Birth Date: 2021/11/20
+Branch Birth Date: 2021/12/17
 
-Branch Pull Date: 2021/12/17
+Branch Pull Date: ????/??/??
 
-Version: 0.0.17
+Version: 0.0.18
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
@@ -90,6 +90,12 @@ macro def collision and interference.
 
 # To Do List:
 
+- context.h will support TRANSFER, GRAPHICS_AND_COMPUTE, and PRESENT operation
+queues. Graphics and Compute will be treated as the same operation, which is
+computational work being performed on the GPU.
+
+- math.h will be re worked to include fields.
+
 - Create System Terminal Class for engine debug commands in engine backend.
 
 - Rewrite math library for more coherent primitive data types, then construct
@@ -152,6 +158,14 @@ ShaderKitty#1696
 
 Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
 I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
+
+# Reference Specifications:
+
+Vulkan:
+https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html
+
+OpenCL:
+https://www.khronos.org/registry/OpenCL/specs/3.0-unified/html/OpenCL_API.html#_the_opencl_architecture
 
 # Donate
 

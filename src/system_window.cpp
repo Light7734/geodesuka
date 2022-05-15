@@ -9,6 +9,8 @@ namespace geodesuka::core::object {
 
 	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
+	const int system_window::RTID = 2;
+
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
 
 		this->Display = aSystemDisplay;
@@ -156,6 +158,42 @@ namespace geodesuka::core::object {
 
 	}
 
+	int system_window::rtid() {
+		return RTID;
+	}
+
+	// Must return a semaphore for an image acquired.
+	VkSemaphore system_window::next_frame() {
+		VkSemaphore FrameAcquireSemaphore = VK_NULL_HANDLE;
+		this->Mutex.lock();
+		// Uses a semaphore to schedule draw calls. Must be waited for to commence draw operations.
+		//vkAcquireNextImageKHR(
+		//	this->Context->handle(), 
+		//	this->Swapchain->handle(), 
+		//	UINT64_MAX, 
+		//	FrameAcquireSemaphore,
+		//	VK_NULL_HANDLE, 
+		//	&this->FrameDrawIndex
+		//);
+		this->Mutex.unlock();
+		// Return semaphore to be used in 
+		return FrameAcquireSemaphore;
+	}
+
+	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
+		VkSubmitInfo DrawBatch{};
+		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext					= NULL;
+		DrawBatch.waitSemaphoreCount	= 0;
+		DrawBatch.pWaitSemaphores		= NULL;
+		DrawBatch.pWaitDstStageMask		= NULL;
+		DrawBatch.commandBufferCount	= 0;
+		DrawBatch.pCommandBuffers		= NULL;
+		DrawBatch.signalSemaphoreCount	= 0;
+		DrawBatch.pSignalSemaphores		= NULL;
+		return DrawBatch;
+	}
+
 	VkSubmitInfo system_window::update(double aDeltaTime) {
 		VkSubmitInfo TransferBatch{};
 		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -173,37 +211,23 @@ namespace geodesuka::core::object {
 		return TransferBatch;
 	}
 
-	VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
-		// This method is responsible for rendering window to display.
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		this->Mutex.lock();
+	//VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
+	//	// This method is responsible for rendering window to display.
+	//	VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+	//	this->Mutex.lock();
 
-		if (this->Property.RefreshRate) {
+	//	if (this->Property.RefreshRate) {
 
-		}
-		this->Mutex.unlock();
+	//	}
+	//	this->Mutex.unlock();
 
-		return DrawCommand;
-	}
+	//	return DrawCommand;
+	//}
 
 	//void system_window::draw(object_t* aObject) {
 	//	if ((object_t*)this == aObject) return;
 	//	aObject->draw(this);
 	//}
-
-	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
-		VkSubmitInfo DrawBatch{};
-		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		DrawBatch.pNext					= NULL;
-		DrawBatch.waitSemaphoreCount	= 0;
-		DrawBatch.pWaitSemaphores		= NULL;
-		DrawBatch.pWaitDstStageMask		= NULL;
-		DrawBatch.commandBufferCount	= 0;
-		DrawBatch.pCommandBuffers		= NULL;
-		DrawBatch.signalSemaphoreCount	= 0;
-		DrawBatch.pSignalSemaphores		= NULL;
-		return DrawBatch;
-	}
 
 	void system_window::swap() {
 		if (this->FPSTimer.check()) {
@@ -238,7 +262,7 @@ namespace geodesuka::core::object {
 		}
 	}
 
-	void system_window::set_position(math::real3 aPosition) {
+	void system_window::set_position(float3 aPosition) {
 		//tex:
 		// Centers system_display and system_window.
 		// $$ \vec{r}_{tmp} = \vec{r}_{sc}^{w} + \frac{\vec{s}_{sc}^{w}}{2} - \Big(\vec{r}_{sc}^{m} + \frac{\vec{s}_{sc}^{m}}{2} \Big) $$
@@ -246,22 +270,22 @@ namespace geodesuka::core::object {
 
 		// Converts Direction and length.
 		this->Position = aPosition;
-		math::integer2 r_tmp = math::integer2(
-			(math::integer)(this->Position.x * (((math::real)(Display->Resolution.x)) / (Display->Size.x))),
-			(math::integer)(-this->Position.y * (((math::real)(Display->Resolution.y)) / (Display->Size.y)))
+		int2 r_tmp = int2(
+			(int)(this->Position.x * (((float)(Display->Resolution.x)) / (Display->Size.x))),
+			(int)(-this->Position.y * (((float)(Display->Resolution.y)) / (Display->Size.y)))
 		);
 
 		// Compensate for shift.
 		this->PositionSC =
 			r_tmp
-			- math::integer2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
+			- int2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
 			+ Display->PositionSC
-			+ math::integer2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
+			+ int2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
 
 		glfwSetWindowPos(this->Handle, this->PositionSC.x, this->PositionSC.y);
 	}
 
-	void system_window::set_size(math::real2 aSize) {
+	void system_window::set_size(float2 aSize) {
 		this->Resolution.x = aSize.x * ((double)this->Display->Resolution.x / (double)this->Display->Size.x);
 		this->Resolution.y = aSize.y * ((double)this->Display->Resolution.y / (double)this->Display->Size.y);
 		glfwSetWindowSize(this->Handle, this->Resolution.x, this->Resolution.y);
@@ -269,7 +293,7 @@ namespace geodesuka::core::object {
 		this->set_position(this->Position);
 	}
 
-	void system_window::set_resolution(math::natural2 aResolution) {
+	void system_window::set_resolution(uint2 aResolution) {
 		this->Size.x = aResolution.x * ((double)this->Display->Size.x / (double)this->Display->Resolution.x);
 		this->Size.y = aResolution.y * ((double)this->Display->Size.y / (double)this->Display->Resolution.y);
 		glfwSetWindowSize(this->Handle, aResolution.x, aResolution.y);
@@ -277,8 +301,8 @@ namespace geodesuka::core::object {
 		this->set_position(this->Position);
 	}
 
-	math::integer2 system_window::phys2scrn(math::real2 R) {
-		math::integer2 temp;
+	int2 system_window::phys2scrn(float2 R) {
+		int2 temp;
 
 		//// Converts Direction and length.
 		//this->Position = aPosition;
@@ -294,11 +318,11 @@ namespace geodesuka::core::object {
 		//	+ ParentDisplay->PositionSC
 		//	+ math::integer2(((double)ParentDisplay->Resolution.x / 2.0), ((double)ParentDisplay->Resolution.y / 2.0));
 
-		return temp;
+		return int2();
 	}
 
-	math::real2 system_window::scrn2phys(math::integer2 R) {
-		math::real2 temp;
+	float2 system_window::scrn2phys(int2 R) {
+		float2 temp;
 		return temp;
 	}
 
@@ -313,14 +337,14 @@ namespace geodesuka::core::object {
 		system_window* Win = (system_window*)glfwGetWindowUserPointer(ContextHandle);
 
 		// Shifts to new origin at parent display center.
-		math::integer2 r_tmp =
-			math::integer2(PosX, PosY)
-			+ math::integer2((double)Win->Resolution.x / 2.0, (double)Win->Resolution.y / 2.0)
+		int2 r_tmp =
+			int2(PosX, PosY)
+			+ int2((double)Win->Resolution.x / 2.0, (double)Win->Resolution.y / 2.0)
 			- Win->Display->PositionSC
-			- math::integer2((double)Win->Display->Resolution.x / 2.0, (double)Win->Display->Resolution.y / 2.0);
+			- int2((double)Win->Display->Resolution.x / 2.0, (double)Win->Display->Resolution.y / 2.0);
 
 		// Converts to physical position on display (meters)
-		Win->Position = math::real3(
+		Win->Position = float3(
 			(double)r_tmp.x * ((double)Win->Display->Size.x / (double)Win->Display->Resolution.x),
 			-(double)r_tmp.y * ((double)Win->Display->Size.y / (double)Win->Display->Resolution.y),
 			0.0

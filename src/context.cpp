@@ -9,7 +9,17 @@
 
 namespace geodesuka::core::gcl {
 
-	context::context(engine* aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList) {
+	context::context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList) {
+
+		// Is this necessary?
+		//this->Mutex.lock();
+		// Insures that object isn't accessed during construction.
+		this->isReady.store(false);
+		// Adds context to engine state. Cannot be accessed while not ready.
+		this->Engine->State.Mutex.lock();
+		this->Engine->State.Context.push_back(this);
+		this->Engine->State.Mutex.unlock();
+
 		// List of operations.
 		// Check for support of required extensions requested i
 		// 1: Check for extensions.
@@ -25,7 +35,8 @@ namespace geodesuka::core::gcl {
 		// If -1, then the option is not supported by the device.
 		this->QFI[0] = this->Device->qfi(device::qfs::TRANSFER);
 		this->QFI[1] = this->Device->qfi(device::qfs::COMPUTE);
-		this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS);
+		//this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS);
+		this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS_AND_COMPUTE);
 		this->QFI[3] = this->Device->qfi(device::qfs::PRESENT);
 
 		// Register this with context.h
@@ -43,6 +54,7 @@ namespace geodesuka::core::gcl {
 			this->Support |= device::qfs::PRESENT;
 		}
 
+		// Searches and sorts out Unique Queue Indices.
 		// UQFI set to -1, as default. Do not use.
 		this->UQFI[0] = -1;
 		this->UQFI[1] = -1;
@@ -128,8 +140,8 @@ namespace geodesuka::core::gcl {
 		this->CreateInfo.flags						= 0;
 		this->CreateInfo.queueCreateInfoCount		= this->UQFICount;
 		this->CreateInfo.pQueueCreateInfos			= this->QueueCreateInfo;
-		this->CreateInfo.enabledLayerCount			= 0;
-		this->CreateInfo.ppEnabledLayerNames		= NULL;
+		this->CreateInfo.enabledLayerCount			= aLayerCount;
+		this->CreateInfo.ppEnabledLayerNames		= aLayerList;
 		if (this->Device->is_extension_list_supported(aExtensionCount, aExtensionList)) {
 			this->CreateInfo.enabledExtensionCount			= aExtensionCount;
 			this->CreateInfo.ppEnabledExtensionNames		= aExtensionList;
@@ -191,14 +203,15 @@ namespace geodesuka::core::gcl {
 			this->CommandBuffer[i] = NULL;
 		}
 
-		this->Engine->submit(this);
+		this->isReady.store(true);
+		this->Mutex.unlock();
 	}
 
 	context::~context() {
 		// lock so context can be safely removed from engine instance.
 		this->Mutex.lock();
+		this->Engine->State->Mutex.lock();
 
-		this->Engine->remove(this);
 
 		// Clear all command buffers and pools.
 		for (int i = 0; i < 3; i++) {
@@ -242,11 +255,12 @@ namespace geodesuka::core::gcl {
 
 	int context::qfi(device::qfs aQFS) {
 		switch (aQFS) {			
-		default						: return -1;
-		case device::qfs::TRANSFER	: return this->QFI[0];
-		case device::qfs::COMPUTE	: return this->QFI[1];
-		case device::qfs::GRAPHICS	: return this->QFI[2];
-		case device::qfs::PRESENT	: return this->QFI[3];
+		default									: return -1;
+		case device::qfs::TRANSFER				: return this->QFI[0];
+		case device::qfs::COMPUTE				: return this->QFI[1];
+		case device::qfs::GRAPHICS				: return this->QFI[2];
+		//case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[3];
+		case device::qfs::PRESENT				: return this->QFI[3];
 		}
 		return 0;
 	}

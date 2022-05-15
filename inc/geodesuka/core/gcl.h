@@ -22,4 +22,11 @@
 
 // Typedefs for vulkan.
 
+
+namespace vk {}
+
+typedef VkInstance vk_instance;
+typedef VkPhysicalDevice vk_physical_device;
+typedef VkDevice vk_device;
+
 #endif // !GEODESUKA_CORE_GCL_H

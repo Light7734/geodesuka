@@ -51,7 +51,7 @@ namespace geodesuka::core::object {
 		math::real4x4 Rotation;
 		math::real4x4 Translation;
 
-		camera(engine* aEngine, gcl::context* aContext);
+		camera(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 
 	};
 

@@ -30,6 +30,12 @@ namespace geodesuka::core::object {
 	//
 	//}
 
+	const int camera3d::RTID = 5;
+
+	int camera3d::rtid() {
+		return RTID;
+	}
+
 	VkSubmitInfo camera3d::draw(size_t aObjectCount, object_t** aObject) {
 		VkSubmitInfo DrawBatch{};
 		DrawBatch.sType = VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;

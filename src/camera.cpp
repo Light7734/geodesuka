@@ -6,6 +6,9 @@
 
 #include <geodesuka/core/math.h>
 
+//#include <geodesuka/core/object.h>
+//#include <geodesuka/core/object/rendertarget.h>
+
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
 //#include "../hid/joystick.h"
@@ -22,7 +25,7 @@ namespace geodesuka::core::object {
 
 	//void camera::draw(object_t* aObject) {}
 
-	camera::camera(engine* aEngine, gcl::context* aContext) : rendertarget(aEngine, aContext) {
+	camera::camera(engine* aEngine, gcl::context* aContext, stage_t* aStage) : rendertarget(aEngine, aContext, aStage) {
 
 	}
 

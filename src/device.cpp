@@ -253,20 +253,20 @@ namespace geodesuka::core::gcl {
 		return this->QueueFamilyCapability;
 	}
 
-	bool device::available(unsigned int aQSB) const {
+	bool device::available(unsigned int aQFS) const {
 		for (uint32_t i = 0; i < this->QueueFamilyCount; i++) {
-			if ((this->QueueFamilyCapability[i].Support & aQSB) == aQSB) {
+			if ((this->QueueFamilyCapability[i].Support & aQFS) == aQFS) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	int device::qfi(unsigned int aQSB) const {
+	int device::qfi(unsigned int aQFS) const {
 		int temp = -1;
 		uint32_t MinimumSupportCount = 10;
 		for (uint32_t i = 0; i < this->QueueFamilyCount; i++) {
-			if ((MinimumSupportCount > this->QueueFamilySupportCount[i]) && ((this->QueueFamilyCapability[i].Support & aQSB) == aQSB)) {
+			if ((MinimumSupportCount > this->QueueFamilySupportCount[i]) && ((this->QueueFamilyCapability[i].Support & aQFS) == aQFS)) {
 				MinimumSupportCount = this->QueueFamilySupportCount[i];
 				temp = (int)i;
 			}

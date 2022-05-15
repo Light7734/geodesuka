@@ -2,9 +2,12 @@
 
 namespace geodesuka::core::stage {
 
-    //stage_t::batch desktop::render() {
-    //    stage_t::batch RenderBatch;
-    //    return RenderBatch;
-    //}
+	desktop::desktop(engine* aEngine, gcl::device* aDevice, object::system_display* aDisplay) : stage_t(aEngine, nullptr) {
+		this->RenderTarget.push_back(aDisplay);
+	}
+
+	desktop::~desktop() {
+
+	}
 
 }

@@ -2,12 +2,18 @@
 
 namespace geodesuka::core::object {
 
-    camera2d::camera2d(engine* aEngine, gcl::context* aContext) : camera(aEngine, aContext) {
+    const int camera2d::RTID = 4;
+
+    camera2d::camera2d(engine* aEngine, gcl::context* aContext, stage_t* aStage) : camera(aEngine, aContext, aStage) {
 
     }
 
     camera2d::~camera2d() {
 
+    }
+
+    int camera2d::rtid() {
+        return RTID;
     }
 
     VkSubmitInfo camera2d::draw(size_t aObjectCount, object_t** aObject) {

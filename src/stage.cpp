@@ -3,163 +3,17 @@
 
 namespace geodesuka::core {
 
-	stage_t::batch::batch() {
-		this->SubmissionCount = 0;
-		this->Submission = NULL;
-	}
-
-	stage_t::batch::batch(VkSubmitInfo aSubmission) {
-		// Discard if no command buffers.
-		if ((aSubmission.commandBufferCount > 0) && (aSubmission.pCommandBuffers != NULL)) {
-			this->Submission = (VkSubmitInfo*)malloc(sizeof(VkSubmitInfo));
-			if (this->Submission != NULL) {
-				memcpy(this->Submission, &aSubmission, sizeof(VkSubmitInfo));
-				this->SubmissionCount = 1;
-			}
-			else {
-				this->SubmissionCount = 0;
-			}
-		}
-		else {
-			this->SubmissionCount = 0;
-			this->Submission = NULL;
-		}
-	}
-
-	stage_t::batch::batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission) {
-		if (aSubmissionCount > 0) {
-			this->Submission = (VkSubmitInfo*)malloc(aSubmissionCount * sizeof(VkSubmitInfo));
-			if (this->Submission != NULL) {
-				this->SubmissionCount = aSubmissionCount;
-				memcpy(this->Submission, aSubmission, this->SubmissionCount * sizeof(VkSubmitInfo));
-			}
-			else {
-				this->SubmissionCount = 0;
-			}
-		}
-		else {
-			this->SubmissionCount = 0;
-			this->Submission = NULL;
-		}
-	}
-
-	stage_t::batch::batch(batch& aInput) {
-		if (aInput.SubmissionCount > 0) {
-			this->Submission = (VkSubmitInfo*)malloc(aInput.SubmissionCount * sizeof(VkSubmitInfo));
-			if (this->Submission != NULL) {
-				this->SubmissionCount = aInput.SubmissionCount;
-				memcpy(this->Submission, aInput.Submission, this->SubmissionCount * sizeof(VkSubmitInfo));
-			}
-			else {
-				this->SubmissionCount = 0;
-			}
-		}
-		else {
-			this->SubmissionCount = 0;
-			this->Submission = NULL;
-		}
-	}
-
-	stage_t::batch::batch(batch&& aInput) noexcept {
-		this->SubmissionCount = aInput.SubmissionCount;
-		this->Submission = aInput.Submission;
-		aInput.SubmissionCount = 0;
-		aInput.Submission = NULL;
-	}
-
-	stage_t::batch::~batch() {
-		this->clear();
-	}
-
-	VkSubmitInfo& stage_t::batch::operator[](int aIndex) {
-		this->Submission[aIndex];
-	}
-
-	stage_t::batch& stage_t::batch::operator=(batch& aRhs) {
-		this->clear();
-		if (aRhs.SubmissionCount > 0) {
-			this->Submission = (VkSubmitInfo*)malloc(aRhs.SubmissionCount * sizeof(VkSubmitInfo));
-			if (this->Submission != NULL) {
-				this->SubmissionCount = aRhs.SubmissionCount;
-				memcpy(this->Submission, aRhs.Submission, this->SubmissionCount * sizeof(VkSubmitInfo));
-			}
-			else {
-				this->SubmissionCount = 0;
-			}
-		}
-		else {
-			this->SubmissionCount = 0;
-			this->Submission = NULL;
-		}
-		return *this;
-	}
-
-	stage_t::batch& stage_t::batch::operator=(batch&& aRhs) noexcept {
-		this->clear();
-		this->SubmissionCount = aRhs.SubmissionCount;
-		this->Submission = aRhs.Submission;
-		aRhs.SubmissionCount = 0;
-		aRhs.Submission = NULL;
-		return *this;
-	}
-
-	void stage_t::batch::operator+=(VkSubmitInfo aRhs) {
-		// Discard if no command buffers.
-		if ((aRhs.commandBufferCount == 0) || (aRhs.pCommandBuffers == NULL)) return;
-		void* nptr = NULL;
-		if (this->Submission == NULL) {
-			nptr = malloc(sizeof(VkSubmitInfo));
-		}
-		else {
-			nptr = realloc(this->Submission, (this->SubmissionCount + 1) * sizeof(VkSubmitInfo));
-		}
-		if (nptr == NULL) return;
-		this->Submission = (VkSubmitInfo*)nptr;
-		memcpy(&(this->Submission[this->SubmissionCount]), &aRhs, sizeof(VkSubmitInfo));
-		this->SubmissionCount += 1;
-	}
-
-	void stage_t::batch::operator+=(batch aRhs) {
-		void* nptr = NULL;
-		if (this->Submission == NULL) {
-			nptr = malloc(aRhs.SubmissionCount * sizeof(VkSubmitInfo));
-		}
-		else {
-			nptr = realloc(this->Submission, (this->SubmissionCount + aRhs.SubmissionCount) * sizeof(VkSubmitInfo));
-		}
-		if (nptr == NULL) return;
-		this->Submission = (VkSubmitInfo*)nptr;
-		memcpy(&(this->Submission[this->SubmissionCount]), aRhs.Submission, aRhs.SubmissionCount * sizeof(VkSubmitInfo));
-		this->SubmissionCount += aRhs.SubmissionCount;
-	}
-
-	size_t stage_t::batch::count() {
-		return this->SubmissionCount;
-	}
-
-	VkSubmitInfo* stage_t::batch::ptr() {
-		return this->Submission;
-	}
-
-	void stage_t::batch::clear() {
-		free(this->Submission);
-		this->Submission = NULL;
-		this->SubmissionCount = 0;
-	}
-
-    stage_t::~stage_t() {
-        // Will be used to delete all contained
-        // objects explicitly.
-
-    }
-
 	stage_t::stage_t(engine* aEngine, gcl::context* aContext) {
-		this->Engine = aEngine;
-		this->Context = aContext;
-		this->ObjectCount = 0;
-		this->Object = NULL;
-		this->RenderTargetCount = 0;
-		this->RenderTarget = NULL;
+
+
+		this->Engine				= aEngine;
+		this->Context				= aContext;
+	}
+
+	stage_t::~stage_t() {
+		// Will be used to delete all contained
+		// objects explicitly.
+
 	}
 
 	VkSubmitInfo stage_t::update(double aDeltaTime) {
@@ -174,7 +28,7 @@ namespace geodesuka::core {
 		TransferBatch.signalSemaphoreCount	= 0;
 		TransferBatch.pSignalSemaphores		= NULL;
 		this->Mutex.lock();
-		for (int i = 0; i < this->RenderTargetCount; i++) {
+		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
 			this->RenderTarget[i]->FPSTimer.update(aDeltaTime);
 		}
 		this->Mutex.unlock();
@@ -219,14 +73,34 @@ namespace geodesuka::core {
 			if (this->RenderTarget[i]->FPSTimer.check()) {
 				// Reset timer loop.
 				this->RenderTarget[i]->FPSTimer.reset();
+				/*
 				
+				vkAcquireNextImageKHR();
+				VkResult vkAcquireNextImageKHR(
+					VkDevice                                    device,
+					VkSwapchainKHR                              swapchain,
+					uint64_t                                    timeout,
+					VkSemaphore                                 semaphore,
+					VkFence                                     fence,
+					uint32_t*                                   pImageIndex);
+
+				// Use semaphore to wait for next image before render operations.
+				vkQueueSubmit(Graphics & Compute Operations);
+
+				// Wait for G&C Ops to complete (Semaphore)
+				vkQueuePresentKHR(Present Newly rendered frame);
+
+				*/
+
 				// Get Next Frame (system_window will get new image).
 				this->RenderTarget[i]->next_frame();
+
+				VkSubmitInfo Submission = this->RenderTarget[i]->draw(this->ObjectCount, this->Object);
 
 				// Get all render operations.
 				RenderOperations;
 
-				this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
+				//this->RenderTarget[i]->present_frame(aWaitSemaphoreCount, aWaitSemaphoreList);
 			}
 		}
 		this->Mutex.unlock();

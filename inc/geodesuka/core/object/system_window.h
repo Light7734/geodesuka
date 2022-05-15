@@ -26,7 +26,7 @@
 
 #include "../object.h"
 #include "window.h"
-//#include "system_display.h"
+#include "system_display.h"
 //#include "system_window.h"
 //#include "virtual_window.h"
 //#include "camera.h"
@@ -59,27 +59,38 @@ namespace geodesuka::core::object {
 
 		// Required Extensions for the class
 		static const std::vector<const char*> RequiredExtension;
+		static const int RTID;
+
 		gcl::texture* FrameTexture;
 
 
 		//math::boolean CloseMe;
 
-		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle);
+		system_window(
+			engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, 
+			window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, 
+			int aPixelFormat, int aWidth, int aHeight, const char* aTitle
+		);
 
 		~system_window();
 
-		virtual void set_position(math::real3 aPosition) override;
-		virtual void set_size(math::real2 aSize) override; // Do not rapidly change size or lag will happen.
-		virtual void set_resolution(math::natural2 aResolution) override;
+		virtual int rtid() override;
+		virtual VkSemaphore next_frame() override;
+		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
+		
+
+
+		virtual void set_position(float3 aPosition) override;
+		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
+		virtual void set_resolution(uint2 aResolution) override;
 
 	protected:
 		// Only accessible to engine backend.
 
 		virtual VkSubmitInfo update(double aDeltaTime);
 
-		virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
+		//virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
 
-		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 		virtual void swap() override;
 
@@ -94,14 +105,14 @@ namespace geodesuka::core::object {
 		gcl::swapchain* Swapchain;
 
 
-		math::integer2 PositionSC;
+		int2 PositionSC;
 		//math::integer2 SizeSC;
 
 
 
 		// Internal Utils, Physical coordinates to Screen coordinates
-		math::integer2 phys2scrn(math::real2 R);
-		math::real2 scrn2phys(math::integer2 R);
+		int2 phys2scrn(float2 R);
+		float2 scrn2phys(int2 R);
 
 		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 

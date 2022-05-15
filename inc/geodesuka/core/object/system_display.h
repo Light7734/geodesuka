@@ -15,11 +15,15 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
+		static const int RTID;
+
 		GLFWmonitor* Handle;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
 		~system_display();
+
+		virtual int rtid() override;
 
 
 	protected:
@@ -30,8 +34,8 @@ namespace geodesuka::core::object {
 
 	private:
 
-		math::integer2 PositionSC;
-		//math::integer2 SizeSC;
+		int2 PositionSC;
+		//int2 SizeSC;
 
 	};
 

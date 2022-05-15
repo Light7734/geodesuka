@@ -17,9 +17,9 @@ namespace geodesuka::core::graphics {
 		*/
 		// Data format of mesh object.
 		struct vertex {
-			math::real3 Position;
-			math::real3 Normal;
-			math::real2 TexCoord;
+			float3 Position;
+			float3 Normal;
+			float2 TexCoord;
 		};
 
 		

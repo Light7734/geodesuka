@@ -42,8 +42,8 @@ namespace geodesuka::builtin::object {
 
 		// Specify Vertex Buffer
 		type temp(type::id::STRUCT, "");
-		temp.push(type::id::REAL3, "Pos");
-		temp.push(type::id::REAL3, "Color");
+		temp.push(type::id::FLOAT3, "Pos");
+		temp.push(type::id::FLOAT3, "Color");
 		variable VertexLayout(temp, "VertexBuffer");
 
 		// Create VertexBuffer

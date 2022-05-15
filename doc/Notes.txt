@@ -6,3 +6,25 @@ dynamic library modding will be supported. Extending object functionality withou
 game source code.
 
 https://forthebadge.com/
+
+TODO:
+
+Add engine method get_primary_device();
+
+Move Resource Objects to be created by context.h
+buffer.h
+shader.h
+texture.h
+
+
+Queue Types:
+
+    Transfer
+    Compute
+    Graphics
+    Present
+or
+    Transfer
+    Graphics & Compute
+    Present
+?

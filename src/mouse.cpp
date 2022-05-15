@@ -14,7 +14,7 @@ namespace geodesuka {
 
 			}
 
-			math::boolean mouse::operator[](math::integer buttonID) {
+			bool mouse::operator[](int buttonID) {
 				if ((Action[buttonID] == BUTTON_PRESS) || (Action[buttonID] == BUTTON_REPEAT)) {
 					return true;
 				}

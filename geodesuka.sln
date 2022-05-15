@@ -5,7 +5,6 @@ VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "geodesuka", "geodesuka.vcxproj", "{31ECF721-D7C6-4E50-8599-ABEDEF79069C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{AC1845B4-3FAF-4567-8CA7-E73C10FD89E8} = {AC1845B4-3FAF-4567-8CA7-E73C10FD89E8}
 		{3A33DCD6-C529-46B1-833A-62585AA3E49B} = {3A33DCD6-C529-46B1-833A-62585AA3E49B}
 	EndProjectSection
 EndProject

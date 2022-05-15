@@ -21,7 +21,8 @@ namespace geodesuka::core::object {
 		//camera3d(engine *aEngine, gcl::context *aContext);
 		//~camera3d();
 
-
+		static const int RTID;
+		virtual int rtid() override;
 
 	protected:
 

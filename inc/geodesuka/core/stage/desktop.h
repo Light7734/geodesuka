@@ -14,7 +14,6 @@ namespace geodesuka::core::stage {
 	class desktop : public stage_t {
 	public:
 
-		desktop(engine *aEngine, gcl::context* aContext, object::system_display* aDisplay);
 		~desktop();
 
 	protected:
@@ -22,13 +21,20 @@ namespace geodesuka::core::stage {
 
 		virtual VkSubmitInfo update(double aDeltaTime) override;
 
+		virtual VkSubmitInfo compute() override;
+
+
 		//virtual batch render() override;
 
 		//system_window::present present();
 
 	private:
 
-		object::system_display* Display;
+		// Graphics Capable Device.
+		//gcl::device* Device;
+		//object::system_display* Display;
+
+		desktop(engine* aEngine, gcl::device* aDevice, object::system_display* aDisplay);
 
 	};
 

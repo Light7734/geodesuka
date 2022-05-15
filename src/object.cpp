@@ -3,33 +3,41 @@
 
 namespace geodesuka::core {
 
-	object_t::~object_t() {
-		this->Engine->remove(this);
-	}
+	object_t::object_t(engine* aEngine, gcl::context* aContext, stage_t* aStage) {
+		this->isReady.store(false);
+		this->Engine->State->Object.push_back(this);
 
-	void object_t::set_position(math::real3 aPosition) {}
-
-	math::real3 object_t::get_position() const {
-		return this->Position;
-	}
-
-	object_t::object_t(engine* aEngine, gcl::context* aContext) {
 
 		// Internal API.
 		this->Engine = aEngine;
 		this->Context = aContext;
+		this->Stage = aStage;
 
-		this->InputVelocity = math::real3(0.0, 0.0, 0.0);
-		this->InputForce	= math::real3(0.0, 0.0, 0.0);
+		this->InputVelocity = float3(0.0, 0.0, 0.0);
+		this->InputForce	= float3(0.0, 0.0, 0.0);
 
 		this->Mass			= 1.0;
 		this->Time			= core::logic::get_time();
-		this->Position		= math::real3(0.0, 0.0, 0.0);
-		this->Momentum		= math::real3(0.0, 0.0, 0.0);
-		this->Force			= math::real3(0.0, 0.0, 0.0);
-		this->DirectionX	= math::real3(1.0, 0.0, 0.0);
-		this->DirectionY	= math::real3(0.0, 1.0, 0.0);
-		this->DirectionZ	= math::real3(0.0, 0.0, 1.0);
+		this->Position		= float3(0.0, 0.0, 0.0);
+		this->Momentum		= float3(0.0, 0.0, 0.0);
+		this->Force			= float3(0.0, 0.0, 0.0);
+		this->DirectionX	= float3(1.0, 0.0, 0.0);
+		this->DirectionY	= float3(0.0, 1.0, 0.0);
+		this->DirectionZ	= float3(0.0, 0.0, 1.0);
+	}
+
+	object_t::~object_t() {
+		// Removes Object from Engine State.
+		if (this->Engine->State->ID != engine::state::id::DESTRUCTION) {
+			int Index = this->Engine->State->objidx(this);
+			this->Engine->State->Object.erase(this->Engine->State->Object.begin() + Index);
+		}
+	}
+
+	void object_t::set_position(float3 aPosition) {}
+
+	float3 object_t::get_position() const {
+		return this->Position;
 	}
 
 	void object_t::input(const hid::keyboard& aKeyboard) {
@@ -83,37 +91,9 @@ namespace geodesuka::core {
 		return ComputeBatch;
 	}
 
-	VkCommandBuffer object_t::draw(object::system_display* aTargetSystemDisplay) {
+	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget){
 		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
 		return DrawCommand;
-	}
-
-	VkCommandBuffer object_t::draw(object::system_window* aTargetSystemWindow) {
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		return DrawCommand;
-	}
-
-	VkCommandBuffer object_t::draw(object::virtual_window* aTargetVirtualWindow) {
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		return DrawCommand;
-	}
-
-	VkCommandBuffer object_t::draw(object::camera2d* aTargetCamera2D) {
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		return DrawCommand;
-	}
-
-	VkCommandBuffer object_t::draw(object::camera3d* aTargetCamera3D) {
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		return DrawCommand;
-	}
-
-	void object_t::submit() {
-		this->Engine->submit(this);
-	}
-
-	void object_t::remove() {
-		this->Engine->remove(this);
 	}
 
 }

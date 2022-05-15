@@ -1,6 +1,7 @@
 #include <geodesuka/core/util/variable.h>
 
-#include <stdio.h>
+//#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef MODE_DEBUG
@@ -11,7 +12,7 @@
 
 #include <geodesuka/core/math.h>
 
-#define BUILT_IN_TYPE_LIST_SIZE 28
+#define BUILT_IN_TYPE_LIST_SIZE 39
 
 namespace geodesuka::core::util {
 
@@ -25,34 +26,49 @@ namespace geodesuka::core::util {
 		math::integer Columns;
 		size_t Size;
 	} BuiltInType[BUILT_IN_TYPE_LIST_SIZE] = {
-		{	type::id::STRUCT		,		"struct"		,	type::id::STRUCT			,		0		  ,		0		,		0		,	0							},
-		{	type::id::UINT8			,		"ubyte"			,	type::id::UINT8				,		1		  ,		1		,		1		,	sizeof(unsigned char)		},
-		{	type::id::UINT16		,		"ushort"		,	type::id::UINT16			,		1		  ,		1		,		1		,	sizeof(unsigned short)		},
-		{	type::id::UINT32		,		"uint"			,	type::id::UINT32			,		1		  ,		1		,		1		,	sizeof(math::natural)				},
-		{	type::id::SINT8			,		"byte"			,	type::id::SINT8				,		1		  ,		1		,		1		,	sizeof(signed char)			},
-		{	type::id::SINT16		,		"short"			,	type::id::SINT16			,		1		  ,		1		,		1		,	sizeof(signed short)		},
-		{	type::id::SINT32		,		"int"			,	type::id::SINT32			,		1		  ,		1		,		1		,	sizeof(math::integer)				},
-		{	type::id::FLOAT16		,		"half"			,	type::id::FLOAT16			,		1		  ,		1		,		1		,	sizeof(unsigned short)		},
-		{	type::id::FLOAT32		,		"float"			,	type::id::FLOAT32			,		1		  ,		1		,		1		,	sizeof(math::real)				},
-		{	type::id::FLOAT64		,		"double"		,	type::id::FLOAT64			,		1		  ,		1		,		1		,	sizeof(double)				},
-		{	type::id::NATURAL2		,		"uvec2"			,	type::id::UINT32			,		2		  ,		2		,		1		,	sizeof(math::natural2)			},
-		{	type::id::NATURAL3		,		"uvec3"			,	type::id::UINT32			,		3		  ,		3		,		1		,	sizeof(math::natural3)			},
-		{	type::id::NATURAL4		,		"uvec4"			,	type::id::UINT32			,		4		  ,		4		,		1		,	sizeof(math::natural4)			},
-		{	type::id::INTEGER2		,		"ivec2"			,	type::id::SINT32			,		2		  ,		2		,		1		,	sizeof(math::integer2)			},
-		{	type::id::INTEGER3		,		"ivec3"			,	type::id::SINT32			,		3		  ,		3		,		1		,	sizeof(math::integer3)			},
-		{	type::id::INTEGER4		,		"ivec4"			,	type::id::SINT32			,		4		  ,		4		,		1		,	sizeof(math::integer4)			},
-		{	type::id::REAL2			,		"vec2"			,	type::id::FLOAT32			,		2		  ,		2		,		1		,	sizeof(math::real2)				},
-		{	type::id::REAL3			,		"vec3"			,	type::id::FLOAT32			,		3		  ,		3		,		1		,	sizeof(math::real3)				},
-		{	type::id::REAL4			,		"vec4"			,	type::id::FLOAT32			,		4		  ,		4		,		1		,	sizeof(math::real4)				},
-		{	type::id::REAL2X2		,		"mat2"			,	type::id::FLOAT32			,		4		  ,		2		,		2		,	sizeof(math::real2x2)				},
-		{	type::id::REAL2X3		,		"mat2x3"		,	type::id::FLOAT32			,		6		  ,		3		,		2		,	sizeof(math::real2x3)				},
-		{	type::id::REAL2X4		,		"mat2x4"		,	type::id::FLOAT32			,		8		  ,		4		,		2		,	sizeof(math::real2x4)				},
-		{	type::id::REAL3X2		,		"mat3x2"		,	type::id::FLOAT32			,		6		  ,		2		,		3		,	sizeof(math::real3x2)				},
-		{	type::id::REAL3X3		,		"mat3"			,	type::id::FLOAT32			,		9		  ,		3		,		3		,	sizeof(math::real3x3)				},
-		{	type::id::REAL3X4		,		"mat3x4"		,	type::id::FLOAT32			,		12		  ,		4		,		3		,	sizeof(math::real3x4)				},
-		{	type::id::REAL4X2		,		"mat4x2"		,	type::id::FLOAT32			,		8		  ,		2		,		4		,	sizeof(math::real4x2)				},
-		{	type::id::REAL4X3		,		"mat4x3"		,	type::id::FLOAT32			,		12		  ,		3		,		4		,	sizeof(math::real4x3)				},
-		{	type::id::REAL4X4		,		"mat4"			,	type::id::FLOAT32			,		16		  ,		4		,		4		,	sizeof(math::real4x4)				}
+		{	type::id::STRUCT		,		"struct"		,	type::id::STRUCT		,		0		  ,		0		,		0		,	0					},
+		{	type::id::UCHAR			,		"uchar"			,	type::id::UCHAR			,		1		  ,		1		,		1		,	sizeof(uchar)		},
+		{	type::id::USHORT		,		"ushort"		,	type::id::USHORT		,		1		  ,		1		,		1		,	sizeof(ushort)		},
+		{	type::id::UINT			,		"uint"			,	type::id::UINT			,		1		  ,		1		,		1		,	sizeof(uint)		},
+		{	type::id::CHAR			,		"byte"			,	type::id::CHAR			,		1		  ,		1		,		1		,	sizeof(char)		},
+		{	type::id::SHORT			,		"short"			,	type::id::SHORT			,		1		  ,		1		,		1		,	sizeof(short)		},
+		{	type::id::INT			,		"int"			,	type::id::INT			,		1		  ,		1		,		1		,	sizeof(int)			},
+		//{	type::id::HALF			,		"half"			,	type::id::HALF			,		1		  ,		1		,		1		,	sizeof(half)		},
+		{	type::id::FLOAT			,		"float"			,	type::id::FLOAT			,		1		  ,		1		,		1		,	sizeof(float)		},
+		{	type::id::DOUBLE		,		"double"		,	type::id::DOUBLE		,		1		  ,		1		,		1		,	sizeof(double)		},
+		{	type::id::UCHAR2		,		"ubyte2"		,	type::id::UCHAR			,		2		  ,		1		,		1		,	sizeof(uchar2)		},
+		{	type::id::UCHAR3		,		"ubyte3"		,	type::id::UCHAR			,		3		  ,		1		,		1		,	sizeof(uchar3)		},
+		{	type::id::UCHAR4		,		"ubyte4"		,	type::id::UCHAR			,		4		  ,		1		,		1		,	sizeof(uchar4)		},
+		{	type::id::USHORT2		,		"ushort2"		,	type::id::USHORT		,		2		  ,		1		,		1		,	sizeof(ushort2)		},
+		{	type::id::USHORT3		,		"ushort3"		,	type::id::USHORT		,		3		  ,		1		,		1		,	sizeof(ushort3)		},
+		{	type::id::USHORT4		,		"ushort4"		,	type::id::USHORT		,		4		  ,		1		,		1		,	sizeof(ushort4)		},
+		{	type::id::UINT2			,		"uint2"			,	type::id::UINT			,		2		  ,		1		,		1		,	sizeof(uint2)		},
+		{	type::id::UINT3			,		"uint3"			,	type::id::UINT			,		3		  ,		1		,		1		,	sizeof(uint3)		},
+		{	type::id::UINT4			,		"uint4"			,	type::id::UINT			,		4		  ,		1		,		1		,	sizeof(uint4)		},
+		{	type::id::CHAR2			,		"byte2"			,	type::id::CHAR			,		2		  ,		1		,		1		,	sizeof(char2)		},
+		{	type::id::CHAR3			,		"byte3"			,	type::id::CHAR			,		3		  ,		1		,		1		,	sizeof(char3)		},
+		{	type::id::CHAR4			,		"byte4"			,	type::id::CHAR			,		4		  ,		1		,		1		,	sizeof(char4)		},
+		{	type::id::SHORT2		,		"short2"		,	type::id::SHORT			,		2		  ,		1		,		1		,	sizeof(short2)		},
+		{	type::id::SHORT3		,		"short3"		,	type::id::SHORT			,		3		  ,		1		,		1		,	sizeof(short3)		},
+		{	type::id::SHORT4		,		"short4"		,	type::id::SHORT			,		4		  ,		1		,		1		,	sizeof(short4)		},
+		{	type::id::INT2			,		"int2"			,	type::id::INT			,		2		  ,		1		,		1		,	sizeof(int2)		},
+		{	type::id::INT3			,		"int3"			,	type::id::INT			,		3		  ,		1		,		1		,	sizeof(int3)		},
+		{	type::id::INT4			,		"int4"			,	type::id::INT			,		4		  ,		1		,		1		,	sizeof(int4)		},
+		//{	type::id::HALF2			,		"half2"			,	type::id::HALF			,		2		  ,		1		,		1		,	sizeof(half2)		},
+		//{	type::id::HALF3			,		"half3"			,	type::id::HALF			,		3		  ,		1		,		1		,	sizeof(half3)		},
+		//{	type::id::HALF4			,		"half4"			,	type::id::HALF			,		4		  ,		1		,		1		,	sizeof(half4)		},
+		{	type::id::FLOAT2		,		"float2"		,	type::id::FLOAT			,		2		  ,		1		,		1		,	sizeof(float2)		},
+		{	type::id::FLOAT3		,		"float3"		,	type::id::FLOAT			,		3		  ,		1		,		1		,	sizeof(float3)		},
+		{	type::id::FLOAT4		,		"float4"		,	type::id::FLOAT			,		4		  ,		1		,		1		,	sizeof(float4)		},
+		{	type::id::FLOAT2X2		,		"float2x2"		,	type::id::FLOAT			,		2*2		  ,		2		,		2		,	sizeof(float2x2)	},
+		{	type::id::FLOAT2X3		,		"float2x3"		,	type::id::FLOAT			,		2*3		  ,		3		,		2		,	sizeof(float2x3)	},
+		{	type::id::FLOAT2X4		,		"float2x4"		,	type::id::FLOAT			,		2*4		  ,		4		,		2		,	sizeof(float2x4)	},
+		{	type::id::FLOAT3X2		,		"float3x2"		,	type::id::FLOAT			,		3*2		  ,		2		,		3		,	sizeof(float3x2)	},
+		{	type::id::FLOAT3X3		,		"float3x3"		,	type::id::FLOAT			,		3*3		  ,		3		,		3		,	sizeof(float3x3)	},
+		{	type::id::FLOAT3X4		,		"float3x4"		,	type::id::FLOAT			,		3*4		  ,		4		,		3		,	sizeof(float3x4)	},
+		{	type::id::FLOAT4X2		,		"float4x2"		,	type::id::FLOAT			,		4*2		  ,		2		,		4		,	sizeof(float4x2)	},
+		{	type::id::FLOAT4X3		,		"float4x3"		,	type::id::FLOAT			,		4*3		  ,		3		,		4		,	sizeof(float4x3)	},
+		{	type::id::FLOAT4X4		,		"float4x4"		,	type::id::FLOAT			,		4*4		  ,		4		,		4		,	sizeof(float4x4)	}
 	};
 
 	type::type() {
@@ -145,7 +161,7 @@ namespace geodesuka::core::util {
 		this->copy(Arg);
 	}
 
-	type::type(type&& Arg) {
+	type::type(type&& Arg) noexcept {
 		this->Master = nullptr;
 		this->ID = Arg.ID;
 		this->Size = Arg.Size;
@@ -198,7 +214,7 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 
-	type& type::operator=(type&& Rhs) {
+	type& type::operator=(type&& Rhs) noexcept {
 		this->ID = Rhs.ID;
 		this->Size = Rhs.Size;
 		this->MemberCount = Rhs.MemberCount;
@@ -907,7 +923,7 @@ namespace geodesuka::core::util {
 		this->copy(Arg);
 	}
 
-	variable::variable(variable&& Arg) {
+	variable::variable(variable&& Arg) noexcept {
 		this->Root = nullptr;
 		this->Parent = nullptr;
 		this->Offset = 0;
@@ -962,7 +978,7 @@ namespace geodesuka::core::util {
 		return *this;
 	}
 
-	variable& variable::operator=(variable&& Rhs) {
+	variable& variable::operator=(variable&& Rhs) noexcept {
 		this->clear();
 		this->swap(Rhs);
 		return *this;

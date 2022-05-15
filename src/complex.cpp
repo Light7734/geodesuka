@@ -1,4 +1,4 @@
-#include <geodesuka/core/math/numbers/complex.h>
+#include <geodesuka/core/math/number/complex.h>
 
 #include <cmath>
 
@@ -8,10 +8,8 @@
 #include <iostream>
 #endif // MATH_ENABLE_IO
 
-#include <geodesuka/core/math/numbers/natural.h>
-#include <geodesuka/core/math/numbers/integer.h>
-#include <geodesuka/core/math/numbers/real.h>
-#include <geodesuka/core/math/numbers/constants.h>
+#include <geodesuka/core/math/number/type.h>
+#include <geodesuka/core/math/number/constants.h>
 
 namespace geodesuka::core::math {
 
