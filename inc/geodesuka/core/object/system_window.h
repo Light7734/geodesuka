@@ -26,7 +26,7 @@
 
 #include "../object.h"
 #include "window.h"
-//#include "system_display.h"
+#include "system_display.h"
 //#include "system_window.h"
 //#include "virtual_window.h"
 //#include "camera.h"
@@ -66,7 +66,11 @@ namespace geodesuka::core::object {
 
 		//math::boolean CloseMe;
 
-		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle);
+		system_window(
+			engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, 
+			window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, 
+			int aPixelFormat, int aWidth, int aHeight, const char* aTitle
+		);
 
 		~system_window();
 
@@ -85,7 +89,7 @@ namespace geodesuka::core::object {
 
 		virtual VkSubmitInfo update(double aDeltaTime);
 
-		virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
+		//virtual VkCommandBuffer draw(system_display* aTargetDisplay) override;
 
 
 		virtual void swap() override;

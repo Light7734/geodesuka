@@ -32,43 +32,6 @@ namespace geodesuka::core {
 
 		friend class engine;
 
-		class batch {
-		public:
-
-			batch();
-			batch(VkSubmitInfo aSubmission);
-			batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission);
-			batch(batch& aInput);
-			batch(batch&& aInput) noexcept;
-			~batch();
-
-			VkSubmitInfo& operator[](int aIndex);
-
-			batch& operator=(batch& aRhs);
-			batch& operator=(batch&& aRhs) noexcept;
-
-			// Will be used to aggregate render_target submissions.
-			void operator+=(VkSubmitInfo aRhs);
-			void operator+=(batch aRhs);
-
-			// Used for final submission.
-			size_t count();
-			VkSubmitInfo* ptr();
-			void clear();
-
-		private:
-			size_t SubmissionCount;
-			VkSubmitInfo* Submission;
-		};
-
-		// Will be used for generalized render operations.
-		class renderop {
-
-		private:
-			batch RenderBatch;
-			//object::rendertarget::presentation PresentBatch;
-		};
-
 		std::mutex Mutex;
 
 		~stage_t();
@@ -78,17 +41,10 @@ namespace geodesuka::core {
 		engine* Engine;
 		gcl::context* Context;
 
-		int ObjectCount;
-		object_t** Object;
-
-		int RenderTargetCount;
-		object::rendertarget** RenderTarget;
+		std::vector<object_t*> Object;
+		std::vector<object::rendertarget*> RenderTarget;
 
 		stage_t(engine* aEngine, gcl::context* aContext);
-
-		virtual VkSubmitInfo update(double aDeltaTime);
-
-		virtual VkSubmitInfo compute();
 
 		// Will generate a batch of rendering commands per render target
 		// if the 
@@ -101,8 +57,12 @@ namespace geodesuka::core {
 
 	private:
 
-		// Generates render and presentation operations per rendertarget.
-		renderop render();
+		virtual VkSubmitInfo update(double aDeltaTime);
+
+		virtual VkSubmitInfo compute();
+
+		// Will generate render operations per render target in scheduled manner.
+		void render();
 
 	};
 

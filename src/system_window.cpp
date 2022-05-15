@@ -211,18 +211,18 @@ namespace geodesuka::core::object {
 		return TransferBatch;
 	}
 
-	VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
-		// This method is responsible for rendering window to display.
-		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-		this->Mutex.lock();
+	//VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
+	//	// This method is responsible for rendering window to display.
+	//	VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+	//	this->Mutex.lock();
 
-		if (this->Property.RefreshRate) {
+	//	if (this->Property.RefreshRate) {
 
-		}
-		this->Mutex.unlock();
+	//	}
+	//	this->Mutex.unlock();
 
-		return DrawCommand;
-	}
+	//	return DrawCommand;
+	//}
 
 	//void system_window::draw(object_t* aObject) {
 	//	if ((object_t*)this == aObject) return;

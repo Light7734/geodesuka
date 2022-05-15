@@ -109,7 +109,7 @@ namespace geodesuka::core::object {
 		float2 Size;				// [m]
 		struct prop Property;
 
-		window(engine *aEngine, gcl::context* aContext);
+		window(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 
 	};
 

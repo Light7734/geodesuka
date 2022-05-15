@@ -8,6 +8,9 @@
 #include "../gcl/context.h"
 #include "../gcl/texture.h"
 
+#include "../gcl/command_list.h"
+#include "../gcl/command_batch.h"
+
 #include "../logic/timer.h"
 
 #include "../object.h"
@@ -93,8 +96,11 @@ namespace geodesuka::core::object {
 		// Used for runtime rendertarget discrimination.
 		virtual int rtid() = 0;
 
+		// -------------------- Called By Stage.render() ------------------------- \\
+
 		// Will acquire next frame index, if semephore is not VK_NULL_HANDLE, 
-		// use as wait semaphore for render operations.
+		// use as wait semaphore for render operations. This really only applies
+		// to a system_window.
 		virtual VkSemaphore next_frame();
 
 		// Propose a collection of objects (Most likely from a stage), to 
@@ -103,15 +109,16 @@ namespace geodesuka::core::object {
 		// for aggregation and eventual execution by the geodesuka engine.
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) = 0;
 
-		// This will present VKPresentInfoKHR.
-		virtual void present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
+		// This will present VKPresentInfoKHR. Must use a semaphore to make presentation
+		// dependant on rendering operations to complete.
+		virtual VkPresentInfoKHR present_frame(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
 
 	protected:
 
 		// Derived classes can use this aggregate draw commands from objects.
-		submission* Submission;
+		//submission* Submission;
 
-		rendertarget(engine* aEngine, gcl::context* aContext);
+		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 
 
 		// Will update to new draw index for rendering operations.

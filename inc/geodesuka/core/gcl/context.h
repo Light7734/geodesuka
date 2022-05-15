@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include "../gcl.h"
-
+#include "command_batch.h"
 #include "device.h"
 
 namespace geodesuka {
@@ -14,43 +14,19 @@ namespace geodesuka {
 
 namespace geodesuka::core::gcl {
 
+	class command_batch;
+
 	class context {
 	public:
-
-		std::mutex Mutex;
 
 		//\\ ------------------------------ Queues ------------------------------ //\\
 		// Available queues for specific operations. Names are self explanatory.
 		// These members will be VK_NULL_HANDLE if not available. Sometimes they
 		// may be the same queue, but treat them differently even if they are
 		// the same opaque handle.
-		
-		//enum qid {
-		//	TRANSFER	= 0x00000001,
-		//	COMPUTE		= 0x00000002,
-		//	GRAPHICS	= 0x00000004,
-		//	PRESENT		= 0x00000008
-		//};
 
-		// TODO: Remove these options and only create TRANSFER, COMPUTE, GRAPHICS pools.
-		enum cmdtype {
-			// One time submit for transfer operations.
-			TRANSFER_OTS,
-			// Persistent transfer operations
-			TRANSFER_OAD,
-			// Compute Operations
-			COMPUTE,
-			// Graphics Operations.
-			GRAPHICS
-		};
-
-		enum level {
-			PRIMARY		= 0,
-			SECONDARY	= 1
-		};
-
-		//TODO: Include dependency of engine instance.
-		context(engine *aEngine, device* aDevice, uint32_t aExtensionCount, const char** aExtensionList);
+		// TODO: Include dependency of engine instance.
+		context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
 		// Grabs the Queue Family Index associated with Queue Support Bit from context.
@@ -59,24 +35,24 @@ namespace geodesuka::core::gcl {
 		// Queries if queue type exists with context.
 		bool available(device::qfs aQFS);
 
-		// Will create a single command buffer with selected operations.
+		// Creates a single command buffer with selected operations.
 		VkCommandBuffer create(device::qfs aQFS);
 
-		// Will create a list of command buffers with this context and selected support options.
+		// Creates a list of command buffers with this context and selected support options.
 		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
-		// Will destroy a single command buffer created by this context.
+		// Destroys a single command buffer created by this context.
 		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
 
-		// Will destroy all command buffers provided if they were created by this context.
+		// Destroys all command buffers provided if they were created by this context.
 		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
 	
-		//TODO: Make create/destroy thread safe.
-		// Will create a series of command buffer handles, and fill the respective arguments.
+		// TODO: Make create/destroy thread safe.
+		// Creates a series of command buffer handles, and fill the respective arguments.
 		//VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		//void destroy(VkCommandBuffer aCommandBuffer);
-		// Will search and clear allocated command buffers from instance.
+		// Searches and clear allocated command buffers from instance.
 		//void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
@@ -90,6 +66,11 @@ namespace geodesuka::core::gcl {
 		VkDevice handle();
 
 	private:
+
+		// Synchronization
+		std::mutex Mutex;
+		std::atomic<bool> isReady;
+		VkFence Fence;
 
 		// Parent physical device.
 		engine* Engine;

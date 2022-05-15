@@ -63,13 +63,13 @@ namespace geodesuka::core::gcl {
 		const VkQueueFamilyProperties* get_queue_families(uint32_t* aQueueFamilyCount) const;
 		const queue_family_capability* get_capability(uint32_t* aQueueFamilyCount) const;
 
+		// Checks if device has a queue that supports desired operations.
+		bool available(unsigned int aQFS) const;
 
-
-		// Checks if device has queue support bit.
-		bool available(unsigned int aQSB) const;
-
-		// Grabs family index with desired support bits. Will return -1 if doesn't exist.
-		int qfi(unsigned int aQSB) const;
+		// Input desired operations, and returns family index of a Queue that supports the desired operations
+		// with minimum extraneous options. If the desired operations are not supported by the device, the 
+		// function will return -1.
+		int qfi(unsigned int aQFS) const;
 
 		// ----- Handles ----- //
 

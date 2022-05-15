@@ -12,8 +12,6 @@ namespace geodesuka::builtin::object {
 		triangle(engine* aEngine, core::gcl::context* aContext);
 		~triangle();
 
-		virtual VkCommandBuffer draw(core::object::system_window* aTargetSystemWindow)		override;
-
 	private:
 
 		// Create with first interaction with window.

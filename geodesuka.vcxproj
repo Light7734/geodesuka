@@ -184,6 +184,8 @@
     <ClCompile Include="src\char2.cpp" />
     <ClCompile Include="src\char3.cpp" />
     <ClCompile Include="src\char4.cpp" />
+    <ClCompile Include="src\command_batch.cpp" />
+    <ClCompile Include="src\command_pool.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\context.cpp" />
     <ClCompile Include="src\cube.cpp" />
@@ -278,6 +280,8 @@
     <ClInclude Include="inc\geodesuka\core\app.h" />
     <ClInclude Include="inc\geodesuka\core\gcl.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\command_batch.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />

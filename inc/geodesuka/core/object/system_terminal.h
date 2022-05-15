@@ -33,12 +33,12 @@ namespace geodesuka::core::object {
 		// Same as above, but good for string literals.
 		bool operator<<(const char* aRhs);
 
-	protected:
-
 	private:
 
-		// Only engine can create this.
-		system_terminal(engine* aEngine, gcl::context* aContext);
+		// Only engine can create this. This is an object representation of the system
+		// terminal at boot up. This will be used for debugging if system_terminal 
+		// is enabled.
+		system_terminal(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 
 	};
 

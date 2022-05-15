@@ -15,7 +15,7 @@ namespace geodesuka::core::object {
 
 		static const int RTID;
 
-		camera2d(engine *aEngine, gcl::context *aContext);
+		camera2d(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 		~camera2d();
 
 		virtual int rtid() override;

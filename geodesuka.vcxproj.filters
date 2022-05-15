@@ -393,6 +393,12 @@
     <ClCompile Include="src\uchar4.cpp">
       <Filter>src\core\math\vectors</Filter>
     </ClCompile>
+    <ClCompile Include="src\command_batch.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command_pool.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -676,6 +682,12 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\math\vector\uchar4.h">
       <Filter>inc\geodesuka\core\math\vector</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\command_batch.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

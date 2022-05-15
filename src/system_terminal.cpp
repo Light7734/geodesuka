@@ -4,7 +4,7 @@
 
 namespace geodesuka::core::object {
 
-	system_terminal::system_terminal(engine* aEngine, gcl::context* aContext) : object_t(aEngine, aContext) {
+	system_terminal::system_terminal(engine* aEngine, gcl::context* aContext, stage_t* aStage) : object_t(aEngine, aContext, aStage) {
 		// It doesn't matter what the Context is, it isn't used
 		// here for rendering at all.
 	}
