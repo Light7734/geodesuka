@@ -128,7 +128,6 @@ namespace geodesuka::core {
 
 	};
 
-
 }
 
 #endif // !GEODESUKA_CORE_OBJECT_H
