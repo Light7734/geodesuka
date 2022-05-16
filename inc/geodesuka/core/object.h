@@ -17,6 +17,7 @@
 * how to stream line 
 */
 
+#include <atomic>
 #include <mutex>
 #include <map>
 

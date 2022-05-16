@@ -9,6 +9,8 @@
 /// boiler plate code, was not satisfied with the functionality of <string>
 /// </summary>
 
+#include <cstddef>
+
 namespace geodesuka::core::util {
 
 	class str {

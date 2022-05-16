@@ -2,6 +2,7 @@
 #ifndef GEODESUKA_CORE_GCL_CONTEXT_H
 #define GEODESUKA_CORE_GCL_CONTEXT_H
 
+#include <atomic>
 #include <mutex>
 
 #include "../gcl.h"

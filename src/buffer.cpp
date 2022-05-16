@@ -1,5 +1,8 @@
 #include <geodesuka/core/gcl/buffer.h>
 
+#include <cstdlib>
+#include <cstring>
+
 // Used to interact with texture class
 #include <geodesuka/core/gcl/texture.h>
 

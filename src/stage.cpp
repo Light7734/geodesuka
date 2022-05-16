@@ -11,11 +11,10 @@ namespace geodesuka::core {
 	stage_t::~stage_t() {
 		// Will be used to delete all contained
 		// objects explicitly.
-
 	}
 
 	VkSubmitInfo stage_t::update(double aDeltaTime) {
-        VkSubmitInfo TransferBatch{};
+		VkSubmitInfo TransferBatch{};
 		TransferBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		TransferBatch.pNext					= NULL;
 		TransferBatch.waitSemaphoreCount	= 0;
@@ -30,13 +29,13 @@ namespace geodesuka::core {
 			this->RenderTarget[i]->FrameRateTimer.update(aDeltaTime);
 		}
 		this->Mutex.unlock();
-        return TransferBatch;
+		return TransferBatch;
     }
 
 	VkSubmitInfo stage_t::compute() {
-        VkSubmitInfo ComputeBatch{};
-		ComputeBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		ComputeBatch.pNext					= NULL;
+		VkSubmitInfo ComputeBatch{};
+		ComputeBatch.sType			= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		ComputeBatch.pNext			= NULL;
 		ComputeBatch.waitSemaphoreCount		= 0;
 		ComputeBatch.pWaitSemaphores		= NULL;
 		ComputeBatch.pWaitDstStageMask		= NULL;
@@ -44,8 +43,7 @@ namespace geodesuka::core {
 		ComputeBatch.pCommandBuffers		= NULL;
 		ComputeBatch.signalSemaphoreCount	= 0;
 		ComputeBatch.pSignalSemaphores		= NULL;
-
-        return ComputeBatch;
+		return ComputeBatch;
 	}
 
 	void stage_t::render() {

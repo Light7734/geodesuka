@@ -3,6 +3,7 @@
 #include <geodesuka/core/gcl/context.h>
 
 #include <cstdlib>
+#include <cstring>
 #include <climits>
 
 #include <GLFW/glfw3.h>
