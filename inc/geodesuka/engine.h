@@ -157,28 +157,8 @@ namespace geodesuka {
 
 	private:
 
-		// Per Context Work Load
-		struct workload {
-
-			core::gcl::context* Context;
-
-			// Update Thread Device Operations.
-			core::gcl::command_batch TransferOperations;
-			core::gcl::command_batch ComputeOperations;
-
-			// Render Thread Device Operations.
-			core::gcl::command_batch GraphicsAndComputeOperations;
-
-
-			workload(core::gcl::context* aContext);
-			~workload();
-
-
-		};
-
-		// Manages the state of the engine.
+		// TODO: Stupid Object, Remove Later
 		struct state {
-
 			enum id {
 				FAILURE = -1,
 				CREATION,						// Engine instance is being constructed.
@@ -186,84 +166,69 @@ namespace geodesuka {
 				RUNNING,						// Threads are launched and running backend.
 				DESTRUCTION						// Engine is currently in destruction phase.
 			};
-
-			id ID;
-			// Might not be needed.
-			std::mutex Mutex;
-			// Used to suspend threads while App Modifies Engine State.
-			core::logic::trap ThreadTrap;
-
-			// ----- References Only ----- //
-
-			core::object::system_terminal* SystemTerminal;
-			core::gcl::device* PrimaryDevice;
-			core::object::system_display* PrimaryDisplay;
-			std::vector<core::gcl::device*> Device;
-			std::vector<core::object::system_display*> Display;
-			std::vector<core::object::system_window*> SystemWindow;
-
-			// ----- Memory Managed Items ----- //
-
-			// Maybe make shared pointers?
-			std::vector<core::io::file*> File;
-			std::vector<core::gcl::context*> Context;
-			std::vector<core::object_t*> Object;
-			std::vector<core::stage_t*> Stage;
-
-			std::vector<workload> Backload;
-			std::vector<workload> Workload;
-
-			state(engine* aEngine);
-			~state();
-
-			// Returns index of of pointer, -1 if doesn't exist. 
-			int winidx(core::object::system_window* aWin);
-
-			int filidx(core::io::file* aFile);
-			int ctxidx(core::gcl::context* aCtx);
-			int objidx(core::object_t* aObj);
-			int stgidx(core::stage_t* aStg);
-
 		};
-
-		//struct batchutil {
-		//	core::gcl::context*		Context;
-		//	std::mutex				Mutex;			// Mutex to prevent 
-		//	core::stage_t::batch	Batch;			// Aggregated batch of submissions.
-		//	VkFence					Fence;			// Fence which will be signalled when execution is complete.
-		//	VkSemaphore				Semaphore;		// Only really used by
-		//	VkPipelineStageFlags	PipelineStage;	// 
-		//	std::atomic<bool>		inFlight;		// Batch has been submitted to a Queue and is being executed.
-		//	core::stage_t::batch	FwdBatch;		// Will be used to aggregate commands in advance.
-
-		//	batchutil(core::gcl::context* aContext);
-		//	~batchutil();
-		//};
-
-		//struct workload {
-		//	core::gcl::context*		Context;
-		//	batchutil				Transfer;
-		//	batchutil				Compute;
-		//	batchutil				Graphics;
-		//	workload(core::gcl::context* aContext);
-		//	~workload();
-		//};
 
 		const version Version = { 0, 0, 18 }; // Major, Minor, Patch
 		const int Date = 20220514; //YYYYMMDD
-
-		std::mutex Mutex;
-		bool isReady;
-		std::atomic<bool> Shutdown;
-
-		// Maybe make a pointer?
-		state* State;
 		std::vector<const char*> Layer;
 		std::vector<const char*> Extension;
 		VkApplicationInfo AppInfo{};
 		VkInstanceCreateInfo CreateInfo{};
 		VkInstance Handle;
 
+		// ------------------------------ Engine State ------------------------------ //
+
+		std::mutex Mutex;
+		state::id ID;
+		bool isReady;
+		std::atomic<bool> Shutdown;
+		core::logic::trap ThreadTrap;
+
+		// ----- References Only ----- //
+
+		core::object::system_terminal* SystemTerminal;
+		core::gcl::device* PrimaryDevice;
+		core::object::system_display* PrimaryDisplay;
+		std::vector<core::gcl::device*> Device;
+		std::vector<core::object::system_display*> Display;
+		std::vector<core::object::system_window*> SystemWindow;
+
+		// ----- Memory Managed Items ----- //
+
+		// Maybe make shared pointers?
+		std::vector<core::io::file*> File;
+		std::vector<core::gcl::context*> Context;
+		std::vector<core::object_t*> Object;
+		std::vector<core::stage_t*> Stage;
+
+		// Returns index of of pointer, -1 if doesn't exist. 
+		int winidx(core::object::system_window* aWin);
+
+		int filidx(core::io::file* aFile);
+		int ctxidx(core::gcl::context* aCtx);
+		int objidx(core::object_t* aObj);
+		int stgidx(core::stage_t* aStg);
+
+		// ------------------------------ Back end runtime ------------------------------ //
+
+		std::thread::id MainThreadID;
+		std::thread::id RenderThreadID;
+		std::thread::id AudioThreadID;
+		std::thread::id SystemTerminalThreadID;
+		std::thread::id AppThreadID;
+
+		std::thread RenderThread;
+		std::thread AudioThread;
+		std::thread SystemTerminalThread;
+		std::thread AppThread;
+
+		void update();
+		void render();			// Thread honors frame rates of respective targets.
+		void audio();			// Thread Handles audio streams.
+		void terminal();		// Thread handles terminal input to the engine.
+
+		// ----- Back End Garbage ----- //
+		
 		// Signals to update thread to create window handle
 		// Needed backend for system window creation
 		std::atomic<bool> SignalCreate;
@@ -282,23 +247,6 @@ namespace geodesuka {
 		GLFWwindow* create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow);
 		void destroy_window_handle(GLFWwindow* aWindow);
 		void mtcd_process_window_handle_call();
-
-		// ------------------------------ Back end runtime ------------------------------ //
-
-		std::thread::id MainThreadID;
-		std::thread::id RenderThreadID;
-		std::thread::id AudioThreadID;
-		std::thread::id SystemTerminalThreadID;
-		std::thread::id AppThreadID;
-
-		std::thread RenderThread;
-		std::thread AudioThread;
-		std::thread SystemTerminalThread;
-		std::thread AppThread;
-
-		void trender();			// Thread honors frame rates of respective targets.
-		void taudio();			// Thread Handles audio streams.
-		void tsterminal();		// Thread handles terminal input to the engine.
 
 	};
 

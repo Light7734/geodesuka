@@ -16,6 +16,8 @@ namespace geodesuka::core::gcl {
 	class context {
 	public:
 
+		friend class engine;
+
 		//\\ ------------------------------ Queues ------------------------------ //\\
 		// Available queues for specific operations. Names are self explanatory.
 		// These members will be VK_NULL_HANDLE if not available. Sometimes they
@@ -33,16 +35,16 @@ namespace geodesuka::core::gcl {
 		bool available(device::qfs aQFS);
 
 		// Creates a single command buffer with selected operations.
-		VkCommandBuffer create(device::qfs aQFS);
+		//VkCommandBuffer create(device::qfs aQFS);
 
 		// Creates a list of command buffers with this context and selected support options.
-		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		//VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Destroys a single command buffer created by this context.
-		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+		//void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
 
 		// Destroys all command buffers provided if they were created by this context.
-		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
+		//void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
 	
 		// TODO: Make create/destroy thread safe.
 		// Creates a series of command buffer handles, and fill the respective arguments.
@@ -63,6 +65,14 @@ namespace geodesuka::core::gcl {
 		VkDevice handle();
 
 	private:
+
+		// Engine Specific Data.
+		std::mutex ExecutionMutex;
+		VkFence ExecutionFence[3];
+		std::atomic<bool> UpdateInFlight;
+		std::atomic<bool> RenderInFlight;
+		command_batch BackBatch[3];
+		command_batch WorkBatch[3];
 
 		// Synchronization
 		std::mutex Mutex;

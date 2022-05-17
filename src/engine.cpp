@@ -34,360 +34,6 @@ namespace geodesuka {
 	using namespace object;
 	using namespace logic;
 
-	engine::state::state(engine* aEngine) {
-
-		this->ID = id::CREATION;
-
-		this->SystemTerminal = nullptr;
-		this->PrimaryDevice = nullptr;
-		this->PrimaryDisplay = nullptr;
-
-		// Represent System Terminal
-		this->SystemTerminal = new system_terminal(aEngine, nullptr, nullptr);
-
-		// Gathers Graphics & Compute devices
-		VkResult Result = VK_SUCCESS;
-		uint32_t PhysicalDeviceCount = 0;
-		Result = vkEnumeratePhysicalDevices(aEngine->Handle, &PhysicalDeviceCount, NULL);
-		std::vector<VkPhysicalDevice> PhysicalDevice(PhysicalDeviceCount);
-		Result = vkEnumeratePhysicalDevices(aEngine->Handle, &PhysicalDeviceCount, PhysicalDevice.data());
-		if (PhysicalDeviceCount > 0) {
-			for (uint32_t i = 0; i < PhysicalDeviceCount; i++) {
-				this->Device.push_back(new device(aEngine->Handle, PhysicalDevice[i]));
-			}
-		}
-
-		vkGetPhysicalDeviceDisplayPropertiesKHR;
-
-		// Gathers current display setup
-		if (glfwGetPrimaryMonitor() != NULL) {
-			this->PrimaryDisplay = new system_display(aEngine, nullptr, glfwGetPrimaryMonitor());
-			int MonitorCount;
-			GLFWmonitor** Monitors = glfwGetMonitors(&MonitorCount);
-			for (int i = 0; i < MonitorCount; i++) {
-				if (Monitors[i] != glfwGetPrimaryMonitor()) {
-					this->Display[i] = new system_display(aEngine, nullptr, Monitors[i]);
-				}
-				else {
-					this->Display[i] = this->PrimaryDisplay;
-				}
-			}
-		}
-
-		// Associate devices with slave system_display. Can only be done with extension VK_KHR_display
-
-		// Construct Desktop Stages.
-		for (size_t i = 0; i < this->Display.size(); i++) {
-			stage::desktop* Desktop = new stage::desktop(aEngine, nullptr, this->Display[i]);
-			this->Display[i]->Stage;
-			this->Stage.push_back(this->Display[i]->Stage);
-		}
-
-	}
-
-	engine::state::~state() {
-		
-		this->ID = state::id::DESTRUCTION;
-
-		this->SystemTerminal = nullptr;
-		this->PrimaryDevice = nullptr;
-		this->PrimaryDisplay = nullptr;
-		this->Display.clear();
-		this->SystemWindow.clear();
-
-		for (size_t i = 0; i < this->Stage.size(); i++) {
-			delete this->Stage[i];
-		}
-
-		for (size_t i = 0; i < this->Object.size(); i++) {
-			delete this->Object[i];
-		}
-
-		for (size_t i = 0; i < this->Stage.size(); i++) {
-			delete this->Context[i];
-		}
-
-		for (size_t i = 0; i < this->Stage.size(); i++) {
-			delete this->File[i];
-		}
-
-		this->Stage.clear();
-		this->Object.clear();
-		this->Context.clear();
-		this->File.clear();
-
-		for (size_t i = 0; i < this->Device.size(); i++) {
-			delete this->Device[i];
-		}
-
-		this->Device.clear();
-
-	}
-
-	//void engine::state::submit(core::gcl::context* aContext) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	//
-	//	this->Context[this->ContextCount] = aContext;
-	//	this->Workload[this->ContextCount] = new workload(aContext);
-	//	this->ContextCount += 1;
-	//
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	//
-	//void engine::state::remove(core::gcl::context* aContext) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	//
-	//	int CtxIdx = this->ctxidx(aContext);
-	//	int MoveCount = (this->ContextCount - 1) - CtxIdx;
-	//
-	//	delete this->Workload[CtxIdx];
-	//	this->Context[CtxIdx] = nullptr;
-	//	this->Workload[CtxIdx] = nullptr;
-	//
-	//	memmove(&this->Context[CtxIdx], &this->Context[CtxIdx + 1], MoveCount * sizeof(context*));
-	//	memmove(&this->Workload[CtxIdx], &this->Workload[CtxIdx + 1], MoveCount * sizeof(context*));
-	//
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	//
-	//void engine::state::submit(core::object_t* aObject) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	//
-	//	void* nptr = NULL;
-	//
-	//	if (this->Object == NULL) {
-	//		nptr = malloc(sizeof(object_t*));
-	//	}
-	//	else {
-	//		nptr = realloc(this->Object, (this->ObjectCount + 1) * sizeof(object_t*));
-	//	}
-	//
-	//	assert(!(nptr == NULL));
-	//
-	//	this->Object = (object_t**)nptr;
-	//	this->Object[this->ObjectCount] = aObject;
-	//	this->ObjectCount += 1;
-	//
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	//
-	//void engine::state::remove(core::object_t* aObject) {
-	//	// Should be fine?
-	//	//if (this->State != state::READY) return;
-	//
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	//
-	//	int ObjIdx = this->objidx(aObject);
-	//	if (ObjIdx >= 0) {
-	//		if (this->ObjectCount == 1) {
-	//			free(this->Object);
-	//			this->Object = NULL;
-	//			this->ObjectCount = 0;
-	//		}
-	//		else {
-	//			this->Object[ObjIdx] = nullptr;
-	//			int MoveCount = (this->ObjectCount - 1) - ObjIdx;
-	//			if (MoveCount > 0) {
-	//				memmove(&this->Object[ObjIdx], &this->Object[ObjIdx + 1], MoveCount * sizeof(object_t*));
-	//			}
-	//			void* nptr = realloc(this->Object, (this->ObjectCount - 1) * sizeof(object_t*));
-	//			assert(!(nptr == NULL));
-	//			this->Object = (object_t**)nptr;
-	//			this->ObjectCount -= 1;
-	//		}
-	//	}
-	//
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	//
-	//void engine::state::submit(core::object::system_window* aSystemWindow) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	// 
-	//	// Put at end of SystemWindow List.
-	//	int Offset = 1 + this->DisplayCount + this->SystemWindowCount;
-	//	int MoveCount = (this->ObjectCount - 1) - Offset;
-	// 
-	//	void* nptr = NULL;
-	// 
-	//	if (this->Object == NULL) {
-	//		nptr = malloc(sizeof(object_t*));
-	//	}
-	//	else {
-	//		nptr = realloc(this->Object, (this->ObjectCount + 1) * sizeof(object_t*));
-	//	}
-	// 
-	//	// If this dereferences a null pointer, oh well.
-	//	assert(!(nptr == NULL));
-	// 
-	//	this->Object = (object_t**)nptr;
-	// 
-	//	this->SystemWindow[this->SystemWindowCount] = aSystemWindow;
-	//	if (MoveCount > 0) {
-	//		memmove(&this->Object[Offset], &this->Object[Offset + 1], MoveCount * sizeof(object_t*));
-	//	}
-	//	this->Object[Offset] = aSystemWindow;
-	// 
-	//	this->SystemWindowCount += 1;
-	//	this->ObjectCount += 1;
-	// 
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	// 
-	//void engine::state::remove(core::object::system_window* aSystemWindow) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	// 
-	//	int WinIdx = this->winidx(aSystemWindow);
-	//	if (WinIdx >= 0) {
-	//		int MoveCount = (this->SystemWindowCount - 1) - WinIdx;
-	//		this->SystemWindow[WinIdx] = nullptr;
-	//		if (MoveCount > 0) {
-	//			memmove(&this->SystemWindow[WinIdx], &this->SystemWindow[WinIdx + 1], MoveCount * sizeof(system_window*));
-	//		}
-	//		this->SystemWindow[this->SystemWindowCount - 1] = nullptr;
-	//		this->SystemWindowCount -= 1;
-	//	}
-	// 
-	//	int ObjIdx = this->objidx(aSystemWindow);
-	//	if (ObjIdx >= 0) {
-	//		int MoveCount = (this->ObjectCount - 1) - ObjIdx;
-	//		this->Object[ObjIdx] = nullptr;
-	//		if (MoveCount > 0) {
-	//			memmove(&this->Object[ObjIdx], &this->Object[ObjIdx + 1], MoveCount * sizeof(object_t*));
-	//		}
-	//		this->Object[this->ObjectCount - 1] = nullptr;
-	//		this->ObjectCount -= 1;
-	//	}
-	// 
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	// 
-	//void engine::state::submit(core::stage_t* aStage) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	// 
-	//	void* nptr = NULL;
-	//	if (this->Stage == NULL) {
-	//		nptr = malloc(sizeof(core::stage_t*));
-	//	}
-	//	else {
-	//		nptr = realloc(this->Stage, (this->StageCount + 1) * sizeof(core::stage_t*));
-	//	}
-	// 
-	//	assert(!(nptr == NULL));
-	// 
-	//	this->Stage[this->StageCount] = aStage;
-	//	this->StageCount += 1;
-	// 
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-	// 
-	//void engine::state::remove(core::stage_t* aStage) {
-	//	if (!((this->State == state::READY) || (this->State == state::RUNNING))) return;
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(true);
-	//		this->RenderUpdateTrap.wait_until(2);
-	//	}
-	// 
-	//	int StgIdx = this->stgidx(aStage);
-	//	if (StgIdx >= 0) {
-	//		if (this->StageCount == 1) {
-	//			free(this->Stage);
-	//			this->Stage = NULL;
-	//			this->StageCount = 0;
-	//		}
-	//		else {
-	//			int MoveCount = (this->StageCount - 1) - StgIdx;
-	//			if (MoveCount) {
-	//				memmove(&this->Stage[StgIdx], &this->Stage[StgIdx + 1], MoveCount * sizeof(core::stage_t*));
-	//			}
-	//			void* nptr = realloc(this->Stage, (this->StageCount - 1) * sizeof(core::stage_t*));
-	//			assert(!(nptr == NULL));
-	//			this->Stage = (core::stage_t**)nptr;
-	//			this->StageCount -= 1;
-	//		}
-	//	}
-	// 
-	//	if (this->State == state::RUNNING) {
-	//		this->RenderUpdateTrap.set(false);
-	//	}
-	//}
-
-	int engine::state::winidx(core::object::system_window* aWin) {
-		for (int i = 0; i < this->SystemWindow.size(); i++) {
-			if (this->SystemWindow[i] == aWin) return i;
-		}
-		return 0;
-	}
-
-	int engine::state::filidx(core::io::file* aFile) {
-		for (int i = 0; i < this->File.size(); i++) {
-			if (this->File[i] == aFile) return i;
-		}
-		return -1;
-	}
-
-	int engine::state::ctxidx(core::gcl::context* aCtx) {
-		for (int i = 0; i < this->Context.size(); i++) {
-			if (this->Context[i] == aCtx) return i;
-		}
-		return -1;
-	}
-
-	int engine::state::objidx(core::object_t* aObj) {
-		for (int i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aObj) return i;
-		}
-		return -1;
-	}
-
-	int engine::state::stgidx(core::stage_t* aStg) {
-		for (int i = 0; i < this->Stage.size(); i++) {
-			if (this->Stage[i] == aStg) return i;
-		}
-		return -1;
-	}
-
 	engine::engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList) /*: State(this)*/ {
 
 		//this->State = state::CREATION;
@@ -480,9 +126,56 @@ namespace geodesuka {
 		}
 
 		if (isGLSLANGReady && isGLFWReady && isVulkanReady) {
-			this->State = new state(this);
-			isGCDeviceAvailable = this->State->Device.size() > 0;
-			isSystemDisplayAvailable = this->State->Display.size() > 0;
+			this->ID = state::id::CREATION;
+
+			this->SystemTerminal = nullptr;
+			this->PrimaryDevice = nullptr;
+			this->PrimaryDisplay = nullptr;
+
+			// Represent System Terminal
+			this->SystemTerminal = new system_terminal(this, nullptr, nullptr);
+
+			// Gathers Graphics & Compute devices
+			VkResult Result = VK_SUCCESS;
+			uint32_t PhysicalDeviceCount = 0;
+			Result = vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, NULL);
+			std::vector<VkPhysicalDevice> PhysicalDevice(PhysicalDeviceCount);
+			Result = vkEnumeratePhysicalDevices(this->Handle, &PhysicalDeviceCount, PhysicalDevice.data());
+			if (PhysicalDeviceCount > 0) {
+				for (uint32_t i = 0; i < PhysicalDeviceCount; i++) {
+					this->Device.push_back(new device(this->Handle, PhysicalDevice[i]));
+				}
+			}
+
+			vkGetPhysicalDeviceDisplayPropertiesKHR;
+
+			// Gathers current display setup
+			if (glfwGetPrimaryMonitor() != NULL) {
+				this->PrimaryDisplay = new system_display(this, nullptr, glfwGetPrimaryMonitor());
+				int MonitorCount;
+				GLFWmonitor** Monitors = glfwGetMonitors(&MonitorCount);
+				for (int i = 0; i < MonitorCount; i++) {
+					if (Monitors[i] != glfwGetPrimaryMonitor()) {
+						this->Display[i] = new system_display(this, nullptr, Monitors[i]);
+					}
+					else {
+						this->Display[i] = this->PrimaryDisplay;
+					}
+				}
+			}
+
+			// Associate devices with slave system_display. Can only be done with extension VK_KHR_display
+
+			// Construct Desktop Stages.
+			for (size_t i = 0; i < this->Display.size(); i++) {
+				stage::desktop* Desktop = new stage::desktop(this, nullptr, this->Display[i]);
+				this->Display[i]->Stage;
+				this->Stage.push_back(this->Display[i]->Stage);
+			}
+
+
+			isGCDeviceAvailable = this->Device.size() > 0;
+			isSystemDisplayAvailable = this->Display.size() > 0;
 		}
 
 		// Store main thread ID.
@@ -495,13 +188,46 @@ namespace geodesuka {
 		this->DestroyWindow.store(NULL);
 
 		this->isReady = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable;
-		this->State->ID = this->isReady ? state::id::READY : state::id::FAILURE;
+		this->ID = this->isReady ? state::id::READY : state::id::FAILURE;
 
 	}
 
 	engine::~engine() {
 
-		delete this->State;
+		this->ID = state::id::DESTRUCTION;
+
+		this->SystemTerminal = nullptr;
+		this->PrimaryDevice = nullptr;
+		this->PrimaryDisplay = nullptr;
+		this->Display.clear();
+		this->SystemWindow.clear();
+
+		for (size_t i = 0; i < this->Stage.size(); i++) {
+			delete this->Stage[i];
+		}
+
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			delete this->Object[i];
+		}
+
+		for (size_t i = 0; i < this->Stage.size(); i++) {
+			delete this->Context[i];
+		}
+
+		for (size_t i = 0; i < this->Stage.size(); i++) {
+			delete this->File[i];
+		}
+
+		this->Stage.clear();
+		this->Object.clear();
+		this->Context.clear();
+		this->File.clear();
+
+		for (size_t i = 0; i < this->Device.size(); i++) {
+			delete this->Device[i];
+		}
+
+		this->Device.clear();
 
 		vkDestroyInstance(this->Handle, NULL);
 
@@ -526,21 +252,21 @@ namespace geodesuka {
 	}
 
 	core::gcl::device** engine::get_device_list(size_t* aListSize) {
-		*aListSize = this->State->Device.size();
-		return this->State->Device.data();
+		*aListSize = this->Device.size();
+		return this->Device.data();
 	}
 
 	core::gcl::device* engine::get_primary_device() {
-		return this->State->PrimaryDevice;
+		return this->PrimaryDevice;
 	}
 
 	core::object::system_display** engine::get_display_list(size_t* aListSize) {
-		*aListSize = this->State->Display.size();
-		return this->State->Display.data();
+		*aListSize = this->Display.size();
+		return this->Display.data();
 	}
 
 	core::object::system_display* engine::get_primary_display() {
-		return this->State->PrimaryDisplay;
+		return this->PrimaryDisplay;
 	}
 
 	VkInstance engine::handle() {
@@ -557,6 +283,283 @@ namespace geodesuka {
 
 	int engine::get_date() {
 		return this->Date;
+	}
+
+	/*
+	
+	update and render thread pseudo code.
+
+	// Rules.
+
+	// Graphics DEPENDS ON Transfer & Compute to finish.
+	// Compute DEPENDS ON Transfer.
+
+	update() {
+		
+		// GPU Context State Transfer -> Compute -> Graphics -> Transfer -> .. (Repeat)
+
+		// step 1
+		// Wait for all context transfer operations to complete before 
+		// doing host updates and transfer and compute command polling
+
+		// step 2
+		// update all host objects and host stages, then aggregate next
+		// transfer and compute operations.
+
+		// step 3
+		// Use semaphores to make gpu dependency on
+
+		// step 4 
+		// Wait for all graphics and compute operations to finish executing
+		// on all contexts before the submission of transfer operation commands.
+		
+		// step 5
+		// (Mutual Exclusion) begin transfer operations 
+
+	}
+
+	render() {
+		
+		// step 1
+		// Aggregate all draw commands from ready rendertargets.
+
+		// step 2
+		// wait for graphics operations to complete for previous draw.
+
+		// step 3
+		// 
+
+	}
+
+	*/
+
+
+	// --------------- Engine Main Thread --------------- //
+	// The main thread is used to spawn backend threads along
+	// with the app thread.
+	// --------------- Engine Main Thread --------------- //
+	int engine::run(core::app* aApp) {
+
+		// Store main thread ID.
+
+		this->State->ID					= state::RUNNING;
+		this->MainThreadID				= std::this_thread::get_id();
+		this->RenderThread				= std::thread(&engine::render, this);
+		this->SystemTerminalThread		= std::thread(&engine::terminal, this);
+		this->AppThread					= std::thread(&core::app::run, aApp);
+
+		this->update();
+
+		// This is redundant. Only the App thread can shutdown all other threads.
+		this->Shutdown.store(true);
+
+		this->RenderThread.join();
+		this->SystemTerminalThread.join();
+		this->AppThread.join();
+		this->State->ID = state::READY;
+
+		return 0;
+	}
+
+	int engine::winidx(core::object::system_window* aWin) {
+		for (int i = 0; i < this->SystemWindow.size(); i++) {
+			if (this->SystemWindow[i] == aWin) return i;
+		}
+		return 0;
+	}
+
+	int engine::filidx(core::io::file* aFile) {
+		for (int i = 0; i < this->File.size(); i++) {
+			if (this->File[i] == aFile) return i;
+		}
+		return -1;
+	}
+
+	int engine::ctxidx(core::gcl::context* aCtx) {
+		for (int i = 0; i < this->Context.size(); i++) {
+			if (this->Context[i] == aCtx) return i;
+		}
+		return -1;
+	}
+
+	int engine::objidx(core::object_t* aObj) {
+		for (int i = 0; i < this->Object.size(); i++) {
+			if (this->Object[i] == aObj) return i;
+		}
+		return -1;
+	}
+
+	int engine::stgidx(core::stage_t* aStg) {
+		for (int i = 0; i < this->Stage.size(); i++) {
+			if (this->Stage[i] == aStg) return i;
+		}
+		return -1;
+	}
+
+	void engine::update() {
+
+		double t1, t2;
+		double wt, ht;
+		double /*t,*/ dt;
+		double ts = 0.01;
+		dt = 0.0;
+
+		// The update thread is the main thread.
+		while (!this->Shutdown.load()) {
+			this->ThreadTrap.door();
+
+			t1 = core::logic::get_time();
+			this->mtcd_process_window_handle_call();
+			glfwPollEvents();
+
+			// Host Work is done here...
+
+			// Per Context/GPU works is submitted in this section.
+			VkResult Result = VkResult::VK_SUCCESS;
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				// Lock Context for execution.
+				this->Context[i]->ExecutionMutex.lock();
+
+				// Check if Transfer/Compute work is being done. If so, reset fences.
+				if (this->Context[i]->UpdateInFlight.load()) {
+					vkWaitForFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
+					vkResetFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0]);
+					this->Context[i]->UpdateInFlight.store(false);
+				}
+
+				// Check if Graphics & Compute work is being done, if so, wait then reset fences.
+				if (this->Context[i]->RenderInFlight.load()) {
+					vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2], VK_TRUE, UINT64_MAX);
+					vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2]);
+					this->Context[i]->RenderInFlight.store(false);
+				}
+
+				// Check if either transfer back batch, or compute back batch have accumulated submission.
+				if ((this->Context[i]->BackBatch[0].SubmissionCount > 0) || (this->Context[i]->BackBatch[1].SubmissionCount > 0)) {
+					// Loads back batch, ready for execution.
+					this->Context[i]->WorkBatch[0] = this->Context[i]->BackBatch[0];
+					this->Context[i]->WorkBatch[1] = this->Context[i]->BackBatch[1];
+
+					// Clears back batch for another run through.
+					this->Context[i]->BackBatch[0].clear();
+					this->Context[i]->BackBatch[1].clear();
+
+					// TODO: Replace with proper Queues.
+					VkQueue Q;
+					// Submit Current Transfer Workload.
+					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
+						vkQueueSubmit(Q, this->Context[i]->WorkBatch[0].SubmissionCount, this->Context[i]->WorkBatch[0].Submission, this->Context[i]->ExecutionFence[0]);
+					}
+					// Submit Current Compute Workload.
+					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
+						vkQueueSubmit(Q, this->Context[i]->WorkBatch[1].SubmissionCount, this->Context[i]->WorkBatch[1].Submission, this->Context[i]->ExecutionFence[1]);
+					}
+
+					// After WorkBatch has been submitted, flag for work in flight.
+					this->Context[i]->UpdateInFlight.store(true);
+				}
+				// Release context from executin lock.
+				this->Context[i]->ExecutionMutex.unlock();
+			}
+
+			t2 = core::logic::get_time();
+
+
+			wt = t2 - t1;
+			if (wt < ts) {
+				ht = ts - wt;
+				core::logic::waitfor(ht);
+			}
+			else {
+				ht = 0.0;
+			}
+			dt = wt + ht;
+		}
+
+	}
+
+	// --------------- Render Thread --------------- //
+	// The job of the render thread is to honor and schedule draw
+	// calls of respective render targets stored in memory.
+	// --------------- Render Thread --------------- //
+	void engine::render() {
+
+		while (!this->Shutdown.load()) {
+			this->ThreadTrap.door();
+
+			// Aggregate all render operations from all render targets...
+
+			// Per Context/GPU works is submitted in this section.
+			VkResult Result = VkResult::VK_SUCCESS;
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				// Lock Context for execution.
+				this->Context[i]->ExecutionMutex.lock();
+
+				// Check if Transfer/Compute work is being done. If so, reset fences.
+				if (this->Context[i]->UpdateInFlight.load()) {
+					vkWaitForFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
+					vkResetFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0]);
+					this->Context[i]->UpdateInFlight.store(false);
+				}
+
+				// Check if Graphics & Compute work is being done, if so, wait then reset fences.
+				if (this->Context[i]->RenderInFlight.load()) {
+					vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2], VK_TRUE, UINT64_MAX);
+					vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2]);
+					this->Context[i]->RenderInFlight.store(false);
+				}
+
+				// Check for Graphics & Compute operations accumulated.
+				if (this->Context[i]->BackBatch[2].SubmissionCount > 0) {
+					// Loads back batch, ready for execution.
+					this->Context[i]->WorkBatch[2] = this->Context[i]->BackBatch[2];
+
+					// Clears back batch for another run through.
+					this->Context[i]->BackBatch[2].clear();
+
+					// TODO: Replace with proper Queues.
+					VkQueue Q;
+
+					// Submit Current Graphics&Compute Workloads.
+					if (this->Context[i]->WorkBatch[2].SubmissionCount > 0) {
+						vkQueueSubmit(Q, this->Context[i]->WorkBatch[2].SubmissionCount, this->Context[i]->WorkBatch[2].Submission, this->Context[i]->ExecutionFence[2]);
+					}
+
+					// Submit All Presentation Commands. (Note: this should not be very often unless lots of system_windows)
+					if (this->Context[i]->WorkBatch[2].PresentationCount > 0) {
+						for (uint32_t j = 0; j < this->Context[i]->WorkBatch[2].PresentationCount; j++) {
+							vkQueuePresentKHR(Q, &this->Context[i]->WorkBatch[2].Presentation[j]);
+						}
+					}
+
+					// After WorkBatch has been submitted, flag for work in flight.
+					this->Context[i]->RenderInFlight.store(true);
+				}
+				// Release context from executin lock.
+				this->Context[i]->ExecutionMutex.unlock();
+			}
+
+		}
+
+	}
+
+	void engine::audio() {
+		// Does nothing currently.
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1);
+		}
+
+	}
+
+	// --------------- System Terminal Thread --------------- //
+	// Will be used for runtime debugging of engine using terminal.
+	// --------------- System Terminal Thread --------------- //
+	void engine::terminal() {
+
+		while (!this->Shutdown.load()) {
+			core::logic::waitfor(1.0);
+		}
+
 	}
 
 	GLFWwindow* engine::create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
@@ -630,147 +633,6 @@ namespace geodesuka {
 			glfwDestroyWindow(temp);
 			this->DestroyWindow.store(NULL);
 		}		
-	}
-
-	/*
-	
-	update and render thread pseudo code.
-
-	// Rules.
-
-	// Graphics DEPENDS ON Transfer & Compute to finish.
-	// Compute DEPENDS ON Transfer.
-
-	update() {
-		
-		// GPU Context State Transfer -> Compute -> Graphics -> Transfer -> .. (Repeat)
-
-		// step 1
-		// Wait for all context transfer operations to complete before 
-		// doing host updates and transfer and compute command polling
-
-		// step 2
-		// update all host objects and host stages, then aggregate next
-		// transfer and compute operations.
-
-		// step 3
-		// Use semaphores to make gpu dependency on
-
-		// step 4 
-		// Wait for all graphics and compute operations to finish executing
-		// on all contexts before the submission of transfer operation commands.
-		
-		// step 5
-		// (Mutual Exclusion) begin transfer operations 
-
-	}
-
-	render() {
-		
-		// step 1
-		// Aggregate all draw commands from ready rendertargets.
-
-		// step 2
-		// wait for graphics operations to complete for previous draw.
-
-		// step 3
-		// 
-
-	}
-
-	*/
-
-
-	// --------------- Engine Main Thread --------------- //
-	// The main thread is used to spawn backend threads along
-	// with the app thread.
-	// --------------- Engine Main Thread --------------- //
-	int engine::run(core::app* aApp) {
-
-		// Store main thread ID.
-
-		this->State->ID					= state::RUNNING;
-		this->MainThreadID				= std::this_thread::get_id();
-		this->RenderThread				= std::thread(&engine::trender, this);
-		this->SystemTerminalThread		= std::thread(&engine::tsterminal, this);
-		this->AppThread					= std::thread(&core::app::run, aApp);
-
-		double t1, t2;
-		double wt, ht;
-		double /*t,*/ dt;
-		double ts = 0.01;
-		dt = 0.0;
-
-		// Used for scheduling compute operations dependent on transfer operations.
-		uint32_t WaitSemaphoreCount = 0;
-		VkSemaphore* WaitSemaphore = NULL;
-		VkPipelineStageFlags* WaitSemaphoreStage = NULL;
-
-
-		VkResult Result = VkResult::VK_SUCCESS;
-
-		// The update thread is the main thread.
-		while (!this->Shutdown.load()) {
-			this->State->ThreadTrap.door();
-
-			t1 = core::logic::get_time();
-			this->mtcd_process_window_handle_call();
-			glfwPollEvents();
-
-			// Work is done here...
-
-			t2 = core::logic::get_time();
-
-
-			wt = t2 - t1;
-			if (wt < ts) {
-				ht = ts - wt;
-				core::logic::waitfor(ht);
-			}
-			else {
-				ht = 0.0;
-			}
-			dt = wt + ht;
-		}
-
-		// This is redundant. Only the App thread can shutdown all other threads.
-		this->Shutdown.store(true);
-
-		this->RenderThread.join();
-		this->SystemTerminalThread.join();
-		this->AppThread.join();
-		this->State->ID = state::READY;
-
-		return 0;
-	}
-
-	// --------------- Render Thread --------------- //
-	// The job of the render thread is to honor and schedule draw
-	// calls of respective render targets stored in memory.
-	// --------------- Render Thread --------------- //
-	void engine::trender() {
-
-		while (!this->Shutdown.load()) {
-			this->State->ThreadTrap.door();
-
-		}
-	}
-
-	void engine::taudio() {
-		// Does nothing currently.
-		while (!this->Shutdown.load()) {
-			core::logic::waitfor(1);
-		}
-	}
-
-	// --------------- System Terminal Thread --------------- //
-	// Will be used for runtime debugging of engine using terminal.
-	// --------------- System Terminal Thread --------------- //
-	void engine::tsterminal() {
-
-		while (!this->Shutdown.load()) {
-			core::logic::waitfor(1.0);
-		}
 	}
 
 }

@@ -12,6 +12,8 @@ namespace geodesuka::core::gcl {
 	class command_batch {
 	public:
 
+		friend class engine;
+
 		command_batch();
 		command_batch(VkSubmitInfo aSubmission);
 		command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission);
