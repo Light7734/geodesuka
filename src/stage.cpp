@@ -72,6 +72,7 @@ namespace geodesuka::core {
 			}
 		}
 		this->Mutex.unlock();
+		return Batch;
 	}
 
 }

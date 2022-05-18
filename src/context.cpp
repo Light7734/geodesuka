@@ -27,7 +27,6 @@ namespace geodesuka::core::gcl {
 		// If -1, then the option is not supported by the device.
 		this->QFI[0] = this->Device->qfi(device::qfs::TRANSFER);
 		this->QFI[1] = this->Device->qfi(device::qfs::COMPUTE);
-		//this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS);
 		this->QFI[2] = this->Device->qfi(device::qfs::GRAPHICS_AND_COMPUTE);
 		this->QFI[3] = this->Device->qfi(device::qfs::PRESENT);
 
@@ -40,7 +39,7 @@ namespace geodesuka::core::gcl {
 			this->Support |= device::qfs::COMPUTE;
 		}
 		if (this->QFI[2] >= 0) {
-			this->Support |= device::qfs::GRAPHICS;
+			this->Support |= device::qfs::GRAPHICS_AND_COMPUTE;
 		}
 		if (this->QFI[3] >= 0) {
 			this->Support |= device::qfs::PRESENT;
@@ -91,6 +90,7 @@ namespace geodesuka::core::gcl {
 				}
 			}
 		}
+
 		this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(this->UQFICount * sizeof(VkDeviceQueueCreateInfo));
 		this->Queue = new queue[this->QueueCount];
 
@@ -182,7 +182,7 @@ namespace geodesuka::core::gcl {
 
 		// Graphics operations.
 		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS);
+		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS_AND_COMPUTE);
 
 		for (int i = 0; i < 3; i++) {
 			if (this->QFI[i] != -1) {

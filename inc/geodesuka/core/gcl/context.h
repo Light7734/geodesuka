@@ -58,7 +58,8 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		// Used for per context operations.
+		// -------------------- Engine Data -------------------- //
+
 		std::mutex ExecutionMutex;
 		VkFence ExecutionFence[3];
 		std::atomic<bool> UpdateInFlight;
@@ -66,23 +67,23 @@ namespace geodesuka::core::gcl {
 		command_batch BackBatch[3];
 		command_batch WorkBatch[3];
 
-		// Synchronization
+		// -------------------- Engine Data -------------------- //
+
 		std::mutex Mutex;
-		std::atomic<bool> isReady;
-		VkFence Fence;
 
 		// Parent physical device.
 		engine* Engine;
 		device* Device;
 
-		// Supported Queue Options.
+		// Supported Queue options for this context
 		unsigned int Support;
 
-		// Queue Family Indices.
+		// Queue Family Indices = QFI
+		// Array of QFIs.
 		int QFI[4];
 
-		// Unique QFI.
-		int UQFICount; // Always <= 4.
+		// Array of Unique QFIs.
+		int UQFICount;
 		int UQFI[4];
 
 		float** QueueFamilyPriority;

@@ -422,8 +422,14 @@ namespace geodesuka {
 
 				// Check if Transfer/Compute work is being done. If so, reset fences.
 				if (this->Context[i]->UpdateInFlight.load()) {
-					vkWaitForFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
-					vkResetFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0]);
+					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0]);
+					}
+					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1]);
+					}
 					this->Context[i]->UpdateInFlight.store(false);
 				}
 
@@ -498,8 +504,14 @@ namespace geodesuka {
 
 				// Check if Transfer/Compute work is being done. If so, reset fences.
 				if (this->Context[i]->UpdateInFlight.load()) {
-					vkWaitForFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
-					vkResetFences(this->Context[i]->Handle, 2, &this->Context[i]->ExecutionFence[0]);
+					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0]);
+					}
+					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1]);
+					}
 					this->Context[i]->UpdateInFlight.store(false);
 				}
 
