@@ -53,7 +53,7 @@ namespace geodesuka::core {
 		virtual VkSubmitInfo compute();
 
 		// Will generate render operations per render target in scheduled manner.
-		virtual void render();
+		virtual gcl::command_batch render();
 
 	};
 

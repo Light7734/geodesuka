@@ -46,7 +46,7 @@ namespace geodesuka::core {
 		return ComputeBatch;
 	}
 
-	void stage_t::render() {
+	gcl::command_batch stage_t::render() {
 		gcl::command_batch Batch;
 		this->Mutex.lock();
 		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
@@ -66,9 +66,9 @@ namespace geodesuka::core {
 				// Use next_frame semaphore to pause render operations until
 				this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
 
-				VkPresentInfoKHR;
 				// Use Submission Semaphore to hold present.
 				this->RenderTarget[i]->present_frame();
+
 			}
 		}
 		this->Mutex.unlock();
