@@ -46,6 +46,8 @@ namespace geodesuka::core::gcl {
 		// Destroys all command buffers provided if they were created by this context.
 		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
 
+		//VkResult execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence);
+
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
 

@@ -13,6 +13,7 @@ namespace geodesuka::core::gcl {
 	public:
 
 		friend class engine;
+		friend class context;
 
 		command_batch();
 		command_batch(VkSubmitInfo aSubmission);
