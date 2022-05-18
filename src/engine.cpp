@@ -342,7 +342,7 @@ namespace geodesuka {
 
 		// Store main thread ID.
 
-		this->State->ID					= state::RUNNING;
+		this->ID						= state::RUNNING;
 		this->MainThreadID				= std::this_thread::get_id();
 		this->RenderThread				= std::thread(&engine::render, this);
 		this->SystemTerminalThread		= std::thread(&engine::terminal, this);
@@ -356,7 +356,7 @@ namespace geodesuka {
 		this->RenderThread.join();
 		this->SystemTerminalThread.join();
 		this->AppThread.join();
-		this->State->ID = state::READY;
+		this->ID = state::READY;
 
 		return 0;
 	}
@@ -445,7 +445,8 @@ namespace geodesuka {
 					this->Context[i]->BackBatch[1].clear();
 
 					// TODO: Replace with proper Queues.
-					VkQueue Q;
+					VkQueue Q = VK_NULL_HANDLE;
+
 					// Submit Current Transfer Workload.
 					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
 						vkQueueSubmit(Q, this->Context[i]->WorkBatch[0].SubmissionCount, this->Context[i]->WorkBatch[0].Submission, this->Context[i]->ExecutionFence[0]);
@@ -518,7 +519,7 @@ namespace geodesuka {
 					this->Context[i]->BackBatch[2].clear();
 
 					// TODO: Replace with proper Queues.
-					VkQueue Q;
+					VkQueue Q = VK_NULL_HANDLE;
 
 					// Submit Current Graphics&Compute Workloads.
 					if (this->Context[i]->WorkBatch[2].SubmissionCount > 0) {

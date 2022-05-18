@@ -35,24 +35,16 @@ namespace geodesuka::core::gcl {
 		bool available(device::qfs aQFS);
 
 		// Creates a single command buffer with selected operations.
-		//VkCommandBuffer create(device::qfs aQFS);
+		VkCommandBuffer create(device::qfs aQFS);
 
 		// Creates a list of command buffers with this context and selected support options.
-		//VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
 		// Destroys a single command buffer created by this context.
-		//void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
 
 		// Destroys all command buffers provided if they were created by this context.
-		//void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
-	
-		// TODO: Make create/destroy thread safe.
-		// Creates a series of command buffer handles, and fill the respective arguments.
-		//VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
-
-		//void destroy(VkCommandBuffer aCommandBuffer);
-		// Searches and clear allocated command buffers from instance.
-		//void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
@@ -66,7 +58,7 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		// Engine Specific Data.
+		// Used for per context operations.
 		std::mutex ExecutionMutex;
 		VkFence ExecutionFence[3];
 		std::atomic<bool> UpdateInFlight;

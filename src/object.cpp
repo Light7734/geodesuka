@@ -5,7 +5,7 @@ namespace geodesuka::core {
 
 	object_t::object_t(engine* aEngine, gcl::context* aContext, stage_t* aStage) {
 		this->isReady.store(false);
-		this->Engine->State->Object.push_back(this);
+		this->Engine->Object.push_back(this);
 
 
 		// Internal API.
@@ -28,9 +28,9 @@ namespace geodesuka::core {
 
 	object_t::~object_t() {
 		// Removes Object from Engine State.
-		if (this->Engine->State->ID != engine::state::id::DESTRUCTION) {
-			int Index = this->Engine->State->objidx(this);
-			this->Engine->State->Object.erase(this->Engine->State->Object.begin() + Index);
+		if (this->Engine->ID != engine::state::id::DESTRUCTION) {
+			int Index = this->Engine->objidx(this);
+			this->Engine->Object.erase(this->Engine->Object.begin() + Index);
 		}
 	}
 
