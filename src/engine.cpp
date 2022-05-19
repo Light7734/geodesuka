@@ -34,7 +34,7 @@ namespace geodesuka {
 	using namespace object;
 	using namespace logic;
 
-	engine::engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList) /*: State(this)*/ {
+	engine::engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList) {
 
 		//this->State = state::CREATION;
 		this->isReady = false;
@@ -398,21 +398,24 @@ namespace geodesuka {
 
 	void engine::update() {
 
-		double t1, t2;
-		double wt, ht;
-		double /*t,*/ dt;
-		double ts = 0.01;
-		dt = 0.0;
+		double DeltaTime = 0.0;
+		time_step TimeStep(0.01);
 
 		// The update thread is the main thread.
 		while (!this->Shutdown.load()) {
+			// Suspend thread if called.
 			this->ThreadTrap.door();
 
-			t1 = core::logic::get_time();
+			// Start TimeStep Enforcer.
+			TimeStep.start();
+
+			// Process system_window constructor calls.
 			this->mtcd_process_window_handle_call();
+
+			// Poll Input Events.
 			glfwPollEvents();
 
-			// Host Work is done here...
+			// ----- ----- Host Work is done here... ----- -----
 
 			// Per Context/GPU works is submitted in this section.
 			VkResult Result = VkResult::VK_SUCCESS;
@@ -420,24 +423,13 @@ namespace geodesuka {
 				// Lock Context for execution.
 				this->Context[i]->ExecutionMutex.lock();
 
-				// Check if Transfer/Compute work is being done. If so, reset fences.
-				if (this->Context[i]->UpdateInFlight.load()) {
-					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
-						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
-						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0]);
+				// Iterate through all workbatches and search for inflight operations.
+				for (int j = 0; j < 3; j++) {
+					if (this->Context[i]->WorkBatch[j].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[j], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[j]);
+						this->Context[i]->WorkBatch[j].clear();
 					}
-					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
-						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1], VK_TRUE, UINT64_MAX);
-						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1]);
-					}
-					this->Context[i]->UpdateInFlight.store(false);
-				}
-
-				// Check if Graphics & Compute work is being done, if so, wait then reset fences.
-				if (this->Context[i]->RenderInFlight.load()) {
-					vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2], VK_TRUE, UINT64_MAX);
-					vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2]);
-					this->Context[i]->RenderInFlight.store(false);
 				}
 
 				// Check if either transfer back batch, or compute back batch have accumulated submission.
@@ -450,37 +442,22 @@ namespace geodesuka {
 					this->Context[i]->BackBatch[0].clear();
 					this->Context[i]->BackBatch[1].clear();
 
-					// TODO: Replace with proper Queues.
-					VkQueue Q = VK_NULL_HANDLE;
-
 					// Submit Current Transfer Workload.
 					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
-						vkQueueSubmit(Q, this->Context[i]->WorkBatch[0].SubmissionCount, this->Context[i]->WorkBatch[0].Submission, this->Context[i]->ExecutionFence[0]);
-					}
-					// Submit Current Compute Workload.
-					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
-						vkQueueSubmit(Q, this->Context[i]->WorkBatch[1].SubmissionCount, this->Context[i]->WorkBatch[1].Submission, this->Context[i]->ExecutionFence[1]);
+						this->Context[i]->execute(device::qfs::TRANSFER, this->Context[i]->WorkBatch[0], this->Context[i]->ExecutionFence[0]);
 					}
 
-					// After WorkBatch has been submitted, flag for work in flight.
-					this->Context[i]->UpdateInFlight.store(true);
+					// Submit Current Compute Workload.
+					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
+						this->Context[i]->execute(device::qfs::COMPUTE, this->Context[i]->WorkBatch[1], this->Context[i]->ExecutionFence[1]);
+					}
 				}
-				// Release context from executin lock.
+				// Release context from execution lock.
 				this->Context[i]->ExecutionMutex.unlock();
 			}
 
-			t2 = core::logic::get_time();
-
-
-			wt = t2 - t1;
-			if (wt < ts) {
-				ht = ts - wt;
-				core::logic::waitfor(ht);
-			}
-			else {
-				ht = 0.0;
-			}
-			dt = wt + ht;
+			// Enforce Time Step, and calculate dt.
+			DeltaTime = TimeStep.stop();
 		}
 
 	}
@@ -492,34 +469,34 @@ namespace geodesuka {
 	void engine::render() {
 
 		while (!this->Shutdown.load()) {
+			// Suspend thread if called.
 			this->ThreadTrap.door();
 
-			// Aggregate all render operations from all render targets...
+			// Aggregate all render operations from each stage to each context.
+			for (size_t i = 0; i < this->Context.size(); i++) {
+				for (size_t j = 1; j < this->Stage.size(); j++) {
+					if (this->Context[i] == this->Stage[j]->Context) {
+						this->Context[i]->BackBatch[2] += this->Stage[j]->render();
+					}
+				}				
+			}
 
 			// Per Context/GPU works is submitted in this section.
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < this->Context.size(); i++) {
+				// If no operations, continue and check next context.
+				if ((this->Context[i]->BackBatch[2].SubmissionCount == 0) && (this->Context[i]->BackBatch[2].PresentationCount == 0)) continue;
+
 				// Lock Context for execution.
 				this->Context[i]->ExecutionMutex.lock();
 
-				// Check if Transfer/Compute work is being done. If so, reset fences.
-				if (this->Context[i]->UpdateInFlight.load()) {
-					if (this->Context[i]->WorkBatch[0].SubmissionCount > 0) {
-						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0], VK_TRUE, UINT64_MAX);
-						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[0]);
+				// Iterate through all workbatches and search for inflight operations.
+				for (int j = 0; j < 3; j++) {
+					if (this->Context[i]->WorkBatch[j].SubmissionCount > 0) {
+						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[j], VK_TRUE, UINT64_MAX);
+						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[j]);
+						this->Context[i]->WorkBatch[j].clear();
 					}
-					if (this->Context[i]->WorkBatch[1].SubmissionCount > 0) {
-						vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1], VK_TRUE, UINT64_MAX);
-						vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[1]);
-					}
-					this->Context[i]->UpdateInFlight.store(false);
-				}
-
-				// Check if Graphics & Compute work is being done, if so, wait then reset fences.
-				if (this->Context[i]->RenderInFlight.load()) {
-					vkWaitForFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2], VK_TRUE, UINT64_MAX);
-					vkResetFences(this->Context[i]->Handle, 1, &this->Context[i]->ExecutionFence[2]);
-					this->Context[i]->RenderInFlight.store(false);
 				}
 
 				// Check for Graphics & Compute operations accumulated.
@@ -530,23 +507,15 @@ namespace geodesuka {
 					// Clears back batch for another run through.
 					this->Context[i]->BackBatch[2].clear();
 
-					// TODO: Replace with proper Queues.
-					VkQueue Q = VK_NULL_HANDLE;
-
-					// Submit Current Graphics&Compute Workloads.
+					// Submit Current Graphics & Compute Workloads.
 					if (this->Context[i]->WorkBatch[2].SubmissionCount > 0) {
-						vkQueueSubmit(Q, this->Context[i]->WorkBatch[2].SubmissionCount, this->Context[i]->WorkBatch[2].Submission, this->Context[i]->ExecutionFence[2]);
+						this->Context[i]->execute(device::qfs::GRAPHICS_AND_COMPUTE, this->Context[i]->WorkBatch[2], this->Context[i]->ExecutionFence[2]);
 					}
 
 					// Submit All Presentation Commands. (Note: this should not be very often unless lots of system_windows)
 					if (this->Context[i]->WorkBatch[2].PresentationCount > 0) {
-						for (uint32_t j = 0; j < this->Context[i]->WorkBatch[2].PresentationCount; j++) {
-							vkQueuePresentKHR(Q, &this->Context[i]->WorkBatch[2].Presentation[j]);
-						}
+						this->Context[i]->execute(device::qfs::PRESENT, this->Context[i]->WorkBatch[2], this->Context[i]->ExecutionFence[2]);
 					}
-
-					// After WorkBatch has been submitted, flag for work in flight.
-					this->Context[i]->RenderInFlight.store(true);
 				}
 				// Release context from executin lock.
 				this->Context[i]->ExecutionMutex.unlock();

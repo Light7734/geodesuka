@@ -28,12 +28,6 @@ namespace geodesuka::core::gcl {
 		context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
-		// Grabs the Queue Family Index associated with Queue Support Bit from context.
-		int qfi(device::qfs aQFS);
-
-		// Queries if queue type exists with context.
-		bool available(device::qfs aQFS);
-
 		// Creates a single command buffer with selected operations.
 		VkCommandBuffer create(device::qfs aQFS);
 
@@ -46,7 +40,16 @@ namespace geodesuka::core::gcl {
 		// Destroys all command buffers provided if they were created by this context.
 		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
 
-		//VkResult execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence);
+		// -------------------- Queue Family Stuff -------------------- //
+
+		// Grabs the Queue Family Index associated with Queue Support Bit from context.
+		int qfi(device::qfs aQFS);
+
+		// Queries if queue type exists with context.
+		bool available(device::qfs aQFS);
+
+		//
+		VkResult execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
@@ -61,11 +64,9 @@ namespace geodesuka::core::gcl {
 	private:
 
 		// -------------------- Engine Data -------------------- //
-
+		// Used for engine backend.
 		std::mutex ExecutionMutex;
 		VkFence ExecutionFence[3];
-		std::atomic<bool> UpdateInFlight;
-		std::atomic<bool> RenderInFlight;
 		command_batch BackBatch[3];
 		command_batch WorkBatch[3];
 

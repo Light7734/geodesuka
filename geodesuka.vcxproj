@@ -185,6 +185,7 @@
     <ClCompile Include="src\char3.cpp" />
     <ClCompile Include="src\char4.cpp" />
     <ClCompile Include="src\command_batch.cpp" />
+    <ClCompile Include="src\command_list.cpp" />
     <ClCompile Include="src\command_pool.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\context.cpp" />
@@ -244,6 +245,7 @@
     <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\time_step.cpp" />
     <ClCompile Include="src\trap.cpp" />
     <ClCompile Include="src\triangle.cpp" />
     <ClCompile Include="src\type.cpp" />
@@ -282,6 +284,7 @@
     <ClInclude Include="inc\geodesuka\core\gcl.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\command_batch.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\command_list.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
@@ -303,6 +306,7 @@
     <ClInclude Include="inc\geodesuka\core\io\image.h" />
     <ClInclude Include="inc\geodesuka\core\io\script.h" />
     <ClInclude Include="inc\geodesuka\core\logic\timer.h" />
+    <ClInclude Include="inc\geodesuka\core\logic\time_step.h" />
     <ClInclude Include="inc\geodesuka\core\logic\trap.h" />
     <ClInclude Include="inc\geodesuka\core\math.h" />
     <ClInclude Include="inc\geodesuka\core\math\config.h" />

@@ -436,6 +436,53 @@ namespace geodesuka::core::gcl {
 		return (this->qfi(aQFS) != -1);
 	}
 
+	VkResult context::execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence) {
+		VkResult Result = VkResult::VK_INCOMPLETE;
+		if ((this->qfi(aQFS) == -1) || ((aQFS == device::qfs::PRESENT) ? (aCommandBatch.PresentationCount == 0) : (aCommandBatch.SubmissionCount == 0))) return Result;
+		
+
+		uint32_t QueueFamilyCount = 0;
+		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		int lQFI = this->qfi(aQFS);
+
+		int Offset = 0;
+		int lQueueCount = 0;
+		for (int i = 0; i < this->UQFICount; i++) {
+			if (this->UQFI[i] == lQFI) {
+				lQueueCount = QueueFamilyProperty[this->UQFI[i]].queueCount;
+				break;
+			}
+			Offset += QueueFamilyProperty[this->UQFI[i]].queueCount;
+		}
+
+		int i = 0;
+		while (true) {
+			int Index = i + Offset;
+			if (this->Queue[Index].Mutex.try_lock()) {
+				switch (aQFS) {
+				default:
+					return VkResult::VK_ERROR_FEATURE_NOT_PRESENT;
+				case device::qfs::TRANSFER: case device::qfs::COMPUTE: case device::qfs::GRAPHICS: case device::qfs::GRAPHICS_AND_COMPUTE:
+					Result = vkQueueSubmit(this->Queue[Index].Handle, aCommandBatch.SubmissionCount, aCommandBatch.Submission, aFence);
+					break;
+				case device::qfs::PRESENT:
+					for (int k = 0; k < aCommandBatch.PresentationCount; k++) {
+						Result = vkQueuePresentKHR(this->Queue[Index].Handle, &aCommandBatch.Presentation[k]);
+					}
+					break;
+				}
+				this->Queue[Index].Mutex.unlock();
+				break;
+			}
+			i += 1;
+			if (i == lQueueCount) {
+				i = 0;
+			}
+		}
+
+		return Result;
+	}
+
 	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
 		VkResult Result = VkResult::VK_INCOMPLETE;
 		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return Result;

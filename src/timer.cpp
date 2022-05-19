@@ -55,17 +55,32 @@ namespace geodesuka::core::logic {
 		return temp;
 	}
 
+	bool timer::check(double aDeltaTime) {
+		bool temp = false;
+		this->Mutex.lock();
+		this->ElapsedTime += aDeltaTime;
+		if (this->ElapsedTime >= this->Duration) {
+			this->ElapsedTime = this->ElapsedTime - this->Duration;
+			temp = true;
+		}
+		else {
+			temp = false;
+		}
+		this->Mutex.unlock();
+		return temp;
+	}
+
 	void timer::reset() {
 		this->Mutex.lock();
 		this->ElapsedTime = 0.0;
 		this->Mutex.unlock();
 	}
 
-	bool timer::check(double aDeltaTime) {
-		bool temp = false;
+	bool timer::check_and_reset() {
+		bool temp;
 		this->Mutex.lock();
-		this->ElapsedTime += aDeltaTime;
 		if (this->ElapsedTime >= this->Duration) {
+			// Maybe use mod function?
 			this->ElapsedTime = this->ElapsedTime - this->Duration;
 			temp = true;
 		}

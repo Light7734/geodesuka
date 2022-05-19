@@ -34,8 +34,8 @@ namespace geodesuka::core {
 
 	VkSubmitInfo stage_t::compute() {
 		VkSubmitInfo ComputeBatch{};
-		ComputeBatch.sType			= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		ComputeBatch.pNext			= NULL;
+		ComputeBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		ComputeBatch.pNext					= NULL;
 		ComputeBatch.waitSemaphoreCount		= 0;
 		ComputeBatch.pWaitSemaphores		= NULL;
 		ComputeBatch.pWaitDstStageMask		= NULL;
@@ -49,26 +49,18 @@ namespace geodesuka::core {
 	gcl::command_batch stage_t::render() {
 		gcl::command_batch Batch;
 		this->Mutex.lock();
+		// Iterate through render targets and gather render commands.
 		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
 			// Check if time to perform render operations on render target.
-			if (this->RenderTarget[i]->FrameRateTimer.check()) {
-				// Reset ellapsed timer.
-				this->RenderTarget[i]->FrameRateTimer.reset();
-
-				// Two are only relevant to system_window
-				//vkAcquireNextImageKHR();
-				//vkQueueSubmit();
-				//vkQueuePresentKHR();
-
+			if (this->RenderTarget[i]->FrameRateTimer.check_and_reset()) {
 				// Acquire next available frame from target.
 				this->RenderTarget[i]->next_frame();
 
 				// Use next_frame semaphore to pause render operations until
-				this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
+				Batch += this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
 
 				// Use Submission Semaphore to hold present.
-				this->RenderTarget[i]->present_frame();
-
+				Batch += this->RenderTarget[i]->present_frame();
 			}
 		}
 		this->Mutex.unlock();

@@ -8,6 +8,7 @@
 #include "../gcl.h"
 #include "device.h"
 #include "context.h"
+#include "command_list.h"
 
 namespace geodesuka::core::gcl {
 
@@ -32,10 +33,12 @@ namespace geodesuka::core::gcl {
 
 		VkCommandBuffer allocate(int aLevel);
 		void allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		command_list allocate(int aLevel, uint32_t aCommandBufferCount);
 
 
 		void release(VkCommandBuffer aCommandBuffer);
 		void release(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		void release(command_list aCommandList);
 
 	private:
 
@@ -43,7 +46,8 @@ namespace geodesuka::core::gcl {
 		VkCommandPoolCreateInfo CreateInfo{};
 		VkCommandPool Handle;
 
-		std::vector<VkCommandBuffer> CommandList;
+		command_list CommandList;
+		//std::vector<VkCommandBuffer> CommandList;
 
 	};
 
