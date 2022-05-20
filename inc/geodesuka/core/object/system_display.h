@@ -5,7 +5,9 @@
 #include "../object.h"
 #include "window.h"
 
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
+struct GLFWmonitor;
+
 
 namespace geodesuka::core::object {
 

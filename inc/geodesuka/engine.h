@@ -137,12 +137,11 @@ namespace geodesuka {
 		struct version {
 			int Major;
 			int Minor;
-			int Patch;
+			int Revision;
 		};
 
 		engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList);
 		~engine();
-
 
 		core::io::file* open(const char* aFilePath);
 		void close(core::io::file* aFile);
@@ -171,8 +170,8 @@ namespace geodesuka {
 			};
 		};
 
-		const version Version = { 0, 0, 18 }; // Major, Minor, Patch
-		const int Date = 20220514; //YYYYMMDD
+		const version Version = { 0, 0, 18 }; // Major, Minor, Revision
+		const int Date = 20220519; //YYYYMMDD
 		std::vector<const char*> Layer;
 		std::vector<const char*> Extension;
 		VkApplicationInfo AppInfo{};
@@ -180,7 +179,7 @@ namespace geodesuka {
 		VkInstance Handle;
 
 		// ------------------------------ Engine State ------------------------------ //
-
+		
 		std::mutex Mutex;
 		state::id ID;
 		bool isReady;
@@ -204,13 +203,12 @@ namespace geodesuka {
 		std::vector<core::object_t*> Object;
 		std::vector<core::stage_t*> Stage;
 
-		// Returns index of of pointer, -1 if doesn't exist. 
-		int winidx(core::object::system_window* aWin);
-
-		int filidx(core::io::file* aFile);
-		int ctxidx(core::gcl::context* aCtx);
-		int objidx(core::object_t* aObj);
-		int stgidx(core::stage_t* aStg);
+		//// Returns index of of pointer, -1 if doesn't exist. 
+		//int winidx(core::object::system_window* aWin);
+		//int filidx(core::io::file* aFile);
+		//int ctxidx(core::gcl::context* aCtx);
+		//int objidx(core::object_t* aObj);
+		//int stgidx(core::stage_t* aStg);
 
 		// ------------------------------ Back end runtime ------------------------------ //
 

@@ -105,6 +105,7 @@ namespace geodesuka::core::gcl {
 	command_list& command_list::operator+=(VkCommandBuffer aRhs) {
 		// // O: insert return statement here
 		*this += command_list(aRhs);
+		return *this;
 	}
 
 	command_list& command_list::operator+=(const command_list& aRhs) {

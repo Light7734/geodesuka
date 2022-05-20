@@ -32,7 +32,8 @@
 //#include "camera.h"
 
 // Interact with windowing system.
-#include <GLFW/glfw3.h>
+//#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 // system_window: This object exists in the display space exclusively.
 // It interfaces with the operating system and holds the context for for
@@ -49,6 +50,7 @@
 // send their contents to multiple targets, it would be wise to stream the contents rather
 // than direct the draw operations to the intended targets.
 
+
 namespace geodesuka::core::object {
 
 	class system_window : public window {
@@ -57,7 +59,8 @@ namespace geodesuka::core::object {
 		friend class engine;
 
 		// Required Extensions for the class
-		static const std::vector<const char*> RequiredContextExtension;
+		static std::vector<const char*> RequiredInstanceExtension;
+		static std::vector<const char*> RequiredContextExtension;
 		static const int RTID;
 
 		gcl::texture* FrameTexture;
@@ -135,6 +138,9 @@ namespace geodesuka::core::object {
 		float2 scrn2phys(int2 R);
 
 		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
+
+		static bool initialize();
+		static void terminate();
 
 		// Window Callbacks
 		static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);

@@ -24,8 +24,7 @@
 
 /* --------------- Third Party Libraries --------------- */
 
-#include <glslang/Public/ShaderLang.h>
-
+#include <GLFW/glfw3.h>
 
 namespace geodesuka {
 	
@@ -68,13 +67,18 @@ namespace geodesuka {
 		//
 
 		// (GLSLang)
-		isGLSLANGReady = glslang::InitializeProcess();
+		isGLSLANGReady = shader::initialize();
 
 		// (GLFW) Must be initialized first for OS extensions.
-		isGLFWReady = glfwInit();
+		isGLFWReady = system_window::initialize();
 
 		// (Vulkan) Load required window extensions.
 		if (isGLFWReady) {
+
+			// Adds WSI instance extensions to list.
+			for (size_t i = 0; i < system_window::RequiredInstanceExtension.size(); i++) {
+				this->Extension.push_back(system_window::RequiredInstanceExtension[i]);
+			}
 
 			// Adds proposed layers to list.
 			for (int i = 0; i < aLayerCount; i++) {
@@ -86,15 +90,6 @@ namespace geodesuka {
 				this->Extension.push_back(aExtensionList[i]);
 			}
 
-			// Acquires WSI instance extensions from GLFW.
-			uint32_t OSExtensionCount = 0;
-			const char** OSExtensionList = glfwGetRequiredInstanceExtensions(&OSExtensionCount);
-
-			// Adds WSI instance extensions to list.
-			for (uint32_t i = 0; i < OSExtensionCount; i++) {
-				this->Extension.push_back(OSExtensionList[i]);
-			}
-
 			//"VK_KHR_display";
 			// Does not work on Windows OS right now, only Linux
 			//this->Extension.push_back(VK_KHR_DISPLAY_EXTENSION_NAME);		
@@ -104,7 +99,7 @@ namespace geodesuka {
 			this->AppInfo.pApplicationName				= "";
 			this->AppInfo.applicationVersion			= VK_MAKE_VERSION(0, 0, 1);
 			this->AppInfo.pEngineName					= "Geodesuka Engine";
-			this->AppInfo.engineVersion					= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Patch);
+			this->AppInfo.engineVersion					= VK_MAKE_VERSION(this->Version.Major, this->Version.Minor, this->Version.Revision);
 			this->AppInfo.apiVersion					= VK_MAKE_VERSION(1, 2, 0);
 
 			this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -147,7 +142,7 @@ namespace geodesuka {
 				}
 			}
 
-			vkGetPhysicalDeviceDisplayPropertiesKHR;
+			//vkGetPhysicalDeviceDisplayPropertiesKHR;
 
 			// Gathers current display setup
 			if (glfwGetPrimaryMonitor() != NULL) {
@@ -173,6 +168,11 @@ namespace geodesuka {
 				this->Stage.push_back(this->Display[i]->Stage);
 			}
 
+			// Load SystemTerminal, SystemDisplay[0], SystemDisplay[1], ... SystemDisplay[n-1]. 
+			Object.push_back(SystemTerminal);
+			for (size_t i = 0; i < Display.size(); i++) {
+				Object.push_back(Display[i]);
+			}
 
 			isGCDeviceAvailable = this->Device.size() > 0;
 			isSystemDisplayAvailable = this->Display.size() > 0;
@@ -231,9 +231,9 @@ namespace geodesuka {
 
 		vkDestroyInstance(this->Handle, NULL);
 
-		glfwTerminate();
+		system_window::terminate();
 
-		glslang::FinalizeProcess();
+		shader::terminate();
 
 	}
 
@@ -350,9 +350,6 @@ namespace geodesuka {
 
 		this->update();
 
-		// This is redundant. Only the App thread can shutdown all other threads.
-		this->Shutdown.store(true);
-
 		this->RenderThread.join();
 		this->SystemTerminalThread.join();
 		this->AppThread.join();
@@ -361,40 +358,40 @@ namespace geodesuka {
 		return 0;
 	}
 
-	int engine::winidx(core::object::system_window* aWin) {
-		for (int i = 0; i < this->SystemWindow.size(); i++) {
-			if (this->SystemWindow[i] == aWin) return i;
-		}
-		return 0;
-	}
-
-	int engine::filidx(core::io::file* aFile) {
-		for (int i = 0; i < this->File.size(); i++) {
-			if (this->File[i] == aFile) return i;
-		}
-		return -1;
-	}
-
-	int engine::ctxidx(core::gcl::context* aCtx) {
-		for (int i = 0; i < this->Context.size(); i++) {
-			if (this->Context[i] == aCtx) return i;
-		}
-		return -1;
-	}
-
-	int engine::objidx(core::object_t* aObj) {
-		for (int i = 0; i < this->Object.size(); i++) {
-			if (this->Object[i] == aObj) return i;
-		}
-		return -1;
-	}
-
-	int engine::stgidx(core::stage_t* aStg) {
-		for (int i = 0; i < this->Stage.size(); i++) {
-			if (this->Stage[i] == aStg) return i;
-		}
-		return -1;
-	}
+	//int engine::winidx(core::object::system_window* aWin) {
+	//	for (int i = 0; i < this->SystemWindow.size(); i++) {
+	//		if (this->SystemWindow[i] == aWin) return i;
+	//	}
+	//	return 0;
+	//}
+	//
+	//int engine::filidx(core::io::file* aFile) {
+	//	for (int i = 0; i < this->File.size(); i++) {
+	//		if (this->File[i] == aFile) return i;
+	//	}
+	//	return -1;
+	//}
+	//
+	//int engine::ctxidx(core::gcl::context* aCtx) {
+	//	for (int i = 0; i < this->Context.size(); i++) {
+	//		if (this->Context[i] == aCtx) return i;
+	//	}
+	//	return -1;
+	//}
+	//
+	//int engine::objidx(core::object_t* aObj) {
+	//	for (int i = 0; i < this->Object.size(); i++) {
+	//		if (this->Object[i] == aObj) return i;
+	//	}
+	//	return -1;
+	//}
+	//
+	//int engine::stgidx(core::stage_t* aStg) {
+	//	for (int i = 0; i < this->Stage.size(); i++) {
+	//		if (this->Stage[i] == aStg) return i;
+	//	}
+	//	return -1;
+	//}
 
 	void engine::update() {
 

@@ -3,11 +3,13 @@
 
 #include <algorithm>
 
+#include <GLFW/glfw3.h>
+
 namespace geodesuka::core::object {
 
 	using namespace gcl;
 
-	const std::vector<const char*> system_window::RequiredContextExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<const char*> system_window::RequiredContextExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	const int system_window::RTID = 2;
 
@@ -302,6 +304,27 @@ namespace geodesuka::core::object {
 		return temp;
 	}
 
+	bool system_window::initialize() {
+		if (glfwInit() == GLFW_TRUE) {
+			uint32_t TempCount = 0;
+			const char** Temp = glfwGetRequiredInstanceExtensions(&TempCount);
+
+			for (uint32_t i = 0; i < TempCount; i++) {
+				RequiredInstanceExtension.push_back(Temp[i]);
+			}
+
+			return true;
+		}
+		else {
+			return false;
+		}
+		//return (glfwInit() == GLFW_TRUE ? true : false);
+	}
+
+	void system_window::terminate() {
+		glfwTerminate();
+	}
+
 	// --------------- These are the system_window callbacks --------------- //
 
 	void system_window::position_callback(GLFWwindow* ContextHandle, int PosX, int PosY) {
@@ -414,9 +437,6 @@ namespace geodesuka::core::object {
 	}
 
 }
-
-
-
 
 //
 //system_window::system_window() {

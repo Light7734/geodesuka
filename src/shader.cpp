@@ -115,6 +115,14 @@ namespace geodesuka::core::gcl {
 		return Temp;
 	}
 
+	bool shader::initialize() {
+		return glslang::InitializeProcess();
+	}
+
+	void shader::terminate() {
+		glslang::FinalizeProcess();
+	}
+
 }
 
 

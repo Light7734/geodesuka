@@ -29,8 +29,8 @@ namespace geodesuka::core {
 	object_t::~object_t() {
 		// Removes Object from Engine State.
 		if (this->Engine->ID != engine::state::id::DESTRUCTION) {
-			int Index = this->Engine->objidx(this);
-			this->Engine->Object.erase(this->Engine->Object.begin() + Index);
+			//int Index = this->Engine->objidx(this);
+			//this->Engine->Object.erase(this->Engine->Object.begin() + Index);
 		}
 	}
 
