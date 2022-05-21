@@ -12,7 +12,6 @@
 * can be extended to any size matrix to compute determinant.
 */
 
-//TODO: Move to backend.
 int kronecker_delta(int I, int J);
 int levi_civita(int aRank, const int* aIndex);
 int levi_civita(int aRank, ...);

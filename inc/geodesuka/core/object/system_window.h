@@ -71,12 +71,14 @@ namespace geodesuka::core::object {
 
 			struct prop {
 				//int Flags;
-				int Count;
+				int FrameCount;
+				double FrameRate;
 				int ColorSpace;
 				int Usage;
 				int CompositeAlpha;
 				int PresentMode;
 				bool Clipped;
+
 
 				prop();
 			};
@@ -131,9 +133,6 @@ namespace geodesuka::core::object {
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 		VkSwapchainCreateInfoKHR CreateInfo{};
 		VkSwapchainKHR Swapchain;
-		//gcl::swapchain* Swapchain;
-		//VkImage* Frame;
-
 
 		// Fill out in constructor
 		int NextImageSemaphoreIndex;
@@ -141,9 +140,6 @@ namespace geodesuka::core::object {
 		VkSemaphore* RenderOperationSemaphore;
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
-		//uint32_t* DrawCommandCount;
-		//VkCommandBuffer** DrawCommandList;
-		//VkPresentInfoKHR* PresentInfo;
 
 		int2 PositionVSC;
 		int2 SizeVSC;

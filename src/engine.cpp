@@ -503,7 +503,7 @@ namespace geodesuka {
 			glfwWindowHint(GLFW_CENTER_CURSOR,		aProperty.CenterCursor);
 			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		aProperty.FocusOnShow);
 			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
 
 			Temp = glfwCreateWindow(aWidth, aHeight, aTitle, aMonitor, aWindow);
 		}
@@ -547,7 +547,7 @@ namespace geodesuka {
 			glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
 			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
 			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
+			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
 
 			this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
 			this->WindowCreated.store(true);

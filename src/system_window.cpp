@@ -16,12 +16,13 @@ namespace geodesuka::core::object {
 	const int system_window::RTID = 2;
 
 	system_window::swapchain::prop::prop() {
-		this->Count					= 1;
-		this->ColorSpace			= colorspace::SRGB_NONLINEAR;
-		this->Usage					= texture::usage::COLOR_ATTACHMENT;
-		this->CompositeAlpha		= system_window::composite::ALPHA_OPAQUE;
-		this->PresentMode			= system_window::present_mode::FIFO;
-		this->Clipped				= true;
+		FrameCount			= 1;
+		FrameRate			= 60.0;
+		ColorSpace			= colorspace::SRGB_NONLINEAR;
+		Usage				= texture::usage::COLOR_ATTACHMENT;
+		CompositeAlpha		= system_window::composite::ALPHA_OPAQUE;
+		PresentMode			= system_window::present_mode::FIFO;
+		Clipped				= true;
 	}
 
 	system_window::system_window(
@@ -30,8 +31,8 @@ namespace geodesuka::core::object {
 		VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext, aSystemDisplay->Stage)
 	{
 
-		this->Display = aSystemDisplay;
-		this->Property = aWindowProperty;
+		Display = aSystemDisplay;
+		Property = aWindowProperty;
 
 		Resolution = uint3(aWidth, aHeight, 1u);
 
@@ -97,7 +98,7 @@ namespace geodesuka::core::object {
 		CreateInfo.pNext					= NULL;
 		CreateInfo.flags					= 0; // Add function later?
 		CreateInfo.surface					= Surface;
-		CreateInfo.minImageCount			= std::clamp((uint32_t)aSwapchainProperty.Count, SurfaceCapabilities.minImageCount, SurfaceCapabilities.maxImageCount);
+		CreateInfo.minImageCount			= std::clamp((uint32_t)aSwapchainProperty.FrameCount, SurfaceCapabilities.minImageCount, SurfaceCapabilities.maxImageCount);
 		CreateInfo.imageFormat				= aPixelFormat;
 		CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aSwapchainProperty.ColorSpace;
 		CreateInfo.imageExtent.width		= std::clamp((uint32_t)Resolution.x, SurfaceCapabilities.minImageExtent.width, SurfaceCapabilities.maxImageExtent.width);
@@ -128,20 +129,29 @@ namespace geodesuka::core::object {
 			Frame[i].CreateInfo.pNext					= NULL;
 			Frame[i].CreateInfo.flags					= 0;
 			Frame[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
-			Frame[i].CreateInfo.format				= CreateInfo.imageFormat;
-			Frame[i].CreateInfo.extent				= { CreateInfo.imageExtent.width, CreateInfo.imageExtent.height, 1u };
+			Frame[i].CreateInfo.format					= CreateInfo.imageFormat;
+			Frame[i].CreateInfo.extent					= { CreateInfo.imageExtent.width, CreateInfo.imageExtent.height, 1u };
 			Frame[i].CreateInfo.mipLevels				= 1;
-			Frame[i].CreateInfo.arrayLayers			= CreateInfo.imageArrayLayers;
-			Frame[i].CreateInfo.samples				= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
-			Frame[i].CreateInfo.tiling				; // Unknown.
+			Frame[i].CreateInfo.arrayLayers				= CreateInfo.imageArrayLayers;
+			Frame[i].CreateInfo.samples					= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
+			Frame[i].CreateInfo.tiling					= VkImageTiling::VK_IMAGE_TILING_LINEAR; // Unknown.
 			Frame[i].CreateInfo.usage					= CreateInfo.imageUsage;
-			Frame[i].CreateInfo.sharingMode			= CreateInfo.imageSharingMode;
+			Frame[i].CreateInfo.sharingMode				= CreateInfo.imageSharingMode;
 			Frame[i].CreateInfo.queueFamilyIndexCount	= 0;
-			Frame[i].CreateInfo.pQueueFamilyIndices	= NULL;
+			Frame[i].CreateInfo.pQueueFamilyIndices		= NULL;
 			Frame[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
-			Frame[i].Handle							= Image[i];
+			Frame[i].Handle								= Image[i];
 
 		}
+
+		NextImageSemaphoreIndex		= 0;
+		NextImageSemaphore			= (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
+		RenderOperationSemaphore	= (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
+		PresentResult				= (VkResult*)malloc(FrameCount * sizeof(VkResult));
+		PipelineStageFlags			= VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+
+
+
 
 	}
 
