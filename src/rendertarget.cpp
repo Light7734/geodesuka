@@ -11,7 +11,7 @@ namespace geodesuka::core::object {
 		this->FrameCount = 0;
 		this->FrameRate = 0.0;
 		this->FrameRateTimer.set(0.0);
-		this->Resolution = uint2(0, 0);
+		this->Resolution = uint3(0u, 0u, 0u);
 
 		this->FrameAttachmentCount = 0;
 		this->FrameAttachmentDescription = NULL;

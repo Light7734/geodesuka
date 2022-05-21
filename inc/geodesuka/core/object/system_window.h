@@ -18,7 +18,7 @@
 #include "../gcl/context.h"
 #include "../gcl/texture.h"
 #include "../gcl/framebuffer.h"
-#include "../gcl/swapchain.h"
+//#include "../gcl/swapchain.h"
 
 //#include "../hid/mouse.h"
 //#include "../hid/keyboard.h"
@@ -58,28 +58,73 @@ namespace geodesuka::core::object {
 
 		friend class engine;
 
+		enum colorspace {
+			SRGB_NONLINEAR			= 0,
+			DISPLAY_P3_NONLINEAR	= 1000104001,
+			EXTENDED_SRGB_LINEAR	= 1000104002,
+			DISPLAY_P3_LINEAR		= 1000104003,
+			DCI_P3_NONLINEAR		= 1000104004,
+			BT709_LINEAR			= 1000104005,
+			BT709_NONLINEAR			= 1000104006,
+			BT2020_LINEAR			= 1000104007,
+			HDR10_ST2084			= 1000104008,
+			DOLBYVISION				= 1000104009,
+			HDR10_HLG				= 1000104010,
+			ADOBERGB_LINEAR			= 1000104011,
+			ADOBERGB_NONLINEAR		= 1000104012,
+			PASS_THROUGH			= 1000104013,
+			EXTENDED_SRGB_NONLINEAR = 1000104014,
+			DISPLAY_NATIVE_AMD		= 1000213000,
+		};
+
+		enum composite {
+			ALPHA_OPAQUE			= 0x00000001,
+			ALPHA_PRE_MULTIPLIED	= 0x00000002,
+			ALPHA_POST_MULTIPLIED	= 0x00000004,
+			ALPHA_INHERIT			= 0x00000008,
+		};
+
+		enum mode {
+			IMMEDIATE		= 0,
+			MAILBOX			= 1,
+			FIFO			= 2,
+			FIFO_RELAXED	= 3
+		};
+
+		struct swapchain {
+
+			struct prop {
+				//int Flags;
+				int Count;
+				int ColorSpace;
+				int Usage;
+				int CompositeAlpha;
+				int PresentMode;
+				bool Clipped;
+
+				prop();
+			};
+
+		};
+
 		// Required Extensions for the class
 		static std::vector<const char*> RequiredInstanceExtension;
 		static std::vector<const char*> RequiredContextExtension;
 		static const int RTID;
 
-		gcl::texture* FrameTexture;
+		gcl::texture* Frame;
 
 
 		//math::boolean CloseMe;
 
-		system_window(
-			engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, 
-			window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, 
-			int aPixelFormat, int aWidth, int aHeight, const char* aTitle
-		);
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, swapchain::prop aSwapchainProperty, VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle);
 
 		~system_window();
 
 		// ----- object_t inheritance ----- //
 
 		virtual void set_position(float3 aPosition) override;
-		virtual VkCommandBuffer draw(rendertarget* aRenderTarget) override;
+		//virtual VkCommandBuffer draw(rendertarget* aRenderTarget) override;
 
 		// ----- rendertarget inheritance ----- //
 
@@ -111,11 +156,11 @@ namespace geodesuka::core::object {
 
 		GLFWwindow* Handle;						// GLFW OS window handle abstraction.
 		VkSurfaceKHR Surface;					// Vulkan window handle.
-		//VkSwapchainCreateInfoKHR CreateInfo{};
-		//VkSwapchainKHR Swapchain;
-		VkImage* Frame;
+		VkSwapchainCreateInfoKHR CreateInfo{};
+		VkSwapchainKHR Swapchain;
+		//gcl::swapchain* Swapchain;
+		//VkImage* Frame;
 
-		gcl::swapchain* Swapchain;
 
 		// Fill out in constructor
 		int NextImageSemaphoreIndex;

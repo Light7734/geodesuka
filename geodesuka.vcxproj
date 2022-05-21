@@ -238,7 +238,6 @@
     <ClCompile Include="src\short4.cpp" />
     <ClCompile Include="src\stage.cpp" />
     <ClCompile Include="src\str.cpp" />
-    <ClCompile Include="src\swapchain.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_terminal.cpp" />
     <ClCompile Include="src\system_window.cpp" />
@@ -292,7 +291,6 @@
     <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\material.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\mesh.h" />

@@ -23,11 +23,9 @@ namespace geodesuka::core::stage {
 
 	protected:
 
+		//virtual VkSubmitInfo update(double aDeltaTime) override;
 
-		virtual VkSubmitInfo update(double aDeltaTime) override;
-
-		virtual VkSubmitInfo compute() override;
-
+		//virtual VkSubmitInfo compute() override;
 
 		//virtual batch render() override;
 

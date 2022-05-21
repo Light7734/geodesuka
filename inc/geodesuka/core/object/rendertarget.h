@@ -15,45 +15,12 @@
 
 #include "../object.h"
 
-/*
-* For a class to be considered a render_target, it must be able to
-* be drawn to and must have attachments to be drawn to. How exactly
-* a render_target is drawn to is decided by the user, and not the 
-* engine API.
-*/
-
-
-
-/*
-
-// Gets next frame.
-vkAcquireNextImageKHR(SignalSemaphore, Index);
-
-Result = vkAcquireNextImageKHR(
-	Context->handle(), 
-	this->Swapchain->handle(), 
-	0,
-	FrameDrawIndexSemaphore, 
-	VkFence fence, 
-	&this->FrameDrawIndex
-);
-
-// 
-vkQueueSubmit(SubmissionList, SignalSemaphore);
-
-PresentInfo.sType				;
-PresentInfo.pNext				;
-PresentInfo.waitSemaphoreCount	;
-PresentInfo.pWaitSemaphores		= ;
-PresentInfo.swapchainCount		= 1;
-PresentInfo.pSwapchains			= &this->Swapchain;
-PresentInfo.pImageIndices		= &this->FrameDrawIndex;
-PresentInfo.pResults			= &Result;
-
-vkQueuePresentKHR(Present Image)
-
-*/
-
+/// <summary>
+/// rendertarget is an extendable class which the engine user can use to create custom
+/// rendertargets for whatever the user may need. For something to be considered a render
+/// target, it must have frame attachments which can be used as targets for rendering commands
+/// by derived object classes.
+/// </summary>
 namespace geodesuka::core::object {
 
 	class rendertarget : public object_t {
@@ -62,10 +29,10 @@ namespace geodesuka::core::object {
 		//friend class engine;
 		friend class stage_t;
 
-		int FrameCount;					// The total number of back buffer frames of the rendertarget.
-		double FrameRate;				// The rate at which the frames will be cycled through by the engine per second.
+		uint32_t FrameCount;			// The total number of back buffer frames of the rendertarget.
+		double FrameRate;				// The rate at which the frames will be iterated through by the engine per unit of time.
 		logic::timer FrameRateTimer;
-		uint2 Resolution;				// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
+		uint3 Resolution;				// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.

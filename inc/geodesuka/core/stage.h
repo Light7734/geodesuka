@@ -32,11 +32,12 @@ namespace geodesuka::core {
 
 		friend class engine;
 
-		std::mutex Mutex;
-
 		~stage_t();
 
 	protected:
+
+		std::mutex Mutex;
+		std::atomic<bool> isReady;
 
 		engine* Engine;
 		gcl::context* Context;
@@ -52,7 +53,6 @@ namespace geodesuka::core {
 
 		virtual VkSubmitInfo compute();
 
-		// Will generate render operations per render target in scheduled manner.
 		virtual gcl::command_batch render();
 
 	};

@@ -71,37 +71,30 @@ namespace geodesuka::core::object {
 
 		//
 		struct prop {
-			int Resizable;
-			int Decorated;
-			int UserFocused;
-			int AutoMinimize;
-			int Floating;
-			int Maximized;
-			int Minimized;
-			int Visible;
-			int ScaleToMonitor;
-			int CenterCursor;
-			int FocusOnShow;
-			int Hovered;
+			int Resizable;			// Creation Option
+			int Decorated;			// Creation Option
+			int UserFocused;		// Runtime Option
+			int AutoMinimize;		// 
+			int Floating;			// 
+			int Maximized;			// 
+			int Minimized;			// 
+			int Visible;			// 
+			int ScaleToMonitor;		// 
+			int CenterCursor;		// 
+			int FocusOnShow;		// 
+
+			int Hovered;			// 
 			int RefreshRate;
-			//VkPresentModeKHR PresentationMode;
 
 			prop();
 		};
 
 		~window();
 
-		// This is to discern what type of target is being drawn to, referenced by object.h
-		//virtual void draw(object_t* aObject) = 0;
-
 		virtual void set_title(util::str aTitle);
 		virtual void set_size(float2 aSize);
 		virtual void set_resolution(uint2 aResolution);
 		virtual bool should_close();
-
-		// Will forward input stream to target object. Can be set to null if
-		// no forwarding is chosen.
-		// virtual math::integer forward_input_stream_to(object* aObject);
 
 	protected:
 

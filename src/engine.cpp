@@ -330,8 +330,9 @@ namespace geodesuka {
 
 			// Update all objects independent of stage, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
+				if (!Context[i]->isReady.load()) continue;
 				for (size_t j = 0; j < Object.size(); j++) {
-					if (Context[i] == Object[j]->Context) {
+					if ((Object[j]->isReady.load()) && (Object[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Object[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Object[i]->compute();
 					}
@@ -340,8 +341,12 @@ namespace geodesuka {
 
 			// Update all stages, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
+				if (!Context[i]->isReady.load()) continue;
 				for (size_t j = 0; j < Stage.size(); j++) {
-					if (Context[i] == Stage[j]->Context) {
+					for (size_t k = 0; k < Stage[j]->RenderTarget.size(); k++) {
+						Stage[j]->RenderTarget[k]->FrameRateTimer.update(DeltaTime);
+					}
+					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Stage[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Stage[i]->compute();
 					}
@@ -351,6 +356,9 @@ namespace geodesuka {
 			// Per Context/GPU works is submitted in this section.
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
+				// Go to next context if not ready.
+				if (!Context[i]->isReady.load()) continue;
+
 				// Lock Context for execution.
 				Context[i]->ExecutionMutex.lock();
 
@@ -406,8 +414,11 @@ namespace geodesuka {
 
 			// Aggregate all render operations from each stage to each context.
 			for (size_t i = 0; i < Context.size(); i++) {
+				// Go to next context if not ready.
+				if (!Context[i]->isReady.load()) continue;
 				for (size_t j = 1; j < Stage.size(); j++) {
-					if (Context[i] == Stage[j]->Context) {
+					// Go to next stage if stage is not ready.
+					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[2] += Stage[j]->render();
 					}
 				}				
@@ -416,6 +427,9 @@ namespace geodesuka {
 			// Per Context/GPU works is submitted in this section.
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
+				// Go to next context if not ready.
+				if (!Context[i]->isReady.load()) continue;
+
 				// If no operations, continue and check next context.
 				if ((Context[i]->BackBatch[2].SubmissionCount == 0) && (Context[i]->BackBatch[2].PresentationCount == 0)) continue;
 
