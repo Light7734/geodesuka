@@ -4,10 +4,12 @@
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-energy-drinks.svg)](https://forthebadge.com)
+
+## State of the Engine
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
-# State of the Engine
 
 Currently what is being worked on is the rendering scheduler, as it will attempt to honor
 the requested frame rate/refresh rate of each render target. Looking at other people's engines,
