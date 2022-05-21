@@ -5,8 +5,6 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
 
-<div align="center">
-
 ## State of the Engine
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
@@ -15,6 +13,8 @@ Now with the update and render backend threads of the engine now complete, and c
 asynchronously, the main focus here on out, is getting something to be drawn to a system_window. Once an example stage
 has been created derived from canvas, where a system window is a render target, it will mark the first successful usage 
 of the geodesuka engine for graphics capability that will be extendable.
+
+<div align="center">
 
 # Description
 
