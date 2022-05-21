@@ -414,6 +414,26 @@ namespace geodesuka {
 
 			// ----- ----- Host Work is done here... ----- -----
 
+			// Update all objects independent of stage, and acquire all transfer operations.
+			for (size_t i = 0; i < Context.size(); i++) {
+				for (size_t j = 0; j < Object.size(); j++) {
+					if (Context[i] == Object[j]->Context) {
+						Context[i]->BackBatch[0] += Object[i]->update(DeltaTime);
+						Context[i]->BackBatch[1] += Object[i]->compute();
+					}
+				}
+			}
+
+			// Update all stages, and acquire all transfer operations.
+			for (size_t i = 0; i < Context.size(); i++) {
+				for (size_t j = 0; j < Stage.size(); j++) {
+					if (Context[i] == Stage[j]->Context) {
+						Context[i]->BackBatch[0] += Stage[i]->update(DeltaTime);
+						Context[i]->BackBatch[1] += Stage[i]->compute();
+					}
+				}
+			}
+
 			// Per Context/GPU works is submitted in this section.
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < this->Context.size(); i++) {
@@ -449,6 +469,7 @@ namespace geodesuka {
 						this->Context[i]->execute(device::qfs::COMPUTE, this->Context[i]->WorkBatch[1], this->Context[i]->ExecutionFence[1]);
 					}
 				}
+
 				// Release context from execution lock.
 				this->Context[i]->ExecutionMutex.unlock();
 			}
