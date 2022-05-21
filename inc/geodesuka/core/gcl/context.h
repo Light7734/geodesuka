@@ -73,7 +73,7 @@ namespace geodesuka::core::gcl {
 		// -------------------- Engine Data -------------------- //
 
 		std::mutex Mutex;
-		std::atomic<bool> isReady;
+		std::atomic<bool> isReadyToBeProcessed;
 
 		// Parent physical device.
 		engine* Engine;

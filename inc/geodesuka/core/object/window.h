@@ -2,16 +2,6 @@
 #ifndef GEODESUKA_CORE_OBJECT_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_WINDOW_H
 
-//#include "../mathematics/mathematics.h"
-//
-//#include "../hid/mouse.h"
-//#include "../hid/keyboard.h"
-//#include "../hid/joystick.h"
-//
-//#include "object.h"
-//
-//#include "../graphical/frame_buffer.h"
-
 
 /*
 Types of Windows
@@ -35,22 +25,6 @@ Property List:
 		Any window can be transformed into another window
 
 */
-
-/*
-VS = Virtual Screen Coordinates
-PX = Pixel Coordinates
-PS = Physical Screen Coordinates
-*/
-
-//for (int i = 0; i < WindowCount; i++) {
-//	for (int j = 0; j < ObjectCount; j++) {
-//		Window[i].draw(Object[j]);
-//	}
-//}
-//
-//Object->render(*this)
-
-//class object;
 
 #include "../util/str.h"
 

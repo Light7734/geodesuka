@@ -20,13 +20,13 @@ namespace geodesuka::core::object {
 		this->ColorSpace			= colorspace::SRGB_NONLINEAR;
 		this->Usage					= texture::usage::COLOR_ATTACHMENT;
 		this->CompositeAlpha		= system_window::composite::ALPHA_OPAQUE;
-		this->PresentMode			= system_window::mode::FIFO;
+		this->PresentMode			= system_window::present_mode::FIFO;
 		this->Clipped				= true;
 	}
 
 	system_window::system_window(
-		engine* aEngine, context* aContext, system_display* aSystemDisplay,
-		window::prop aWindowProperty, swapchain::prop aSwapchainProperty,
+		engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, 
+		window::prop aWindowProperty, swapchain::prop aSwapchainProperty, 
 		VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext, aSystemDisplay->Stage)
 	{
 
@@ -34,20 +34,6 @@ namespace geodesuka::core::object {
 		this->Property = aWindowProperty;
 
 		Resolution = uint3(aWidth, aHeight, 1u);
-
-		//glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
-		//glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
-		//glfwWindowHint(GLFW_FOCUSED,			this->Property.UserFocused);
-		//glfwWindowHint(GLFW_AUTO_ICONIFY,		this->Property.AutoMinimize);
-		//glfwWindowHint(GLFW_FLOATING,			this->Property.Floating);
-		//glfwWindowHint(GLFW_MAXIMIZED,			this->Property.Maximized);
-		//glfwWindowHint(GLFW_VISIBLE,			this->Property.Visible);
-		//glfwWindowHint(GLFW_SCALE_TO_MONITOR,	this->Property.ScaleToMonitor);
-		//glfwWindowHint(GLFW_CENTER_CURSOR,		this->Property.CenterCursor);
-		//glfwWindowHint(GLFW_FOCUS_ON_SHOW,		this->Property.FocusOnShow);
-		//glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-		//glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-		////glfwWindowHint(GLFW_REFRESH_RATE,		this->Property.RefreshRate); // TODO: Change to GLFW_DONT_CARE, and remove option.
 
 		//// Create Window Handle.
 		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
@@ -203,13 +189,13 @@ namespace geodesuka::core::object {
 		);
 
 		// Compensate for shift.
-		this->PositionSC =
+		this->PositionVSC =
 			r_tmp
 			- int2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
-			+ Display->PositionSC
+			+ Display->PositionVSC
 			+ int2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
 
-		glfwSetWindowPos(Handle, PositionSC.x, PositionSC.y);
+		glfwSetWindowPos(Handle, PositionVSC.x, PositionVSC.y);
 	}
 
 	//VkCommandBuffer system_window::draw(rendertarget* aRenderTarget) {}
@@ -369,7 +355,7 @@ namespace geodesuka::core::object {
 		int2 r_tmp =
 			int2(PosX, PosY)
 			+ int2((double)Win->Resolution.x / 2.0, (double)Win->Resolution.y / 2.0)
-			- Win->Display->PositionSC
+			- Win->Display->PositionVSC
 			- int2((double)Win->Display->Resolution.x / 2.0, (double)Win->Display->Resolution.y / 2.0);
 
 		// Converts to physical position on display (meters)

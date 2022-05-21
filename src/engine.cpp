@@ -41,7 +41,7 @@ namespace geodesuka {
 
 	engine::engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList) {
 
-		ID = state::CREATION;
+		StateID = state::CREATION;
 		Shutdown.store(false);
 		Handle = VK_NULL_HANDLE;
 
@@ -144,27 +144,26 @@ namespace geodesuka {
 				GLFWmonitor** Monitors = glfwGetMonitors(&MonitorCount);
 				for (int i = 0; i < MonitorCount; i++) {
 					if (Monitors[i] != glfwGetPrimaryMonitor()) {
-						this->Display[i] = new system_display(this, nullptr, Monitors[i]);
+						this->Display.push_back(new system_display(this, nullptr, Monitors[i]));
 					}
 					else {
-						this->Display[i] = PrimaryDisplay;
+						this->Display.push_back(PrimaryDisplay);
 					}
 				}
 			}
 
 			// Associate devices with slave system_display. Can only be done with extension VK_KHR_display
 
-			// Construct Desktop Stages.
-			for (size_t i = 0; i < Display.size(); i++) {
-				desktop* Desktop = new desktop(this, nullptr, Display[i]);
-				Display[i]->Stage;
-				Stage.push_back(Display[i]->Stage);
-			}
-
 			// Load SystemTerminal, SystemDisplay[0], SystemDisplay[1], ... SystemDisplay[n-1]. 
 			Object.push_back(SystemTerminal);
 			for (size_t i = 0; i < Display.size(); i++) {
 				Object.push_back(Display[i]);
+			}
+
+			// Construct Desktop Stages.
+			for (size_t i = 0; i < Display.size(); i++) {
+				desktop* Desktop = new desktop(this, nullptr, Display[i]);
+				Stage.push_back(Desktop);
 			}
 
 			isGCDeviceAvailable = Device.size() > 0;
@@ -188,13 +187,13 @@ namespace geodesuka {
 		DestroyWindow.store(NULL);
 
 		// Is ready if startup condition = success.
-		ID = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable ? state::id::READY : state::id::FAILURE;
+		StateID = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable ? state::id::READY : state::id::FAILURE;
 
 	}
 
 	engine::~engine() {
 
-		ID = state::id::DESTRUCTION;
+		StateID = state::id::DESTRUCTION;
 
 		SystemTerminal = nullptr;
 		PrimaryDevice = nullptr;
@@ -210,11 +209,11 @@ namespace geodesuka {
 			delete Object[i];
 		}
 
-		for (size_t i = 0; i < Stage.size(); i++) {
+		for (size_t i = 0; i < Context.size(); i++) {
 			delete Context[i];
 		}
 
-		for (size_t i = 0; i < Stage.size(); i++) {
+		for (size_t i = 0; i < File.size(); i++) {
 			delete File[i];
 		}
 
@@ -274,7 +273,7 @@ namespace geodesuka {
 	}
 
 	bool engine::is_ready() {
-		return (ID == state::id::READY);
+		return (StateID == state::id::READY);
 	}
 
 	engine::version engine::get_version() {
@@ -287,7 +286,7 @@ namespace geodesuka {
 
 	int engine::run(app* aApp) {
 
-		ID							= state::RUNNING;
+		StateID						= state::RUNNING;
 		MainThreadID				= std::this_thread::get_id();
 		RenderThread				= std::thread(&engine::render, this);
 		SystemTerminalThread		= std::thread(&engine::terminal, this);
@@ -298,7 +297,7 @@ namespace geodesuka {
 		RenderThread.join();
 		SystemTerminalThread.join();
 		AppThread.join();
-		ID = state::READY;
+		StateID = state::READY;
 
 		return 0;
 	}
@@ -330,9 +329,9 @@ namespace geodesuka {
 
 			// Update all objects independent of stage, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 0; j < Object.size(); j++) {
-					if ((Object[j]->isReady.load()) && (Object[j]->Context == Context[i])) {
+					if ((Object[j]->isReadyToBeProcessed.load()) && (Object[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Object[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Object[i]->compute();
 					}
@@ -341,12 +340,12 @@ namespace geodesuka {
 
 			// Update all stages, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 0; j < Stage.size(); j++) {
 					for (size_t k = 0; k < Stage[j]->RenderTarget.size(); k++) {
 						Stage[j]->RenderTarget[k]->FrameRateTimer.update(DeltaTime);
 					}
-					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
+					if ((Stage[j]->isReadyToBeProcessed.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Stage[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Stage[i]->compute();
 					}
@@ -357,7 +356,7 @@ namespace geodesuka {
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 
 				// Lock Context for execution.
 				Context[i]->ExecutionMutex.lock();
@@ -415,10 +414,10 @@ namespace geodesuka {
 			// Aggregate all render operations from each stage to each context.
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 1; j < Stage.size(); j++) {
 					// Go to next stage if stage is not ready.
-					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
+					if ((Stage[j]->isReadyToBeProcessed.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[2] += Stage[j]->render();
 					}
 				}				
@@ -428,7 +427,7 @@ namespace geodesuka {
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 
 				// If no operations, continue and check next context.
 				if ((Context[i]->BackBatch[2].SubmissionCount == 0) && (Context[i]->BackBatch[2].PresentationCount == 0)) continue;

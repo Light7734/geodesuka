@@ -66,7 +66,7 @@ namespace geodesuka::core {
 
 		// Used for shared usage between Engine & App.
 		std::mutex Mutex;
-		std::atomic<bool> isReady;
+		std::atomic<bool> isReadyToBeProcessed;
 
 		// Parent Item References
 		engine* Engine;

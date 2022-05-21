@@ -2,13 +2,6 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
-/*
-* Windows API
-* Wayland
-* X11
-* Android
-*/
-
 #include <vector>
 
 #include "../math.h"
@@ -18,39 +11,22 @@
 #include "../gcl/context.h"
 #include "../gcl/texture.h"
 #include "../gcl/framebuffer.h"
-//#include "../gcl/swapchain.h"
-
-//#include "../hid/mouse.h"
-//#include "../hid/keyboard.h"
-//#include "../hid/joystick.h"
 
 #include "../object.h"
 #include "window.h"
 #include "system_display.h"
-//#include "system_window.h"
-//#include "virtual_window.h"
-//#include "camera.h"
 
-// Interact with windowing system.
-//#include <GLFW/glfw3.h>
 struct GLFWwindow;
 
-// system_window: This object exists in the display space exclusively.
-// It interfaces with the operating system and holds the context for for
-// the graphics API being used. All system windows must be managed by the
-// engine itself.
-//
-//
-//
 
-// A system_window by default should have the default framebuffer. All proceeding
-// draw calls will be towards the window itself. If the contents of the system_window 
-// are to be streamed to another destination, create a seperate frame_buffer, and forward
-// its outputs to the target. For intensive draw operations and windows that are due to
-// send their contents to multiple targets, it would be wise to stream the contents rather
-// than direct the draw operations to the intended targets.
-
-
+/// <summary>
+/// system_window.h is an object that will represent Operating System (OS) managed windows, managed
+/// by a window manager like Wayland, X11, win32, and so on. It will also be a render target that
+/// can be used by other objects to create render commands for. Position and Size will accept
+/// two units for modifying the state of a SystemWindow instance. It will take physical coordinates
+/// in units of meters which the position and size will be in reference to the parent display it
+/// is a child of.
+/// </summary>
 namespace geodesuka::core::object {
 
 	class system_window : public window {
@@ -84,7 +60,7 @@ namespace geodesuka::core::object {
 			ALPHA_INHERIT			= 0x00000008,
 		};
 
-		enum mode {
+		enum present_mode {
 			IMMEDIATE		= 0,
 			MAILBOX			= 1,
 			FIFO			= 2,
@@ -113,9 +89,6 @@ namespace geodesuka::core::object {
 		static const int RTID;
 
 		gcl::texture* Frame;
-
-
-		//math::boolean CloseMe;
 
 		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, swapchain::prop aSwapchainProperty, VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle);
 
@@ -172,11 +145,8 @@ namespace geodesuka::core::object {
 		//VkCommandBuffer** DrawCommandList;
 		//VkPresentInfoKHR* PresentInfo;
 
-
-		int2 PositionSC;
-		//math::integer2 SizeSC;
-
-
+		int2 PositionVSC;
+		int2 SizeVSC;
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		int2 phys2scrn(float2 R);

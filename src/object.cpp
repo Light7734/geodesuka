@@ -4,33 +4,55 @@
 namespace geodesuka::core {
 
 	object_t::object_t(engine* aEngine, gcl::context* aContext, stage_t* aStage) {
-		this->isReady.store(false);
-		this->Engine->Object.push_back(this);
-
 
 		// Internal API.
-		this->Engine = aEngine;
-		this->Context = aContext;
-		this->Stage = aStage;
+		Engine = aEngine;
+		Context = aContext;
+		Stage = aStage;
 
-		this->InputVelocity = float3(0.0, 0.0, 0.0);
-		this->InputForce	= float3(0.0, 0.0, 0.0);
+		// Submit new object instance to engine.
+		isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::CREATION) {
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			Engine->Object.push_back(this);
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
 
-		this->Mass			= 1.0;
-		this->Time			= core::logic::get_time();
-		this->Position		= float3(0.0, 0.0, 0.0);
-		this->Momentum		= float3(0.0, 0.0, 0.0);
-		this->Force			= float3(0.0, 0.0, 0.0);
-		this->DirectionX	= float3(1.0, 0.0, 0.0);
-		this->DirectionY	= float3(0.0, 1.0, 0.0);
-		this->DirectionZ	= float3(0.0, 0.0, 1.0);
+		InputVelocity	= float3(0.0, 0.0, 0.0);
+		InputForce		= float3(0.0, 0.0, 0.0);
+
+		Mass			= 1.0;
+		Time			= logic::get_time();
+		Position		= float3(0.0, 0.0, 0.0);
+		Momentum		= float3(0.0, 0.0, 0.0);
+		Force			= float3(0.0, 0.0, 0.0);
+		DirectionX		= float3(1.0, 0.0, 0.0);
+		DirectionY		= float3(0.0, 1.0, 0.0);
+		DirectionZ		= float3(0.0, 0.0, 1.0);
 	}
 
 	object_t::~object_t() {
-		// Removes Object from Engine State.
-		if (this->Engine->ID != engine::state::id::DESTRUCTION) {
-			//int Index = this->Engine->objidx(this);
-			//this->Engine->Object.erase(this->Engine->Object.begin() + Index);
+		// If engine is in destruction state, do not attempt to remove from engine.
+		if (Engine->StateID != engine::state::id::DESTRUCTION) {
+			// Removes Object from Engine State.
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			// Finds object in engine, and removes it.
+			for (size_t i = 0; i < Engine->Object.size(); i++) {
+				if (Engine->Object[i] == this) {
+					Engine->Object.erase(Engine->Object.begin() + i);
+				}
+			}
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
 		}
 	}
 

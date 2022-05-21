@@ -140,6 +140,17 @@ namespace geodesuka {
 			int Revision;
 		};
 
+		// TODO: Stupid Object, Remove Later
+		struct state {
+			enum id {
+				FAILURE = -1,
+				CREATION,						// Engine instance is being constructed.
+				READY,							// Engine instance is active, and ready to be used.
+				RUNNING,						// Threads are launched and running backend.
+				DESTRUCTION						// Engine is currently in destruction phase.
+			};
+		};
+
 		engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList);
 		~engine();
 
@@ -159,17 +170,6 @@ namespace geodesuka {
 
 	private:
 
-		// TODO: Stupid Object, Remove Later
-		struct state {
-			enum id {
-				FAILURE = -1,
-				CREATION,						// Engine instance is being constructed.
-				READY,							// Engine instance is active, and ready to be used.
-				RUNNING,						// Threads are launched and running backend.
-				DESTRUCTION						// Engine is currently in destruction phase.
-			};
-		};
-
 		const version Version = { 0, 0, 20 }; // Major, Minor, Revision
 		const int Date = 20220521; //YYYYMMDD
 		std::vector<const char*> Layer;
@@ -181,7 +181,7 @@ namespace geodesuka {
 		// ------------------------------ Engine State ------------------------------ //
 		
 		std::mutex Mutex;
-		state::id ID;
+		state::id StateID;
 		//bool isReady;
 		std::atomic<bool> Shutdown;
 		core::logic::trap ThreadTrap;

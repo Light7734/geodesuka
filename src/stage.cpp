@@ -4,13 +4,41 @@
 namespace geodesuka::core {
 
 	stage_t::stage_t(engine* aEngine, gcl::context* aContext) {
-		this->Engine				= aEngine;
-		this->Context				= aContext;
+		Engine				= aEngine;
+		Context				= aContext;
+
+		isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::CREATION) {
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			Engine->Stage.push_back(this);
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
 	}
 
 	stage_t::~stage_t() {
-		// Will be used to delete all contained
-		// objects explicitly.
+		// If engine is in destruction state, do not attempt to remove from engine.
+		//isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::DESTRUCTION) {
+			// Removes Object from Engine State.
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			// Finds object in engine, and removes it.
+			for (size_t i = 0; i < Engine->Stage.size(); i++) {
+				if (Engine->Stage[i] == this) {
+					Engine->Stage.erase(Engine->Stage.begin() + i);
+				}
+			}
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
 	}
 
 	VkSubmitInfo stage_t::update(double aDeltaTime) {

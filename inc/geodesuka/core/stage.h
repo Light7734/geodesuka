@@ -37,7 +37,7 @@ namespace geodesuka::core {
 	protected:
 
 		std::mutex Mutex;
-		std::atomic<bool> isReady;
+		std::atomic<bool> isReadyToBeProcessed;
 
 		engine* Engine;
 		gcl::context* Context;
