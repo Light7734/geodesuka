@@ -116,12 +116,6 @@ GLFW - https://github.com/glfw/glfw
 glslang: - https://github.com/KhronosGroup/glslang
     Is backend compiler to SPIRV in this project.
 
-# Contact Info:
-ShaderKitty#1696 
-
-Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
-I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
-
 # Reference Specifications:
 
 Vulkan:
