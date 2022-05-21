@@ -1,3 +1,4 @@
+<div align="center">
 <img src="https://github.com/ShaderKitty/Geodesuka/blob/d20220521-v0.0.20/res/github/gsdgiusdu2_2k.png" align="left" height="128" width="128" alt="Geodesuka Engine">
 
 ## Geodesuka Engine v0.0.20
@@ -93,13 +94,30 @@ OpenCL - https://software.intel.com/content/www/us/en/develop/tools/opencl-sdk.h
     If you wish to use another OpenCL SDK, just change the proper directories associated with
     the project files to do so. Otherwise go to the link provided to download Intel's OpenCL.
 
+OpenXR - 
+    N/A
+
 GLFW - https://github.com/glfw/glfw
     GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development.
     It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, 
     handling events, etc.
 
+portaudio - http://portaudio.com/
+    N/A
+
 glslang: - https://github.com/KhronosGroup/glslang
     Is backend compiler to SPIRV in this project.
+
+
+
+Assimp - https://assimp-docs.readthedocs.io/en/v5.1.0/
+    N/A
+
+FreeType - https://freetype.org/
+    N/A
+
+FreeImage - https://freeimage.sourceforge.io/
+    N/A
 
 # Reference Specifications:
 
