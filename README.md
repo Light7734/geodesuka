@@ -9,19 +9,10 @@
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
-
-Currently what is being worked on is the rendering scheduler, as it will attempt to honor
-the requested frame rate/refresh rate of each render target. Looking at other people's engines,
-they seem to use a one and done renderer to prop up images on the screen as quickly as possible
-while this engine gives a lot of render choices to the object implementations themselves. This
-could nerf performance, but won't know until various scenes have been constructed and are being
-actively rendered by the engine. Since the way this engine is designed, this could severely impair
-performance. But wont't really know until I test it.
-
-Since OpenCL 3.0 specification has been released by the Khronos group, it turns out that it might
-still be possible to combine the kernel execution model of various GPGPU compute apis with graphics
-rasterization apis like Vulkan.
-https://www.khronos.org/blog/khronos-releases-opencl-3.0-extensions-for-neural-network-inferencing-and-opencl-vulkan-interop
+Now with the update and render backend threads of the engine now complete, and capable of processing objects and stages
+asynchronously, the main focus here on out, is getting something to be drawn to a system_window. Once an example stage
+has been created derived from canvas, where a system window is a render target, it will mark the first successful usage 
+of the geodesuka engine for graphics capability that will be extendable.
 
 # Description
 
@@ -48,18 +39,12 @@ still an ambitious goal for a single person, but it is still a fun project to wo
 
 - engine.cpp Added backend update and render thread code. Engine will now process all contexts, objects, and stages.
 
+- context.h now only supports the following queue types. TRANSFER, COMPUTE, GRAPHICS_AND_COMPUTE, and PRESENT. This
+is to allow custom post processing shaders to be executed along side standard rendering operations.
+
 # To Do List:
 
-- context.h will support TRANSFER, GRAPHICS_AND_COMPUTE, and PRESENT operation
-queues. Graphics and Compute will be treated as the same operation, which is
-computational work being performed on the GPU.
-
 - math.h will be re worked to include fields.
-
-- Create System Terminal Class for engine debug commands in engine backend.
-
-- Rewrite math library for more coherent primitive data types, then construct
-natural, integer, and real types from it.
 
 - Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
 
@@ -67,6 +52,11 @@ natural, integer, and real types from it.
 on. (Will be done with canvas class, and window as target.)
 
 - Resolve issue with object being used in multiple stages simultaneously.
+
+- Work on audio processing for game engine.
+
+- Link asset libraries such as Assimp, FreeType, FreeImage, and so on to
+geodesuka.
 
 # Back Burner:
 
@@ -76,8 +66,6 @@ on. (Will be done with canvas class, and window as target.)
 and forward to proper objects.
 
 - Add lua support for runtime scripting.
-
-- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
 
 - Add engine asset manager to prevent double loading.
 
