@@ -225,9 +225,6 @@
     <ClCompile Include="src\engine.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\swapchain.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\canvas.cpp">
       <Filter>src\core\stage</Filter>
     </ClCompile>
@@ -399,11 +396,18 @@
     <ClCompile Include="src\command_pool.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\time_step.cpp">
+      <Filter>src\core\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="src\command_list.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
     <None Include="Makefile" />
     <None Include="LICENSE.md" />
+    <None Include="compile.bat" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="doc\Notes.txt">
@@ -499,9 +503,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage.h">
       <Filter>inc\geodesuka\core</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h">
       <Filter>inc\geodesuka\core\stage</Filter>
@@ -687,6 +688,12 @@
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\logic\time_step.h">
+      <Filter>inc\geodesuka\core\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\command_list.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>

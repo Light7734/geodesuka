@@ -23,8 +23,4 @@ namespace geodesuka::core::object {
         return DrawBatch;
     }
 
-    void camera2d::swap() {
-
-    }
-
 }

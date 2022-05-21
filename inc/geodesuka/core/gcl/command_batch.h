@@ -12,9 +12,14 @@ namespace geodesuka::core::gcl {
 	class command_batch {
 	public:
 
+		friend class engine;
+		friend class context;
+
 		command_batch();
 		command_batch(VkSubmitInfo aSubmission);
 		command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission);
+		command_batch(VkPresentInfoKHR aSubmission);
+		command_batch(size_t aSubmissionCount, VkPresentInfoKHR* aSubmission);
 		command_batch(command_batch& aInput);
 		command_batch(command_batch&& aInput) noexcept;
 		~command_batch();
@@ -26,6 +31,7 @@ namespace geodesuka::core::gcl {
 
 		// Will be used to aggregate render_target submissions.
 		void operator+=(VkSubmitInfo aRhs);
+		void operator+=(VkPresentInfoKHR aRhs);
 		void operator+=(command_batch aRhs);
 
 		// Used for final submission.
@@ -36,6 +42,9 @@ namespace geodesuka::core::gcl {
 	private:
 		size_t SubmissionCount;
 		VkSubmitInfo* Submission;
+
+		size_t PresentationCount;
+		VkPresentInfoKHR* Presentation;
 	};
 
 }

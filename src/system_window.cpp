@@ -1,21 +1,39 @@
 #include <geodesuka/engine.h>
 #include <geodesuka/core/object/system_window.h>
 
+#include <vector>
 #include <algorithm>
+
+#include <GLFW/glfw3.h>
 
 namespace geodesuka::core::object {
 
 	using namespace gcl;
 
-	const std::vector<const char*> system_window::RequiredExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	std::vector<const char*> system_window::RequiredInstanceExtension;
+	std::vector<const char*> system_window::RequiredContextExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	const int system_window::RTID = 2;
 
-	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, gcl::swapchain::prop aSwapchainProperty, int aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext) {
+	system_window::swapchain::prop::prop() {
+		this->Count					= 1;
+		this->ColorSpace			= colorspace::SRGB_NONLINEAR;
+		this->Usage					= texture::usage::COLOR_ATTACHMENT;
+		this->CompositeAlpha		= system_window::composite::ALPHA_OPAQUE;
+		this->PresentMode			= system_window::mode::FIFO;
+		this->Clipped				= true;
+	}
+
+	system_window::system_window(
+		engine* aEngine, context* aContext, system_display* aSystemDisplay,
+		window::prop aWindowProperty, swapchain::prop aSwapchainProperty,
+		VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle) : window(aEngine, aContext, aSystemDisplay->Stage)
+	{
 
 		this->Display = aSystemDisplay;
 		this->Property = aWindowProperty;
 
+		Resolution = uint3(aWidth, aHeight, 1u);
 
 		//glfwWindowHint(GLFW_RESIZABLE,			this->Property.Resizable);
 		//glfwWindowHint(GLFW_DECORATED,			this->Property.Decorated);
@@ -85,64 +103,77 @@ namespace geodesuka::core::object {
 			return;
 		}
 
-		// Create swapchain.
-		this->Swapchain = new swapchain(aContext, this->Surface, aSwapchainProperty, aPixelFormat, aWidth, aHeight, nullptr);
+		// Queries Surface Capabilities.
+		VkSurfaceCapabilitiesKHR SurfaceCapabilities{};
+		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Context->parent()->handle(), Surface, &SurfaceCapabilities);
 
-		// These images belong to the swapchain, do not delete these.
-		uint32_t ImageCount = 0;
-		VkImage* Image = NULL;
-		Result = vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain->Handle, &ImageCount, NULL);
-		Image = (VkImage*)malloc(ImageCount * sizeof(VkImage));
-		Result = vkGetSwapchainImagesKHR(this->Context->handle(), this->Swapchain->Handle, &ImageCount, Image);
+		CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		CreateInfo.pNext					= NULL;
+		CreateInfo.flags					= 0; // Add function later?
+		CreateInfo.surface					= Surface;
+		CreateInfo.minImageCount			= std::clamp((uint32_t)aSwapchainProperty.Count, SurfaceCapabilities.minImageCount, SurfaceCapabilities.maxImageCount);
+		CreateInfo.imageFormat				= aPixelFormat;
+		CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aSwapchainProperty.ColorSpace;
+		CreateInfo.imageExtent.width		= std::clamp((uint32_t)Resolution.x, SurfaceCapabilities.minImageExtent.width, SurfaceCapabilities.maxImageExtent.width);
+		CreateInfo.imageExtent.height		= std::clamp((uint32_t)Resolution.y, SurfaceCapabilities.minImageExtent.height, SurfaceCapabilities.maxImageExtent.height);
+		CreateInfo.imageArrayLayers			= std::clamp((uint32_t)Resolution.z, 1u, SurfaceCapabilities.maxImageArrayLayers);
+		CreateInfo.imageUsage				= (VkImageUsageFlags)aSwapchainProperty.Usage;
+		CreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
+		CreateInfo.queueFamilyIndexCount	= 0;
+		CreateInfo.pQueueFamilyIndices		= NULL;
+		CreateInfo.preTransform				= VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		CreateInfo.compositeAlpha			= (VkCompositeAlphaFlagBitsKHR)aSwapchainProperty.CompositeAlpha;
+		CreateInfo.presentMode				= (VkPresentModeKHR)aSwapchainProperty.PresentMode;
+		CreateInfo.clipped					= (VkBool32)aSwapchainProperty.Clipped;
+		CreateInfo.oldSwapchain				= VK_NULL_HANDLE;
+
+		Result = vkCreateSwapchainKHR(Context->handle(), &CreateInfo, NULL, &Swapchain);
+
+		Result = vkGetSwapchainImagesKHR(this->Context->handle(), Swapchain, &FrameCount, NULL);
+		std::vector<VkImage> Image(FrameCount);
+		Result = vkGetSwapchainImagesKHR(this->Context->handle(), Swapchain, &FrameCount, Image.data());
 		
-		this->FrameCount = ImageCount;
-		this->FrameTexture = new texture[FrameCount];
+		Frame = new texture[FrameCount];
 
 		// Load images into texture class.
-		for (uint32_t i = 0; i < ImageCount; i++) {
+		for (uint32_t i = 0; i < FrameCount; i++) {
 
-			this->FrameTexture[i].CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-			this->FrameTexture[i].CreateInfo.pNext					= NULL;
-			this->FrameTexture[i].CreateInfo.flags					= 0;
-			this->FrameTexture[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
-			this->FrameTexture[i].CreateInfo.format					= this->Swapchain->CreateInfo.imageFormat;
-			this->FrameTexture[i].CreateInfo.extent					= { this->Swapchain->CreateInfo.imageExtent.width, this->Swapchain->CreateInfo.imageExtent.height, 1u };
-			this->FrameTexture[i].CreateInfo.mipLevels				= 1;
-			this->FrameTexture[i].CreateInfo.arrayLayers			= this->Swapchain->CreateInfo.imageArrayLayers;
-			this->FrameTexture[i].CreateInfo.samples				= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
-			this->FrameTexture[i].CreateInfo.tiling					; // Unknown.
-			this->FrameTexture[i].CreateInfo.usage					= this->Swapchain->CreateInfo.imageUsage;
-			this->FrameTexture[i].CreateInfo.sharingMode			= this->Swapchain->CreateInfo.imageSharingMode;
-			this->FrameTexture[i].CreateInfo.queueFamilyIndexCount	= 0;
-			this->FrameTexture[i].CreateInfo.pQueueFamilyIndices	= NULL;
-			this->FrameTexture[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
-			this->FrameTexture[i].Handle							= Image[i];
+			Frame[i].CreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+			Frame[i].CreateInfo.pNext					= NULL;
+			Frame[i].CreateInfo.flags					= 0;
+			Frame[i].CreateInfo.imageType				= VkImageType::VK_IMAGE_TYPE_2D;
+			Frame[i].CreateInfo.format				= CreateInfo.imageFormat;
+			Frame[i].CreateInfo.extent				= { CreateInfo.imageExtent.width, CreateInfo.imageExtent.height, 1u };
+			Frame[i].CreateInfo.mipLevels				= 1;
+			Frame[i].CreateInfo.arrayLayers			= CreateInfo.imageArrayLayers;
+			Frame[i].CreateInfo.samples				= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT; // Unknown.
+			Frame[i].CreateInfo.tiling				; // Unknown.
+			Frame[i].CreateInfo.usage					= CreateInfo.imageUsage;
+			Frame[i].CreateInfo.sharingMode			= CreateInfo.imageSharingMode;
+			Frame[i].CreateInfo.queueFamilyIndexCount	= 0;
+			Frame[i].CreateInfo.pQueueFamilyIndices	= NULL;
+			Frame[i].CreateInfo.initialLayout			= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Unknown.
+			Frame[i].Handle							= Image[i];
 
 		}
-
-		free(Image);
-		Image = NULL;
-
-		this->Engine->submit(this);
 
 	}
 
 	system_window::~system_window() {
-		this->Engine->remove(this);
 
 		// Clears swapchain images.
 		for (int i = 0; i < this->FrameCount; i++) {
-			this->FrameTexture[i].CreateInfo = {};
-			this->FrameTexture[i].Handle = VK_NULL_HANDLE;
+			this->Frame[i].CreateInfo = {};
+			this->Frame[i].Handle = VK_NULL_HANDLE;
 		}
 
 		this->FrameCount = 0;
-		delete[] this->FrameTexture;
-		this->FrameTexture = nullptr;
+		delete[] this->Frame;
+		this->Frame = nullptr;
 
-		// Destroys swapchain.
-		delete this->Swapchain;
-		this->Swapchain = nullptr;
+		//// Destroys swapchain.
+		//delete this->Swapchain;
+		//this->Swapchain = nullptr;
 
 		if ((this->Engine != nullptr) && (this->Surface != VK_NULL_HANDLE)) {
 			// Destroys suface.
@@ -158,40 +189,107 @@ namespace geodesuka::core::object {
 
 	}
 
+	void system_window::set_position(float3 aPosition) {
+		//tex:
+		// Centers system_display and system_window.
+		// $$ \vec{r}_{tmp} = \vec{r}_{sc}^{w} + \frac{\vec{s}_{sc}^{w}}{2} - \Big(\vec{r}_{sc}^{m} + \frac{\vec{s}_{sc}^{m}}{2} \Big) $$
+		// $$ x_{tmp} = $$
+
+		// Converts Direction and length.
+		this->Position = aPosition;
+		int2 r_tmp = int2(
+			(int)(Position.x * (((float)(Display->Resolution.x)) / (Display->Size.x))),
+			(int)(-Position.y * (((float)(Display->Resolution.y)) / (Display->Size.y)))
+		);
+
+		// Compensate for shift.
+		this->PositionSC =
+			r_tmp
+			- int2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
+			+ Display->PositionSC
+			+ int2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
+
+		glfwSetWindowPos(Handle, PositionSC.x, PositionSC.y);
+	}
+
+	//VkCommandBuffer system_window::draw(rendertarget* aRenderTarget) {}
+
+	void system_window::set_size(float2 aSize) {
+		Resolution.x = aSize.x * ((double)Display->Resolution.x / (double)Display->Size.x);
+		Resolution.y = aSize.y * ((double)Display->Resolution.y / (double)Display->Size.y);
+		glfwSetWindowSize(Handle, Resolution.x, Resolution.y);
+		// TODO: make more efficient
+		this->set_position(this->Position);
+	}
+
+	void system_window::set_resolution(uint2 aResolution) {
+		Size.x = aResolution.x * ((double)Display->Size.x / (double)Display->Resolution.x);
+		Size.y = aResolution.y * ((double)Display->Size.y / (double)Display->Resolution.y);
+		glfwSetWindowSize(Handle, aResolution.x, aResolution.y);
+		// TODO: make more efficient
+		this->set_position(Position);
+	}
+
 	int system_window::rtid() {
 		return RTID;
 	}
 
-	// Must return a semaphore for an image acquired.
-	VkSemaphore system_window::next_frame() {
-		VkSemaphore FrameAcquireSemaphore = VK_NULL_HANDLE;
-		this->Mutex.lock();
-		// Uses a semaphore to schedule draw calls. Must be waited for to commence draw operations.
-		//vkAcquireNextImageKHR(
-		//	this->Context->handle(), 
-		//	this->Swapchain->handle(), 
-		//	UINT64_MAX, 
-		//	FrameAcquireSemaphore,
-		//	VK_NULL_HANDLE, 
-		//	&this->FrameDrawIndex
-		//);
-		this->Mutex.unlock();
-		// Return semaphore to be used in 
-		return FrameAcquireSemaphore;
+	void system_window::next_frame() {
+		Mutex.lock();
+		// I hate this...
+		NextImageSemaphoreIndex = ((NextImageSemaphoreIndex == (FrameCount - 1)) ? 0 : (NextImageSemaphoreIndex + 1));
+		// This function is fucking retarded when it comes to semaphores. Because I cannot know that the next frame index is before setting a signal
+		// semaphore, I have iterate through an unmatched semaphore array to 
+		vkAcquireNextImageKHR(Context->handle(), Swapchain, UINT64_MAX, NextImageSemaphore[NextImageSemaphoreIndex], VK_NULL_HANDLE, &FrameDrawIndex);
+		Mutex.unlock();
 	}
 
 	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
 		VkSubmitInfo DrawBatch{};
 		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		DrawBatch.pNext					= NULL;
-		DrawBatch.waitSemaphoreCount	= 0;
-		DrawBatch.pWaitSemaphores		= NULL;
-		DrawBatch.pWaitDstStageMask		= NULL;
-		DrawBatch.commandBufferCount	= 0;
-		DrawBatch.pCommandBuffers		= NULL;
-		DrawBatch.signalSemaphoreCount	= 0;
-		DrawBatch.pSignalSemaphores		= NULL;
+		this->Mutex.lock();
+
+		void* nptr = NULL;
+		if (this->DrawCommandList[this->FrameDrawIndex] == NULL) {
+			nptr = malloc(aObjectCount * sizeof(VkCommandBuffer));
+		}
+		else if (this->DrawCommandCount[this->FrameDrawIndex] != aObjectCount) {
+			nptr = realloc(this->DrawCommandList[this->FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
+		}
+		
+		// Check if NULL.
+		if (nptr != this->DrawCommandList[this->FrameDrawIndex]) this->DrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
+
+		// Segfault anyways if mem alloc failure.
+		for (size_t i = 0; i < aObjectCount; i++) {
+			this->DrawCommandList[this->FrameDrawIndex][i] = aObject[i]->draw(this);
+		}
+
+		DrawBatch.waitSemaphoreCount	= 1;
+		DrawBatch.pWaitSemaphores		= &this->NextImageSemaphore[this->NextImageSemaphoreIndex];
+		DrawBatch.pWaitDstStageMask		= &this->PipelineStageFlags;
+		DrawBatch.commandBufferCount	= this->DrawCommandCount[this->FrameDrawIndex];
+		DrawBatch.pCommandBuffers		= this->DrawCommandList[this->FrameDrawIndex];
+		DrawBatch.signalSemaphoreCount	= 1;
+		DrawBatch.pSignalSemaphores		= &this->RenderOperationSemaphore[this->FrameDrawIndex];
+		this->Mutex.unlock();
 		return DrawBatch;
+	}
+
+	VkPresentInfoKHR system_window::present_frame() {
+		VkPresentInfoKHR PresentInfo{};
+		PresentInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		PresentInfo.pNext					= NULL;
+		this->Mutex.lock();
+		PresentInfo.waitSemaphoreCount		= 1;
+		PresentInfo.pWaitSemaphores			= &this->RenderOperationSemaphore[this->FrameDrawIndex];
+		PresentInfo.swapchainCount			= 1;
+		//PresentInfo.pSwapchains				= &this->Swapchain->handle();
+		PresentInfo.pImageIndices			= &this->FrameDrawIndex;
+		PresentInfo.pResults				= &this->PresentResult[this->FrameDrawIndex];
+		this->Mutex.unlock();
+		return PresentInfo;
 	}
 
 	VkSubmitInfo system_window::update(double aDeltaTime) {
@@ -209,96 +307,6 @@ namespace geodesuka::core::object {
 		this->Time += aDeltaTime;
 		this->Mutex.unlock();
 		return TransferBatch;
-	}
-
-	//VkCommandBuffer system_window::draw(system_display* aTargetDisplay) {
-	//	// This method is responsible for rendering window to display.
-	//	VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
-	//	this->Mutex.lock();
-
-	//	if (this->Property.RefreshRate) {
-
-	//	}
-	//	this->Mutex.unlock();
-
-	//	return DrawCommand;
-	//}
-
-	//void system_window::draw(object_t* aObject) {
-	//	if ((object_t*)this == aObject) return;
-	//	aObject->draw(this);
-	//}
-
-	void system_window::swap() {
-		if (this->FPSTimer.check()) {
-			VkResult Result = VkResult::VK_SUCCESS;
-			uint32_t NextIndex = UINT32_MAX;
-			VkPresentInfoKHR Presentation;
-
-			Presentation.sType = VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-			Presentation.pNext = NULL;
-			Presentation.waitSemaphoreCount = 0;
-			Presentation.pWaitSemaphores = NULL;
-			Presentation.swapchainCount = 1;
-			Presentation.pSwapchains = &this->Swapchain->Handle;
-			Presentation.pImageIndices = &this->FrameDrawIndex;
-			Presentation.pResults = &Result;
-
-			// Present image to display.
-			this->Context->present(&Presentation);
-
-			// Acquire next image and wait for availability.
-			Result = vkAcquireNextImageKHR(
-				this->Context->handle(),
-				this->Swapchain->handle(),
-				UINT64_MAX,
-				VK_NULL_HANDLE,
-				VK_NULL_HANDLE,
-				&this->FrameDrawIndex
-			);
-
-			// Reset refresh update timer.
-			this->FPSTimer.reset();
-		}
-	}
-
-	void system_window::set_position(float3 aPosition) {
-		//tex:
-		// Centers system_display and system_window.
-		// $$ \vec{r}_{tmp} = \vec{r}_{sc}^{w} + \frac{\vec{s}_{sc}^{w}}{2} - \Big(\vec{r}_{sc}^{m} + \frac{\vec{s}_{sc}^{m}}{2} \Big) $$
-		// $$ x_{tmp} = $$
-
-		// Converts Direction and length.
-		this->Position = aPosition;
-		int2 r_tmp = int2(
-			(int)(this->Position.x * (((float)(Display->Resolution.x)) / (Display->Size.x))),
-			(int)(-this->Position.y * (((float)(Display->Resolution.y)) / (Display->Size.y)))
-		);
-
-		// Compensate for shift.
-		this->PositionSC =
-			r_tmp
-			- int2(((double)Resolution.x / 2.0), ((double)Resolution.y / 2.0))
-			+ Display->PositionSC
-			+ int2(((double)Display->Resolution.x / 2.0), ((double)Display->Resolution.y / 2.0));
-
-		glfwSetWindowPos(this->Handle, this->PositionSC.x, this->PositionSC.y);
-	}
-
-	void system_window::set_size(float2 aSize) {
-		this->Resolution.x = aSize.x * ((double)this->Display->Resolution.x / (double)this->Display->Size.x);
-		this->Resolution.y = aSize.y * ((double)this->Display->Resolution.y / (double)this->Display->Size.y);
-		glfwSetWindowSize(this->Handle, this->Resolution.x, this->Resolution.y);
-		// TODO: make more efficient
-		this->set_position(this->Position);
-	}
-
-	void system_window::set_resolution(uint2 aResolution) {
-		this->Size.x = aResolution.x * ((double)this->Display->Size.x / (double)this->Display->Resolution.x);
-		this->Size.y = aResolution.y * ((double)this->Display->Size.y / (double)this->Display->Resolution.y);
-		glfwSetWindowSize(this->Handle, aResolution.x, aResolution.y);
-		// TODO: make more efficient
-		this->set_position(this->Position);
 	}
 
 	int2 system_window::phys2scrn(float2 R) {
@@ -324,6 +332,27 @@ namespace geodesuka::core::object {
 	float2 system_window::scrn2phys(int2 R) {
 		float2 temp;
 		return temp;
+	}
+
+	bool system_window::initialize() {
+		if (glfwInit() == GLFW_TRUE) {
+			uint32_t TempCount = 0;
+			const char** Temp = glfwGetRequiredInstanceExtensions(&TempCount);
+
+			for (uint32_t i = 0; i < TempCount; i++) {
+				RequiredInstanceExtension.push_back(Temp[i]);
+			}
+
+			return true;
+		}
+		else {
+			return false;
+		}
+		//return (glfwInit() == GLFW_TRUE ? true : false);
+	}
+
+	void system_window::terminate() {
+		glfwTerminate();
 	}
 
 	// --------------- These are the system_window callbacks --------------- //
@@ -438,9 +467,6 @@ namespace geodesuka::core::object {
 	}
 
 }
-
-
-
 
 //
 //system_window::system_window() {

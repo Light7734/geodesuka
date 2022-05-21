@@ -10,6 +10,8 @@ namespace geodesuka::core::gcl {
 	command_batch::command_batch() {
 		this->SubmissionCount = 0;
 		this->Submission = NULL;
+		this->PresentationCount = 0;
+		this->Presentation = NULL;
 	}
 
 	command_batch::command_batch(VkSubmitInfo aSubmission) {
@@ -28,6 +30,8 @@ namespace geodesuka::core::gcl {
 			this->SubmissionCount = 0;
 			this->Submission = NULL;
 		}
+		this->PresentationCount = 0;
+		this->Presentation = NULL;
 	}
 
 	command_batch::command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission) {
@@ -45,6 +49,8 @@ namespace geodesuka::core::gcl {
 			this->SubmissionCount = 0;
 			this->Submission = NULL;
 		}
+		this->PresentationCount = 0;
+		this->Presentation = NULL;
 	}
 
 	command_batch::command_batch(command_batch& aInput) {
@@ -67,8 +73,12 @@ namespace geodesuka::core::gcl {
 	command_batch::command_batch(command_batch&& aInput) noexcept {
 		this->SubmissionCount = aInput.SubmissionCount;
 		this->Submission = aInput.Submission;
+		this->PresentationCount = aInput.PresentationCount;
+		this->Presentation = aInput.Presentation;
 		aInput.SubmissionCount = 0;
 		aInput.Submission = NULL;
+		aInput.PresentationCount = 0;
+		aInput.Presentation = NULL;
 	}
 
 	command_batch::~command_batch() {
@@ -123,6 +133,21 @@ namespace geodesuka::core::gcl {
 		this->SubmissionCount += 1;
 	}
 
+	void command_batch::operator+=(VkPresentInfoKHR aRhs) {
+		if ((aRhs.swapchainCount == 0) || (aRhs.pSwapchains == NULL) || (aRhs.pImageIndices == NULL)) return;
+		void* nptr = NULL;
+		if (this->Presentation == NULL) {
+			nptr = malloc(sizeof(VkPresentInfoKHR));
+		}
+		else {
+			nptr = realloc(this->Presentation, (this->PresentationCount + 1) * sizeof(VkPresentInfoKHR));
+		}
+		if (nptr == NULL) return;
+		this->Presentation = (VkPresentInfoKHR*)nptr;
+		memcpy(&(this->Presentation[this->PresentationCount]), &aRhs, sizeof(VkSubmitInfo));
+		this->SubmissionCount += 1;
+	}
+
 	void command_batch::operator+=(command_batch aRhs) {
 		void* nptr = NULL;
 		if (this->Submission == NULL) {
@@ -149,5 +174,8 @@ namespace geodesuka::core::gcl {
 		free(this->Submission);
 		this->Submission = NULL;
 		this->SubmissionCount = 0;
+		free(this->Presentation);
+		this->Presentation = NULL;
+		this->PresentationCount = 0;
 	}
 }

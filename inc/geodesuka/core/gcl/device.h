@@ -6,11 +6,20 @@
 
 #include "../math/number/type.h"
 
+namespace geodesuka {
+	class engine;
+}
+
+namespace geodesuka::core::object {
+	class system_display;
+}
+
 namespace geodesuka::core::gcl {
 
 	class device {
 	public:
 
+		friend class engine;
 		friend class context;
 
 		// Queue Family Support Options
@@ -78,12 +87,7 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		//Scrap
-		//struct queue_family {
-		//	VkQueueFamilyProperties Property;
-		//	queue_family_capability Capability;
-		//	uint32_t SupportCount;
-		//};
+		//std::vector<object::system_display*> ChildDisplay;
 
 		VkInstance ParentInstance;
 		VkPhysicalDevice Handle;

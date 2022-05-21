@@ -1,8 +1,8 @@
 CXX = g++
-OPT = 
-INC = '-I/Program Files (x86)/IntelSWTools/system_studio_2020/OpenCL/sdk/include' -Iinc -Idep/glfw/inc -Idep/glad/inc
+OPT = -std=c++17 -pthread -c
+INC = -I./inc -Idep/glfw/inc -Idep/glad/inc
 LIB = 
-SRC = src
+SRC = src/
 
-all:
+geodesuka:
 	$(CXX) $(OPT) $(INC) $(LIB) %(SRC) main.cpp -o main.exe

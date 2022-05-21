@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -185,6 +185,7 @@
     <ClCompile Include="src\char3.cpp" />
     <ClCompile Include="src\char4.cpp" />
     <ClCompile Include="src\command_batch.cpp" />
+    <ClCompile Include="src\command_list.cpp" />
     <ClCompile Include="src\command_pool.cpp" />
     <ClCompile Include="src\complex.cpp" />
     <ClCompile Include="src\context.cpp" />
@@ -237,13 +238,13 @@
     <ClCompile Include="src\short4.cpp" />
     <ClCompile Include="src\stage.cpp" />
     <ClCompile Include="src\str.cpp" />
-    <ClCompile Include="src\swapchain.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_terminal.cpp" />
     <ClCompile Include="src\system_window.cpp" />
     <ClCompile Include="src\text.cpp" />
     <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\time_step.cpp" />
     <ClCompile Include="src\trap.cpp" />
     <ClCompile Include="src\triangle.cpp" />
     <ClCompile Include="src\type.cpp" />
@@ -261,6 +262,7 @@
     <ClCompile Include="src\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="compile.bat" />
     <None Include="LICENSE.md" />
     <None Include="Makefile" />
     <None Include="README.md" />
@@ -281,6 +283,7 @@
     <ClInclude Include="inc\geodesuka\core\gcl.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\buffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\command_batch.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\command_list.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
@@ -288,7 +291,6 @@
     <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\swapchain.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\material.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\mesh.h" />
@@ -302,6 +304,7 @@
     <ClInclude Include="inc\geodesuka\core\io\image.h" />
     <ClInclude Include="inc\geodesuka\core\io\script.h" />
     <ClInclude Include="inc\geodesuka\core\logic\timer.h" />
+    <ClInclude Include="inc\geodesuka\core\logic\time_step.h" />
     <ClInclude Include="inc\geodesuka\core\logic\trap.h" />
     <ClInclude Include="inc\geodesuka\core\math.h" />
     <ClInclude Include="inc\geodesuka\core\math\config.h" />

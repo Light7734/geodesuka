@@ -17,6 +17,7 @@
 * how to stream line 
 */
 
+#include <atomic>
 #include <mutex>
 #include <map>
 
@@ -52,6 +53,15 @@ namespace geodesuka::core {
 		virtual void set_position(float3 aPosition);
 		float3 get_position() const;
 
+		/*
+		* This function will be called by a particular rendertarget to gather Draw Commands
+		* from the object in question. Base object class must provide default render methods for generic
+		* runtime data.
+		*/
+		// This is public for rendertargets to access object draw commands.
+		// This is public because it is needed for user defined rendertargets.
+		virtual VkCommandBuffer draw(object::rendertarget* aRenderTarget);
+
 	protected:
 
 		// Used for shared usage between Engine & App.
@@ -80,11 +90,6 @@ namespace geodesuka::core {
 		float3 DirectionX;		// Right		[Normalized]
 		float3 DirectionY;		// Up			[Normalized]
 		float3 DirectionZ;		// Forward		[Normalized]
-
-		//integer WorldID;				// Which world is this object in?
-		//integer LevelID;				// Which Level is this object in?
-		//integer StageID;				// Which Stage is this object in?
-		//integer ID;						// 
 
 		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
 		//boolean isDeterministic;		// Does this object have predefined motion?
@@ -121,15 +126,7 @@ namespace geodesuka::core {
 		*/
 		virtual VkSubmitInfo compute();
 
-		/*
-		* This function will be called by a particular rendertarget to gather Draw Commands
-		* from the object in question. Base object class must provide default render methods for generic
-		* runtime data.
-		*/
-		virtual VkCommandBuffer draw(object::rendertarget* aRenderTarget);
-
 	};
-
 
 }
 

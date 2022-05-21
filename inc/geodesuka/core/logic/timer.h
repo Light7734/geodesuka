@@ -23,11 +23,15 @@ namespace geodesuka::core::logic {
 		// Check if duration has ellapsed.
 		bool check();
 
+		// Will update and check if condition has been met.
+		bool check(double aDeltaTime);
+
 		// Resets ellapsed time.
 		void reset();
 
-		// Will update and check if condition has been met.
-		bool check(double aDeltaTime);
+		// Checks and resets timer.
+		bool check_and_reset();
+
 
 
 	private:

@@ -32,11 +32,12 @@ namespace geodesuka::core {
 
 		friend class engine;
 
-		std::mutex Mutex;
-
 		~stage_t();
 
 	protected:
+
+		std::mutex Mutex;
+		std::atomic<bool> isReady;
 
 		engine* Engine;
 		gcl::context* Context;
@@ -46,23 +47,13 @@ namespace geodesuka::core {
 
 		stage_t(engine* aEngine, gcl::context* aContext);
 
-		// Will generate a batch of rendering commands per render target
-		// if the 
-		//virtual batch render() = 0;
-
-		void present(uint32_t aWaitSemaphoreCount, VkSemaphore* aWaitSemaphoreList);
-
-		void submit();
-		//void remove();
-
 	private:
 
 		virtual VkSubmitInfo update(double aDeltaTime);
 
 		virtual VkSubmitInfo compute();
 
-		// Will generate render operations per render target in scheduled manner.
-		void render();
+		virtual gcl::command_batch render();
 
 	};
 

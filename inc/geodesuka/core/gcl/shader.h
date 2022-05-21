@@ -14,6 +14,8 @@ namespace geodesuka::core::gcl {
 	class shader /*: public glslang::TIntermTraverser*/ {
 	public:
 
+		friend class engine;
+
 		enum stage {
 			UNKNOWN,
 			VERTEX,
@@ -47,6 +49,9 @@ namespace geodesuka::core::gcl {
 		VkPipelineShaderStageCreateInfo stageci();
 
 	private:
+
+		static bool initialize();
+		static void terminate();
 
 		io::file* FileHandle;						// Reference Asset File.
 		context* ParentDC;					// Parent Device Context of this Shader

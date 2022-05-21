@@ -29,7 +29,7 @@ namespace geodesuka::core::object {
 		this->CenterCursor		= GLFW_TRUE;
 		this->FocusOnShow		= GLFW_TRUE;
 		this->Hovered			= GLFW_TRUE;
-		this->RefreshRate		= GLFW_DONT_CARE;
+		//this->RefreshRate		= GLFW_DONT_CARE;
 	}
 
 	window::~window() {
@@ -44,7 +44,7 @@ namespace geodesuka::core::object {
 	}
 
 	void window::set_resolution(uint2 aResolution) {
-		this->Resolution = aResolution;
+		this->Resolution = uint3(aResolution.x, aResolution.y, 1u);
 
 	}
 

@@ -2,15 +2,12 @@
 #ifndef GEODESUKA_CORE_GCL_CONTEXT_H
 #define GEODESUKA_CORE_GCL_CONTEXT_H
 
+#include <atomic>
 #include <mutex>
 
 #include "../gcl.h"
 #include "command_batch.h"
 #include "device.h"
-
-namespace geodesuka {
-	class engine;
-}
 
 namespace geodesuka::core::gcl {
 
@@ -18,6 +15,8 @@ namespace geodesuka::core::gcl {
 
 	class context {
 	public:
+
+		friend class engine;
 
 		//\\ ------------------------------ Queues ------------------------------ //\\
 		// Available queues for specific operations. Names are self explanatory.
@@ -28,12 +27,6 @@ namespace geodesuka::core::gcl {
 		// TODO: Include dependency of engine instance.
 		context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
-
-		// Grabs the Queue Family Index associated with Queue Support Bit from context.
-		int qfi(device::qfs aQFS);
-
-		// Queries if queue type exists with context.
-		bool available(device::qfs aQFS);
 
 		// Creates a single command buffer with selected operations.
 		VkCommandBuffer create(device::qfs aQFS);
@@ -46,14 +39,17 @@ namespace geodesuka::core::gcl {
 
 		// Destroys all command buffers provided if they were created by this context.
 		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
-	
-		// TODO: Make create/destroy thread safe.
-		// Creates a series of command buffer handles, and fill the respective arguments.
-		//VkResult create(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
 
-		//void destroy(VkCommandBuffer aCommandBuffer);
-		// Searches and clear allocated command buffers from instance.
-		//void destroy(cmdtype aCommandType, size_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		// -------------------- Queue Family Stuff -------------------- //
+
+		// Grabs the Queue Family Index associated with Queue Support Bit from context.
+		int qfi(device::qfs aQFS);
+
+		// Queries if queue type exists with context.
+		bool available(device::qfs aQFS);
+
+		//
+		VkResult execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
 		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
@@ -67,23 +63,31 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		// Synchronization
+		// -------------------- Engine Data -------------------- //
+		// Used for engine backend.
+		std::mutex ExecutionMutex;
+		VkFence ExecutionFence[3];
+		command_batch BackBatch[3];
+		command_batch WorkBatch[3];
+
+		// -------------------- Engine Data -------------------- //
+
 		std::mutex Mutex;
 		std::atomic<bool> isReady;
-		VkFence Fence;
 
 		// Parent physical device.
 		engine* Engine;
 		device* Device;
 
-		// Supported Queue Options.
+		// Supported Queue options for this context
 		unsigned int Support;
 
-		// Queue Family Indices.
+		// Queue Family Indices = QFI
+		// Array of QFIs.
 		int QFI[4];
 
-		// Unique QFI.
-		int UQFICount; // Always <= 4.
+		// Array of Unique QFIs.
+		int UQFICount;
 		int UQFI[4];
 
 		float** QueueFamilyPriority;

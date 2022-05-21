@@ -155,7 +155,8 @@ struct_declarator:
 
 //#define MODE_DEBUG
 
-#include <stdarg.h>
+#include <cstddef>
+#include <cstdarg>
 
 #ifdef MODE_DEBUG
 #include <iostream>
