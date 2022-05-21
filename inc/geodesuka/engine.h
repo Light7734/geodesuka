@@ -182,7 +182,7 @@ namespace geodesuka {
 		
 		std::mutex Mutex;
 		state::id ID;
-		bool isReady;
+		//bool isReady;
 		std::atomic<bool> Shutdown;
 		core::logic::trap ThreadTrap;
 
@@ -202,13 +202,6 @@ namespace geodesuka {
 		std::vector<core::gcl::context*> Context;
 		std::vector<core::object_t*> Object;
 		std::vector<core::stage_t*> Stage;
-
-		//// Returns index of of pointer, -1 if doesn't exist. 
-		//int winidx(core::object::system_window* aWin);
-		//int filidx(core::io::file* aFile);
-		//int ctxidx(core::gcl::context* aCtx);
-		//int objidx(core::object_t* aObj);
-		//int stgidx(core::stage_t* aStg);
 
 		// ------------------------------ Back end runtime ------------------------------ //
 
