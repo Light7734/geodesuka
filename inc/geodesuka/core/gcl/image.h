@@ -1,9 +1,6 @@
 #pragma once
-#ifndef GEODESUKA_CORE_GCL_TEXTURE_H
-#define GEODESUKA_CORE_GCL_TEXTURE_H
-
-#include "../io/file.h"
-#include "../io/image.h"
+#ifndef GEODESUKA_CORE_GCL_IMAGE_H
+#define GEODESUKA_CORE_GCL_IMAGE_H
 
 #include "../util/variable.h"
 
@@ -18,7 +15,7 @@ namespace geodesuka::core::object {
 
 namespace geodesuka::core::gcl {
 
-	class texture {
+	class image {
 	public:
 
 		friend class buffer;
@@ -98,25 +95,25 @@ namespace geodesuka::core::gcl {
 		static size_t bytesperpixel(VkFormat aFormat);
 		static size_t bitsperpixel(VkFormat aFormat);
 
-		texture();
-		texture(context *aContext, int aMemoryType, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth, void *aTextureData);
-		~texture();
+		image();
+		image(context *aContext, int aMemoryType, prop aProperty, int aFormat, int aWidth, int aHeight, int aDepth, void *aTextureData);
+		~image();
 		
 		// Copy Constructor.
-		texture(texture& aInput);
+		image(image& aInput);
 		// Move Constructor.
-		texture(texture&& aInput) noexcept;
+		image(image&& aInput) noexcept;
 		// Copy Assignment.
-		texture& operator=(texture& aRhs);
+		image& operator=(image& aRhs);
 		// Move Assignment.
-		texture& operator=(texture&& aRhs) noexcept;
+		image& operator=(image&& aRhs) noexcept;
 
 		// Each of these operators produces OTS Command Buffers.
 
 		// Copies the contents and mip levels of the right, to the left.
-		VkCommandBuffer operator<<(texture& aRhs);
+		VkCommandBuffer operator<<(image& aRhs);
 		// Copies the contents and mip levels of the left, to the right.
-		VkCommandBuffer operator>>(texture& aRhs);
+		VkCommandBuffer operator>>(image& aRhs);
 		// Copies the contents of the first buffer to the first mip level of the texture.
 		VkCommandBuffer operator<<(buffer& aRhs);
 		// Copies the contents of the first mip level to the buffer on the right.
@@ -161,4 +158,4 @@ namespace geodesuka::core::gcl {
 
 }
 
-#endif // !GEODESUKA_CORE_GCL_TEXTURE_H
+#endif // !GEODESUKA_CORE_GCL_IMAGE_H

@@ -43,7 +43,6 @@ namespace geodesuka::core::object {
 	class window : public rendertarget {
 	public:
 
-		//
 		struct prop {
 			int Resizable;			// Creation Option
 			int Decorated;			// Creation Option
@@ -58,7 +57,6 @@ namespace geodesuka::core::object {
 			int FocusOnShow;		// 
 
 			int Hovered;			// 
-			int RefreshRate;
 
 			prop();
 		};
@@ -74,7 +72,7 @@ namespace geodesuka::core::object {
 
 		util::str Title;
 		float2 Size;				// [m]
-		struct prop Property;
+		prop Property;
 
 		window(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 

@@ -11,7 +11,7 @@ As of right now geodesuka is the primary namespace. Engine
 is the factory manager of all objects, including memory. Can
 be used to 
 
-TODO: Fix context.h queues.
+TODO: Find error regarding int2.
 
 \\ ------------------------- Notes ------------------------- //
 */
@@ -71,7 +71,7 @@ Include: $(ProjectDir)..\glslang
 #include "core/gcl/command_batch.h"
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
-#include "core/gcl/texture.h"
+#include "core/gcl/image.h"
 #include "core/gcl/renderpass.h"
 #include "core/gcl/framebuffer.h"
 #include "core/gcl/pipeline.h"

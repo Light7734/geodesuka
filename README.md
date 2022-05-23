@@ -44,6 +44,9 @@ still an ambitious goal for a single person, but it is still a fun project to wo
 - context.h now only supports the following queue types. TRANSFER, COMPUTE, GRAPHICS_AND_COMPUTE, and PRESENT. This
 is to allow custom post processing shaders to be executed along side standard rendering operations.
 
+- texture.h is now image.h. This change has come because a texture linguistically describes the texture of a surface,
+while an image is just a set of data with a format, which is more appropriate for the previously aliased texture.h.
+
 # To Do List:
 
 - math.h will be re worked to include fields.

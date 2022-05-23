@@ -7,7 +7,7 @@
 
 #include "device.h"
 #include "context.h"
-#include "texture.h"
+#include "image.h"
 #include "renderpass.h"
 
 namespace geodesuka::core::gcl {
@@ -16,7 +16,7 @@ namespace geodesuka::core::gcl {
 	public:
 
 		framebuffer();
-		framebuffer(context* aContext, renderpass& aRenderPass, uint32_t aAttachmentCount, texture* aAttachment, uint32_t aWidth, uint32_t aHeight, uint32_t aLayers);
+		framebuffer(context* aContext, renderpass& aRenderPass, uint32_t aAttachmentCount, image* aAttachment, uint32_t aWidth, uint32_t aHeight, uint32_t aLayers);
 
 		~framebuffer();
 
@@ -27,7 +27,7 @@ namespace geodesuka::core::gcl {
 		VkFramebuffer Handle;
 
 		uint32_t AttachmentCount;
-		texture* Attachment;
+		image* Attachment;
 		VkImageView* View;
 
 	};

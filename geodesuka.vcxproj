@@ -242,7 +242,6 @@
     <ClCompile Include="src\system_terminal.cpp" />
     <ClCompile Include="src\system_window.cpp" />
     <ClCompile Include="src\text.cpp" />
-    <ClCompile Include="src\texture.cpp" />
     <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\time_step.cpp" />
     <ClCompile Include="src\trap.cpp" />
@@ -288,10 +287,10 @@
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\image.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\texture.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\material.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\mesh.h" />
     <ClInclude Include="inc\geodesuka\core\graphics\model.h" />
@@ -301,7 +300,6 @@
     <ClInclude Include="inc\geodesuka\core\io\dynalib.h" />
     <ClInclude Include="inc\geodesuka\core\io\file.h" />
     <ClInclude Include="inc\geodesuka\core\io\font.h" />
-    <ClInclude Include="inc\geodesuka\core\io\image.h" />
     <ClInclude Include="inc\geodesuka\core\io\script.h" />
     <ClInclude Include="inc\geodesuka\core\logic\timer.h" />
     <ClInclude Include="inc\geodesuka\core\logic\time_step.h" />

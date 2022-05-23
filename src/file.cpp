@@ -10,7 +10,7 @@
 
 // Used for generic file loading.
 #include <geodesuka/core/io/dynalib.h>
-#include <geodesuka/core/io/image.h>
+//#include <geodesuka/core/io/image.h>
 #include <geodesuka/core/io/font.h>
 //#include <geodesuka/core/io/model.h>
 

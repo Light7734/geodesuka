@@ -17,22 +17,23 @@
 namespace geodesuka::core::object {
 
 	window::prop::prop() {
-		this->Resizable			= GLFW_TRUE;
-		this->Decorated			= GLFW_TRUE;
-		this->UserFocused		= GLFW_TRUE;
-		this->AutoMinimize		= GLFW_TRUE;
-		this->Floating			= GLFW_FALSE;
-		this->Maximized			= GLFW_FALSE;
-		this->Minimized			= GLFW_FALSE;
-		this->Visible			= GLFW_TRUE;
-		this->ScaleToMonitor	= GLFW_FALSE;
-		this->CenterCursor		= GLFW_TRUE;
-		this->FocusOnShow		= GLFW_TRUE;
-		this->Hovered			= GLFW_TRUE;
-		//this->RefreshRate		= GLFW_DONT_CARE;
+		Resizable		= GLFW_TRUE;
+		Decorated		= GLFW_TRUE;
+		UserFocused		= GLFW_TRUE;
+		AutoMinimize	= GLFW_TRUE;
+		Floating		= GLFW_FALSE;
+		Maximized		= GLFW_FALSE;
+		Minimized		= GLFW_FALSE;
+		Visible			= GLFW_TRUE;
+		ScaleToMonitor	= GLFW_FALSE;
+		CenterCursor	= GLFW_TRUE;
+		FocusOnShow		= GLFW_TRUE;
+
+		Hovered			= GLFW_TRUE;
 	}
 
 	window::~window() {
+
 	}
 
 	void window::set_title(util::str aTitle) {
@@ -55,7 +56,6 @@ namespace geodesuka::core::object {
 	window::window(engine* aEngine, gcl::context* aContext, stage_t* aStage) : rendertarget(aEngine, aContext, aStage) {
 		Title = "";
 		Size = float2(0.0, 0.0);
-		Property = prop();
 	}
 
 }

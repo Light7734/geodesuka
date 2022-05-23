@@ -177,9 +177,6 @@
     <ClCompile Include="src\framebuffer.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
-    <ClCompile Include="src\image.cpp">
-      <Filter>src\core\io</Filter>
-    </ClCompile>
     <ClCompile Include="src\joystick.cpp">
       <Filter>src\core\hid</Filter>
     </ClCompile>
@@ -211,9 +208,6 @@
       <Filter>src\core\io</Filter>
     </ClCompile>
     <ClCompile Include="src\shader.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\texture.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
     <ClCompile Include="src\log.cpp">
@@ -402,6 +396,9 @@
     <ClCompile Include="src\command_list.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\image.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -430,9 +427,6 @@
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\shader.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\texture.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\hid\joystick.h">
@@ -478,9 +472,6 @@
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\io\font.h">
-      <Filter>inc\geodesuka\core\io</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\io\image.h">
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\io\script.h">
@@ -694,6 +685,9 @@
       <Filter>inc\geodesuka\core\logic</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\command_list.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\image.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>

@@ -163,6 +163,7 @@ namespace geodesuka {
 			// Construct Desktop Stages.
 			for (size_t i = 0; i < Display.size(); i++) {
 				desktop* Desktop = new desktop(this, nullptr, Display[i]);
+				Display[i]->Stage = Desktop;
 				Stage.push_back(Desktop);
 			}
 

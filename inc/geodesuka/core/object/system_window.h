@@ -9,7 +9,7 @@
 #include "../gcl.h"
 #include "../gcl/device.h"
 #include "../gcl/context.h"
-#include "../gcl/texture.h"
+#include "../gcl/image.h"
 #include "../gcl/framebuffer.h"
 
 #include "../object.h"
@@ -79,20 +79,45 @@ namespace geodesuka::core::object {
 				int PresentMode;
 				bool Clipped;
 
-
 				prop();
 			};
 
 		};
+
+		struct property {
+			// Window Options.
+			prop Window;
+			swapchain::prop Swapchain;
+			VkFormat PixelFormat;
+			float2 Position;
+			float2 Size;
+			const char* Title;
+
+			property();
+		};
+
+		struct propertyvsc {
+			// Window Options.
+			prop Window;
+			swapchain::prop Swapchain;
+			VkFormat PixelFormat;
+			int2 Position;
+			int2 Size;
+			const char* Title;
+
+			propertyvsc();
+		};
+
 
 		// Required Extensions for the class
 		static std::vector<const char*> RequiredInstanceExtension;
 		static std::vector<const char*> RequiredContextExtension;
 		static const int RTID;
 
-		gcl::texture* Frame;
-
-		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, swapchain::prop aSwapchainProperty, VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle);
+		gcl::image* Frame;
+		
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const property& aProperty);
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const propertyvsc& aProperty);
 
 		~system_window();
 
@@ -110,13 +135,13 @@ namespace geodesuka::core::object {
 
 		// ----- window inheritance ----- //
 
-		// ----- system_window methods ----- //
-
 		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(uint2 aResolution) override;
 
-		// ----- Used in Stage Render Logic ----- //
+		// ----- system_window methods ----- //
 
+		void set_position_vsc(int2 aPositionVSC);
+		void set_size_vsc(int2 aSizeVSC);
 
 	protected:
 		// Only accessible to engine backend.
@@ -133,6 +158,8 @@ namespace geodesuka::core::object {
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 		VkSwapchainCreateInfoKHR CreateInfo{};
 		VkSwapchainKHR Swapchain;
+		int2 PositionVSC;
+		int2 SizeVSC;
 
 		// Fill out in constructor
 		int NextImageSemaphoreIndex;
@@ -141,8 +168,6 @@ namespace geodesuka::core::object {
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
 
-		int2 PositionVSC;
-		int2 SizeVSC;
 
 		// Internal Utils, Physical coordinates to Screen coordinates
 		int2 phys2scrn(float2 R);

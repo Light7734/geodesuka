@@ -461,8 +461,8 @@ namespace geodesuka::core::gcl {
 		default									: return -1;
 		case device::qfs::TRANSFER				: return this->QFI[0];
 		case device::qfs::COMPUTE				: return this->QFI[1];
-		case device::qfs::GRAPHICS				: return this->QFI[2];
-		//case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[3];
+		//case device::qfs::GRAPHICS				: return this->QFI[2];
+		case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[2];
 		case device::qfs::PRESENT				: return this->QFI[3];
 		}
 		return 0;

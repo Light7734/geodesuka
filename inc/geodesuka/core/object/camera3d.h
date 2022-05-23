@@ -33,11 +33,11 @@ namespace geodesuka::core::object {
 		// The structure of each frame.
 		struct frame {
 			// Depth Attachments.
-			gcl::texture DepthBuffer;
+			gcl::image DepthBuffer;
 			// Color Attachments
-			gcl::texture PixelColor;		// R32G32B32
-			gcl::texture PixelPosition;		// R32G32B32
-			gcl::texture PixelNormal;		// R32G32B32
+			gcl::image PixelColor;		// R32G32B32
+			gcl::image PixelPosition;		// R32G32B32
+			gcl::image PixelNormal;		// R32G32B32
 
 		};
 
