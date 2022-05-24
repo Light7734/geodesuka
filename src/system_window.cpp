@@ -113,7 +113,7 @@ namespace geodesuka::core::object {
 
 		SizeVSC.x = (((float)aSystemDisplay->SizeVSC.x) / (aSystemDisplay->Size.x)) * aProperty.Size.x;
 		SizeVSC.y = (((float)aSystemDisplay->SizeVSC.y) / (aSystemDisplay->Size.y)) * aProperty.Size.y;
-		PositionVSC = this->phy2vsc(aProperty.Position, SizeVSC, aSystemDisplay->PositionVSC, aSystemDisplay->SizeVSC, aSystemDisplay->Size);;
+		PositionVSC = this->phy2vsc(aProperty.Position, SizeVSC, aSystemDisplay->PositionVSC, aSystemDisplay->SizeVSC, aSystemDisplay->Size);
 
 		NextImageSemaphoreIndex = 0;
 		NextImageSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
@@ -123,41 +123,41 @@ namespace geodesuka::core::object {
 
 		//// Create Window Handle.
 		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
-		this->Handle = create_window_handle(Option, SizeVSC.x, SizeVSC.y, Title.ptr(), NULL, NULL);
+		Handle = create_window_handle(Option, SizeVSC.x, SizeVSC.y, Title.ptr(), NULL, NULL);
 
 		glfwSetWindowPos(Handle, PositionVSC.x, PositionVSC.y);
 
 		// Check if handle is NULL.
-		if (this->Handle == NULL) return;
+		if (Handle == NULL) return;
 
 		// User pointer to forward input stream.
-		glfwSetWindowUserPointer(this->Handle, (void*)this);
+		glfwSetWindowUserPointer(Handle, (void*)this);
 
 		// system_window callbacks
-		glfwSetWindowPosCallback(this->Handle, system_window::position_callback);
-		glfwSetWindowSizeCallback(this->Handle, system_window::size_callback);
-		glfwSetWindowCloseCallback(this->Handle, system_window::close_callback);
-		glfwSetWindowRefreshCallback(this->Handle, system_window::refresh_callback);
-		glfwSetWindowFocusCallback(this->Handle, system_window::focus_callback);
-		glfwSetWindowIconifyCallback(this->Handle, system_window::iconify_callback);
-		glfwSetWindowMaximizeCallback(this->Handle, system_window::maximize_callback);
-		glfwSetWindowContentScaleCallback(this->Handle, system_window::content_scale_callback);
+		glfwSetWindowPosCallback(Handle, system_window::position_callback);
+		glfwSetWindowSizeCallback(Handle, system_window::size_callback);
+		glfwSetWindowCloseCallback(Handle, system_window::close_callback);
+		glfwSetWindowRefreshCallback(Handle, system_window::refresh_callback);
+		glfwSetWindowFocusCallback(Handle, system_window::focus_callback);
+		glfwSetWindowIconifyCallback(Handle, system_window::iconify_callback);
+		glfwSetWindowMaximizeCallback(Handle, system_window::maximize_callback);
+		glfwSetWindowContentScaleCallback(Handle, system_window::content_scale_callback);
 
 		// framebuffer callbacks
-		glfwSetFramebufferSizeCallback(this->Handle, system_window::framebuffer_size_callback);
+		glfwSetFramebufferSizeCallback(Handle, system_window::framebuffer_size_callback);
 
 		// Mouse callbacks
-		glfwSetMouseButtonCallback(this->Handle, system_window::mouse_button_callback);
-		glfwSetCursorPosCallback(this->Handle, system_window::cursor_position_callback);
-		glfwSetCursorEnterCallback(this->Handle, system_window::cursor_enter_callback);
-		glfwSetScrollCallback(this->Handle, system_window::scroll_callback);
+		glfwSetMouseButtonCallback(Handle, system_window::mouse_button_callback);
+		glfwSetCursorPosCallback(Handle, system_window::cursor_position_callback);
+		glfwSetCursorEnterCallback(Handle, system_window::cursor_enter_callback);
+		glfwSetScrollCallback(Handle, system_window::scroll_callback);
 
 		// Keyboard callbacks
-		glfwSetKeyCallback(this->Handle, system_window::key_callback);
-		glfwSetCharCallback(this->Handle, system_window::character_callback);
+		glfwSetKeyCallback(Handle, system_window::key_callback);
+		glfwSetCharCallback(Handle, system_window::character_callback);
 
 		// File drop
-		glfwSetDropCallback(this->Handle, system_window::file_drop_callback);
+		glfwSetDropCallback(Handle, system_window::file_drop_callback);
 
 		//glfwGetWindowFrameSize(this->Context->Handle, system_window::framebuffer_size_callback);
 
@@ -167,19 +167,19 @@ namespace geodesuka::core::object {
 
 		// Create Surface Handle.
 		VkResult Result = VkResult::VK_SUCCESS;
-		Result = glfwCreateWindowSurface(this->Engine->handle(), this->Handle, NULL, &this->Surface);
+		Result = glfwCreateWindowSurface(Engine->handle(), Handle, NULL, &Surface);
 
 		//TODO: Move to glfwGetPhysicalDevicePresentationSupport.
 		//int isSupported = glfwGetPhysicalDevicePresentationSupport(Engine->Handle, Context->parent()->handle(), this->Context->qfi(device::qfs::PRESENT));
 
 		// Check for presentation support for new window.
 		VkBool32 isSupported = VK_FALSE;
-		Result = vkGetPhysicalDeviceSurfaceSupportKHR(this->Context->parent()->handle(), this->Context->qfi(device::qfs::PRESENT), this->Surface, &isSupported);
+		Result = vkGetPhysicalDeviceSurfaceSupportKHR(Context->parent()->handle(), Context->qfi(device::qfs::PRESENT), Surface, &isSupported);
 		if (isSupported == VK_FALSE) {
 			// Destroys suface.
-			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
+			vkDestroySurfaceKHR(Engine->handle(), Surface, NULL);
 			// Destroys window handle.
-			glfwDestroyWindow(this->Handle);
+			glfwDestroyWindow(Handle);
 			return;
 		}
 
@@ -327,12 +327,12 @@ namespace geodesuka::core::object {
 		PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
 		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
-		//// Create Window Handle.
+		// Create Window Handle.
 		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
-		this->Handle = create_window_handle(Option, SizeVSC.x, SizeVSC.y, Title.ptr(), NULL, NULL);
+		Handle = create_window_handle(Option, SizeVSC.x, SizeVSC.y, Title.ptr(), NULL, NULL);
 
 		// Check if handle is NULL.
-		if (this->Handle == NULL) return;
+		if (Handle == NULL) return;
 
 		// User pointer to forward input stream.
 		glfwSetWindowUserPointer(Handle, (void*)this);
@@ -369,19 +369,19 @@ namespace geodesuka::core::object {
 
 		// Create Surface Handle.
 		VkResult Result = VkResult::VK_SUCCESS;
-		Result = glfwCreateWindowSurface(this->Engine->handle(), this->Handle, NULL, &this->Surface);
+		Result = glfwCreateWindowSurface(Engine->handle(), Handle, NULL, &Surface);
 
 		//TODO: Move to glfwGetPhysicalDevicePresentationSupport.
 		//int isSupported = glfwGetPhysicalDevicePresentationSupport(Engine->Handle, Context->parent()->handle(), this->Context->qfi(device::qfs::PRESENT));
 
 		// Check for presentation support for new window.
 		VkBool32 isSupported = VK_FALSE;
-		Result = vkGetPhysicalDeviceSurfaceSupportKHR(this->Context->parent()->handle(), this->Context->qfi(device::qfs::PRESENT), this->Surface, &isSupported);
+		Result = vkGetPhysicalDeviceSurfaceSupportKHR(Context->parent()->handle(), Context->qfi(device::qfs::PRESENT), Surface, &isSupported);
 		if (isSupported == VK_FALSE) {
 			// Destroys suface.
-			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
+			vkDestroySurfaceKHR(Engine->handle(), Surface, NULL);
 			// Destroys window handle.
-			glfwDestroyWindow(this->Handle);
+			glfwDestroyWindow(Handle);
 			return;
 		}
 
@@ -412,9 +412,9 @@ namespace geodesuka::core::object {
 
 		Result = vkCreateSwapchainKHR(Context->handle(), &CreateInfo, NULL, &Swapchain);
 
-		Result = vkGetSwapchainImagesKHR(this->Context->handle(), Swapchain, &FrameCount, NULL);
+		Result = vkGetSwapchainImagesKHR(Context->handle(), Swapchain, &FrameCount, NULL);
 		std::vector<VkImage> Image(FrameCount);
-		Result = vkGetSwapchainImagesKHR(this->Context->handle(), Swapchain, &FrameCount, Image.data());
+		Result = vkGetSwapchainImagesKHR(Context->handle(), Swapchain, &FrameCount, Image.data());
 
 		Frame = new image[FrameCount];
 
@@ -464,47 +464,43 @@ namespace geodesuka::core::object {
 
 	system_window::~system_window() {
 
-
-
 		// Clears swapchain images.
-		for (int i = 0; i < this->FrameCount; i++) {
-			this->Frame[i].CreateInfo = {};
-			this->Frame[i].Handle = VK_NULL_HANDLE;
+		for (int i = 0; i < FrameCount; i++) {
+			Frame[i].CreateInfo = {};
+			Frame[i].Handle = VK_NULL_HANDLE;
 			vkDestroyImageView(Context->handle(), FrameAttachment[i][0], NULL);
 			FrameAttachment[i][0] = VK_NULL_HANDLE;
 		}
 
-		this->FrameCount = 0;
-		delete[] this->Frame;
-		this->Frame = nullptr;
+		FrameCount = 0;
+		delete[] Frame;
+		Frame = nullptr;
 
 		if ((Context != nullptr) && (Swapchain != VK_NULL_HANDLE)) {
 			vkDestroySwapchainKHR(Context->handle(), Swapchain, NULL);
 			Swapchain = VK_NULL_HANDLE;
 		}
 
-		if ((this->Engine != nullptr) && (this->Surface != VK_NULL_HANDLE)) {
+		if ((Engine != nullptr) && (Surface != VK_NULL_HANDLE)) {
 			// Destroys suface.
-			vkDestroySurfaceKHR(this->Engine->handle(), this->Surface, NULL);
-			this->Surface = VK_NULL_HANDLE;
+			vkDestroySurfaceKHR(Engine->handle(), Surface, NULL);
+			Surface = VK_NULL_HANDLE;
 		}
-		if (this->Handle != NULL) {
+		if (Handle != NULL) {
 			// Destroys window handle.
 			//glfwDestroyWindow(this->Handle);
-			destroy_window_handle(this->Handle);
-			this->Handle = NULL;
+			destroy_window_handle(Handle);
+			Handle = NULL;
 		}
 
 	}
 
 	void system_window::set_position(float3 aPosition) {
-		this->Mutex.lock();
-		this->Position = aPosition;
-		this->PositionVSC;// = this->phy2vsc()
-
-
+		Mutex.lock();
+		Position = aPosition;
+		PositionVSC = this->phy2vsc(Position, SizeVSC, Display->PositionVSC, Display->SizeVSC, Display->Size);
 		glfwSetWindowPos(Handle, PositionVSC.x, PositionVSC.y);
-		this->Mutex.unlock();
+		Mutex.unlock();
 	}
 
 	//VkCommandBuffer system_window::draw(rendertarget* aRenderTarget) {}
@@ -525,8 +521,8 @@ namespace geodesuka::core::object {
 
 	VkSubmitInfo system_window::draw(size_t aObjectCount, object_t** aObject) {
 		VkSubmitInfo DrawBatch{};
-		DrawBatch.sType					= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
-		DrawBatch.pNext					= NULL;
+		DrawBatch.sType	= VkStructureType::VK_STRUCTURE_TYPE_SUBMIT_INFO;
+		DrawBatch.pNext	= NULL;
 		this->Mutex.lock();
 
 		void* nptr = NULL;
@@ -572,27 +568,38 @@ namespace geodesuka::core::object {
 	}
 
 	void system_window::set_size(float2 aSize) {
-		Resolution.x = aSize.x * ((double)Display->Resolution.x / (double)Display->Size.x);
-		Resolution.y = aSize.y * ((double)Display->Resolution.y / (double)Display->Size.y);
-		glfwSetWindowSize(Handle, Resolution.x, Resolution.y);
-		// TODO: make more efficient
+		Mutex.lock();
+		SizeVSC.x = aSize.x * ((float)Display->SizeVSC.x / Display->Size.x);
+		SizeVSC.y = aSize.y * ((float)Display->SizeVSC.y / Display->Size.y);
+		glfwSetWindowSize(Handle, SizeVSC.x, SizeVSC.y);
+		Mutex.unlock();
 		this->set_position(this->Position);
 	}
 
 	void system_window::set_resolution(uint2 aResolution) {
-		Size.x = aResolution.x * ((double)Display->Size.x / (double)Display->Resolution.x);
-		Size.y = aResolution.y * ((double)Display->Size.y / (double)Display->Resolution.y);
+		Mutex.lock();
+		Size.x = aResolution.x * (Display->Size.x / (float)Display->SizeVSC.x);
+		Size.y = aResolution.y * (Display->Size.y / (float)Display->SizeVSC.y);
 		glfwSetWindowSize(Handle, aResolution.x, aResolution.y);
-		// TODO: make more efficient
+		Mutex.unlock();
 		this->set_position(Position);
 	}
 
 	void system_window::set_position_vsc(int2 aPositionVSC) {
-
+		Mutex.lock();
+		PositionVSC = aPositionVSC;
+		Position = this->vsc2phy(PositionVSC, SizeVSC, Display->PositionVSC, Display->SizeVSC, Display->Size);
+		glfwSetWindowPos(Handle, PositionVSC.x, PositionVSC.y);
+		Mutex.unlock();
 	}
 
 	void system_window::set_size_vsc(int2 aSizeVSC) {
-
+		Mutex.lock();
+		Size.x = aSizeVSC.x * (Display->Size.x / (float)Display->SizeVSC.x);
+		Size.y = aSizeVSC.y * (Display->Size.y / (float)Display->SizeVSC.y);
+		glfwSetWindowSize(Handle, SizeVSC.x, SizeVSC.y);
+		Mutex.unlock();
+		this->set_position(Position);
 	}
 
 	void system_window::set_option(option::id, bool aValue) {

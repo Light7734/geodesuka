@@ -6,8 +6,6 @@
 
 #include "../number/type.h"
 
-//TODO: Maybe change constants -> constant because of namespace?
-
 namespace geodesuka::core::math {
 	namespace constant {
 		extern const real pi;

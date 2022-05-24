@@ -16,7 +16,6 @@ namespace geodesuka::core::util {
 	class str {
 	public:
 
-		//TODO: Update internals to size_t.
 		size_t n;
 		char* hptr;
 

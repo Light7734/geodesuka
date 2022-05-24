@@ -11,17 +11,6 @@
 #include <vector>
 #include <chrono>
 
-/* --------------- Platform Dependent Libraries --------------- */
-#if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-#elif defined(__APPLE__) || defined(MACOSX)
-
-#elif defined(__linux__) && !defined(__ANDROID__)
-#include <unistd.h>
-#elif defined(__ANDROID__)
-#include <unistd.h>
-#endif
-
 /* --------------- Third Party Libraries --------------- */
 
 #include <GLFW/glfw3.h>

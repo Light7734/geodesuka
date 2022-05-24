@@ -11,8 +11,6 @@ As of right now geodesuka is the primary namespace. Engine
 is the factory manager of all objects, including memory. Can
 be used to 
 
-TODO: Find error regarding int2.
-
 \\ ------------------------- Notes ------------------------- //
 */
 
