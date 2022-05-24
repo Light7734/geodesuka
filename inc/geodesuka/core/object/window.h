@@ -43,7 +43,22 @@ namespace geodesuka::core::object {
 	class window : public rendertarget {
 	public:
 
-		struct prop {
+		struct option {
+
+			enum id {
+				RESIZABLE,
+				DECORATED,
+				FOCUSED,
+				AUTO_ICONIFY,
+				FLOATING,
+				MAXIMIZED,
+				VISIBLE,
+				SCALE_TO_MONITOR,
+				CENTER_CURSOR,
+				FOCUS_ON_SHOW,
+				TRANSPARENCY
+			};
+
 			int Resizable;			// Creation Option
 			int Decorated;			// Creation Option
 			int UserFocused;		// Runtime Option
@@ -55,10 +70,12 @@ namespace geodesuka::core::object {
 			int ScaleToMonitor;		// 
 			int CenterCursor;		// 
 			int FocusOnShow;		// 
+			int Transparency;		// 
 
 			int Hovered;			// 
+			int ShouldClose;
 
-			prop();
+			option();
 		};
 
 		~window();
@@ -72,7 +89,7 @@ namespace geodesuka::core::object {
 
 		util::str Title;
 		float2 Size;				// [m]
-		prop Property;
+		option Option;
 
 		window(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 

@@ -16,7 +16,7 @@
 
 namespace geodesuka::core::object {
 
-	window::prop::prop() {
+	window::option::option() {
 		Resizable		= GLFW_TRUE;
 		Decorated		= GLFW_TRUE;
 		UserFocused		= GLFW_TRUE;

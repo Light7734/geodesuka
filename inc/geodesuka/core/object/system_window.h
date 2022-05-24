@@ -3,6 +3,7 @@
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
 #include <vector>
+#include <thread>
 
 #include "../math.h"
 
@@ -86,10 +87,10 @@ namespace geodesuka::core::object {
 
 		struct property {
 			// Window Options.
-			prop Window;
+			option Window;
 			swapchain::prop Swapchain;
 			VkFormat PixelFormat;
-			float2 Position;
+			float3 Position;
 			float2 Size;
 			const char* Title;
 
@@ -98,7 +99,7 @@ namespace geodesuka::core::object {
 
 		struct propertyvsc {
 			// Window Options.
-			prop Window;
+			option Window;
 			swapchain::prop Swapchain;
 			VkFormat PixelFormat;
 			int2 Position;
@@ -142,9 +143,9 @@ namespace geodesuka::core::object {
 
 		void set_position_vsc(int2 aPositionVSC);
 		void set_size_vsc(int2 aSizeVSC);
+		void set_option(option::id, bool aValue);
 
 	protected:
-		// Only accessible to engine backend.
 
 		virtual VkSubmitInfo update(double aDeltaTime) override;
 
@@ -168,15 +169,42 @@ namespace geodesuka::core::object {
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
 
+		// ------------------------------ Utility (Internal, Do Not Use) ------------------------------ //
 
-		// Internal Utils, Physical coordinates to Screen coordinates
-		int2 phys2scrn(float2 R);
-		float2 scrn2phys(int2 R);
+		// Position vector conversions for system_window.
+		float3 vsc2phy(int2 aRscrw, int2 aSscrw, int2 aRscrm, int2 aSscrm, float2 aSphy);
+		int2 phy2vsc(float3 aRphyw, int2 aSvscw, int2 aRvscm, int2 aSvscm, float2 aSphy);
 
-		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
+		struct glfwargs {
+			window::option Property;
+			int Width;
+			int Height;
+			const char* Title;
+			GLFWmonitor* Monitor;
+			GLFWwindow* Window;
+		};
 
 		static bool initialize();
 		static void terminate();
+		static void poll_events();
+
+		// Signals to update thread to create window handle
+		// Needed backend for system window creation
+		static std::thread::id MainThreadID;
+		static std::atomic<bool> SignalCreate;
+		static std::atomic<bool> WindowCreated;
+		static glfwargs WindowTempData;
+		static GLFWwindow* ReturnWindow;
+		static std::atomic<GLFWwindow*> DestroyWindow;
+
+		// This is necessary for main thread to create window handles.
+		static GLFWwindow* create_window_handle(core::object::window::option aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow); 
+
+		static void destroy_window_handle(GLFWwindow* aWindow);
+		// This function is by the engine update thread to create and destroy handles.
+		static void mtcd_process_window_handle_call();
+
+		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 
 		// Window Callbacks
 		static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);

@@ -174,19 +174,6 @@ namespace geodesuka {
 		// Store main thread ID.
 		this->MainThreadID = std::this_thread::get_id();
 
-		// Window Temp Data?
-		SignalCreate.store(false);
-		WindowCreated.store(false);
-		WindowTempData.Property = window::prop();
-		WindowTempData.Width = 0;
-		WindowTempData.Height = 0;
-		WindowTempData.Title = NULL;
-		WindowTempData.Monitor = NULL;
-		WindowTempData.Window = NULL;
-		ReturnWindow = NULL;
-		ReturnWindow = NULL;
-		DestroyWindow.store(NULL);
-
 		// Is ready if startup condition = success.
 		StateID = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable ? state::id::READY : state::id::FAILURE;
 
@@ -321,10 +308,11 @@ namespace geodesuka {
 			TimeStep.start();
 
 			// Process system_window constructor calls.
-			mtcd_process_window_handle_call();
+			system_window::mtcd_process_window_handle_call();
 
 			// Poll Input Events.
-			glfwPollEvents();
+			//glfwPollEvents();
+			system_window::poll_events();
 
 			// ----- ----- Host Work is done here... ----- -----
 
@@ -488,79 +476,6 @@ namespace geodesuka {
 			waitfor(1.0);
 		}
 
-	}
-
-	GLFWwindow* engine::create_window_handle(window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
-		GLFWwindow* Temp = NULL;
-		if (this->MainThreadID == std::this_thread::get_id()) {
-			glfwWindowHint(GLFW_RESIZABLE,			aProperty.Resizable);
-			glfwWindowHint(GLFW_DECORATED,			aProperty.Decorated);
-			glfwWindowHint(GLFW_FOCUSED,			aProperty.UserFocused);
-			glfwWindowHint(GLFW_AUTO_ICONIFY,		aProperty.AutoMinimize);
-			glfwWindowHint(GLFW_FLOATING,			aProperty.Floating);
-			glfwWindowHint(GLFW_MAXIMIZED,			aProperty.Maximized);
-			glfwWindowHint(GLFW_VISIBLE,			aProperty.Visible);
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	aProperty.ScaleToMonitor);
-			glfwWindowHint(GLFW_CENTER_CURSOR,		aProperty.CenterCursor);
-			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		aProperty.FocusOnShow);
-			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
-
-			Temp = glfwCreateWindow(aWidth, aHeight, aTitle, aMonitor, aWindow);
-		}
-		else {
-			this->WindowTempData.Property = aProperty;
-			this->WindowTempData.Width = aWidth;
-			this->WindowTempData.Height = aHeight;
-			this->WindowTempData.Title = aTitle;
-			this->WindowTempData.Monitor = aMonitor;
-			this->WindowTempData.Window = aWindow;
-
-			this->WindowCreated.store(false);
-			this->SignalCreate.store(true);
-			// Wait for window to be created.
-			while (!this->WindowCreated.load()) {}
-			Temp = this->ReturnWindow;
-		}
-		return Temp;
-	}
-
-	void engine::destroy_window_handle(GLFWwindow* aWindow) {
-		if (this->MainThreadID == std::this_thread::get_id()) {
-			glfwDestroyWindow(aWindow);
-		}
-		else {
-			while (this->DestroyWindow.load() != NULL) {}
-			this->DestroyWindow.store(aWindow);
-		}
-	}
-
-	void engine::mtcd_process_window_handle_call() {
-		if (this->SignalCreate.load()) {
-			glfwWindowHint(GLFW_RESIZABLE,			WindowTempData.Property.Resizable);
-			glfwWindowHint(GLFW_DECORATED,			WindowTempData.Property.Decorated);
-			glfwWindowHint(GLFW_FOCUSED,			WindowTempData.Property.UserFocused);
-			glfwWindowHint(GLFW_AUTO_ICONIFY,		WindowTempData.Property.AutoMinimize);
-			glfwWindowHint(GLFW_FLOATING,			WindowTempData.Property.Floating);
-			glfwWindowHint(GLFW_MAXIMIZED,			WindowTempData.Property.Maximized);
-			glfwWindowHint(GLFW_VISIBLE,			WindowTempData.Property.Visible);
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	WindowTempData.Property.ScaleToMonitor);
-			glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
-			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
-			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
-
-			this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
-			this->WindowCreated.store(true);
-			this->SignalCreate.store(false);
-		}
-		
-		// Check if window needs to be destroyed.
-		GLFWwindow* temp = this->DestroyWindow.load();
-		if (temp != NULL) {
-			glfwDestroyWindow(temp);
-			this->DestroyWindow.store(NULL);
-		}		
 	}
 
 }

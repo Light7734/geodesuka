@@ -36,11 +36,12 @@ namespace geodesuka::core::object {
 		Size.y = (math::real)(((double)PhysicalSize.y) / 1000.0);
 
 		// Load resolution
+		SizeVSC.x = CurrentVideoMode->width;
+		SizeVSC.y = CurrentVideoMode->height;
 		Resolution.x = CurrentVideoMode->width;
 		Resolution.y = CurrentVideoMode->height;
 		Resolution.z = 1u;
 		FrameRate = CurrentVideoMode->refreshRate;
-
 	}
 
 	system_display::~system_display() {

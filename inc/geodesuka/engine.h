@@ -221,27 +221,6 @@ namespace geodesuka {
 		void audio();			// Thread Handles audio streams.
 		void terminal();		// Thread handles terminal input to the engine.
 
-		// ----- Back End Garbage ----- //
-		
-		// Signals to update thread to create window handle
-		// Needed backend for system window creation
-		std::atomic<bool> SignalCreate;
-		std::atomic<bool> WindowCreated;
-		struct {
-			core::object::window::prop Property;
-			int Width;
-			int Height;
-			const char* Title;
-			GLFWmonitor* Monitor;
-			GLFWwindow* Window;
-		} WindowTempData;
-		GLFWwindow* ReturnWindow;
-		std::atomic<GLFWwindow*> DestroyWindow;
-
-		GLFWwindow* create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow);
-		void destroy_window_handle(GLFWwindow* aWindow);
-		void mtcd_process_window_handle_call();
-
 	};
 
 }
