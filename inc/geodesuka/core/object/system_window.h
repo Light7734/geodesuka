@@ -168,7 +168,9 @@ namespace geodesuka::core::object {
 		VkSemaphore* RenderOperationSemaphore;
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
-
+		// Semaphores are even fucking dumber than I thought they were.
+		// It turns out that there is no way to unsignal a semaphore other than recreating it.
+		// Which is beyond fucking stupid. Thanks Khronos Group.
 		// ------------------------------ Utility (Internal, Do Not Use) ------------------------------ //
 
 		// Position vector conversions for system_window.

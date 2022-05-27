@@ -211,6 +211,15 @@ namespace geodesuka::core::gcl {
 			this->CommandBuffer[i] = NULL;
 		}
 
+		VkFenceCreateInfo FenceCreateInfo{};
+		FenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		FenceCreateInfo.pNext = NULL;
+		FenceCreateInfo.flags = 0;
+
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[0]);
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[1]);
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[2]);
+
 		isReadyToBeProcessed.store(true);
 	}
 
@@ -235,6 +244,9 @@ namespace geodesuka::core::gcl {
 			}
 		}
 
+		vkDestroyFence(Handle, ExecutionFence[0], NULL);
+		vkDestroyFence(Handle, ExecutionFence[1], NULL);
+		vkDestroyFence(Handle, ExecutionFence[2], NULL);
 
 		// Clear all command buffers and pools.
 		for (int i = 0; i < 3; i++) {

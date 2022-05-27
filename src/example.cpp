@@ -38,9 +38,13 @@ namespace geodesuka::builtin::stage {
 
 		Triangle = new object::triangle(aEngine, aContext, this);
 
+		Object.push_back(Triangle);
+
+		isReadyToBeProcessed.store(true);
 	}
 
 	example::~example() {
+		isReadyToBeProcessed.store(false);
 		delete Triangle;
 		delete SystemWindow;
 	}

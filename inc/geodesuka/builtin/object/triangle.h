@@ -20,7 +20,6 @@ namespace geodesuka::builtin::object {
 		core::gcl::shader* VertexShader;
 		core::gcl::shader* PixelShader;
 
-
 		VkPipeline Pipeline;
 
 	};

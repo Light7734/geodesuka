@@ -1,6 +1,8 @@
 #include <geodesuka/engine.h>
 #include <geodesuka/core/object/system_window.h>
 
+#include <assert.h>
+
 #include <vector>
 #include <algorithm>
 
@@ -59,7 +61,7 @@ namespace geodesuka::core::object {
 
 		FrameCount = aProperty.Swapchain.FrameCount;
 		FrameRate = aProperty.Swapchain.FrameRate;
-		FrameRateTimer.set(aProperty.Swapchain.FrameRate);
+		FrameRateTimer.set(1.0 / aProperty.Swapchain.FrameRate);
 		//Resolution; // Determined after window creation.
 
 		FrameAttachmentCount = 1;
@@ -118,6 +120,10 @@ namespace geodesuka::core::object {
 		RenderOperationSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 		PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
 		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+
+		assert(!((NextImageSemaphore == NULL) || (RenderOperationSemaphore == NULL) || (PresentResult == NULL)));
+
+		memset(PresentResult, 0x00, FrameCount * sizeof(VkResult));
 
 		//// Create Window Handle.
 		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
@@ -253,6 +259,13 @@ namespace geodesuka::core::object {
 			ImageViewCreateInfo.subresourceRange.layerCount			= 1;
 
 			Result = vkCreateImageView(Context->handle(), &ImageViewCreateInfo, NULL, &FrameAttachment[i][0]);
+
+			VkSemaphoreCreateInfo SemaphoreCreateInfo{};
+			SemaphoreCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+			SemaphoreCreateInfo.pNext = NULL;
+			SemaphoreCreateInfo.flags = 0;
+			Result = vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &NextImageSemaphore[i]);
+			Result = vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &RenderOperationSemaphore[i]);
 		}
 
 		isReadyToBeProcessed.store(true);
@@ -266,7 +279,7 @@ namespace geodesuka::core::object {
 
 		FrameCount = aProperty.Swapchain.FrameCount;
 		FrameRate = aProperty.Swapchain.FrameRate;
-		FrameRateTimer.set(aProperty.Swapchain.FrameRate);
+		FrameRateTimer.set(1.0 / aProperty.Swapchain.FrameRate);
 		//Resolution; // Determined after window creation.
 
 		FrameAttachmentCount = 1;
@@ -324,6 +337,10 @@ namespace geodesuka::core::object {
 		RenderOperationSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 		PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
 		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+
+		assert(!((NextImageSemaphore == NULL) || (RenderOperationSemaphore == NULL) || (PresentResult == NULL)));
+
+		memset(PresentResult, 0x00, FrameCount * sizeof(VkResult));
 
 		// Create Window Handle.
 		//this->Handle = glfwCreateWindow(aWidth, aHeight, aTitle, NULL, NULL);
@@ -455,15 +472,25 @@ namespace geodesuka::core::object {
 			ImageViewCreateInfo.subresourceRange.layerCount			= 1;
 
 			Result = vkCreateImageView(Context->handle(), &ImageViewCreateInfo, NULL, &FrameAttachment[i][0]);
+
+			VkSemaphoreCreateInfo SemaphoreCreateInfo{};
+			SemaphoreCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+			SemaphoreCreateInfo.pNext = NULL;
+			SemaphoreCreateInfo.flags = 0;
+			vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &NextImageSemaphore[i]);
+			vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &RenderOperationSemaphore[i]);
 		}
 
 		isReadyToBeProcessed.store(true);
 	}
 
 	system_window::~system_window() {
-
+		isReadyToBeProcessed.store(false);
+		this->Mutex.lock();
 		// Clears swapchain images.
 		for (int i = 0; i < FrameCount; i++) {
+			vkDestroySemaphore(Context->handle(), NextImageSemaphore[i], NULL);
+			vkDestroySemaphore(Context->handle(), RenderOperationSemaphore[i], NULL);
 			Frame[i].CreateInfo = {};
 			Frame[i].Handle = VK_NULL_HANDLE;
 			vkDestroyImageView(Context->handle(), FrameAttachment[i][0], NULL);
@@ -490,7 +517,7 @@ namespace geodesuka::core::object {
 			destroy_window_handle(Handle);
 			Handle = NULL;
 		}
-
+		this->Mutex.unlock();
 	}
 
 	void system_window::set_position(float3 aPosition) {
@@ -523,20 +550,26 @@ namespace geodesuka::core::object {
 		DrawBatch.pNext	= NULL;
 		this->Mutex.lock();
 
-		void* nptr = NULL;
-		if (this->DrawCommandList[this->FrameDrawIndex] == NULL) {
-			nptr = malloc(aObjectCount * sizeof(VkCommandBuffer));
-		}
-		else if (this->DrawCommandCount[this->FrameDrawIndex] != aObjectCount) {
-			nptr = realloc(this->DrawCommandList[this->FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
-		}
-		
-		// Check if NULL.
-		if (nptr != this->DrawCommandList[this->FrameDrawIndex]) this->DrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
+		// If memory container not the same size, change size.
+		if (DrawCommandCount[FrameDrawIndex] != aObjectCount) {
+			void* nptr = NULL;
+			if (DrawCommandList[FrameDrawIndex] == NULL) {
+				nptr = malloc(aObjectCount * sizeof(VkCommandBuffer));
+			}
+			else if (DrawCommandCount[FrameDrawIndex] != aObjectCount) {
+				nptr = realloc(DrawCommandList[FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
+			}
+
+			// Check if NULL.	
+			assert(nptr != NULL);
+
+			if (nptr != this->DrawCommandList[this->FrameDrawIndex]) this->DrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
+			DrawCommandCount[FrameDrawIndex] = aObjectCount;
+		}		
 
 		// Segfault anyways if mem alloc failure.
 		for (size_t i = 0; i < aObjectCount; i++) {
-			this->DrawCommandList[this->FrameDrawIndex][i] = aObject[i]->draw(this);
+			DrawCommandList[FrameDrawIndex][i] = aObject[i]->draw(this);
 		}
 
 		DrawBatch.waitSemaphoreCount	= 1;
@@ -558,7 +591,7 @@ namespace geodesuka::core::object {
 		PresentInfo.waitSemaphoreCount		= 1;
 		PresentInfo.pWaitSemaphores			= &this->RenderOperationSemaphore[this->FrameDrawIndex];
 		PresentInfo.swapchainCount			= 1;
-		//PresentInfo.pSwapchains				= &this->Swapchain->handle();
+		PresentInfo.pSwapchains				= &this->Swapchain;
 		PresentInfo.pImageIndices			= &this->FrameDrawIndex;
 		PresentInfo.pResults				= &this->PresentResult[this->FrameDrawIndex];
 		this->Mutex.unlock();

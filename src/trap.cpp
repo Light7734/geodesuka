@@ -1,9 +1,8 @@
 #include <geodesuka/core/logic/trap.h>
 
 #include <mutex>
-#include <iostream>
-std::mutex IOMutex;
-
+//#include <iostream>
+//std::mutex IOMutex;
 
 namespace geodesuka::core::logic {
 
@@ -25,9 +24,9 @@ namespace geodesuka::core::logic {
 	void trap::door() {
 		if (this->Active.load()) {
 			this->Count.fetch_add(1);
-			IOMutex.lock();
-			std::cout << "Thread ID " << std::this_thread::get_id() << std::endl;
-			IOMutex.unlock();
+			//IOMutex.lock();
+			//std::cout << "Thread ID " << std::this_thread::get_id() << std::endl;
+			//IOMutex.unlock();
 			while (this->Active.load()) {
 				// TODO: Add sleep timer.
 			};

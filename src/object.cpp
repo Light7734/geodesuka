@@ -38,6 +38,7 @@ namespace geodesuka::core {
 
 	object_t::~object_t() {
 		// If engine is in destruction state, do not attempt to remove from engine.
+		this->Mutex.lock();
 		if (Engine->StateID != engine::state::id::DESTRUCTION) {
 			// Removes Object from Engine State.
 			if (Engine->StateID == engine::state::id::RUNNING) {
@@ -54,6 +55,7 @@ namespace geodesuka::core {
 				Engine->ThreadTrap.set(false);
 			}
 		}
+		this->Mutex.unlock();
 	}
 
 	void object_t::set_position(float3 aPosition) {}
@@ -64,9 +66,11 @@ namespace geodesuka::core {
 
 	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget) {
 		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		this->Mutex.lock();
 		if (DrawPack.count(aRenderTarget) > 0) {
 			DrawCommand = DrawPack[aRenderTarget]->Command[aRenderTarget->FrameDrawIndex];
 		}
+		this->Mutex.unlock();
 		return DrawCommand;
 	}
 
