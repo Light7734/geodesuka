@@ -186,10 +186,6 @@ namespace geodesuka::builtin::object {
 				VertexInput.sType								= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 				VertexInput.pNext								= NULL;
 				VertexInput.flags								= 0;
-				//VertexInput.vertexBindingDescriptionCount		= 0;
-				//VertexInput.pVertexBindingDescriptions			= NULL;
-				//VertexInput.vertexAttributeDescriptionCount		= 0;
-				//VertexInput.pVertexAttributeDescriptions		= NULL;
 				VertexInput.vertexBindingDescriptionCount		= 1;
 				VertexInput.pVertexBindingDescriptions			= BindingDescription;
 				VertexInput.vertexAttributeDescriptionCount		= 2;
@@ -300,7 +296,7 @@ namespace geodesuka::builtin::object {
 				GraphicsPipelineCreateInfo.pMultisampleState		= &Multisample;
 				GraphicsPipelineCreateInfo.pDepthStencilState		= NULL;
 				GraphicsPipelineCreateInfo.pColorBlendState			= &ColorBlend;
-				GraphicsPipelineCreateInfo.pDynamicState			= &DynamicState;
+				GraphicsPipelineCreateInfo.pDynamicState			= NULL;
 				GraphicsPipelineCreateInfo.layout					= PipelineLayout;
 				GraphicsPipelineCreateInfo.renderPass				= DrawPack[Stage->RenderTarget[i]]->RenderPass;
 				GraphicsPipelineCreateInfo.subpass					= 0;
@@ -321,7 +317,7 @@ namespace geodesuka::builtin::object {
 					VkRenderPassBeginInfo RenderPassBeginInfo{};
 					VkRect2D RenderArea{};
 					VkClearValue ClearValue = { 0.0, 0.0, 0.0, 0.0 };
-					ClearValue.color			= { 1.0f, 0.0f, 0.0f, 0.0f };
+					ClearValue.color			= { 0.5f, 0.0f, 0.0f, 0.0f };
 					ClearValue.depthStencil		= { 0.0f, 0u };
 					RenderArea.offset = { 0, 0 };
 					RenderArea.extent = { Stage->RenderTarget[i]->Resolution.x, Stage->RenderTarget[i]->Resolution.y };

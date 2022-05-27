@@ -166,8 +166,10 @@ namespace geodesuka::core::object {
 		int NextImageSemaphoreIndex;
 		VkSemaphore* NextImageSemaphore;
 		VkSemaphore* RenderOperationSemaphore;
+		uint32_t* PresentIndex;
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
+		VkPresentInfoKHR* Presentation;
 		// Semaphores are even fucking dumber than I thought they were.
 		// It turns out that there is no way to unsignal a semaphore other than recreating it.
 		// Which is beyond fucking stupid. Thanks Khronos Group.
