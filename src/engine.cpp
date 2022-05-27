@@ -11,17 +11,6 @@
 #include <vector>
 #include <chrono>
 
-/* --------------- Platform Dependent Libraries --------------- */
-#if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-#elif defined(__APPLE__) || defined(MACOSX)
-
-#elif defined(__linux__) && !defined(__ANDROID__)
-#include <unistd.h>
-#elif defined(__ANDROID__)
-#include <unistd.h>
-#endif
-
 /* --------------- Third Party Libraries --------------- */
 
 #include <GLFW/glfw3.h>
@@ -41,7 +30,7 @@ namespace geodesuka {
 
 	engine::engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList) {
 
-		ID = state::CREATION;
+		StateID = state::CREATION;
 		Shutdown.store(false);
 		Handle = VK_NULL_HANDLE;
 
@@ -144,27 +133,27 @@ namespace geodesuka {
 				GLFWmonitor** Monitors = glfwGetMonitors(&MonitorCount);
 				for (int i = 0; i < MonitorCount; i++) {
 					if (Monitors[i] != glfwGetPrimaryMonitor()) {
-						this->Display[i] = new system_display(this, nullptr, Monitors[i]);
+						this->Display.push_back(new system_display(this, nullptr, Monitors[i]));
 					}
 					else {
-						this->Display[i] = PrimaryDisplay;
+						this->Display.push_back(PrimaryDisplay);
 					}
 				}
 			}
 
 			// Associate devices with slave system_display. Can only be done with extension VK_KHR_display
 
-			// Construct Desktop Stages.
-			for (size_t i = 0; i < Display.size(); i++) {
-				desktop* Desktop = new desktop(this, nullptr, Display[i]);
-				Display[i]->Stage;
-				Stage.push_back(Display[i]->Stage);
-			}
-
 			// Load SystemTerminal, SystemDisplay[0], SystemDisplay[1], ... SystemDisplay[n-1]. 
 			Object.push_back(SystemTerminal);
 			for (size_t i = 0; i < Display.size(); i++) {
 				Object.push_back(Display[i]);
+			}
+
+			// Construct Desktop Stages.
+			for (size_t i = 0; i < Display.size(); i++) {
+				desktop* Desktop = new desktop(this, nullptr, Display[i]);
+				Display[i]->Stage = Desktop;
+				Stage.push_back(Desktop);
 			}
 
 			isGCDeviceAvailable = Device.size() > 0;
@@ -174,27 +163,14 @@ namespace geodesuka {
 		// Store main thread ID.
 		this->MainThreadID = std::this_thread::get_id();
 
-		// Window Temp Data?
-		SignalCreate.store(false);
-		WindowCreated.store(false);
-		WindowTempData.Property = window::prop();
-		WindowTempData.Width = 0;
-		WindowTempData.Height = 0;
-		WindowTempData.Title = NULL;
-		WindowTempData.Monitor = NULL;
-		WindowTempData.Window = NULL;
-		ReturnWindow = NULL;
-		ReturnWindow = NULL;
-		DestroyWindow.store(NULL);
-
 		// Is ready if startup condition = success.
-		ID = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable ? state::id::READY : state::id::FAILURE;
+		StateID = isGLSLANGReady && isGLFWReady && isVulkanReady && isGCDeviceAvailable && isSystemDisplayAvailable ? state::id::READY : state::id::FAILURE;
 
 	}
 
 	engine::~engine() {
 
-		ID = state::id::DESTRUCTION;
+		StateID = state::id::DESTRUCTION;
 
 		SystemTerminal = nullptr;
 		PrimaryDevice = nullptr;
@@ -210,11 +186,11 @@ namespace geodesuka {
 			delete Object[i];
 		}
 
-		for (size_t i = 0; i < Stage.size(); i++) {
+		for (size_t i = 0; i < Context.size(); i++) {
 			delete Context[i];
 		}
 
-		for (size_t i = 0; i < Stage.size(); i++) {
+		for (size_t i = 0; i < File.size(); i++) {
 			delete File[i];
 		}
 
@@ -274,7 +250,7 @@ namespace geodesuka {
 	}
 
 	bool engine::is_ready() {
-		return (ID == state::id::READY);
+		return (StateID == state::id::READY);
 	}
 
 	engine::version engine::get_version() {
@@ -287,7 +263,7 @@ namespace geodesuka {
 
 	int engine::run(app* aApp) {
 
-		ID							= state::RUNNING;
+		StateID						= state::RUNNING;
 		MainThreadID				= std::this_thread::get_id();
 		RenderThread				= std::thread(&engine::render, this);
 		SystemTerminalThread		= std::thread(&engine::terminal, this);
@@ -298,7 +274,7 @@ namespace geodesuka {
 		RenderThread.join();
 		SystemTerminalThread.join();
 		AppThread.join();
-		ID = state::READY;
+		StateID = state::READY;
 
 		return 0;
 	}
@@ -321,18 +297,19 @@ namespace geodesuka {
 			TimeStep.start();
 
 			// Process system_window constructor calls.
-			mtcd_process_window_handle_call();
+			system_window::mtcd_process_window_handle_call();
 
 			// Poll Input Events.
-			glfwPollEvents();
+			//glfwPollEvents();
+			system_window::poll_events();
 
 			// ----- ----- Host Work is done here... ----- -----
 
 			// Update all objects independent of stage, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 0; j < Object.size(); j++) {
-					if ((Object[j]->isReady.load()) && (Object[j]->Context == Context[i])) {
+					if ((Object[j]->isReadyToBeProcessed.load()) && (Object[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Object[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Object[i]->compute();
 					}
@@ -341,12 +318,12 @@ namespace geodesuka {
 
 			// Update all stages, and acquire all transfer operations.
 			for (size_t i = 0; i < Context.size(); i++) {
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 0; j < Stage.size(); j++) {
 					for (size_t k = 0; k < Stage[j]->RenderTarget.size(); k++) {
 						Stage[j]->RenderTarget[k]->FrameRateTimer.update(DeltaTime);
 					}
-					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
+					if ((Stage[j]->isReadyToBeProcessed.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[0] += Stage[i]->update(DeltaTime);
 						Context[i]->BackBatch[1] += Stage[i]->compute();
 					}
@@ -357,7 +334,7 @@ namespace geodesuka {
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 
 				// Lock Context for execution.
 				Context[i]->ExecutionMutex.lock();
@@ -415,10 +392,10 @@ namespace geodesuka {
 			// Aggregate all render operations from each stage to each context.
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 				for (size_t j = 1; j < Stage.size(); j++) {
 					// Go to next stage if stage is not ready.
-					if ((Stage[j]->isReady.load()) && (Stage[j]->Context == Context[i])) {
+					if ((Stage[j]->isReadyToBeProcessed.load()) && (Stage[j]->Context == Context[i])) {
 						Context[i]->BackBatch[2] += Stage[j]->render();
 					}
 				}				
@@ -428,7 +405,7 @@ namespace geodesuka {
 			VkResult Result = VkResult::VK_SUCCESS;
 			for (size_t i = 0; i < Context.size(); i++) {
 				// Go to next context if not ready.
-				if (!Context[i]->isReady.load()) continue;
+				if (!Context[i]->isReadyToBeProcessed.load()) continue;
 
 				// If no operations, continue and check next context.
 				if ((Context[i]->BackBatch[2].SubmissionCount == 0) && (Context[i]->BackBatch[2].PresentationCount == 0)) continue;
@@ -474,7 +451,7 @@ namespace geodesuka {
 	void engine::audio() {
 		// Does nothing currently.
 		while (!Shutdown.load()) {
-			waitfor(1);
+			//waitfor(1);
 		}
 
 	}
@@ -485,82 +462,9 @@ namespace geodesuka {
 	void engine::terminal() {
 
 		while (!Shutdown.load()) {
-			waitfor(1.0);
+			//waitfor(1.0);
 		}
 
-	}
-
-	GLFWwindow* engine::create_window_handle(window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow) {
-		GLFWwindow* Temp = NULL;
-		if (this->MainThreadID == std::this_thread::get_id()) {
-			glfwWindowHint(GLFW_RESIZABLE,			aProperty.Resizable);
-			glfwWindowHint(GLFW_DECORATED,			aProperty.Decorated);
-			glfwWindowHint(GLFW_FOCUSED,			aProperty.UserFocused);
-			glfwWindowHint(GLFW_AUTO_ICONIFY,		aProperty.AutoMinimize);
-			glfwWindowHint(GLFW_FLOATING,			aProperty.Floating);
-			glfwWindowHint(GLFW_MAXIMIZED,			aProperty.Maximized);
-			glfwWindowHint(GLFW_VISIBLE,			aProperty.Visible);
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	aProperty.ScaleToMonitor);
-			glfwWindowHint(GLFW_CENTER_CURSOR,		aProperty.CenterCursor);
-			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		aProperty.FocusOnShow);
-			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-
-			Temp = glfwCreateWindow(aWidth, aHeight, aTitle, aMonitor, aWindow);
-		}
-		else {
-			this->WindowTempData.Property = aProperty;
-			this->WindowTempData.Width = aWidth;
-			this->WindowTempData.Height = aHeight;
-			this->WindowTempData.Title = aTitle;
-			this->WindowTempData.Monitor = aMonitor;
-			this->WindowTempData.Window = aWindow;
-
-			this->WindowCreated.store(false);
-			this->SignalCreate.store(true);
-			// Wait for window to be created.
-			while (!this->WindowCreated.load()) {}
-			Temp = this->ReturnWindow;
-		}
-		return Temp;
-	}
-
-	void engine::destroy_window_handle(GLFWwindow* aWindow) {
-		if (this->MainThreadID == std::this_thread::get_id()) {
-			glfwDestroyWindow(aWindow);
-		}
-		else {
-			while (this->DestroyWindow.load() != NULL) {}
-			this->DestroyWindow.store(aWindow);
-		}
-	}
-
-	void engine::mtcd_process_window_handle_call() {
-		if (this->SignalCreate.load()) {
-			glfwWindowHint(GLFW_RESIZABLE,			WindowTempData.Property.Resizable);
-			glfwWindowHint(GLFW_DECORATED,			WindowTempData.Property.Decorated);
-			glfwWindowHint(GLFW_FOCUSED,			WindowTempData.Property.UserFocused);
-			glfwWindowHint(GLFW_AUTO_ICONIFY,		WindowTempData.Property.AutoMinimize);
-			glfwWindowHint(GLFW_FLOATING,			WindowTempData.Property.Floating);
-			glfwWindowHint(GLFW_MAXIMIZED,			WindowTempData.Property.Maximized);
-			glfwWindowHint(GLFW_VISIBLE,			WindowTempData.Property.Visible);
-			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	WindowTempData.Property.ScaleToMonitor);
-			glfwWindowHint(GLFW_CENTER_CURSOR,		WindowTempData.Property.CenterCursor);
-			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		WindowTempData.Property.FocusOnShow);
-			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
-			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE); // TODO: Change to GLFW_DONT_CARE, and remove option.
-
-			this->ReturnWindow = glfwCreateWindow(WindowTempData.Width, WindowTempData.Height, WindowTempData.Title, WindowTempData.Monitor, WindowTempData.Window);
-			this->WindowCreated.store(true);
-			this->SignalCreate.store(false);
-		}
-		
-		// Check if window needs to be destroyed.
-		GLFWwindow* temp = this->DestroyWindow.load();
-		if (temp != NULL) {
-			glfwDestroyWindow(temp);
-			this->DestroyWindow.store(NULL);
-		}		
 	}
 
 }

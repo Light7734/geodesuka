@@ -108,23 +108,22 @@ namespace geodesuka::core::gcl {
 
 			this->QueueFamilyCapability[i].Support = 0;
 			this->QueueFamilyCapability[i].Flags = this->QueueFamilyProperty[i].queueFlags;
-			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) == VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) {
+			if (this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_TRANSFER_BIT) {
 				this->QueueFamilyCapability[i].Support |= qfs::TRANSFER;
 				this->QueueFamilyCapability[i].isTransferSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
-			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) == VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) {
+			if (this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_COMPUTE_BIT) {
 				this->QueueFamilyCapability[i].Support |= qfs::COMPUTE;
 				this->QueueFamilyCapability[i].isComputeSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
-			if ((this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) == VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) {
+			if (this->QueueFamilyProperty[i].queueFlags & VkQueueFlagBits::VK_QUEUE_GRAPHICS_BIT) {
 				this->QueueFamilyCapability[i].Support |= qfs::GRAPHICS;
 				this->QueueFamilyCapability[i].isGraphicsSupported = true;
 				this->QueueFamilySupportCount[i] += 1;
 			}
 
-			// TODO: Make sure "VK_KHR_surface" is a loaded extension in Instance.
 			VkBool32 PresentSupport;
 			Result = vkGetPhysicalDeviceSurfaceSupportKHR(aPhysicalDevice, i, lDummySurface, &PresentSupport);
 			if (PresentSupport == VK_TRUE) {

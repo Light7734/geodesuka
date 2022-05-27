@@ -3,8 +3,10 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <vector>
+
 // Used to interact with texture class
-#include <geodesuka/core/gcl/texture.h>
+#include <geodesuka/core/gcl/image.h>
 
 namespace geodesuka::core::gcl {
 
@@ -325,7 +327,7 @@ namespace geodesuka::core::gcl {
 		return (aRhs << *this);
 	}
 
-	VkCommandBuffer buffer::operator<<(texture& aRhs) {
+	VkCommandBuffer buffer::operator<<(image& aRhs) {
 		VkCommandBuffer CommandBuffer = VK_NULL_HANDLE;
 		// Must share the same parent context and have the same size.
 		if ((this->Context != aRhs.Context) || ((size_t)this->CreateInfo.size != aRhs.MemorySize)) return CommandBuffer;
@@ -333,7 +335,7 @@ namespace geodesuka::core::gcl {
 		if (
 			((this->CreateInfo.usage & buffer::usage::TRANSFER_DST) != buffer::usage::TRANSFER_DST) 
 			|| 
-			((aRhs.CreateInfo.usage & texture::usage::TRANSFER_SRC) != texture::usage::TRANSFER_SRC)
+			((aRhs.CreateInfo.usage & image::usage::TRANSFER_SRC) != image::usage::TRANSFER_SRC)
 		) return CommandBuffer;
 
 		VkResult Result = VkResult::VK_SUCCESS;
@@ -399,7 +401,7 @@ namespace geodesuka::core::gcl {
 		return CommandBuffer;
 	}
 
-	VkCommandBuffer buffer::operator>>(texture& aRhs) {
+	VkCommandBuffer buffer::operator>>(image& aRhs) {
 		return (aRhs >> *this);
 		return VK_NULL_HANDLE;
 	}
@@ -450,7 +452,7 @@ namespace geodesuka::core::gcl {
 
 	}
 
-	VkBuffer buffer::handle() {
+	VkBuffer& buffer::handle() {
 		return this->Handle;
 	}
 

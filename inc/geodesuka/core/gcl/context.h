@@ -24,7 +24,6 @@ namespace geodesuka::core::gcl {
 		// may be the same queue, but treat them differently even if they are
 		// the same opaque handle.
 
-		// TODO: Include dependency of engine instance.
 		context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
@@ -73,7 +72,7 @@ namespace geodesuka::core::gcl {
 		// -------------------- Engine Data -------------------- //
 
 		std::mutex Mutex;
-		std::atomic<bool> isReady;
+		std::atomic<bool> isReadyToBeProcessed;
 
 		// Parent physical device.
 		engine* Engine;

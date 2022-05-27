@@ -23,12 +23,12 @@
 
 namespace geodesuka::core::gcl {
 
-	class texture;
+	class image;
 
 	class buffer {
 	public:
 
-		friend class texture;
+		friend class image;
 
 		enum usage {
 			TRANSFER_SRC			= 0x00000001,
@@ -62,9 +62,9 @@ namespace geodesuka::core::gcl {
 		// Will copy data from left to right.
 		VkCommandBuffer operator>>(buffer& aRhs);
 		// Will copy data from right to left.
-		VkCommandBuffer operator<<(texture& aRhs);
+		VkCommandBuffer operator<<(image& aRhs);
 		// Will copy data from left to right.
-		VkCommandBuffer operator>>(texture& aRhs);
+		VkCommandBuffer operator>>(image& aRhs);
 
 		// Use Command Buffers to update. vkCmdUpdateBuffer() 64kB limit.
 		// Has to be host memory to be used.
@@ -73,7 +73,7 @@ namespace geodesuka::core::gcl {
 		void read(size_t aMemOffset, size_t aMemSize, void* aData);
 		void read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData);
 
-		VkBuffer handle();
+		VkBuffer& handle();
 
 	private:
 

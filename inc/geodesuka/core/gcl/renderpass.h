@@ -6,7 +6,7 @@
 
 #include "device.h"
 #include "context.h"
-#include "texture.h"
+#include "image.h"
 
 namespace geodesuka::core::gcl {
 
@@ -16,7 +16,7 @@ namespace geodesuka::core::gcl {
 		renderpass();
 		renderpass(
 			context* aContext,
-			int aAttachmentCount, texture* aAttachment,
+			int aAttachmentCount, image* aAttachment,
 			uint32_t aSubpassCount, VkSubpassDescription* aSubpass,
 			uint32_t aDependencyCount, VkSubpassDependency* aDependency
 		);

@@ -8,7 +8,7 @@
 
 namespace geodesuka::builtin::stage {
 
-	class example /*: core::stage::canvas*/ {
+	class example : core::stage_t {
 	public:
 
 		example(engine* aEngine, core::gcl::context* aContext);
@@ -18,6 +18,10 @@ namespace geodesuka::builtin::stage {
 
 	private:
 
+		object::triangle* Triangle;
+		core::object::system_window::property Property;
+		core::object::system_display* SystemDisplay;
+		core::object::system_window* SystemWindow;
 	};
 
 }

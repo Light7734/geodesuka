@@ -5,9 +5,8 @@
 #include "../object.h"
 #include "window.h"
 
-//#include <GLFW/glfw3.h>
 struct GLFWmonitor;
-
+struct GLFWvidmode;
 
 namespace geodesuka::core::object {
 
@@ -17,10 +16,7 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
-		static const int RTID;
-
-		GLFWmonitor* Handle;
-		//VkDisplayKHR Handle;
+		static constexpr int RTID = 1;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
@@ -43,8 +39,16 @@ namespace geodesuka::core::object {
 
 	private:
 
-		int2 PositionSC;
-		//int2 SizeSC;
+		GLFWmonitor* Handle;
+		//VkDisplayKHR Handle;
+
+		int VideoModeCount;
+		GLFWvidmode* VideoMode;
+		const GLFWvidmode* CurrentVideoMode;
+
+		// Used internally to interact with OS size and positioning.
+		int2 PositionVSC;
+		int2 SizeVSC;
 
 	};
 

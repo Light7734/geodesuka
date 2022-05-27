@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "../gcl/texture.h"
+#include "../gcl/image.h"
 #include "../gcl/shader.h"
 
 namespace geodesuka::core::graphics {
@@ -12,7 +12,7 @@ namespace geodesuka::core::graphics {
 	class material {
 	public:
 
-		std::vector<gcl::texture*> Texture;
+		std::vector<gcl::image*> Texture;
 		gcl::shader* VertexShader;
 		gcl::shader* PixelShader;
 

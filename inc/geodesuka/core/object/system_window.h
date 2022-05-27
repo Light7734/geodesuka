@@ -2,55 +2,32 @@
 #ifndef GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 #define GEODESUKA_CORE_OBJECT_SYSTEM_WINDOW_H
 
-/*
-* Windows API
-* Wayland
-* X11
-* Android
-*/
-
 #include <vector>
+#include <thread>
 
 #include "../math.h"
 
 #include "../gcl.h"
 #include "../gcl/device.h"
 #include "../gcl/context.h"
-#include "../gcl/texture.h"
+#include "../gcl/image.h"
 #include "../gcl/framebuffer.h"
-//#include "../gcl/swapchain.h"
-
-//#include "../hid/mouse.h"
-//#include "../hid/keyboard.h"
-//#include "../hid/joystick.h"
 
 #include "../object.h"
 #include "window.h"
 #include "system_display.h"
-//#include "system_window.h"
-//#include "virtual_window.h"
-//#include "camera.h"
 
-// Interact with windowing system.
-//#include <GLFW/glfw3.h>
 struct GLFWwindow;
 
-// system_window: This object exists in the display space exclusively.
-// It interfaces with the operating system and holds the context for for
-// the graphics API being used. All system windows must be managed by the
-// engine itself.
-//
-//
-//
 
-// A system_window by default should have the default framebuffer. All proceeding
-// draw calls will be towards the window itself. If the contents of the system_window 
-// are to be streamed to another destination, create a seperate frame_buffer, and forward
-// its outputs to the target. For intensive draw operations and windows that are due to
-// send their contents to multiple targets, it would be wise to stream the contents rather
-// than direct the draw operations to the intended targets.
-
-
+/// <summary>
+/// system_window.h is an object that will represent Operating System (OS) managed windows, managed
+/// by a window manager like Wayland, X11, win32, and so on. It will also be a render target that
+/// can be used by other objects to create render commands for. Position and Size will accept
+/// two units for modifying the state of a SystemWindow instance. It will take physical coordinates
+/// in units of meters which the position and size will be in reference to the parent display it
+/// is a child of.
+/// </summary>
 namespace geodesuka::core::object {
 
 	class system_window : public window {
@@ -84,7 +61,7 @@ namespace geodesuka::core::object {
 			ALPHA_INHERIT			= 0x00000008,
 		};
 
-		enum mode {
+		enum present_mode {
 			IMMEDIATE		= 0,
 			MAILBOX			= 1,
 			FIFO			= 2,
@@ -95,7 +72,8 @@ namespace geodesuka::core::object {
 
 			struct prop {
 				//int Flags;
-				int Count;
+				int FrameCount;
+				double FrameRate;
 				int ColorSpace;
 				int Usage;
 				int CompositeAlpha;
@@ -107,17 +85,40 @@ namespace geodesuka::core::object {
 
 		};
 
+		struct property {
+			// Window Options.
+			option Window;
+			swapchain::prop Swapchain;
+			VkFormat PixelFormat;
+			float3 Position;
+			float2 Size;
+			const char* Title;
+
+			property();
+		};
+
+		struct propertyvsc {
+			// Window Options.
+			option Window;
+			swapchain::prop Swapchain;
+			VkFormat PixelFormat;
+			int2 Position;
+			int2 Size;
+			const char* Title;
+
+			propertyvsc();
+		};
+
+
 		// Required Extensions for the class
 		static std::vector<const char*> RequiredInstanceExtension;
 		static std::vector<const char*> RequiredContextExtension;
-		static const int RTID;
+		static constexpr int RTID = 2;
 
-		gcl::texture* Frame;
-
-
-		//math::boolean CloseMe;
-
-		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, window::prop aWindowProperty, swapchain::prop aSwapchainProperty, VkFormat aPixelFormat, int aWidth, int aHeight, const char* aTitle);
+		gcl::image* Frame;
+		
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const property& aProperty);
+		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const propertyvsc& aProperty);
 
 		~system_window();
 
@@ -135,16 +136,16 @@ namespace geodesuka::core::object {
 
 		// ----- window inheritance ----- //
 
-		// ----- system_window methods ----- //
-
 		virtual void set_size(float2 aSize) override; // Do not rapidly change size or lag will happen.
 		virtual void set_resolution(uint2 aResolution) override;
 
-		// ----- Used in Stage Render Logic ----- //
+		// ----- system_window methods ----- //
 
+		void set_position_vsc(int2 aPositionVSC);
+		void set_size_vsc(int2 aSizeVSC);
+		void set_option(option::id, bool aValue);
 
 	protected:
-		// Only accessible to engine backend.
 
 		virtual VkSubmitInfo update(double aDeltaTime) override;
 
@@ -158,34 +159,56 @@ namespace geodesuka::core::object {
 		VkSurfaceKHR Surface;					// Vulkan window handle.
 		VkSwapchainCreateInfoKHR CreateInfo{};
 		VkSwapchainKHR Swapchain;
-		//gcl::swapchain* Swapchain;
-		//VkImage* Frame;
-
+		int2 PositionVSC;
+		int2 SizeVSC;
 
 		// Fill out in constructor
 		int NextImageSemaphoreIndex;
 		VkSemaphore* NextImageSemaphore;
 		VkSemaphore* RenderOperationSemaphore;
+		uint32_t* PresentIndex;
 		VkResult* PresentResult;
 		VkPipelineStageFlags PipelineStageFlags;
-		//uint32_t* DrawCommandCount;
-		//VkCommandBuffer** DrawCommandList;
-		//VkPresentInfoKHR* PresentInfo;
+		VkPresentInfoKHR* Presentation;
+		// Semaphores are even fucking dumber than I thought they were.
+		// It turns out that there is no way to unsignal a semaphore other than recreating it.
+		// Which is beyond fucking stupid. Thanks Khronos Group.
+		// ------------------------------ Utility (Internal, Do Not Use) ------------------------------ //
 
+		// Position vector conversions for system_window.
+		float3 vsc2phy(int2 aRscrw, int2 aSscrw, int2 aRscrm, int2 aSscrm, float2 aSphy);
+		int2 phy2vsc(float3 aRphyw, int2 aSvscw, int2 aRvscm, int2 aSvscm, float2 aSphy);
 
-		int2 PositionSC;
-		//math::integer2 SizeSC;
-
-
-
-		// Internal Utils, Physical coordinates to Screen coordinates
-		int2 phys2scrn(float2 R);
-		float2 scrn2phys(int2 R);
-
-		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
+		struct glfwargs {
+			window::option Property;
+			int Width;
+			int Height;
+			const char* Title;
+			GLFWmonitor* Monitor;
+			GLFWwindow* Window;
+		};
 
 		static bool initialize();
 		static void terminate();
+		static void poll_events();
+
+		// Signals to update thread to create window handle
+		// Needed backend for system window creation
+		static std::thread::id MainThreadID;
+		static std::atomic<bool> SignalCreate;
+		static std::atomic<bool> WindowCreated;
+		static glfwargs WindowTempData;
+		static GLFWwindow* ReturnWindow;
+		static std::atomic<GLFWwindow*> DestroyWindow;
+
+		// This is necessary for main thread to create window handles.
+		static GLFWwindow* create_window_handle(core::object::window::option aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow); 
+
+		static void destroy_window_handle(GLFWwindow* aWindow);
+		// This function is by the engine update thread to create and destroy handles.
+		static void mtcd_process_window_handle_call();
+
+		// ------------------------------ Callbacks (Internal, Do Not Use) ------------------------------ //
 
 		// Window Callbacks
 		static void position_callback(GLFWwindow* ContextHandle, int PosX, int PosY);

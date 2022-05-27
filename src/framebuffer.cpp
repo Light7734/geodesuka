@@ -6,7 +6,7 @@ namespace geodesuka::core::gcl {
 
 	}
 
-	framebuffer::framebuffer(context* aContext, renderpass& aRenderPass, uint32_t aAttachmentCount, texture* aAttachment, uint32_t aWidth, uint32_t aHeight, uint32_t aLayers) {
+	framebuffer::framebuffer(context* aContext, renderpass& aRenderPass, uint32_t aAttachmentCount, image* aAttachment, uint32_t aWidth, uint32_t aHeight, uint32_t aLayers) {
 		VkResult Result = VkResult::VK_SUCCESS;
 
 		this->Context = aContext;

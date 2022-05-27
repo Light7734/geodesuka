@@ -11,6 +11,8 @@ namespace geodesuka::core::gcl {
 	class command_list {
 	public:
 
+		friend class command_pool;
+
 		command_list();
 		command_list(VkCommandBuffer aCommandBuffer);
 		command_list(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
@@ -30,7 +32,6 @@ namespace geodesuka::core::gcl {
 
 	private:
 
-		//command_pool* CommandPool;
 		uint32_t n;
 		VkCommandBuffer* ptr;
 

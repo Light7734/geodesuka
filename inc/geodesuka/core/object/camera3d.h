@@ -18,28 +18,38 @@ namespace geodesuka::core::object {
 		* layout (location = 2) out vec3 PixelNormal;
 		*/
 
+		struct geometry_buffer {
+			gcl::image OpaquePixelColor;
+			gcl::image OpaqueDepthBuffer;
+			gcl::image TranslucentPixelColor;
+			gcl::image TranslucentDepthBuffer;
+			gcl::image PixelPosition;
+			gcl::image PixelNormal;
+		};
+
+		static constexpr int RTID = 5;
+
+		geometry_buffer *GeometryBuffer;
+
+
 		//camera3d(engine *aEngine, gcl::context *aContext);
 		//~camera3d();
 
-		static const int RTID;
+		// ----- object_t methods ----- //
+
+		// ----- rendertarget methods ----- //
+
 		virtual int rtid() override;
+
+		// ----- camera methods ----- //
+
+		// ----- camera3d methods ----- //
 
 	protected:
 
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 
 	private:
-
-		// The structure of each frame.
-		struct frame {
-			// Depth Attachments.
-			gcl::texture DepthBuffer;
-			// Color Attachments
-			gcl::texture PixelColor;		// R32G32B32
-			gcl::texture PixelPosition;		// R32G32B32
-			gcl::texture PixelNormal;		// R32G32B32
-
-		};
 
 		// DepthList:
 		// The depth list is a list of sorted objects based

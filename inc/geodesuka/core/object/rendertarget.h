@@ -6,9 +6,10 @@
 
 #include "../gcl.h"
 #include "../gcl/context.h"
-#include "../gcl/texture.h"
+#include "../gcl/image.h"
 
 //#include "../gcl/command_list.h"
+#include "../gcl/command_pool.h"
 #include "../gcl/command_batch.h"
 
 #include "../logic/timer.h"
@@ -40,6 +41,8 @@ namespace geodesuka::core::object {
 
 		//uint32_t FrameReadIndex;
 		uint32_t FrameDrawIndex;
+
+		gcl::command_pool DrawCommandPool;
 
 		~rendertarget();
 

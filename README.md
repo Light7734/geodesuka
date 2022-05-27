@@ -1,32 +1,20 @@
-# Geodesuka Engine
+<img src="https://github.com/ShaderKitty/Geodesuka/blob/d20220521-v0.0.20/res/github/gsdgiusdu2_2k.png" align="left" height="128" width="128" alt="Geodesuka Engine">
+
+## Geodesuka Engine v0.0.20
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
 
-Project Start: 2021/06/01
-
-Branch Birth Date: 2022/05/15
-
-Branch Pull Date: 2022/05/21
-
-Version: 0.0.19
+## State of the Engine
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
-# State of the Engine
+Now with the update and render backend threads of the engine now complete, and capable of processing objects and stages
+asynchronously, the main focus here on out, is getting something to be drawn to a system_window. Once an example stage
+has been created derived from canvas, where a system window is a render target, it will mark the first successful usage 
+of the geodesuka engine for graphics capability that will be extendable.
 
-Currently what is being worked on is the rendering scheduler, as it will attempt to honor
-the requested frame rate/refresh rate of each render target. Looking at other people's engines,
-they seem to use a one and done renderer to prop up images on the screen as quickly as possible
-while this engine gives a lot of render choices to the object implementations themselves. This
-could nerf performance, but won't know until various scenes have been constructed and are being
-actively rendered by the engine. Since the way this engine is designed, this could severely impair
-performance. But wont't really know until I test it.
-
-Since OpenCL 3.0 specification has been released by the Khronos group, it turns out that it might
-still be possible to combine the kernel execution model of various GPGPU compute apis with graphics
-rasterization apis like Vulkan.
-https://www.khronos.org/blog/khronos-releases-opencl-3.0-extensions-for-neural-network-inferencing-and-opencl-vulkan-interop
+<div align="center">
 
 # Description
 
@@ -53,18 +41,20 @@ still an ambitious goal for a single person, but it is still a fun project to wo
 
 - engine.cpp Added backend update and render thread code. Engine will now process all contexts, objects, and stages.
 
+- context.h now only supports the following queue types. TRANSFER, COMPUTE, GRAPHICS_AND_COMPUTE, and PRESENT. This
+is to allow custom post processing shaders to be executed along side standard rendering operations.
+
+- texture.h is now image.h. This change has come because a texture linguistically describes the texture of a surface,
+while an image is just a set of data with a format, which is more appropriate for the previously aliased texture.h.
+
+- added drawpack.h to manage render target command buffers. 
+
+- updated rendertarget.h to own a command pool, which stage objects can borrow VkCommandBuffers from to draw to a
+render target.
+
 # To Do List:
 
-- context.h will support TRANSFER, GRAPHICS_AND_COMPUTE, and PRESENT operation
-queues. Graphics and Compute will be treated as the same operation, which is
-computational work being performed on the GPU.
-
 - math.h will be re worked to include fields.
-
-- Create System Terminal Class for engine debug commands in engine backend.
-
-- Rewrite math library for more coherent primitive data types, then construct
-natural, integer, and real types from it.
 
 - Add r1.h, r2.h, r3.h, r4.h, and vector field classes to engine.
 
@@ -72,6 +62,11 @@ natural, integer, and real types from it.
 on. (Will be done with canvas class, and window as target.)
 
 - Resolve issue with object being used in multiple stages simultaneously.
+
+- Work on audio processing for game engine.
+
+- Link asset libraries such as Assimp, FreeType, FreeImage, and so on to
+geodesuka.
 
 # Back Burner:
 
@@ -81,8 +76,6 @@ on. (Will be done with canvas class, and window as target.)
 and forward to proper objects.
 
 - Add lua support for runtime scripting.
-
-- Add asset loading libraries (Assimp, FreeImage, FreeType, ...)
 
 - Add engine asset manager to prevent double loading.
 
@@ -110,19 +103,30 @@ OpenCL - https://software.intel.com/content/www/us/en/develop/tools/opencl-sdk.h
     If you wish to use another OpenCL SDK, just change the proper directories associated with
     the project files to do so. Otherwise go to the link provided to download Intel's OpenCL.
 
+OpenXR - 
+    N/A
+
 GLFW - https://github.com/glfw/glfw
     GLFW is an Open Source, multi-platform library for OpenGL, OpenGL ES and Vulkan application development.
     It provides a simple, platform-independent API for creating windows, contexts and surfaces, reading input, 
     handling events, etc.
 
+portaudio - http://portaudio.com/
+    N/A
+
 glslang: - https://github.com/KhronosGroup/glslang
     Is backend compiler to SPIRV in this project.
 
-# Contact Info:
-ShaderKitty#1696 
 
-Feel free to contact me through discord if github.com isn't doing any justice on what you would like to convey.
-I am mostly available when I am not at work, and if you have any questions or suggestions feel free to reach out.
+
+Assimp - https://assimp-docs.readthedocs.io/en/v5.1.0/
+    N/A
+
+FreeType - https://freetype.org/
+    N/A
+
+FreeImage - https://freeimage.sourceforge.io/
+    N/A
 
 # Reference Specifications:
 

@@ -11,8 +11,6 @@ As of right now geodesuka is the primary namespace. Engine
 is the factory manager of all objects, including memory. Can
 be used to 
 
-TODO: Fix context.h queues.
-
 \\ ------------------------- Notes ------------------------- //
 */
 
@@ -71,9 +69,10 @@ Include: $(ProjectDir)..\glslang
 #include "core/gcl/command_batch.h"
 #include "core/gcl/buffer.h"
 #include "core/gcl/shader.h"
-#include "core/gcl/texture.h"
+#include "core/gcl/image.h"
 #include "core/gcl/renderpass.h"
 #include "core/gcl/framebuffer.h"
+#include "core/gcl/drawpack.h"
 #include "core/gcl/pipeline.h"
 
 // ------------------------- Human Interface Devices ------------------------- //
@@ -140,6 +139,17 @@ namespace geodesuka {
 			int Revision;
 		};
 
+		// TODO: Stupid Object, Remove Later
+		struct state {
+			enum id {
+				FAILURE = -1,
+				CREATION,						// Engine instance is being constructed.
+				READY,							// Engine instance is active, and ready to be used.
+				RUNNING,						// Threads are launched and running backend.
+				DESTRUCTION						// Engine is currently in destruction phase.
+			};
+		};
+
 		engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList);
 		~engine();
 
@@ -159,19 +169,8 @@ namespace geodesuka {
 
 	private:
 
-		// TODO: Stupid Object, Remove Later
-		struct state {
-			enum id {
-				FAILURE = -1,
-				CREATION,						// Engine instance is being constructed.
-				READY,							// Engine instance is active, and ready to be used.
-				RUNNING,						// Threads are launched and running backend.
-				DESTRUCTION						// Engine is currently in destruction phase.
-			};
-		};
-
-		const version Version = { 0, 0, 19 }; // Major, Minor, Revision
-		const int Date = 20220519; //YYYYMMDD
+		const version Version = { 0, 0, 20 }; // Major, Minor, Revision
+		const int Date = 20220521; //YYYYMMDD
 		std::vector<const char*> Layer;
 		std::vector<const char*> Extension;
 		VkApplicationInfo AppInfo{};
@@ -181,8 +180,7 @@ namespace geodesuka {
 		// ------------------------------ Engine State ------------------------------ //
 		
 		std::mutex Mutex;
-		state::id ID;
-		//bool isReady;
+		state::id StateID;
 		std::atomic<bool> Shutdown;
 		core::logic::trap ThreadTrap;
 
@@ -220,27 +218,6 @@ namespace geodesuka {
 		void render();			// Thread honors frame rates of respective targets.
 		void audio();			// Thread Handles audio streams.
 		void terminal();		// Thread handles terminal input to the engine.
-
-		// ----- Back End Garbage ----- //
-		
-		// Signals to update thread to create window handle
-		// Needed backend for system window creation
-		std::atomic<bool> SignalCreate;
-		std::atomic<bool> WindowCreated;
-		struct {
-			core::object::window::prop Property;
-			int Width;
-			int Height;
-			const char* Title;
-			GLFWmonitor* Monitor;
-			GLFWwindow* Window;
-		} WindowTempData;
-		GLFWwindow* ReturnWindow;
-		std::atomic<GLFWwindow*> DestroyWindow;
-
-		GLFWwindow* create_window_handle(core::object::window::prop aProperty, int aWidth, int aHeight, const char* aTitle, GLFWmonitor* aMonitor, GLFWwindow* aWindow);
-		void destroy_window_handle(GLFWwindow* aWindow);
-		void mtcd_process_window_handle_call();
 
 	};
 

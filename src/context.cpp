@@ -18,9 +18,25 @@ namespace geodesuka::core::gcl {
 		// 2: Queue Create Info.
 		// 3: Create Logical Device.
 
+		if ((aEngine == nullptr) || (aDevice == nullptr)) return;
+
 		this->Engine = aEngine;
 		this->Device = aDevice;
-		if ((this->Engine == nullptr) || (this->Device == nullptr)) return;
+
+		isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::CREATION) {
+			// Loads Context on engine.
+			isReadyToBeProcessed.store(false);
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			Engine->Context.push_back(this);
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
+
 
 		VkResult Result = VkResult::VK_SUCCESS;
 
@@ -195,10 +211,42 @@ namespace geodesuka::core::gcl {
 			this->CommandBuffer[i] = NULL;
 		}
 
+		VkFenceCreateInfo FenceCreateInfo{};
+		FenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		FenceCreateInfo.pNext = NULL;
+		FenceCreateInfo.flags = 0;
+
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[0]);
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[1]);
+		Result = vkCreateFence(Handle, &FenceCreateInfo, NULL, &ExecutionFence[2]);
+
+		isReadyToBeProcessed.store(true);
 	}
 
 	context::~context() {
 		// lock so context can be safely removed from engine instance.
+		// If engine is in destruction state, do not attempt to remove from engine.
+		isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::DESTRUCTION) {
+			// Removes Object from Engine State.
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			// Finds object in engine, and removes it.
+			for (size_t i = 0; i < Engine->Context.size(); i++) {
+				if (Engine->Context[i] == this) {
+					Engine->Context.erase(Engine->Context.begin() + i);
+				}
+			}
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
+
+		vkDestroyFence(Handle, ExecutionFence[0], NULL);
+		vkDestroyFence(Handle, ExecutionFence[1], NULL);
+		vkDestroyFence(Handle, ExecutionFence[2], NULL);
 
 		// Clear all command buffers and pools.
 		for (int i = 0; i < 3; i++) {
@@ -425,8 +473,8 @@ namespace geodesuka::core::gcl {
 		default									: return -1;
 		case device::qfs::TRANSFER				: return this->QFI[0];
 		case device::qfs::COMPUTE				: return this->QFI[1];
-		case device::qfs::GRAPHICS				: return this->QFI[2];
-		//case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[3];
+		//case device::qfs::GRAPHICS				: return this->QFI[2];
+		case device::qfs::GRAPHICS_AND_COMPUTE	: return this->QFI[2];
 		case device::qfs::PRESENT				: return this->QFI[3];
 		}
 		return 0;

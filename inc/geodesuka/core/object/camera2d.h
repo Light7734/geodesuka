@@ -13,7 +13,7 @@ namespace geodesuka::core::object {
 	class camera2d : public camera {
 	public:
 
-		static const int RTID;
+		static constexpr int RTID = 4;
 
 		camera2d(engine* aEngine, gcl::context* aContext, stage_t* aStage);
 		~camera2d();
