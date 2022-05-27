@@ -16,7 +16,7 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
-		static const int RTID;
+		static constexpr int RTID = 1;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);

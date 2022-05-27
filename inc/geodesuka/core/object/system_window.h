@@ -113,7 +113,7 @@ namespace geodesuka::core::object {
 		// Required Extensions for the class
 		static std::vector<const char*> RequiredInstanceExtension;
 		static std::vector<const char*> RequiredContextExtension;
-		static const int RTID;
+		static constexpr int RTID = 2;
 
 		gcl::image* Frame;
 		

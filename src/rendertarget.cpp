@@ -6,7 +6,10 @@ namespace geodesuka::core::object {
 
 	}
 
-	rendertarget::rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/) : object_t(aEngine, aContext, aStage) {
+	rendertarget::rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/) : 
+		object_t(aEngine, aContext, aStage), 
+		DrawCommandPool(aContext, 0, gcl::device::qfs::GRAPHICS_AND_COMPUTE)
+	{
 
 		this->FrameCount = 0;
 		this->FrameRate = 0.0;

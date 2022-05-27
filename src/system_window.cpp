@@ -17,8 +17,6 @@ namespace geodesuka::core::object {
 	std::vector<const char*> system_window::RequiredInstanceExtension;
 	std::vector<const char*> system_window::RequiredContextExtension = { /*VK_KHR_SURFACE_EXTENSION_NAME,*/ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-	const int system_window::RTID = 2;
-
 	std::thread::id system_window::MainThreadID;
 	std::atomic<bool> system_window::SignalCreate = false;
 	std::atomic<bool> system_window::WindowCreated = false;

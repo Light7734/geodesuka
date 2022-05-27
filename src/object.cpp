@@ -64,6 +64,9 @@ namespace geodesuka::core {
 
 	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget) {
 		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
+		if (DrawPack.count(aRenderTarget) > 0) {
+			DrawCommand = DrawPack[aRenderTarget]->Command[aRenderTarget->FrameDrawIndex];
+		}
 		return DrawCommand;
 	}
 

@@ -32,6 +32,9 @@ namespace geodesuka::core {
 
 		friend class engine;
 
+		std::vector<object_t*> Object;
+		std::vector<object::rendertarget*> RenderTarget;
+
 		~stage_t();
 
 	protected:
@@ -42,8 +45,6 @@ namespace geodesuka::core {
 		engine* Engine;
 		gcl::context* Context;
 
-		std::vector<object_t*> Object;
-		std::vector<object::rendertarget*> RenderTarget;
 
 		stage_t(engine* aEngine, gcl::context* aContext);
 

@@ -42,7 +42,7 @@ namespace geodesuka::core::object {
 		//uint32_t FrameReadIndex;
 		uint32_t FrameDrawIndex;
 
-		//command_pool CommandPool;
+		gcl::command_pool DrawCommandPool;
 
 		~rendertarget();
 

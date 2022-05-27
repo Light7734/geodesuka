@@ -399,6 +399,9 @@
     <ClCompile Include="src\image.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\drawpack.cpp">
+      <Filter>src\core\gcl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -688,6 +691,9 @@
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\image.h">
+      <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\gcl\drawpack.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
   </ItemGroup>

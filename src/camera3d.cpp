@@ -30,8 +30,6 @@ namespace geodesuka::core::object {
 	//
 	//}
 
-	const int camera3d::RTID = 5;
-
 	int camera3d::rtid() {
 		return RTID;
 	}

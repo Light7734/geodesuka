@@ -47,6 +47,11 @@ is to allow custom post processing shaders to be executed along side standard re
 - texture.h is now image.h. This change has come because a texture linguistically describes the texture of a surface,
 while an image is just a set of data with a format, which is more appropriate for the previously aliased texture.h.
 
+- added drawpack.h to manage render target command buffers. 
+
+- updated rendertarget.h to own a command pool, which stage objects can borrow VkCommandBuffers from to draw to a
+render target.
+
 # To Do List:
 
 - math.h will be re worked to include fields.

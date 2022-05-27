@@ -73,7 +73,7 @@ namespace geodesuka::core::gcl {
 		void read(size_t aMemOffset, size_t aMemSize, void* aData);
 		void read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData);
 
-		VkBuffer handle();
+		VkBuffer& handle();
 
 	private:
 

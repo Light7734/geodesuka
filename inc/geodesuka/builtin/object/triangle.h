@@ -9,21 +9,19 @@ namespace geodesuka::builtin::object {
 	class triangle : public core::object_t {
 	public:
 
-		//triangle(engine* aEngine, core::gcl::context* aContext, stage_t* aStage);
-		//~triangle();
+		triangle(engine* aEngine, core::gcl::context* aContext, core::stage_t* aStage);
+		~triangle();
+
+	protected:
 
 	private:
 
-		// Create with first interaction with window.
-		VkRenderPassCreateInfo RenderPassCreateInfo{};
-		VkRenderPass RenderPass;
+		core::gcl::buffer* VertexBuffer;
+		core::gcl::shader* VertexShader;
+		core::gcl::shader* PixelShader;
 
-		VkFramebufferCreateInfo FramebufferCreateInfo{};
-		VkFramebuffer Framebuffer;
 
-		//core::gcl::pipeline Pipeline;
-		VkSubpassDescription Subpass[1];
-		VkSubpassDependency Dependency[1];
+		VkPipeline Pipeline;
 
 	};
 

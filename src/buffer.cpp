@@ -452,7 +452,7 @@ namespace geodesuka::core::gcl {
 
 	}
 
-	VkBuffer buffer::handle() {
+	VkBuffer& buffer::handle() {
 		return this->Handle;
 	}
 

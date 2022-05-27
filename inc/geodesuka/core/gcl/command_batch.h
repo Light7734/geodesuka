@@ -18,25 +18,23 @@ namespace geodesuka::core::gcl {
 		command_batch();
 		command_batch(VkSubmitInfo aSubmission);
 		command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission);
-		command_batch(VkPresentInfoKHR aSubmission);
-		command_batch(size_t aSubmissionCount, VkPresentInfoKHR* aSubmission);
-		command_batch(command_batch& aInput);
+		command_batch(VkPresentInfoKHR aPresentation);
+		command_batch(size_t aPresentationCount, VkPresentInfoKHR* aPresentation);
+		command_batch(const command_batch& aInput);
 		command_batch(command_batch&& aInput) noexcept;
 		~command_batch();
 
-		VkSubmitInfo& operator[](int aIndex);
+		//VkSubmitInfo operator[](int aIndex) const;
+		//VkSubmitInfo& operator[](int aIndex);
 
-		command_batch& operator=(command_batch& aRhs);
+		command_batch& operator=(const command_batch& aRhs);
 		command_batch& operator=(command_batch&& aRhs) noexcept;
 
 		// Will be used to aggregate render_target submissions.
-		void operator+=(VkSubmitInfo aRhs);
-		void operator+=(VkPresentInfoKHR aRhs);
-		void operator+=(command_batch aRhs);
+		command_batch& operator+=(VkSubmitInfo aRhs);
+		command_batch& operator+=(VkPresentInfoKHR aRhs);
+		command_batch& operator+=(const command_batch& aRhs);
 
-		// Used for final submission.
-		size_t count();
-		VkSubmitInfo* ptr();
 		void clear();
 
 	private:

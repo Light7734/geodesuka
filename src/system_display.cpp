@@ -7,8 +7,6 @@
 
 namespace geodesuka::core::object {
 
-	const int system_display::RTID = 1;
-
 	system_display::system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor) : window(aEngine, aContext, nullptr) {
 
 		Handle = aMonitor;

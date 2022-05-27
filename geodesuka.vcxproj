@@ -192,6 +192,7 @@
     <ClCompile Include="src\cube.cpp" />
     <ClCompile Include="src\desktop.cpp" />
     <ClCompile Include="src\device.cpp" />
+    <ClCompile Include="src\drawpack.cpp" />
     <ClCompile Include="src\dynalib.cpp" />
     <ClCompile Include="src\engine.cpp" />
     <ClCompile Include="src\example.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="inc\geodesuka\core\gcl\command_pool.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
+    <ClInclude Include="inc\geodesuka\core\gcl\drawpack.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\image.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />

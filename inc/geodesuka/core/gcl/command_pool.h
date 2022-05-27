@@ -22,9 +22,11 @@ namespace geodesuka::core::gcl {
 		};
 
 		enum level {
-
+			PRIMARY,
+			SECONDARY
 		};
 
+		// Use for command buffer writing.
 		std::mutex Mutex;
 
 		command_pool(context* aContext, int aFlags, uint32_t aQueueFamilyIndex);
@@ -35,10 +37,9 @@ namespace geodesuka::core::gcl {
 		void allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
 		command_list allocate(int aLevel, uint32_t aCommandBufferCount);
 
-
 		void release(VkCommandBuffer aCommandBuffer);
 		void release(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
-		void release(command_list aCommandList);
+		void release(command_list& aCommandList);
 
 	private:
 
@@ -47,7 +48,6 @@ namespace geodesuka::core::gcl {
 		VkCommandPool Handle;
 
 		command_list CommandList;
-		//std::vector<VkCommandBuffer> CommandList;
 
 	};
 

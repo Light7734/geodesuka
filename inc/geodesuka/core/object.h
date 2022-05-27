@@ -25,6 +25,7 @@
 
 #include "gcl/device.h"
 #include "gcl/context.h"
+#include "gcl/drawpack.h"
 
 #include "graphics/mesh.h"
 #include "graphics/material.h"
@@ -38,9 +39,10 @@ namespace geodesuka::core {
 
 	class stage_t;
 
-	namespace object {
-		class rendertarget;
-	}
+	// TODO: Remove rendertarget forward declaration.
+	//namespace object {
+	//	class rendertarget;
+	//}
 
 	class object_t {
 	public:
@@ -90,6 +92,8 @@ namespace geodesuka::core {
 		float3 DirectionX;		// Right		[Normalized]
 		float3 DirectionY;		// Up			[Normalized]
 		float3 DirectionZ;		// Forward		[Normalized]
+
+		std::map<object::rendertarget*, gcl::drawpack*> DrawPack;
 
 		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
 		//boolean isDeterministic;		// Does this object have predefined motion?

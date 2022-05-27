@@ -451,7 +451,7 @@ namespace geodesuka {
 	void engine::audio() {
 		// Does nothing currently.
 		while (!Shutdown.load()) {
-			waitfor(1);
+			//waitfor(1);
 		}
 
 	}
@@ -462,7 +462,7 @@ namespace geodesuka {
 	void engine::terminal() {
 
 		while (!Shutdown.load()) {
-			waitfor(1.0);
+			//waitfor(1.0);
 		}
 
 	}

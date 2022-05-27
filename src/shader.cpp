@@ -6,7 +6,6 @@
 
 #include <SPIRV/GlslangToSpv.h>
 
-
 namespace geodesuka::core::gcl {
 
 	shader::shader(context* aDeviceContext, stage aStage, const char* aSource) {
@@ -55,22 +54,49 @@ namespace geodesuka::core::gcl {
 
 		if (this->isValid) {
 
+			glslang::EShSource Source = glslang::EShSource::EShSourceGlsl;
+			glslang::EShClient Client = glslang::EShClient::EShClientVulkan;
+			int ClientInputSemanticsVersion = 100;
+
+			glslang::EShTargetClientVersion ClientVersion = glslang::EShTargetClientVersion::EShTargetVulkan_1_0;
+
+			glslang::EShTargetLanguage TargetLanguage = glslang::EShTargetLanguage::EShTargetSpv;
+			glslang::EShTargetLanguageVersion TargetLanguageVersion = glslang::EShTargetLanguageVersion::EShTargetSpv_1_0;
+
+			//EShMessages Options = (EShMessages)(EShMessages::EShMsgAST | EShMessages::EShMsgSpvRules | EShMessages::EShMsgVulkanRules);
+			EShMessages Options = (EShMessages)(EShMessages::EShMsgAST | EShMessages::EShMsgSpvRules | EShMessages::EShMsgVulkanRules | EShMessages::EShMsgDebugInfo | EShMessages::EShMsgBuiltinSymbolTable);
+
+			//const int DefaultVersion = Options & EOptionDefaultDesktop ? 110 : 100;
+			const int DefaultVersion = 100;
+
+			//glslang::TShader::Includer Includer;
+
+			glslang::SpvOptions SPIRVOption;
+			spv::SpvBuildLogger SPIRVLogger;
+			SPIRVOption.generateDebugInfo	= false;
+			SPIRVOption.disableOptimizer	= false;
+			SPIRVOption.optimizeSize		= true;
+			SPIRVOption.disassemble			= false;
+			SPIRVOption.validate			= false;
+
+			// Setup
 			glslang::TShader lShader(lShaderStage);
-			// Clean me up later
 			lShader.setStrings(&aSource, 1);
-			//lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, EShLanguage::EShLangVertex, glslang::EShClient::EShClientVulkan, 120);
-			lShader.setEnvInput(glslang::EShSource::EShSourceGlsl, lShaderStage, glslang::EShClient::EShClientVulkan, 100);
-			lShader.setEnvClient(glslang::EShClient::EShClientVulkan, glslang::EShTargetClientVersion::EShTargetVulkan_1_0);
-			lShader.setEnvTarget(glslang::EShTargetLanguage::EShTargetSpv, glslang::EShTargetLanguageVersion::EShTargetSpv_1_0);
+			lShader.setEnvInput(Source, lShaderStage, Client, ClientInputSemanticsVersion);
+			lShader.setEnvClient(Client, ClientVersion);
+			lShader.setEnvTarget(TargetLanguage, TargetLanguageVersion);
 			lShader.setEntryPoint("main");
-			//glslang::EOp
-			EShMessages Options = (EShMessages)(/*EShMessages::EShMsgDebugInfo |*/ EShMessages::EShMsgVulkanRules | EShMessages::EShMsgSpvRules | EShMessages::EShMsgAST /*| EShMessages::EShMsgDefault*/);
-			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 100, false, Options);
-			//this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, 100, EProfile::ENoProfile, false, false, Options);
-			if (this->isValid) {
-				// AST to SPIRV
-				glslang::GlslangToSpv(*lShader.getIntermediate(), this->Binary);
-			}
+
+			//this->isValid = lShader.preprocess(&glslang::DefaultTBuiltInResource, DefaultVersion, ENoProfile, false, false, Options, NULL);
+			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, DefaultVersion, false, Options);
+
+			glslang::TProgram Program;
+			Program.addShader(&lShader);
+			Program.link(Options);
+			//Program.buildReflection(EShReflectionDefault);
+
+			glslang::GlslangToSpv(*Program.getIntermediate(lShaderStage), this->Binary, &SPIRVLogger, &SPIRVOption);
+
 		}
 
 		if (this->isValid) {

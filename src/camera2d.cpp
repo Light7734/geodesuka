@@ -2,8 +2,6 @@
 
 namespace geodesuka::core::object {
 
-    const int camera2d::RTID = 4;
-
     camera2d::camera2d(engine* aEngine, gcl::context* aContext, stage_t* aStage) : camera(aEngine, aContext, aStage) {
 
     }
