@@ -169,8 +169,8 @@ namespace geodesuka {
 
 	private:
 
-		const version Version = { 0, 0, 20 }; // Major, Minor, Revision
-		const int Date = 20220521; //YYYYMMDD
+		const version Version = { 0, 0, 21 }; // Major, Minor, Revision
+		const int Date = 20220527; //YYYYMMDD
 		std::vector<const char*> Layer;
 		std::vector<const char*> Extension;
 		VkApplicationInfo AppInfo{};
