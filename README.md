@@ -1,6 +1,6 @@
 <img src="https://github.com/ShaderKitty/Geodesuka/blob/d20220521-v0.0.20/res/github/gsdgiusdu2_2k.png" align="left" height="128" width="128" alt="Geodesuka Engine">
 
-## Geodesuka Engine v0.0.21
+## Geodesuka Engine v0.1.0
 
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.md)
 [![forthebadge](https://forthebadge.com/images/badges/works-on-my-machine.svg)](https://forthebadge.com)
@@ -9,10 +9,12 @@
 
 ![](https://github.com/ShaderKitty/Geodesuka/blob/master/res/github/glcringe.jpg)
 
-Now with the update and render backend threads of the engine now complete, and capable of processing objects and stages
-asynchronously, the main focus here on out, is getting something to be drawn to a system_window. Once an example stage
-has been created derived from canvas, where a system window is a render target, it will mark the first successful usage 
-of the geodesuka engine for graphics capability that will be extendable.
+The update to version 0.1.0 marks the first successful rendering using vulkan and the geodesuka engine. Backend
+Update and Render threads of the engine successfully process contexts, objects and stages. Now I will be focused
+on cleaning up the api and making it more user friendly. The upcoming goals are to write more examples using the
+engin in builtin. Another thing is create a renderpass class to streamline redering options, and create a default
+render option provided by each render target. camera3d might have a default renderer which objects can refer to.
+As of right now
 
 <div align="center">
 
