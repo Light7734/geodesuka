@@ -80,6 +80,7 @@ namespace geodesuka::core {
 		// Iterate through render targets and gather render commands.
 		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
 			// Check if time to perform render operations on render target.
+			if (!this->RenderTarget[i]->isReadyToBeProcessed.load()) continue;
 			if (this->RenderTarget[i]->FrameRateTimer.check_and_reset()) {
 				// Acquire next available frame from target.
 				this->RenderTarget[i]->next_frame();

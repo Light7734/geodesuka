@@ -119,7 +119,7 @@ namespace geodesuka::core::object {
 		
 		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const property& aProperty);
 		system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const propertyvsc& aProperty);
-
+		//system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay);
 		~system_window();
 
 		// ----- object_t inheritance ----- //
@@ -168,12 +168,18 @@ namespace geodesuka::core::object {
 		VkSemaphore* RenderOperationSemaphore;
 		uint32_t* PresentIndex;
 		VkResult* PresentResult;
-		VkPipelineStageFlags PipelineStageFlags;
 		VkPresentInfoKHR* Presentation;
+		VkPipelineStageFlags PipelineStageFlags;
 		// Semaphores are even fucking dumber than I thought they were.
 		// It turns out that there is no way to unsignal a semaphore other than recreating it.
 		// Which is beyond fucking stupid. Thanks Khronos Group.
+
 		// ------------------------------ Utility (Internal, Do Not Use) ------------------------------ //
+
+		void make_default();
+		void clear_all();
+		//void make_swapchain();
+		//void remake_swapchain();
 
 		// Position vector conversions for system_window.
 		float3 vsc2phy(int2 aRscrw, int2 aSscrw, int2 aRscrm, int2 aSscrm, float2 aSphy);
