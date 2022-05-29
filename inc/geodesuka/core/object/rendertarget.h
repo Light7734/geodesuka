@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_OBJECT_RENDERTARGET_H
 #define GEODESUKA_CORE_OBJECT_RENDERTARGET_H
 
-#include <vector>
+//#include <vector>
 
 #include "../gcl.h"
 #include "../gcl/context.h"

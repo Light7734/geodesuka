@@ -22,6 +22,7 @@ namespace geodesuka::builtin::stage {
 		core::object::system_window::property Property;
 		core::object::system_display* SystemDisplay;
 		core::object::system_window* SystemWindow;
+
 	};
 
 }

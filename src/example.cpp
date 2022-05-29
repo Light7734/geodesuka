@@ -23,9 +23,9 @@ namespace geodesuka::builtin::stage {
 		Property.Swapchain.ColorSpace		= core::object::system_window::colorspace::EXTENDED_SRGB_LINEAR;
 		Property.Swapchain.Usage			= core::gcl::image::usage::COLOR_ATTACHMENT;
 		Property.Swapchain.CompositeAlpha	= core::object::system_window::composite::ALPHA_OPAQUE;
-		Property.Swapchain.PresentMode		= core::object::system_window::present_mode::FIFO;
+		Property.Swapchain.PresentMode		= core::object::system_window::present_mode::MAILBOX;
 		Property.Swapchain.Clipped			= true;
-		Property.PixelFormat				= VkFormat::VK_FORMAT_R16G16B16A16_SFLOAT;
+		Property.PixelFormat				= VK_FORMAT_R16G16B16A16_SFLOAT;
 		Property.Position					= float3(0, 0, 0);
 		Property.Size						= float2(0.3, 0.3);
 		Property.Title						= "Triangle";

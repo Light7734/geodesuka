@@ -29,7 +29,7 @@ namespace geodesuka::core::object {
 	system_window::swapchain::prop::prop() {
 		FrameCount			= 1;
 		FrameRate			= 30.0;
-		ColorSpace			= colorspace::SRGB_NONLINEAR;
+		ColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
 		Usage				= image::usage::COLOR_ATTACHMENT;
 		CompositeAlpha		= system_window::composite::ALPHA_OPAQUE;
 		PresentMode			= system_window::present_mode::FIFO;
@@ -39,7 +39,7 @@ namespace geodesuka::core::object {
 	system_window::property::property() {
 		Window = window::option();
 		Swapchain = swapchain::prop();
-		PixelFormat = VkFormat::VK_FORMAT_B8G8R8A8_SRGB;
+		PixelFormat = VK_FORMAT_B8G8R8A8_SRGB;
 		Position = float3(0.0f, 0.0f, 0.0f);
 		Size = float2(0.08f, 0.08f);
 		Title = NULL;
@@ -54,6 +54,7 @@ namespace geodesuka::core::object {
 		Title = NULL;
 	}
 
+	/*
 	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const property& aProperty) : window(aEngine, aContext, aSystemDisplay->Stage) {
 		if ((aEngine == nullptr) || (aContext == nullptr) || (aSystemDisplay == nullptr)) return;
 
@@ -77,13 +78,13 @@ namespace geodesuka::core::object {
 		// Describes the format of system_window frames
 		FrameAttachmentDescription[0].flags				= 0;
 		FrameAttachmentDescription[0].format			= aProperty.PixelFormat;
-		FrameAttachmentDescription[0].samples			= VkSampleCountFlagBits::VK_SAMPLE_COUNT_1_BIT;
-		FrameAttachmentDescription[0].loadOp			= VkAttachmentLoadOp::VK_ATTACHMENT_LOAD_OP_CLEAR;
-		FrameAttachmentDescription[0].storeOp			= VkAttachmentStoreOp::VK_ATTACHMENT_STORE_OP_STORE;
-		FrameAttachmentDescription[0].stencilLoadOp		= VkAttachmentLoadOp::VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		FrameAttachmentDescription[0].stencilStoreOp	= VkAttachmentStoreOp::VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		FrameAttachmentDescription[0].initialLayout		= VkImageLayout::VK_IMAGE_LAYOUT_UNDEFINED; // Depends on swapchain
-		FrameAttachmentDescription[0].finalLayout		= VkImageLayout::VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		FrameAttachmentDescription[0].samples			= VK_SAMPLE_COUNT_1_BIT;
+		FrameAttachmentDescription[0].loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
+		FrameAttachmentDescription[0].storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
+		FrameAttachmentDescription[0].stencilLoadOp		= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+		FrameAttachmentDescription[0].stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		FrameAttachmentDescription[0].initialLayout		= VK_IMAGE_LAYOUT_UNDEFINED; // Depends on swapchain
+		FrameAttachmentDescription[0].finalLayout		= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
 		// Place Null handle on views
 		for (uint32_t i = 0; i < FrameCount; i++) {
@@ -121,7 +122,7 @@ namespace geodesuka::core::object {
 		PresentIndex = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
 		PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
 		Presentation = (VkPresentInfoKHR*)malloc(FrameCount * sizeof(VkPresentInfoKHR));
-		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 		assert(!((NextImageSemaphore == NULL) || (RenderOperationSemaphore == NULL) || (PresentResult == NULL)));
 
@@ -208,7 +209,7 @@ namespace geodesuka::core::object {
 		CreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 		CreateInfo.queueFamilyIndexCount	= 0;
 		CreateInfo.pQueueFamilyIndices		= NULL;
-		CreateInfo.preTransform				= VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		CreateInfo.preTransform				= SurfaceCapabilities.currentTransform;
 		CreateInfo.compositeAlpha			= (VkCompositeAlphaFlagBitsKHR)aProperty.Swapchain.CompositeAlpha;
 		CreateInfo.presentMode				= (VkPresentModeKHR)aProperty.Swapchain.PresentMode;
 		CreateInfo.clipped					= (VkBool32)aProperty.Swapchain.Clipped;
@@ -279,6 +280,7 @@ namespace geodesuka::core::object {
 			Presentation[i].pSwapchains				= &Swapchain;
 			Presentation[i].pImageIndices			= &PresentIndex[i];
 			Presentation[i].pResults				= &PresentResult[i];
+
 		}
 
 		isReadyToBeProcessed.store(true);
@@ -349,7 +351,7 @@ namespace geodesuka::core::object {
 		NextImageSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 		RenderOperationSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 		PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
-		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+		PipelineStageFlags = VkPipelineStageFlagBits::VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 
 		assert(!((NextImageSemaphore == NULL) || (RenderOperationSemaphore == NULL) || (PresentResult == NULL)));
 
@@ -432,7 +434,7 @@ namespace geodesuka::core::object {
 		CreateInfo.imageSharingMode			= VkSharingMode::VK_SHARING_MODE_EXCLUSIVE;
 		CreateInfo.queueFamilyIndexCount	= 0;
 		CreateInfo.pQueueFamilyIndices		= NULL;
-		CreateInfo.preTransform				= VkSurfaceTransformFlagBitsKHR::VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+		CreateInfo.preTransform				= SurfaceCapabilities.currentTransform;
 		CreateInfo.compositeAlpha			= (VkCompositeAlphaFlagBitsKHR)aProperty.Swapchain.CompositeAlpha;
 		CreateInfo.presentMode				= (VkPresentModeKHR)aProperty.Swapchain.PresentMode;
 		CreateInfo.clipped					= (VkBool32)aProperty.Swapchain.Clipped;
@@ -507,40 +509,235 @@ namespace geodesuka::core::object {
 
 		isReadyToBeProcessed.store(true);
 	}
+	*/
+
+	system_window::system_window(engine* aEngine, gcl::context* aContext, system_display* aSystemDisplay, const property& aProperty) : window(aEngine, aContext, aSystemDisplay->Stage) {
+		// Debug window constructor
+		
+		/*
+		Construction List
+		1 - Preinitialize Variables
+		2 - Create Window Handle
+		3 - Set System Window Callbacks
+
+		*/
+
+		make_default();
+
+		// Number of back buffered frames in the swapchain.
+		FrameCount = aProperty.Swapchain.FrameCount;
+		// Only one color attachment.
+		FrameAttachmentCount = 1;
+		// FrameRate
+		FrameRate = aProperty.Swapchain.FrameRate;
+
+		Display = aSystemDisplay;
+
+		Size		= aProperty.Size;
+		Position	= aProperty.Position;
+		SizeVSC.x	= (((float)aSystemDisplay->SizeVSC.x) / (aSystemDisplay->Size.x)) * Size.x;
+		SizeVSC.y	= (((float)aSystemDisplay->SizeVSC.y) / (aSystemDisplay->Size.y)) * Size.y;
+		PositionVSC = this->phy2vsc(Position, SizeVSC, aSystemDisplay->PositionVSC, aSystemDisplay->SizeVSC, aSystemDisplay->Size);
+		Option		= aProperty.Window;
+		Title		= aProperty.Title;
+
+		Handle = create_window_handle(Option, SizeVSC.x, SizeVSC.y, Title.ptr(), NULL, NULL);
+
+		if (Handle != NULL) {
+
+			// User pointer to forward input stream.
+			glfwSetWindowUserPointer(Handle, (void*)this);
+
+			// system_window callbacks
+			glfwSetWindowPosCallback(Handle, system_window::position_callback);
+			glfwSetWindowSizeCallback(Handle, system_window::size_callback);
+			glfwSetWindowCloseCallback(Handle, system_window::close_callback);
+			glfwSetWindowRefreshCallback(Handle, system_window::refresh_callback);
+			glfwSetWindowFocusCallback(Handle, system_window::focus_callback);
+			glfwSetWindowIconifyCallback(Handle, system_window::iconify_callback);
+			glfwSetWindowMaximizeCallback(Handle, system_window::maximize_callback);
+			glfwSetWindowContentScaleCallback(Handle, system_window::content_scale_callback);
+
+			// framebuffer callbacks
+			glfwSetFramebufferSizeCallback(Handle, system_window::framebuffer_size_callback);
+
+			// Mouse callbacks
+			glfwSetMouseButtonCallback(Handle, system_window::mouse_button_callback);
+			glfwSetCursorPosCallback(Handle, system_window::cursor_position_callback);
+			glfwSetCursorEnterCallback(Handle, system_window::cursor_enter_callback);
+			glfwSetScrollCallback(Handle, system_window::scroll_callback);
+
+			// Keyboard callbacks
+			glfwSetKeyCallback(Handle, system_window::key_callback);
+			glfwSetCharCallback(Handle, system_window::character_callback);
+
+			// File drop
+			glfwSetDropCallback(Handle, system_window::file_drop_callback);
+
+			int sWidth, sHeight;
+			glfwGetFramebufferSize(Handle, &sWidth, &sHeight);
+			Resolution = uint3(sWidth, sHeight, 1u);
+
+			glfwCreateWindowSurface(Engine->Handle, Handle, NULL, &Surface);
+		}
+
+		if (Surface != VK_NULL_HANDLE) {
+			// Queries Available formats.
+			uint32_t sSurfaceFormatCount;
+			vkGetPhysicalDeviceSurfaceFormatsKHR(Context->parent()->handle(), Surface, &sSurfaceFormatCount, NULL);
+			std::vector<VkSurfaceFormatKHR> sSurfaceFormatList(sSurfaceFormatCount);
+			vkGetPhysicalDeviceSurfaceFormatsKHR(Context->parent()->handle(), Surface, &sSurfaceFormatCount, sSurfaceFormatList.data());
+
+			// Queries Surface Capabilities.
+			VkSurfaceCapabilitiesKHR sSurfaceCapabilities{};
+			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Context->parent()->handle(), Surface, &sSurfaceCapabilities);
+
+			// Queries presentation modes.
+			uint32_t sSurfacePresentModeCount;
+			vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), Surface, &sSurfacePresentModeCount, NULL);
+			std::vector<VkPresentModeKHR> sSurfacePresentModeList(sSurfacePresentModeCount);
+			vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), Surface, &sSurfacePresentModeCount, sSurfacePresentModeList.data());
+
+			bool isSupported[10] = { false, false, false, false, false, false, false, false, false, false };
+
+			// Check for Colorspace and Format support.
+			for (uint32_t i = 0; i < sSurfaceFormatCount; i++) {
+				if ((aProperty.PixelFormat == sSurfaceFormatList[i].format) && (aProperty.Swapchain.ColorSpace == sSurfaceFormatList[i].colorSpace)) {
+					isSupported[0] = true;
+				}
+			}
+
+			// Image Usage and Composite Alpha Support
+
+			CreateInfo.sType					= VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+			CreateInfo.surface					= Surface;
+			CreateInfo.minImageCount			= std::clamp(FrameCount, sSurfaceCapabilities.minImageCount, sSurfaceCapabilities.maxImageCount); // change maybe later?
+			if (isSupported[0]) {
+				CreateInfo.imageFormat				= aProperty.PixelFormat;
+				CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aProperty.Swapchain.ColorSpace;
+			}
+			else {
+				CreateInfo.imageFormat				= VK_FORMAT_B8G8R8A8_SRGB;
+				CreateInfo.imageColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+			}
+			CreateInfo.imageExtent.width		= std::clamp((uint32_t)Resolution.x, sSurfaceCapabilities.minImageExtent.width, sSurfaceCapabilities.maxImageExtent.width);
+			CreateInfo.imageExtent.height		= std::clamp((uint32_t)Resolution.y, sSurfaceCapabilities.minImageExtent.height, sSurfaceCapabilities.maxImageExtent.height);
+			CreateInfo.imageArrayLayers			= 1;
+			if ((sSurfaceCapabilities.supportedUsageFlags & aProperty.Swapchain.Usage) == aProperty.Swapchain.Usage) {
+				CreateInfo.imageUsage				= aProperty.Swapchain.Usage;
+			}
+			else {
+				CreateInfo.imageUsage				= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+			}
+			CreateInfo.imageSharingMode			= VK_SHARING_MODE_EXCLUSIVE;
+			CreateInfo.queueFamilyIndexCount	= 0;
+			CreateInfo.pQueueFamilyIndices		= NULL;
+			CreateInfo.preTransform				= sSurfaceCapabilities.currentTransform;
+			if ((sSurfaceCapabilities.supportedCompositeAlpha & aProperty.Swapchain.CompositeAlpha) == aProperty.Swapchain.CompositeAlpha) {
+				CreateInfo.compositeAlpha			= (VkCompositeAlphaFlagBitsKHR)aProperty.Swapchain.CompositeAlpha;
+			}
+			else {
+				CreateInfo.compositeAlpha			= VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+			}
+			CreateInfo.presentMode				= VK_PRESENT_MODE_MAILBOX_KHR;
+			for (uint32_t i = 0; i < sSurfacePresentModeCount; i++) {
+				if (sSurfacePresentModeList[i] == aProperty.Swapchain.PresentMode) {
+					CreateInfo.presentMode			= (VkPresentModeKHR)aProperty.Swapchain.PresentMode;
+				}
+			}
+			CreateInfo.clipped					= VK_TRUE;
+
+			vkCreateSwapchainKHR(Context->handle(), &CreateInfo, NULL, &Swapchain);
+		}
+
+		if (Swapchain != VK_NULL_HANDLE) {
+			vkGetSwapchainImagesKHR(Context->handle(), Swapchain, &FrameCount, NULL);
+			std::vector<VkImage> sImage(FrameCount);
+			vkGetSwapchainImagesKHR(Context->handle(), Swapchain, &FrameCount, sImage.data());
+
+			FrameRateTimer.set(1.0 / FrameRate);
+
+			FrameAttachmentDescription = (VkAttachmentDescription*)malloc(FrameAttachmentCount * sizeof(VkAttachmentDescription));
+			FrameAttachment = (VkImageView**)malloc(FrameCount * sizeof(VkImageView*));
+			DrawCommandCount = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
+			DrawCommandList = (VkCommandBuffer**)malloc(FrameCount * sizeof(VkCommandBuffer*));
+			NextImageSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
+			RenderOperationSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
+			PresentIndex = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
+			PresentResult = (VkResult*)malloc(FrameCount * sizeof(VkResult));
+			Presentation = (VkPresentInfoKHR*)malloc(FrameCount * sizeof(VkPresentInfoKHR));
+			PipelineStageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+			if (FrameAttachment != NULL) {
+				for (int i = 0; i < FrameCount; i++) {
+					DrawCommandCount[i] = 0;
+					DrawCommandList[i] = NULL;
+					FrameAttachment[i] = (VkImageView*)malloc(FrameAttachmentCount * sizeof(VkImageView));
+					if (FrameAttachment[i] != NULL) {
+						for (int j = 0; j < FrameAttachmentCount; j++) {
+							FrameAttachment[i][j] = VK_NULL_HANDLE;
+						}
+					}
+				}
+			}
+
+			FrameAttachmentDescription[0].format			= CreateInfo.imageFormat;
+			FrameAttachmentDescription[0].samples			= VK_SAMPLE_COUNT_1_BIT;
+			FrameAttachmentDescription[0].loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
+			FrameAttachmentDescription[0].storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
+			FrameAttachmentDescription[0].stencilLoadOp		= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			FrameAttachmentDescription[0].stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			FrameAttachmentDescription[0].initialLayout		= VK_IMAGE_LAYOUT_UNDEFINED;
+			FrameAttachmentDescription[0].finalLayout		= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+			for (int i = 0; i < FrameCount; i++) {
+				VkImageViewCreateInfo ImageViewCreateInfo{};
+				ImageViewCreateInfo.sType									= VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				ImageViewCreateInfo.image									= sImage[i];
+				ImageViewCreateInfo.viewType								= VK_IMAGE_VIEW_TYPE_2D;
+				ImageViewCreateInfo.format									= CreateInfo.imageFormat;
+				ImageViewCreateInfo.components.r							= VK_COMPONENT_SWIZZLE_IDENTITY;
+				ImageViewCreateInfo.components.g							= VK_COMPONENT_SWIZZLE_IDENTITY;
+				ImageViewCreateInfo.components.b							= VK_COMPONENT_SWIZZLE_IDENTITY;
+				ImageViewCreateInfo.components.a							= VK_COMPONENT_SWIZZLE_IDENTITY;
+				ImageViewCreateInfo.subresourceRange.aspectMask				= VK_IMAGE_ASPECT_COLOR_BIT;
+				ImageViewCreateInfo.subresourceRange.baseMipLevel			= 0;
+				ImageViewCreateInfo.subresourceRange.levelCount				= 1;
+				ImageViewCreateInfo.subresourceRange.baseArrayLayer			= 0;
+				ImageViewCreateInfo.subresourceRange.layerCount				= 1;
+
+				vkCreateImageView(Context->handle(), &ImageViewCreateInfo, NULL, &FrameAttachment[i][0]);
+
+				VkSemaphoreCreateInfo SemaphoreCreateInfo{};
+				SemaphoreCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+				SemaphoreCreateInfo.pNext = NULL;
+				SemaphoreCreateInfo.flags = 0;
+				vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &NextImageSemaphore[i]);
+				vkCreateSemaphore(Context->handle(), &SemaphoreCreateInfo, NULL, &RenderOperationSemaphore[i]);
+
+				PresentIndex[i]		= i;
+				PresentResult[i]	= VkResult::VK_SUCCESS;
+
+				Presentation[i].sType					= VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+				Presentation[i].pNext					= NULL;
+				Presentation[i].waitSemaphoreCount		= 1;
+				Presentation[i].pWaitSemaphores			= &RenderOperationSemaphore[i];
+				Presentation[i].swapchainCount			= 1;
+				Presentation[i].pSwapchains				= &Swapchain;
+				Presentation[i].pImageIndices			= &PresentIndex[i];
+				Presentation[i].pResults				= &PresentResult[i];
+
+			}
+		}
+
+		isReadyToBeProcessed.store(true);
+
+	}
 
 	system_window::~system_window() {
 		isReadyToBeProcessed.store(false);
 		this->Mutex.lock();
-		// Clears swapchain images.
-		for (int i = 0; i < FrameCount; i++) {
-			vkDestroySemaphore(Context->handle(), NextImageSemaphore[i], NULL);
-			vkDestroySemaphore(Context->handle(), RenderOperationSemaphore[i], NULL);
-			Frame[i].CreateInfo = {};
-			Frame[i].Handle = VK_NULL_HANDLE;
-			vkDestroyImageView(Context->handle(), FrameAttachment[i][0], NULL);
-			FrameAttachment[i][0] = VK_NULL_HANDLE;
-		}
-
-		FrameCount = 0;
-		delete[] Frame;
-		Frame = nullptr;
-
-		if ((Context != nullptr) && (Swapchain != VK_NULL_HANDLE)) {
-			vkDestroySwapchainKHR(Context->handle(), Swapchain, NULL);
-			Swapchain = VK_NULL_HANDLE;
-		}
-
-		if ((Engine != nullptr) && (Surface != VK_NULL_HANDLE)) {
-			// Destroys suface.
-			vkDestroySurfaceKHR(Engine->handle(), Surface, NULL);
-			Surface = VK_NULL_HANDLE;
-		}
-		if (Handle != NULL) {
-			// Destroys window handle.
-			//glfwDestroyWindow(this->Handle);
-			destroy_window_handle(Handle);
-			Handle = NULL;
-		}
+		this->clear_all();
 		this->Mutex.unlock();
 	}
 
@@ -680,6 +877,87 @@ namespace geodesuka::core::object {
 		this->Time += aDeltaTime;
 		this->Mutex.unlock();
 		return TransferBatch;
+	}
+
+	void system_window::make_default() {
+		//Engine = nullptr;
+		//Context = nullptr;
+		//Stage = nullptr;
+		//Display = nullptr;
+
+		InputVelocity	= float3(0.0, 0.0, 0.0);
+		InputForce		= float3(0.0, 0.0, 0.0);
+		Mass			= 1.0;
+		Time			= logic::get_time();
+		Position		= float3(0.0, 0.0, 0.0);
+		Momentum		= float3(0.0, 0.0, 0.0);
+		Force			= float3(0.0, 0.0, 0.0);
+		DirectionX		= float3(1.0, 0.0, 0.0);
+		DirectionY		= float3(0.0, 1.0, 0.0);
+		DirectionZ		= float3(0.0, 0.0, 1.0);
+
+		FrameCount = 0;
+		FrameRate = 0.0;
+		Resolution = uint3(0u, 0u, 0u);
+		FrameAttachmentCount = 0;
+		FrameAttachmentDescription = NULL;
+		FrameAttachment = NULL;
+		FrameDrawIndex = 0;
+		DrawCommandCount = NULL;
+		DrawCommandList = NULL;
+
+		Title = "";
+		Size = float2(0.0, 0.0);
+		Option = window::option();
+
+		memset(&CreateInfo, 0x00, sizeof(VkSwapchainCreateInfoKHR));
+		Handle = NULL;
+		Surface = VK_NULL_HANDLE;
+		CreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+		Swapchain = VK_NULL_HANDLE;
+		PositionVSC = int2(0, 0);
+		SizeVSC = int2(0, 0);
+		NextImageSemaphoreIndex = 0;
+		NextImageSemaphore = NULL;
+		RenderOperationSemaphore = NULL;
+		PresentIndex = NULL;
+		PresentResult = NULL;
+		PipelineStageFlags = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		Presentation = NULL;
+	}
+
+	void system_window::clear_all() {
+		if (Context != nullptr) {
+			for (int i = 0; i < FrameCount; i++) {
+				vkDestroySemaphore(Context->handle(), RenderOperationSemaphore[i], NULL);
+				vkDestroySemaphore(Context->handle(), NextImageSemaphore[i], NULL);
+				vkDestroyImageView(Context->handle(), FrameAttachment[i][0], NULL);
+			}
+			vkDestroySwapchainKHR(Context->handle(), Swapchain, NULL);
+			vkDestroySurfaceKHR(Engine->handle(), Surface, NULL);
+			system_window::destroy_window_handle(Handle);
+		}
+
+		free(Presentation);
+		free(PresentResult);
+		free(PresentIndex);
+		free(RenderOperationSemaphore);
+		free(NextImageSemaphore);
+
+		if (DrawCommandList != NULL) {
+			for (int i = 0; i < FrameCount; i++) {
+				free(DrawCommandList[i]);
+			}
+		}
+		free(DrawCommandList);
+		free(DrawCommandCount);
+		if (FrameAttachment != NULL) {
+			for (int i = 0; i < FrameAttachmentCount; i++) {
+				free(FrameAttachment);
+			}
+		}
+		free(FrameAttachmentDescription);
+
 	}
 
 	float3 system_window::vsc2phy(int2 aRvscw, int2 aSvscw, int2 aRvscm, int2 aSvscm, float2 aSphym) {

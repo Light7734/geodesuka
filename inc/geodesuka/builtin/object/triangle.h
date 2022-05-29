@@ -14,12 +14,20 @@ namespace geodesuka::builtin::object {
 
 	protected:
 
+		virtual VkCommandBuffer draw(core::object::rendertarget* aRenderTarget) override;
+
 	private:
 
 		core::gcl::buffer* VertexBuffer;
 		core::gcl::shader* VertexShader;
 		core::gcl::shader* PixelShader;
 
+		// Hardcoded section for debugging.
+		VkRenderPass RenderPass;
+		std::vector<VkFramebuffer> FrameBuffer;
+		std::vector<VkCommandBuffer> CommandBuffer;
+
+		VkPipelineLayout PipelineLayout;
 		VkPipeline Pipeline;
 
 	};
