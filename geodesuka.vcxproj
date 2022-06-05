@@ -210,7 +210,6 @@
     <ClCompile Include="src\float4x3.cpp" />
     <ClCompile Include="src\float4x4.cpp" />
     <ClCompile Include="src\font.cpp" />
-    <ClCompile Include="src\framebuffer.cpp" />
     <ClCompile Include="src\fsupport.cpp" />
     <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\int2.cpp" />
@@ -288,7 +287,6 @@
     <ClInclude Include="inc\geodesuka\core\gcl\context.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\device.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\drawpack.h" />
-    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\image.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\pipeline.h" />
     <ClInclude Include="inc\geodesuka\core\gcl\renderpass.h" />

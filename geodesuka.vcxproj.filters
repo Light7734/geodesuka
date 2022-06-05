@@ -174,9 +174,6 @@
     <ClCompile Include="src\font.cpp">
       <Filter>src\core\io</Filter>
     </ClCompile>
-    <ClCompile Include="src\framebuffer.cpp">
-      <Filter>src\core\gcl</Filter>
-    </ClCompile>
     <ClCompile Include="src\joystick.cpp">
       <Filter>src\core\hid</Filter>
     </ClCompile>
@@ -484,9 +481,6 @@
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\context.h">
-      <Filter>inc\geodesuka\core\gcl</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\gcl\framebuffer.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\variable.h">

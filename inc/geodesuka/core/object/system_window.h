@@ -11,7 +11,6 @@
 #include "../gcl/device.h"
 #include "../gcl/context.h"
 #include "../gcl/image.h"
-#include "../gcl/framebuffer.h"
 
 #include "../object.h"
 #include "window.h"

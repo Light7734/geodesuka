@@ -2,109 +2,156 @@
 
 namespace geodesuka::core::gcl {
 
-
-
-
-	// Graphics Pipeline
-	pipeline::pipeline(
-		context* aContext,
-		uint32_t aShaderCount, shader* aShader,
-		uint32_t aDSLCount, VkDescriptorSetLayout* aDSL,
-		renderpass& aRenderPass, uint32_t aSubpassIndex
-	) {
-
-		this->gdefault();
-
-		VkResult Result = VkResult::VK_SUCCESS;
-
-		// Load shaders.
-		this->ShaderStage = (VkPipelineShaderStageCreateInfo*)malloc(this->ShaderCount * sizeof(VkPipelineShaderStageCreateInfo));
-		for (uint32_t i = 0; i < this->ShaderCount; i++) {
-			this->ShaderStage[i] = this->Shader[i].stageci();
-		}
-
-		VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
-		DescriptorPoolCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		DescriptorPoolCreateInfo.pNext				= NULL;
-		DescriptorPoolCreateInfo.flags				= 0;
-		DescriptorPoolCreateInfo.maxSets			;
-		DescriptorPoolCreateInfo.poolSizeCount		;
-		DescriptorPoolCreateInfo.pPoolSizes			;
-
-		// Create Pipeline Layout.
-		this->LayoutCreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		this->LayoutCreateInfo.pNext					= NULL;
-		this->LayoutCreateInfo.flags					= 0;
-		this->LayoutCreateInfo.setLayoutCount			= aDSLCount;
-		this->LayoutCreateInfo.pSetLayouts				= aDSL;
-		this->LayoutCreateInfo.pushConstantRangeCount	= 0;
-		this->LayoutCreateInfo.pPushConstantRanges		= NULL;
-		Result = vkCreatePipelineLayout(this->Context->handle(), &this->LayoutCreateInfo, NULL, &this->Layout);
-
-
+	pipeline::rasterizer::rasterizer() {
 
 	}
 
-	pipeline::~pipeline() {
-
-	}
-
-	void pipeline::gdefault() {
-		this->GraphicsCreateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-		this->GraphicsCreateInfo.pNext					= NULL;
-		this->GraphicsCreateInfo.flags					= 0;
-		this->GraphicsCreateInfo.stageCount				= 0;
-		this->GraphicsCreateInfo.pStages				= NULL;
-		this->GraphicsCreateInfo.pVertexInputState		= &this->VertexInput;
-		this->GraphicsCreateInfo.pInputAssemblyState	= &this->InputAssembly;
-		this->GraphicsCreateInfo.pTessellationState		= &this->Tesselation;
-		this->GraphicsCreateInfo.pViewportState			= &this->Viewport;
-		this->GraphicsCreateInfo.pRasterizationState	= &this->Rasterizer;
-		this->GraphicsCreateInfo.pMultisampleState		= &this->Multisample;
-		this->GraphicsCreateInfo.pDepthStencilState		= &this->DepthStencil;
-		this->GraphicsCreateInfo.pColorBlendState		= &this->ColorBlend;
-		this->GraphicsCreateInfo.pDynamicState			= &this->DynamicState;
-		this->GraphicsCreateInfo.layout					= VK_NULL_HANDLE;
-		this->GraphicsCreateInfo.renderPass				= VK_NULL_HANDLE;
-		this->GraphicsCreateInfo.subpass				= 0;
-		this->GraphicsCreateInfo.basePipelineHandle		= VK_NULL_HANDLE;
-		this->GraphicsCreateInfo.basePipelineIndex		= 0;
-
-		this->VertexInput.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	// Needs shaders to determine descriptor sets/pipeline layout.
+	pipeline::rasterizer::rasterizer(uint32_t aShaderCount, shader** aShaderList) {
+		this->VertexInput.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 		this->VertexInput.pNext = NULL;
 		this->VertexInput.flags = 0;
 
-		this->InputAssembly.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+		this->InputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		this->InputAssembly.pNext = NULL;
 		this->InputAssembly.flags = 0;
 
-		this->Tesselation.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
+		// Depends
+		this->Tesselation.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 		this->Tesselation.pNext = NULL;
 		this->Tesselation.flags = 0;
 
-		this->Viewport.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+		this->Viewport.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 		this->Viewport.pNext = NULL;
 		this->Viewport.flags = 0;
 
-		this->Rasterizer.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+		this->Rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
 		this->Rasterizer.pNext = NULL;
 		this->Rasterizer.flags = 0;
 
-		this->Multisample.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+		this->Multisample.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
 		this->Multisample.pNext = NULL;
 		this->Multisample.flags = 0;
 
-		this->DepthStencil.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+		this->DepthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		this->DepthStencil.pNext = NULL;
 		this->DepthStencil.flags = 0;
-		
-		this->ColorBlend.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+
+		this->ColorBlend.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		this->ColorBlend.pNext = NULL;
 		this->ColorBlend.flags = 0;
 
 		this->DynamicState.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		this->DynamicState.pNext = NULL;
 		this->DynamicState.flags = 0;
+
+		bool TesselationShaderExists = false;
+		bool GeometryShaderExists = false;
+
+		CreateInfo.sType					= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		CreateInfo.pNext					= NULL;
+		CreateInfo.flags					= 0;
+		CreateInfo.stageCount				= StageCount;
+		CreateInfo.pStages					= StageList;
+		CreateInfo.pVertexInputState		= &VertexInput;
+		CreateInfo.pInputAssemblyState		= &InputAssembly;
+		if (TesselationShaderExists) {
+			CreateInfo.pTessellationState = &Tesselation;
+		}
+		else {
+			CreateInfo.pTessellationState = NULL;
+		}
+		CreateInfo.pViewportState			= &Viewport;
+		CreateInfo.pRasterizationState		= &Rasterizer;
+		CreateInfo.pMultisampleState		= &Multisample;
+		CreateInfo.pDepthStencilState		= &DepthStencil;
+		CreateInfo.pColorBlendState			= &ColorBlend;
+		CreateInfo.pDynamicState			= &DynamicState;
+		CreateInfo.layout					= VK_NULL_HANDLE;
+		CreateInfo.renderPass				= VK_NULL_HANDLE;
+		CreateInfo.subpass					= 0;
+		CreateInfo.basePipelineHandle		= VK_NULL_HANDLE;
+		CreateInfo.basePipelineIndex		= 0;
+
+	}
+
+	pipeline::raytracer::raytracer() {
+
+	}
+
+	pipeline::compute::compute() {
+
+	}
+
+	pipeline::pipeline(context* aContext, rasterizer& aRasterizer, VkRenderPass aRenderPass, uint32_t aSubpassIndex) {
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		Type = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		Context = aContext;
+		Rasterizer = aRasterizer;
+
+		// Create Descriptor Set Layouts
+		for (uint32_t i = 0; i < Rasterizer.UniformSetCount; i++) {
+			VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInfo{};
+			DescriptorSetLayoutCreateInfo.sType				= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+			DescriptorSetLayoutCreateInfo.pNext				= NULL;
+			DescriptorSetLayoutCreateInfo.flags				= 0;
+			DescriptorSetLayoutCreateInfo.bindingCount		= Rasterizer.UniformSetBindingCount[i];
+			DescriptorSetLayoutCreateInfo.pBindings			= Rasterizer.UniformSetBindingList[i];
+			Result = vkCreateDescriptorSetLayout(Context->handle(), &DescriptorSetLayoutCreateInfo, NULL, &DescriptorSetLayoutList[i]);
+		}
+
+		VkDescriptorSetLayoutBinding;
+
+		// Number of Pool Types.
+
+		VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
+		DescriptorPoolCreateInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		DescriptorPoolCreateInfo.pNext			= NULL;
+		DescriptorPoolCreateInfo.flags			= 0;
+		DescriptorPoolCreateInfo.maxSets		;
+		DescriptorPoolCreateInfo.poolSizeCount	;
+		DescriptorPoolCreateInfo.pPoolSizes		;
+
+		Result = vkCreateDescriptorPool(Context->handle(), &DescriptorPoolCreateInfo, NULL, &DescriptorPool);
+
+		VkPipelineLayoutCreateInfo LayoutCreateInfo{};
+		LayoutCreateInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+		LayoutCreateInfo.pNext					= NULL;
+		LayoutCreateInfo.flags					= 0;
+		LayoutCreateInfo.setLayoutCount			;
+		LayoutCreateInfo.pSetLayouts			;
+		LayoutCreateInfo.pushConstantRangeCount	= 0;
+		LayoutCreateInfo.pPushConstantRanges	= NULL;
+
+		// Load rasterizer
+		Rasterizer.CreateInfo.layout			= Layout;
+		Rasterizer.CreateInfo.renderPass		= aRenderPass;
+		Rasterizer.CreateInfo.subpass			= aSubpassIndex;
+
+		Result = vkCreatePipelineLayout(Context->handle(), &LayoutCreateInfo, NULL, &Layout);
+
+		Result = vkCreateGraphicsPipelines(Context->handle(), VK_NULL_HANDLE, 1, &Rasterizer.CreateInfo, NULL, &Handle);
+	}
+
+	pipeline::pipeline(context* aContext, raytracer& aRaytracer) {
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		Type = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR;
+		Context = aContext;
+		Raytracer = aRaytracer;
+
+		//Result = vkCreateRayTracingPipelinesKHR(Context->handle())
+	}
+
+	pipeline::pipeline(context* aContext, compute& aCompute) {
+		VkResult Result = VkResult::VK_SUCCESS;
+
+		Type = VK_PIPELINE_BIND_POINT_COMPUTE;
+		Context = aContext;
+		Compute = aCompute;
+
+		Result = vkCreateComputePipelines(Context->handle(), Cache, 1, &Compute.CreateInfo, NULL, &Handle);
 	}
 
 }

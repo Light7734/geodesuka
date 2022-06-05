@@ -30,8 +30,6 @@ Property List:
 
 #include "../math.h"
 
-#include "../gcl/framebuffer.h"
-
 #include "../object.h"
 #include "rendertarget.h"
 

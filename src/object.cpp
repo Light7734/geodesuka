@@ -68,7 +68,7 @@ namespace geodesuka::core {
 		VkCommandBuffer DrawCommand = VK_NULL_HANDLE;
 		this->Mutex.lock();
 		if (DrawPack.count(aRenderTarget) > 0) {
-			DrawCommand = DrawPack[aRenderTarget]->Command[aRenderTarget->FrameDrawIndex];
+			DrawCommand = (*(DrawPack[aRenderTarget]))[aRenderTarget->FrameDrawIndex];
 		}
 		this->Mutex.unlock();
 		return DrawCommand;
@@ -102,9 +102,8 @@ namespace geodesuka::core {
 		this->Mutex.lock();
 
 		// Generic Free body motion equations.
-		this->Momentum += (this->Force + this->InputForce) * aDeltaTime;
-		this->Position += ((this->Momentum / this->Mass) + this->InputVelocity) * aDeltaTime;
-
+		Momentum += (Force + InputForce) * aDeltaTime;
+		Position += ((Momentum / Mass) + InputVelocity) * aDeltaTime;
 
 		this->Mutex.unlock();
 		return TransferBatch;
@@ -121,7 +120,6 @@ namespace geodesuka::core {
 		ComputeBatch.pCommandBuffers		= NULL;
 		ComputeBatch.signalSemaphoreCount	= 0;
 		ComputeBatch.pSignalSemaphores		= NULL;
-
 		return ComputeBatch;
 	}
 

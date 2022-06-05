@@ -5,8 +5,8 @@
 #include <vulkan/vulkan.h>
 
 #include "context.h"
-#include "renderpass.h"
-#include "framebuffer.h"
+//#include "renderpass.h"
+//#include "framebuffer.h"
 
 // Forward Declaration.
 namespace geodesuka::core::object {
@@ -21,16 +21,18 @@ namespace geodesuka::core::gcl {
 		context* Context;
 		object::rendertarget* RenderTarget;
 
-		VkResult Result;
-		VkRenderPassCreateInfo CreateInfo{};
 		VkRenderPass RenderPass;
-		// This is created per frame.
-		//uint32_t FrameCount;
-		VkFramebuffer* Frame;
-		VkCommandBuffer* Command;
+		VkFramebuffer* FrameBuffer;
+		VkCommandBuffer* CommandBuffer;
+
+
+		VkPipeline *Pipeline;
+		VkPipelineBindPoint BindPoint;
 
 		drawpack(context *aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
 		~drawpack();
+
+		VkCommandBuffer operator[](int aIndex);
 
 	};
 

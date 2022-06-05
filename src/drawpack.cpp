@@ -4,29 +4,34 @@
 
 #include <assert.h>
 
+#include <vulkan/vulkan.h>
+
+#include <geodesuka/core/gcl/context.h>
+
 namespace geodesuka::core::gcl {
 
 	drawpack::drawpack(context* aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList) {
-
 		Context = aContext;
 		RenderTarget = aRenderTarget;
 
-		CreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		CreateInfo.pNext				= NULL;
-		CreateInfo.flags				= 0;
-		CreateInfo.attachmentCount		= RenderTarget->FrameAttachmentCount;
-		CreateInfo.pAttachments			= RenderTarget->FrameAttachmentDescription;
-		CreateInfo.subpassCount			= aSubpassDescriptionCount;
-		CreateInfo.pSubpasses			= aSubpassDescriptionList;
-		CreateInfo.dependencyCount		= aSubpassDependencyCount;
-		CreateInfo.pDependencies		= aSubpassDependencyList;
+		VkResult Result = VK_SUCCESS;
+		VkRenderPassCreateInfo RenderPassCreateInfo{};
+		RenderPassCreateInfo.sType				= VkStructureType::VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		RenderPassCreateInfo.pNext				= NULL;
+		RenderPassCreateInfo.flags				= 0;
+		RenderPassCreateInfo.attachmentCount	= RenderTarget->FrameAttachmentCount;
+		RenderPassCreateInfo.pAttachments		= RenderTarget->FrameAttachmentDescription;
+		RenderPassCreateInfo.subpassCount		= aSubpassDescriptionCount;
+		RenderPassCreateInfo.pSubpasses			= aSubpassDescriptionList;
+		RenderPassCreateInfo.dependencyCount	= aSubpassDependencyCount;
+		RenderPassCreateInfo.pDependencies		= aSubpassDependencyList;
 
-		Result = vkCreateRenderPass(Context->handle(), &CreateInfo, NULL, &RenderPass);
+		Result = vkCreateRenderPass(Context->handle(), &RenderPassCreateInfo, NULL, &RenderPass);
 
-		Frame = (VkFramebuffer*)malloc(RenderTarget->FrameCount * sizeof(VkFramebuffer));
-		Command = (VkCommandBuffer*)malloc(RenderTarget->FrameCount * sizeof(VkCommandBuffer));
+		FrameBuffer = (VkFramebuffer*)malloc(RenderTarget->FrameCount * sizeof(VkFramebuffer));
+		CommandBuffer = (VkCommandBuffer*)malloc(RenderTarget->FrameCount * sizeof(VkCommandBuffer));
 
-		assert(!((Frame == NULL) || (Command == NULL)));
+		assert(!((FrameBuffer == NULL) || (CommandBuffer == NULL)));
 
 		for (uint32_t i = 0; i < RenderTarget->FrameCount; i++) {
 			VkFramebufferCreateInfo FramebufferCreateInfo{};
@@ -39,25 +44,35 @@ namespace geodesuka::core::gcl {
 			FramebufferCreateInfo.width					= RenderTarget->Resolution.x;
 			FramebufferCreateInfo.height				= RenderTarget->Resolution.y;
 			FramebufferCreateInfo.layers				= RenderTarget->Resolution.z;
-			Result = vkCreateFramebuffer(Context->handle(), &FramebufferCreateInfo, NULL, &Frame[i]);
+			Result = vkCreateFramebuffer(Context->handle(), &FramebufferCreateInfo, NULL, &FrameBuffer[i]);
 		}
 
-		RenderTarget->DrawCommandPool.allocate(command_pool::level::PRIMARY, RenderTarget->FrameCount, Command);
+		RenderTarget->DrawCommandPool.allocate(command_pool::level::PRIMARY, RenderTarget->FrameCount, CommandBuffer);
 	}
 
 	drawpack::~drawpack() {
-		RenderTarget->DrawCommandPool.release(RenderTarget->FrameCount, Command);
-		free(Command);
-		for (uint32_t i = 0; i < RenderTarget->FrameCount; i++) {
-			vkDestroyFramebuffer(Context->handle(), Frame[i], NULL);
+		if (Context != nullptr) {
+			// Return CommandBuffers to rendertarget.
+			RenderTarget->DrawCommandPool.release(RenderTarget->FrameCount, CommandBuffer);
+			// Destroy Framebuffers
+			for (uint32_t i = 0; i < RenderTarget->FrameCount; i++) {
+				vkDestroyFramebuffer(Context->handle(), FrameBuffer[i], NULL);
+			}
+			// Destroy Render Pass
+			vkDestroyRenderPass(Context->handle(), RenderPass, NULL);
 		}
-		free(Frame);
-		vkDestroyRenderPass(Context->handle(), RenderPass, NULL);
-		Command = NULL;
-		Frame = NULL;
+		// Clear Allocated Memory.
+		free(CommandBuffer);
+		free(FrameBuffer);
+		CommandBuffer = NULL;
+		FrameBuffer = NULL;
 		RenderPass = VK_NULL_HANDLE;
 		RenderTarget = nullptr;
 		Context = nullptr;
+	}
+
+	VkCommandBuffer drawpack::operator[](int aIndex) {
+		return CommandBuffer[aIndex];
 	}
 
 }

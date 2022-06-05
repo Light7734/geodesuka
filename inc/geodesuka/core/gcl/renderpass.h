@@ -13,38 +13,18 @@ namespace geodesuka::core::gcl {
 	class renderpass {
 	public:
 
-		renderpass();
-		renderpass(
-			context* aContext,
-			int aAttachmentCount, image* aAttachment,
-			uint32_t aSubpassCount, VkSubpassDescription* aSubpass,
-			uint32_t aDependencyCount, VkSubpassDependency* aDependency
-		);
-		renderpass(
-			context* aContext,
-			uint32_t aAttachmentCount, VkAttachmentDescription* aAttachment,
-			uint32_t aSubpassCount, VkSubpassDescription* aSubpass,
-			uint32_t aDependencyCount, VkSubpassDependency* aDependency
-		);
+		context* Context;
+		//object::rendertarget* RenderTarget;
+
+		VkRenderPass RenderPass;
+		VkFramebuffer* FrameBuffer;
+		VkCommandBuffer* CommandBuffer;
+
+		//renderpass(context* aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
+		renderpass(context* aContext, uint32_t aAttachmentCount, VkImageView* aAttachmentList, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
 		~renderpass();
 
-
-		VkRenderPass handle();
-
 	private:
-
-		context* Context;
-		VkRenderPassCreateInfo CreateInfo{};
-		VkRenderPass Handle;
-
-		uint32_t AttachmentDescriptionCount;
-		VkAttachmentDescription* AttachmentDescription;
-
-		VkRenderPass create(
-			uint32_t aAttachmentCount, VkAttachmentDescription* aAttachment,
-			uint32_t aSubpassCount, VkSubpassDescription* aSubpass,
-			uint32_t aDependencyCount, VkSubpassDependency* aDependency
-		);
 
 	};
 

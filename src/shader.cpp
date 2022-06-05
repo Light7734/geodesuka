@@ -6,6 +6,8 @@
 
 #include <SPIRV/GlslangToSpv.h>
 
+#include <iostream>
+
 namespace geodesuka::core::gcl {
 
 	shader::shader(context* aDeviceContext, stage aStage, const char* aSource) {
@@ -90,10 +92,22 @@ namespace geodesuka::core::gcl {
 			//this->isValid = lShader.preprocess(&glslang::DefaultTBuiltInResource, DefaultVersion, ENoProfile, false, false, Options, NULL);
 			this->isValid = lShader.parse(&glslang::DefaultTBuiltInResource, DefaultVersion, false, Options);
 
+
+			const glslang::TIntermediate* I = lShader.getIntermediate();
+
 			glslang::TProgram Program;
 			Program.addShader(&lShader);
 			Program.link(Options);
 			//Program.buildReflection(EShReflectionDefault);
+
+			// ----- 
+
+			Program.buildReflection();
+			std::cout << "Input Count:\t" << Program.getNumPipeInputs() << std::endl;
+			std::cout << "Uniform Count:\t" << Program.getNumUniformVariables() << std::endl;
+			std::cout << "Output Count:\t" << Program.getNumPipeOutputs() << std::endl;
+
+			// ----- 
 
 			glslang::GlslangToSpv(*Program.getIntermediate(lShaderStage), this->Binary, &SPIRVLogger, &SPIRVOption);
 

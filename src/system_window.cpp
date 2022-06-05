@@ -522,7 +522,7 @@ namespace geodesuka::core::object {
 
 		*/
 
-		make_default();
+		this->make_default();
 
 		// Number of back buffered frames in the swapchain.
 		FrameCount = aProperty.Swapchain.FrameCount;
@@ -598,27 +598,16 @@ namespace geodesuka::core::object {
 			std::vector<VkPresentModeKHR> sSurfacePresentModeList(sSurfacePresentModeCount);
 			vkGetPhysicalDeviceSurfacePresentModesKHR(aContext->parent()->handle(), Surface, &sSurfacePresentModeCount, sSurfacePresentModeList.data());
 
-			bool isSupported[10] = { false, false, false, false, false, false, false, false, false, false };
-
-			// Check for Colorspace and Format support.
-			for (uint32_t i = 0; i < sSurfaceFormatCount; i++) {
-				if ((aProperty.PixelFormat == sSurfaceFormatList[i].format) && (aProperty.Swapchain.ColorSpace == sSurfaceFormatList[i].colorSpace)) {
-					isSupported[0] = true;
-				}
-			}
-
-			// Image Usage and Composite Alpha Support
-
 			CreateInfo.sType					= VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 			CreateInfo.surface					= Surface;
 			CreateInfo.minImageCount			= std::clamp(FrameCount, sSurfaceCapabilities.minImageCount, sSurfaceCapabilities.maxImageCount); // change maybe later?
-			if (isSupported[0]) {
-				CreateInfo.imageFormat				= aProperty.PixelFormat;
-				CreateInfo.imageColorSpace			= (VkColorSpaceKHR)aProperty.Swapchain.ColorSpace;
-			}
-			else {
-				CreateInfo.imageFormat				= VK_FORMAT_B8G8R8A8_SRGB;
-				CreateInfo.imageColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+			CreateInfo.imageFormat				= VK_FORMAT_B8G8R8A8_SRGB;
+			CreateInfo.imageColorSpace			= VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+			for (uint32_t i = 0; i < sSurfaceFormatCount; i++) {
+				if ((aProperty.PixelFormat == sSurfaceFormatList[i].format) && (aProperty.Swapchain.ColorSpace == sSurfaceFormatList[i].colorSpace)) {
+					CreateInfo.imageFormat			= aProperty.PixelFormat;
+					CreateInfo.imageColorSpace		= (VkColorSpaceKHR)aProperty.Swapchain.ColorSpace;
+				}
 			}
 			CreateInfo.imageExtent.width		= std::clamp((uint32_t)Resolution.x, sSurfaceCapabilities.minImageExtent.width, sSurfaceCapabilities.maxImageExtent.width);
 			CreateInfo.imageExtent.height		= std::clamp((uint32_t)Resolution.y, sSurfaceCapabilities.minImageExtent.height, sSurfaceCapabilities.maxImageExtent.height);
@@ -805,18 +794,6 @@ namespace geodesuka::core::object {
 	}
 
 	VkPresentInfoKHR system_window::present_frame() {
-		//VkPresentInfoKHR PresentInfo{};
-		//PresentInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-		//PresentInfo.pNext					= NULL;
-		//this->Mutex.lock();
-		//PresentInfo.waitSemaphoreCount		= 1;
-		//PresentInfo.pWaitSemaphores			= &this->RenderOperationSemaphore[this->FrameDrawIndex];
-		//PresentInfo.swapchainCount			= 1;
-		//PresentInfo.pSwapchains				= &this->Swapchain;
-		//PresentInfo.pImageIndices			= &this->FrameDrawIndex;
-		//PresentInfo.pResults				= &this->PresentResult[this->FrameDrawIndex];
-		//this->Mutex.unlock();
-		//return PresentInfo;
 		this->Mutex.lock();
 		VkPresentInfoKHR PresentInfo = Presentation[FrameDrawIndex];
 		this->Mutex.unlock();
@@ -957,7 +934,6 @@ namespace geodesuka::core::object {
 			}
 		}
 		free(FrameAttachmentDescription);
-
 	}
 
 	float3 system_window::vsc2phy(int2 aRvscw, int2 aSvscw, int2 aRvscm, int2 aSvscm, float2 aSphym) {
@@ -1027,6 +1003,7 @@ namespace geodesuka::core::object {
 			glfwWindowHint(GLFW_SCALE_TO_MONITOR,	aProperty.ScaleToMonitor);
 			glfwWindowHint(GLFW_CENTER_CURSOR,		aProperty.CenterCursor);
 			glfwWindowHint(GLFW_FOCUS_ON_SHOW,		aProperty.FocusOnShow);
+			//glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, 1);
 			glfwWindowHint(GLFW_CLIENT_API,			GLFW_NO_API);
 			glfwWindowHint(GLFW_REFRESH_RATE,		GLFW_DONT_CARE);
 

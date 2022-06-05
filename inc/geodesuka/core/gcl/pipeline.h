@@ -14,52 +14,100 @@ namespace geodesuka::core::gcl {
 	class pipeline {
 	public:
 
-		// Compute Pipeline
-		
-		pipeline();
-		// Graphics Pipeline
-		pipeline(
-			context* aContext,
-			uint32_t aShaderCount, shader* aShader,
-			uint32_t aDSLCount, VkDescriptorSetLayout* aDSL,
-			renderpass& aRenderPass, uint32_t aSubpassIndex
-		);
+		// Pre creation options for a rasterizer pipeline.
+		struct rasterizer {
 
-		~pipeline();
+			VkPipelineBindPoint BindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
-	protected:
+			uint32_t UniformSetCount;
+			uint32_t *UniformSetBindingCount;
+			VkDescriptorSetLayoutBinding **UniformSetBindingList;
+
+			uint32_t InputCount;
+			VkVertexInputAttributeDescription* InputList;
+
+			uint32_t OutputCount;
+			VkAttachmentDescription* OutputList;
+
+			uint32_t StageCount;
+			VkPipelineShaderStageCreateInfo* StageList;
+			VkPipelineVertexInputStateCreateInfo VertexInput{};
+			VkPipelineInputAssemblyStateCreateInfo InputAssembly{};
+			VkPipelineTessellationStateCreateInfo Tesselation{};
+			VkPipelineViewportStateCreateInfo Viewport{};
+			VkPipelineRasterizationStateCreateInfo Rasterizer{};
+			VkPipelineMultisampleStateCreateInfo Multisample{};
+			VkPipelineDepthStencilStateCreateInfo DepthStencil{};
+			VkPipelineColorBlendStateCreateInfo ColorBlend{};
+			VkPipelineDynamicStateCreateInfo DynamicState{};
+
+			VkGraphicsPipelineCreateInfo CreateInfo{};
+
+			rasterizer();
+			rasterizer(uint32_t aShaderCount, shader** aShaderList);
+
+		};
+
+		// Pre creation options for a raytracer pipeline.
+		struct raytracer {
+
+			VkPipelineBindPoint BindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR;
+
+			VkRayTracingPipelineCreateInfoKHR CreateInfo{};
+
+			raytracer();
+			//raytracer(uint32_t aShaderCount, shader** aShaderList);
+
+		};
+
+		// Pre creation options for a compute pipeline.
+		// Requires on a single compute shader.
+		struct compute {
+
+			VkPipelineBindPoint BindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
+
+			VkComputePipelineCreateInfo CreateInfo{};
+
+			compute();
+			//compute(shader* aComputeShader);
+
+		};
+
+
+
+		// Creates rasterizer pipeline. (RenderPass is only needed for rasterizers, Thanks Khronos...)
+		pipeline(context* aContext, rasterizer& aRasterizer, VkRenderPass aRenderPass, uint32_t aSubpassIndex);
+
+		// Dynamic Rendering Rasterizer
+		//pipeline(context* aContext, rasterizer& aRasterizer);
+
+		// Creates raytracer pipeline.
+		pipeline(context* aContext, raytracer& aRaytracer);
+
+		// Creates compute pipeline.
+		pipeline(context* aContext, compute& aCompute);
+
+		VkCommandBuffer set_uniform(int aSet, int aBinding, buffer* Image);
+		VkCommandBuffer set_uniform(int aSet, int aBinding, image* Image);
+
+	private:
+
+		rasterizer Rasterizer;
+		raytracer Raytracer;
+		compute Compute;
 
 		context* Context;
 
-		uint32_t ShaderCount;
-		shader* Shader;
-
-		VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
+		uint32_t DescriptorSetCount;
+		VkDescriptorSetLayout* DescriptorSetLayoutList;
 		VkDescriptorPool DescriptorPool;
+		VkDescriptorSet* DescriptorSetList;
 
-		// Graphics Options.
-		VkGraphicsPipelineCreateInfo			GraphicsCreateInfo{};
-
-		VkPipelineShaderStageCreateInfo*		ShaderStage;
-		VkPipelineVertexInputStateCreateInfo	VertexInput{};
-		VkPipelineInputAssemblyStateCreateInfo	InputAssembly{};
-		VkPipelineTessellationStateCreateInfo	Tesselation{};
-		VkPipelineViewportStateCreateInfo		Viewport{};
-		VkPipelineRasterizationStateCreateInfo	Rasterizer{};
-		VkPipelineMultisampleStateCreateInfo	Multisample{};
-		VkPipelineDepthStencilStateCreateInfo	DepthStencil{};
-		VkPipelineColorBlendStateCreateInfo		ColorBlend{};
-		VkPipelineDynamicStateCreateInfo		DynamicState{};
-
-		// Compute Options.
-		//VkComputePipelineCreateInfo				ComputeCreateInfo{};
-
-		VkPipelineLayoutCreateInfo				LayoutCreateInfo{};
-		VkPipelineLayout						Layout;
-
+		VkPipelineLayout Layout;
+		VkPipelineCache Cache;
+		VkPipelineBindPoint Type;
 		VkPipeline Handle;
 
-		void gdefault();
 
 	};
 

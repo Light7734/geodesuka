@@ -71,7 +71,6 @@ Include: $(ProjectDir)..\glslang
 #include "core/gcl/shader.h"
 #include "core/gcl/image.h"
 #include "core/gcl/renderpass.h"
-#include "core/gcl/framebuffer.h"
 #include "core/gcl/drawpack.h"
 #include "core/gcl/pipeline.h"
 
