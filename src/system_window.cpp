@@ -648,8 +648,8 @@ namespace geodesuka::core::object {
 
 			FrameAttachmentDescription = (VkAttachmentDescription*)malloc(FrameAttachmentCount * sizeof(VkAttachmentDescription));
 			FrameAttachment = (VkImageView**)malloc(FrameCount * sizeof(VkImageView*));
-			DrawCommandCount = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
-			DrawCommandList = (VkCommandBuffer**)malloc(FrameCount * sizeof(VkCommandBuffer*));
+			AggregatedDrawCommandCount = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
+			AggregatedDrawCommandList = (VkCommandBuffer**)malloc(FrameCount * sizeof(VkCommandBuffer*));
 			NextImageSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 			RenderOperationSemaphore = (VkSemaphore*)malloc(FrameCount * sizeof(VkSemaphore));
 			PresentIndex = (uint32_t*)malloc(FrameCount * sizeof(uint32_t));
@@ -659,8 +659,8 @@ namespace geodesuka::core::object {
 
 			if (FrameAttachment != NULL) {
 				for (int i = 0; i < FrameCount; i++) {
-					DrawCommandCount[i] = 0;
-					DrawCommandList[i] = NULL;
+					AggregatedDrawCommandCount[i] = 0;
+					AggregatedDrawCommandList[i] = NULL;
 					FrameAttachment[i] = (VkImageView*)malloc(FrameAttachmentCount * sizeof(VkImageView));
 					if (FrameAttachment[i] != NULL) {
 						for (int j = 0; j < FrameAttachmentCount; j++) {
@@ -761,32 +761,32 @@ namespace geodesuka::core::object {
 		this->Mutex.lock();
 
 		// If memory container not the same size, change size.
-		if (DrawCommandCount[FrameDrawIndex] != aObjectCount) {
+		if (AggregatedDrawCommandCount[FrameDrawIndex] != aObjectCount) {
 			void* nptr = NULL;
-			if (DrawCommandList[FrameDrawIndex] == NULL) {
+			if (AggregatedDrawCommandList[FrameDrawIndex] == NULL) {
 				nptr = malloc(aObjectCount * sizeof(VkCommandBuffer));
 			}
-			else if (DrawCommandCount[FrameDrawIndex] != aObjectCount) {
-				nptr = realloc(DrawCommandList[FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
+			else if (AggregatedDrawCommandCount[FrameDrawIndex] != aObjectCount) {
+				nptr = realloc(AggregatedDrawCommandList[FrameDrawIndex], aObjectCount * sizeof(VkCommandBuffer));
 			}
 
 			// Check if NULL.	
 			assert(nptr != NULL);
 
-			if (nptr != this->DrawCommandList[this->FrameDrawIndex]) this->DrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
-			DrawCommandCount[FrameDrawIndex] = aObjectCount;
+			if (nptr != this->AggregatedDrawCommandList[this->FrameDrawIndex]) this->AggregatedDrawCommandList[this->FrameDrawIndex] = (VkCommandBuffer*)nptr;
+			AggregatedDrawCommandCount[FrameDrawIndex] = aObjectCount;
 		}		
 
 		// Segfault anyways if mem alloc failure.
 		for (size_t i = 0; i < aObjectCount; i++) {
-			DrawCommandList[FrameDrawIndex][i] = aObject[i]->draw(this);
+			AggregatedDrawCommandList[FrameDrawIndex][i] = aObject[i]->draw(this);
 		}
 
 		DrawBatch.waitSemaphoreCount	= 1;
 		DrawBatch.pWaitSemaphores		= &this->NextImageSemaphore[this->NextImageSemaphoreIndex];
 		DrawBatch.pWaitDstStageMask		= &this->PipelineStageFlags;
-		DrawBatch.commandBufferCount	= this->DrawCommandCount[this->FrameDrawIndex];
-		DrawBatch.pCommandBuffers		= this->DrawCommandList[this->FrameDrawIndex];
+		DrawBatch.commandBufferCount	= this->AggregatedDrawCommandCount[this->FrameDrawIndex];
+		DrawBatch.pCommandBuffers		= this->AggregatedDrawCommandList[this->FrameDrawIndex];
 		DrawBatch.signalSemaphoreCount	= 1;
 		DrawBatch.pSignalSemaphores		= &this->RenderOperationSemaphore[this->FrameDrawIndex];
 		this->Mutex.unlock();
@@ -880,8 +880,8 @@ namespace geodesuka::core::object {
 		FrameAttachmentDescription = NULL;
 		FrameAttachment = NULL;
 		FrameDrawIndex = 0;
-		DrawCommandCount = NULL;
-		DrawCommandList = NULL;
+		AggregatedDrawCommandCount = NULL;
+		AggregatedDrawCommandList = NULL;
 
 		Title = "";
 		Size = float2(0.0, 0.0);
@@ -921,13 +921,13 @@ namespace geodesuka::core::object {
 		free(RenderOperationSemaphore);
 		free(NextImageSemaphore);
 
-		if (DrawCommandList != NULL) {
+		if (AggregatedDrawCommandList != NULL) {
 			for (int i = 0; i < FrameCount; i++) {
-				free(DrawCommandList[i]);
+				free(AggregatedDrawCommandList[i]);
 			}
 		}
-		free(DrawCommandList);
-		free(DrawCommandCount);
+		free(AggregatedDrawCommandList);
+		free(AggregatedDrawCommandCount);
 		if (FrameAttachment != NULL) {
 			for (int i = 0; i < FrameAttachmentCount; i++) {
 				free(FrameAttachment);

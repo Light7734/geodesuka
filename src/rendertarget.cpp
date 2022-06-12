@@ -23,8 +23,8 @@ namespace geodesuka::core::object {
 		//this->FrameReadIndex = 0;
 		this->FrameDrawIndex = 0;
 
-		this->DrawCommandCount = NULL;
-		this->DrawCommandList = NULL;
+		this->AggregatedDrawCommandCount = NULL;
+		this->AggregatedDrawCommandList = NULL;
 	}
 
 	void rendertarget::next_frame() {

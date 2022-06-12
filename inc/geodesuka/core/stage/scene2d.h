@@ -7,6 +7,7 @@
 #include "../object.h"
 #include "../object/rendertarget.h"
 #include "../object/camera2d.h"
+#include "../object/light.h"
 
 #include "../stage.h"
 
@@ -20,7 +21,7 @@ namespace geodesuka::core::stage {
 
 	protected:
 
-		std::vector<object::camera2d*> Camera;
+		std::vector<object::light*> Light;
 
 		scene2d(engine* aEngine, gcl::context* aContext);
 

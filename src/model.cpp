@@ -4,6 +4,4 @@ namespace geodesuka::core::graphics {
 
 
 
-
-
 }

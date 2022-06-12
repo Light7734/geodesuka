@@ -1,7 +1,3 @@
-#pragma once
-#ifndef GEODESUKA_CORE_OBJECT_H
-#define GEODESUKA_CORE_OBJECT_H
-
 // ------------------------------ object.h ------------------------------ //
 /*
 * object.h will serve as a generic object that is extendable for the user
@@ -17,6 +13,10 @@
 * how to stream line 
 */
 
+#pragma once
+#ifndef GEODESUKA_CORE_OBJECT_H
+#define GEODESUKA_CORE_OBJECT_H
+
 #include <atomic>
 #include <mutex>
 #include <map>
@@ -27,27 +27,32 @@
 #include "gcl/context.h"
 #include "gcl/drawpack.h"
 
-#include "graphics/mesh.h"
-#include "graphics/material.h"
-#include "graphics/model.h"
+//#include "graphics/mesh.h"
+//#include "graphics/material.h"
+//#include "graphics/model.h"
 
 #include "hid/keyboard.h"
 #include "hid/mouse.h"
 #include "hid/joystick.h"
 
+// Forward declared built in render targets.
+namespace geodesuka::core::object {
+	class system_display;
+	class system_window;
+	class virtual_window;
+	class camera2d;
+	class camera3d;
+}
+
 namespace geodesuka::core {
 
 	class stage_t;
-
-	// TODO: Remove rendertarget forward declaration.
-	//namespace object {
-	//	class rendertarget;
-	//}
 
 	class object_t {
 	public:
 
 		friend class engine;
+		friend class stage_t;
 		friend class object::rendertarget;
 		
 		virtual ~object_t() /*= default*/;
@@ -93,7 +98,15 @@ namespace geodesuka::core {
 		float3 DirectionY;		// Up			[Normalized]
 		float3 DirectionZ;		// Forward		[Normalized]
 
+		// Processsing Flags.
+		//bool isTransparent;
+
+		// Get rid of this
 		std::map<object::rendertarget*, gcl::drawpack*> DrawPack;
+
+		// The number of draw commands is equal to the number of frames per render target.
+		std::map<object::rendertarget*, VkCommandBuffer*> DrawCommand;
+
 
 		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
 		//boolean isDeterministic;		// Does this object have predefined motion?
@@ -104,6 +117,16 @@ namespace geodesuka::core {
 		//boolean isGraphicalActive;
 
 		object_t(engine *aEngine, gcl::context *aContext, stage_t* aStage);
+
+		/*
+		* These methods will be used to generate draw commands.
+		*/
+		virtual void generate_draw_commands(object::rendertarget* aRenderTarget);
+		virtual void generate_draw_commands(object::system_display* aSystemDisplay);
+		virtual void generate_draw_commands(object::system_window* aSystemWindow);
+		virtual void generate_draw_commands(object::virtual_window* aVirtualWindow);
+		virtual void generate_draw_commands(object::camera2d* aCamera2D);
+		virtual void generate_draw_commands(object::camera3d* aCamera3D);
 
 		/*
 		* If input stream is being forwarded to a particular instance of an object,

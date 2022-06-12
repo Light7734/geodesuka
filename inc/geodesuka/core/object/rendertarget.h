@@ -69,8 +69,8 @@ namespace geodesuka::core::object {
 	protected:
 
 		// Used to back store aggregated draw commands.
-		uint32_t* DrawCommandCount;
-		VkCommandBuffer** DrawCommandList;
+		uint32_t* AggregatedDrawCommandCount;
+		VkCommandBuffer** AggregatedDrawCommandList;
 
 		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/);
 

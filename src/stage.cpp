@@ -20,6 +20,16 @@ namespace geodesuka::core {
 		}
 	}
 
+	int stage_t::generate_render_commands() {
+		for (size_t i = 0; i < this->Object.size(); i++) {
+			for (size_t j = 0; j < this->RenderTarget.size(); j++) {
+				this->Object[i]->generate_draw_commands(this->RenderTarget[j]);
+			}
+		}
+
+		return 0;
+	}
+
 	stage_t::~stage_t() {
 		// If engine is in destruction state, do not attempt to remove from engine.
 		//isReadyToBeProcessed.store(false);

@@ -18,11 +18,20 @@ namespace geodesuka::core::object {
 		* layout (location = 2) out vec3 PixelNormal;
 		*/
 
+		// These are the built in shaders needed for the default renderer.
+		static const char* DefaultPerVertexShaderSource;
+		static const char* DefaultPerPixelShaderSource;
+
 		struct geometry_buffer {
-			gcl::image OpaquePixelColor;
-			gcl::image OpaqueDepthBuffer;
-			gcl::image TranslucentPixelColor;
-			gcl::image TranslucentDepthBuffer;
+			//gcl::image OpaquePixelColor;
+			//gcl::image OpaqueDepthBuffer;
+			//gcl::image TranslucentPixelColor;
+			//gcl::image TranslucentDepthBuffer;
+			//gcl::image PixelPosition;
+			//gcl::image PixelNormal;
+
+			gcl::image PixelColor;
+
 			gcl::image PixelPosition;
 			gcl::image PixelNormal;
 		};
@@ -31,8 +40,7 @@ namespace geodesuka::core::object {
 
 		geometry_buffer *GeometryBuffer;
 
-
-		//camera3d(engine *aEngine, gcl::context *aContext);
+		//camera3d(engine* aEngine, gcl::context* aContext, stage::scene3d* aScene3D);
 		//~camera3d();
 
 		// ----- object_t methods ----- //
@@ -51,17 +59,19 @@ namespace geodesuka::core::object {
 
 	private:
 
+
+
 		// DepthList:
 		// The depth list is a list of sorted objects based
 		// on the distance from the camera they are. The opaque
 		// objects nearest to the camera will be rendered first.
-		std::vector<object_t> OpaqueObject;
+		std::vector<object_t*> OpaqueObject;
 
 		// AlphaList:
 		// Objects with that have translucency or are transparent
 		// (i.e. Alpha != 1.0) will be drawn where the furthest objects
 		// are rendered first for appropriate ordering.
-		std::vector<object_t> TranslucentObject;
+		std::vector<object_t*> TranslucentObject;
 
 
 	};

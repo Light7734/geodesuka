@@ -51,7 +51,7 @@ namespace geodesuka::core::gcl {
 		return CommandBuffer;
 	}
 
-	void command_pool::allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList) {
+	VkResult command_pool::allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList) {
 		VkCommandBufferAllocateInfo AllocateInfo{};
 		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		AllocateInfo.pNext					= NULL;
@@ -59,6 +59,7 @@ namespace geodesuka::core::gcl {
 		AllocateInfo.level					= (VkCommandBufferLevel)aLevel;
 		AllocateInfo.commandBufferCount		= aCommandBufferCount;
 		VkResult Result = vkAllocateCommandBuffers(this->Context->handle(), &AllocateInfo, aCommandBufferList);
+		return Result;
 	}
 
 	command_list command_pool::allocate(int aLevel, uint32_t aCommandBufferCount) {

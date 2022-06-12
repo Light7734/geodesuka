@@ -7,14 +7,14 @@
 #include "../gcl/image.h"
 #include "../gcl/shader.h"
 
-namespace geodesuka::core::graphics {
+namespace geodesuka::core::gcl {
 
 	class material {
 	public:
 
-		std::vector<gcl::image*> Texture;
-		gcl::shader* VertexShader;
-		gcl::shader* PixelShader;
+		std::vector<image*> Texture;
+		shader* VertexShader;
+		shader* PixelShader;
 
 		material();
 		~material();

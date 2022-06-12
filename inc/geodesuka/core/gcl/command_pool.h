@@ -34,7 +34,7 @@ namespace geodesuka::core::gcl {
 		~command_pool();
 
 		VkCommandBuffer allocate(int aLevel);
-		void allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		VkResult allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
 		command_list allocate(int aLevel, uint32_t aCommandBufferCount);
 
 		void release(VkCommandBuffer aCommandBuffer);

@@ -2,6 +2,10 @@
 
 namespace geodesuka::core::object {
 
+	const char* camera3d::DefaultPerVertexShaderSource = "";
+
+	const char* camera3d::DefaultPerPixelShaderSource = "";
+
 	//void camera3d::draw(object_t* aObject) {
 	//	// Checks if this and aObject are the same object.
 	//	if ((object_t*)this == aObject) return;

@@ -14,6 +14,11 @@ namespace geodesuka::core::gcl {
 	class pipeline {
 	public:
 
+		/*
+		The point of these structure is a straightforward api to map vulkan managed resources,
+		to slots indicated by the shaders provided.
+		*/
+
 		// Pre creation options for a rasterizer pipeline.
 		struct rasterizer {
 
@@ -28,6 +33,8 @@ namespace geodesuka::core::gcl {
 
 			uint32_t OutputCount;
 			VkAttachmentDescription* OutputList;
+
+
 
 			uint32_t StageCount;
 			VkPipelineShaderStageCreateInfo* StageList;
@@ -90,7 +97,29 @@ namespace geodesuka::core::gcl {
 		VkCommandBuffer set_uniform(int aSet, int aBinding, buffer* Image);
 		VkCommandBuffer set_uniform(int aSet, int aBinding, image* Image);
 
+		void subpass(VkCommandBuffer aCommandBuffer);
+
 	private:
+
+		/*
+		
+		// Rendering Done Here
+		vkCmdBeginRenderPass();
+		// Subpass 0
+		vkCmdBindPipeline();
+		vkCmdBindDescriptorSets();
+		vkCmdBindVertexBuffers();
+		vkCmdBindIndexBuffer();
+		vkCmdDraw***();
+		vkCmdNextSubpass();
+		// Subpass 1
+		vkCmdNextSubpass();
+		// Subpass 2
+		vkCmdEndRenderPass();
+
+		// Other Garbage
+
+		*/
 
 		rasterizer Rasterizer;
 		raytracer Raytracer;

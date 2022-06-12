@@ -40,6 +40,9 @@ namespace geodesuka::builtin::stage {
 
 		Object.push_back(Triangle);
 
+		// Will generate all draw commands per object-rendertarget pair.
+		this->generate_render_commands();
+		// Declare that instance is ready to be processed by engine.
 		isReadyToBeProcessed.store(true);
 	}
 

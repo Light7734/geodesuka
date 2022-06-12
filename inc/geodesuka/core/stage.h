@@ -32,12 +32,13 @@ namespace geodesuka::core {
 
 		friend class engine;
 
-		std::vector<object_t*> Object;
-		std::vector<object::rendertarget*> RenderTarget;
 
 		~stage_t();
 
 	protected:
+
+		std::vector<object_t*> Object;
+		std::vector<object::rendertarget*> RenderTarget;
 
 		std::mutex Mutex;
 		std::atomic<bool> isReadyToBeProcessed;
@@ -45,8 +46,9 @@ namespace geodesuka::core {
 		engine* Engine;
 		gcl::context* Context;
 
-
 		stage_t(engine* aEngine, gcl::context* aContext);
+
+		int generate_render_commands();
 
 	private:
 

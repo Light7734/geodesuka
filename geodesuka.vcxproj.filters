@@ -124,12 +124,6 @@
     <Filter Include="inc\geodesuka\builtin\stage">
       <UniqueIdentifier>{1a8d27a1-7d65-43fe-b543-767a8f99872e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="inc\geodesuka\core\graphics">
-      <UniqueIdentifier>{5f70e7f3-43ac-41bf-b9b8-149d07e8573b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\core\graphics">
-      <UniqueIdentifier>{e1344c19-b42f-4f97-a813-3946635d42ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="inc\geodesuka\core\math\number">
       <UniqueIdentifier>{7ad755d9-fe5d-45c5-99da-77785a2473af}</UniqueIdentifier>
     </Filter>
@@ -144,6 +138,12 @@
     </Filter>
     <Filter Include="src\core\math\number">
       <UniqueIdentifier>{8dd03647-e4ee-4315-b065-42efdf072394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="inc\geodesuka\core\graphics">
+      <UniqueIdentifier>{bdb3a7ba-8561-47eb-ab06-e1982f613215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\core\graphics">
+      <UniqueIdentifier>{a63ca042-670f-4e74-8f5e-7c59890f131a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -257,15 +257,6 @@
     </ClCompile>
     <ClCompile Include="src\rendertarget.cpp">
       <Filter>src\core\object</Filter>
-    </ClCompile>
-    <ClCompile Include="src\material.cpp">
-      <Filter>src\core\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\mesh.cpp">
-      <Filter>src\core\graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\model.cpp">
-      <Filter>src\core\graphics</Filter>
     </ClCompile>
     <ClCompile Include="src\str.cpp">
       <Filter>src\core\util</Filter>
@@ -398,6 +389,21 @@
     </ClCompile>
     <ClCompile Include="src\drawpack.cpp">
       <Filter>src\core\gcl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\model.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\mesh.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\material.cpp">
+      <Filter>src\core\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\light.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\skybox.cpp">
+      <Filter>src\core\object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -536,15 +542,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl.h">
       <Filter>inc\geodesuka\core</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\graphics\material.h">
-      <Filter>inc\geodesuka\core\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\graphics\mesh.h">
-      <Filter>inc\geodesuka\core\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\graphics\model.h">
-      <Filter>inc\geodesuka\core\graphics</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\str.h">
       <Filter>inc\geodesuka\core\util</Filter>
@@ -689,6 +686,21 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\drawpack.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\material.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\mesh.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\graphics\model.h">
+      <Filter>inc\geodesuka\core\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\light.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object\skybox.h">
+      <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

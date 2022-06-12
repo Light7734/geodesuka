@@ -154,4 +154,19 @@ namespace geodesuka::core::gcl {
 		Result = vkCreateComputePipelines(Context->handle(), Cache, 1, &Compute.CreateInfo, NULL, &Handle);
 	}
 
+	void pipeline::subpass(VkCommandBuffer aCommandBuffer) {
+		vkCmdBindPipeline(aCommandBuffer, Type, Handle);
+		switch (Type) {
+		default:
+			break;
+		case VK_PIPELINE_BIND_POINT_GRAPHICS:
+
+			break;
+		case VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR:
+			break;
+		case VK_PIPELINE_BIND_POINT_COMPUTE:
+			break;
+		}
+	}
+
 }
