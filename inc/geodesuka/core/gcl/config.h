@@ -96,6 +96,7 @@ typedef VkShaderModuleCreateInfo					vk_shader_module_create_info;
 typedef VkShaderModule								vk_shader_module;
 
 typedef VkAttachmentDescription						vk_attachment_description;
+typedef VkAttachmentReference						vk_attachment_reference;
 typedef VkSubpassDescription						vk_subpass_description;
 typedef VkSubpassDependency							vk_subpass_dependency;
 typedef VkRenderPassCreateInfo						vk_render_pass_create_info;
@@ -112,6 +113,7 @@ typedef VkDescriptorPool							vk_descriptor_pool;
 typedef VkDescriptorSetAllocateInfo					vk_descriptor_set_allocate_info;
 typedef VkDescriptorSet								vk_descriptor_set;
 
+typedef VkVertexInputBindingDescription				vk_vertex_input_binding_description;
 typedef VkVertexInputAttributeDescription			vk_vertex_input_attribute_description;
 
 typedef VkPipelineShaderStageCreateInfo				vk_pipeline_shader_stage_create_info;

@@ -1,5 +1,7 @@
 #include <geodesuka/core/gcl/pipeline.h>
 
+#include <cassert>
+
 namespace geodesuka::core::gcl {
 
 	pipeline::rasterizer::rasterizer() {
@@ -91,38 +93,21 @@ namespace geodesuka::core::gcl {
 
 	}
 
-	pipeline::pipeline(context* aContext, rasterizer& aRasterizer, VkRenderPass aRenderPass, uint32_t aSubpassIndex) {
+	pipeline::pipeline(context* aContext, rasterizer& aRasterizer) {
 		VkResult Result = VkResult::VK_SUCCESS;
 
-		BindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		AttachmentReferenceCount = 0;
+		AttachmentReferenceList = NULL;
+		RenderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		RenderPassCreateInfo.pNext = NULL;
+
 		Context = aContext;
 		Rasterizer = aRasterizer;
 
-		//// Create Descriptor Set Layouts
-		//for (uint32_t i = 0; i < Rasterizer.UniformSetCount; i++) {
-		//	VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInfo{};
-		//	DescriptorSetLayoutCreateInfo.sType				= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-		//	DescriptorSetLayoutCreateInfo.pNext				= NULL;
-		//	DescriptorSetLayoutCreateInfo.flags				= 0;
-		//	DescriptorSetLayoutCreateInfo.bindingCount		= Rasterizer.UniformSetBindingCount[i];
-		//	DescriptorSetLayoutCreateInfo.pBindings			= Rasterizer.UniformSetBindingList[i];
-		//	Result = vkCreateDescriptorSetLayout(Context->handle(), &DescriptorSetLayoutCreateInfo, NULL, &DescriptorSetLayoutList[i]);
-		//}
+		BindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		VkDescriptorSetLayoutCreateInfo DSLCreateInfo{};
 
-		//VkDescriptorSetLayoutBinding;
-
-		//// Number of Pool Types.
-
-		//VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
-		//DescriptorPoolCreateInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		//DescriptorPoolCreateInfo.pNext			= NULL;
-		//DescriptorPoolCreateInfo.flags			= 0;
-		//DescriptorPoolCreateInfo.maxSets		;
-		//DescriptorPoolCreateInfo.poolSizeCount	;
-		//DescriptorPoolCreateInfo.pPoolSizes		;
-
-		//Result = vkCreateDescriptorPool(Context->handle(), &DescriptorPoolCreateInfo, NULL, &DescriptorPool);
-
+		VkDescriptorSetAllocateInfo AllocateInfo{};
 		VkPipelineLayoutCreateInfo LayoutCreateInfo{};
 		LayoutCreateInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		LayoutCreateInfo.pNext					= NULL;
@@ -132,14 +117,56 @@ namespace geodesuka::core::gcl {
 		LayoutCreateInfo.pushConstantRangeCount	= 0;
 		LayoutCreateInfo.pPushConstantRanges	= NULL;
 
-		// Load rasterizer
-		Rasterizer.CreateInfo.layout			= Layout;
-		Rasterizer.CreateInfo.renderPass		= aRenderPass;
-		Rasterizer.CreateInfo.subpass			= aSubpassIndex;
-
 		Result = vkCreatePipelineLayout(Context->handle(), &LayoutCreateInfo, NULL, &Layout);
 
-		Result = vkCreateGraphicsPipelines(Context->handle(), VK_NULL_HANDLE, 1, &Rasterizer.CreateInfo, NULL, &Handle);
+		Rasterizer.CreateInfo.layout			= Layout;
+
+		if (Rasterizer.CreateInfo.renderPass == VK_NULL_HANDLE) {
+			AttachmentReferenceCount = Rasterizer.OutputCount;
+			AttachmentReferenceList = (vk_attachment_reference*)malloc(AttachmentReferenceCount * sizeof(vk_attachment_reference));
+			assert(AttachmentReferenceList != NULL);
+
+			for (uint32_t i = 0; i < AttachmentReferenceCount; i++) {
+				AttachmentReferenceList[i].attachment	= i;
+				AttachmentReferenceList[i].layout		= VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			}
+
+			SubpassDescription.flags					= 0;
+			SubpassDescription.pipelineBindPoint		= BindPoint;
+			SubpassDescription.inputAttachmentCount		= 0;				// This is inter subpass resource reusing.
+			SubpassDescription.pInputAttachments		= NULL;				// This is inter subpass resource reusing.
+			SubpassDescription.colorAttachmentCount		= AttachmentReferenceCount;
+			SubpassDescription.pColorAttachments		= AttachmentReferenceList;
+			SubpassDescription.pResolveAttachments		= NULL;
+			SubpassDescription.pDepthStencilAttachment	= NULL;
+			SubpassDescription.preserveAttachmentCount	= 0;
+			SubpassDescription.pPreserveAttachments		= NULL;
+
+			SubpassDependency.srcSubpass				= VK_SUBPASS_EXTERNAL;
+			SubpassDependency.dstSubpass				= 0;
+			SubpassDependency.srcStageMask				= VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+			SubpassDependency.dstStageMask				= VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+			SubpassDependency.srcAccessMask				= VK_ACCESS_MEMORY_WRITE_BIT;
+			SubpassDependency.dstAccessMask				= VK_ACCESS_SHADER_WRITE_BIT;
+			SubpassDependency.dependencyFlags			= 0;
+
+			RenderPassCreateInfo.flags					= 0;
+			RenderPassCreateInfo.attachmentCount		= Rasterizer.OutputCount;
+			RenderPassCreateInfo.pAttachments			= Rasterizer.OutputList;
+			RenderPassCreateInfo.subpassCount			= 1;
+			RenderPassCreateInfo.pSubpasses				= &SubpassDescription;
+			RenderPassCreateInfo.dependencyCount		= 1;
+			RenderPassCreateInfo.pDependencies			= &SubpassDependency;
+			// Only Create If Render Pass has not been provided. Create Single Subpass RenderPass.
+			Result = vkCreateRenderPass(Context->handle(), &RenderPassCreateInfo, NULL, &RenderPass);
+
+			Rasterizer.CreateInfo.renderPass			= RenderPass;
+			Rasterizer.CreateInfo.subpass				= 0;
+		}
+
+
+		Result = vkCreateGraphicsPipelines(Context->handle(), Cache, 1, &Rasterizer.CreateInfo, NULL, &Handle);
+
 	}
 
 	pipeline::pipeline(context* aContext, raytracer& aRaytracer) {
@@ -160,23 +187,6 @@ namespace geodesuka::core::gcl {
 		Compute = aCompute;
 
 		Result = vkCreateComputePipelines(Context->handle(), Cache, 1, &Compute.CreateInfo, NULL, &Handle);
-	}
-
-	void pipeline::subpass(VkCommandBuffer aCommandBuffer) {
-		vkCmdBindPipeline(aCommandBuffer, BindPoint, Handle);
-		vkCmdBindDescriptorSets(aCommandBuffer, BindPoint, Layout, 0, 0, NULL, 0, NULL);
-		
-		switch (BindPoint) {
-		default:
-			break;
-		case VK_PIPELINE_BIND_POINT_GRAPHICS:
-
-			break;
-		case VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR:
-			break;
-		case VK_PIPELINE_BIND_POINT_COMPUTE:
-			break;
-		}
 	}
 
 }

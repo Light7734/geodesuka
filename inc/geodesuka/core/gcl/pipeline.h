@@ -2,6 +2,8 @@
 #ifndef GEODESUKA_CORE_GCL_PIPELINE_H
 #define GEODESUKA_CORE_GCL_PIPELINE_H
 
+#include <vector>
+
 #include "config.h"
 
 #include "device.h"
@@ -24,9 +26,11 @@ namespace geodesuka::core::gcl {
 
 			vk_pipeline_bind_point BindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 
+			std::vector<std::vector<vk_descriptor_set_layout_binding>> UniformSet;
+
 			uint32_t UniformSetCount;
-			uint32_t *UniformSetBindingCount;
-			vk_descriptor_set_layout_binding **UniformSetBindingList;
+			uint32_t UniformSetBindingCount[4];
+			vk_descriptor_set_layout_binding* UniformSetBindingList[4];
 
 			uint32_t InputCount;
 			vk_vertex_input_attribute_description* InputList;
@@ -50,6 +54,8 @@ namespace geodesuka::core::gcl {
 
 			rasterizer();
 			rasterizer(uint32_t aShaderCount, shader** aShaderList);
+
+			void set_inputs(uint32_t aInputCount, vk_vertex_input_attribute_description* aInputList);
 
 		};
 
@@ -78,20 +84,26 @@ namespace geodesuka::core::gcl {
 
 		};
 
-		// Render pass is a retarded idea, and 
-		vk_render_pass_create_info RenderPassCreateInfo;
+		/*
+		* Render passes should be a KHR extension, not a part of core.
+		* VkRenderPass only makes sense on mobile, and therefore should
+		* not be a part of the core standard.
+		*/
+
+		// RenderPass created if no master render pass is provided to rasterizer.
 		vk_render_pass RenderPass;
 		uint32_t SubpassIndex;
+
+		// This will be used for creating descriptor sets as well.
+		uint32_t DescriptorSetLayoutCount;
+		vk_descriptor_set_layout *DescriptorSetLayoutList;
 
 		vk_pipeline_bind_point BindPoint;
 		vk_pipeline_layout Layout;
 		vk_pipeline_cache Cache;
 		vk_pipeline Handle;
 
-		// Creates rasterizer pipeline. (RenderPass is only needed for rasterizers, Thanks Khronos...)
-		pipeline(context* aContext, rasterizer& aRasterizer, VkRenderPass aRenderPass, uint32_t aSubpassIndex);
-
-		// Dynamic Rendering Rasterizer
+		// Creates rasterizer pipeline.
 		pipeline(context* aContext, rasterizer& aRasterizer);
 
 		// Creates raytracer pipeline.
@@ -100,14 +112,19 @@ namespace geodesuka::core::gcl {
 		// Creates compute pipeline.
 		pipeline(context* aContext, compute& aCompute);
 
-		void subpass(VkCommandBuffer aCommandBuffer);
-
 	private:
 
 		context* Context;
 		rasterizer Rasterizer;
 		raytracer Raytracer;
 		compute Compute;
+
+		// This is backended for tracking.
+		uint32_t AttachmentReferenceCount;
+		vk_attachment_reference * AttachmentReferenceList;
+		vk_subpass_description SubpassDescription{};
+		vk_subpass_dependency SubpassDependency{};
+		vk_render_pass_create_info RenderPassCreateInfo;
 
 	};
 

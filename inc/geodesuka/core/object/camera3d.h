@@ -2,52 +2,73 @@
 #ifndef GEODESUKA_CORE_OBJECT_CAMERA3D_H
 #define GEODESUKA_CORE_OBJECT_CAMERA3D_H
 
+#include "../gcl/context.h"
+#include "../gcl/pipeline.h"
+
 #include "../object.h"
 #include "camera.h"
+
+//#include "../stage.h"
+//#include "../stage/scene3d.h"
 
 namespace geodesuka::core::object {
 
 	class camera3d : public camera {
 	public:
 
+		struct geometry_buffer {
+			gcl::image PixelColor;
+			gcl::image PixelPosition;
+			gcl::image PixelNormal;
+			gcl::image PixelSpecular;
+		};
+
 		/*
-		* The output of a pixel shader using this as a render target
-		* must use the following form.
+		* Input Table
+		* layout (location = 0) in vec3 VertexPosition;
+		* layout (location = 1) in vec3 VertexNormal;
+		* layout (location = 2) in vec2 VertexTextureCoordinate;
+		*/
+
+		/*
+		* Output Table:
 		* layout (location = 0) out vec3 PixelColor;
 		* layout (location = 1) out vec3 PixelPosition;
 		* layout (location = 2) out vec3 PixelNormal;
+		* layout (location = 3) out vec3 PixelSpecular;
 		*/
-
-		// These are the built in shaders needed for the default renderer.
-		static const char* DefaultPerVertexShaderSource;
-		static const char* DefaultPerPixelShaderSource;
-
-		struct geometry_buffer {
-			//gcl::image OpaquePixelColor;
-			//gcl::image OpaqueDepthBuffer;
-			//gcl::image TranslucentPixelColor;
-			//gcl::image TranslucentDepthBuffer;
-			//gcl::image PixelPosition;
-			//gcl::image PixelNormal;
-
-			gcl::image PixelColor;
-
-			gcl::image PixelPosition;
-			gcl::image PixelNormal;
-		};
 
 		static constexpr int ID = 5;
 
+		// These are the built in shaders needed for the default renderer.
+		// They are made public to other classes so they can be modified or reused
+		// on draw command creation.
+		static const char* OpaquePerVertexShaderSource;
+		static const char* OpaquePerPixelShaderSource;
+
+
+		gcl::shader* OpaqueVertexShader;
+		gcl::shader* OpaquePixelShader;
+
+
+
+
+		// Used for rendering opaque objects.
+		gcl::pipeline* OpaquePipeline;
+		gcl::pipeline* TransparentPipeline;
+
 		geometry_buffer *GeometryBuffer;
 
-		//camera3d(engine* aEngine, gcl::context* aContext, stage::scene3d* aScene3D);
-		//~camera3d();
+		camera3d(engine* aEngine, gcl::context* aContext, stage_t* aScene3D);
+		~camera3d();
 
 		// ----- object_t methods ----- //
 
 		// ----- rendertarget methods ----- //
 
 		virtual int id() override;
+
+		virtual gcl::command_batch render(stage_t* aStage);
 
 		// ----- camera methods ----- //
 
