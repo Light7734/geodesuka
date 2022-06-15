@@ -1,32 +1,28 @@
+/*
+* ----- Geodesuka Core Graphics & Computation Library ----- 
+* This is the core graphics and computation library of the Geodesuka Engine.
+* It contains all the necessary quality of life classes to take advantage of
+* a multigpu system for generalized graphics and computation.
+*/
+
 #pragma once
 #ifndef GEODESUKA_CORE_GCL_H
 #define GEODESUKA_CORE_GCL_H
 
-/* Vulkan API */
 #include <vulkan/vulkan.h>
 
-/* OpenCL API */
-//#define CL_TARGET_OPENCL_VERSION GCL_OPENCL_VERSION
-//#ifdef __APPLE__
-// #include <OpenCL/opencl.h>
-// #include <OpenCL/cl_gl.h>
-// #include <OpenCL/cl_gl_ext.h>
-//#else
-// #include <CL/cl.h>
-// #include <CL/cl_gl.h>
-// #include <CL/cl_gl_ext.h>
-//#endif
-
-/* OpenVR API */
-//#include <openvr.h>
-
-// Typedefs for vulkan.
-
-
-namespace vk {}
-
-typedef VkInstance vk_instance;
-typedef VkPhysicalDevice vk_physical_device;
-typedef VkDevice vk_device;
+#include "gcl/config.h"
+#include "gcl/variable.h"
+#include "gcl/device.h"
+#include "gcl/context.h"
+#include "gcl/command_list.h"
+#include "gcl/command_pool.h"
+#include "gcl/command_batch.h"
+#include "gcl/buffer.h"
+#include "gcl/shader.h"
+#include "gcl/image.h"
+#include "gcl/renderpass.h"
+#include "gcl/drawpack.h"
+#include "gcl/pipeline.h"
 
 #endif // !GEODESUKA_CORE_GCL_H

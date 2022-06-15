@@ -4,6 +4,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "config.h"
+
 #include "context.h"
 //#include "renderpass.h"
 //#include "framebuffer.h"

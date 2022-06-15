@@ -80,7 +80,7 @@ namespace geodesuka::core {
 
 	// Discriminator for generic render targets. Only works for built in rendertargets.
 	// User is free to create new render targets if he/she/they wish to expand.
-	void object_t::generate_draw_commands(object::rendertarget* aRenderTarget) {
+	void object_t::generate_renderops(object::rendertarget* aRenderTarget) {
 		this->Mutex.lock();
 		// Return previously generated command buffers to render target.
 		if (this->DrawCommand.count(aRenderTarget) != 0) {
@@ -113,22 +113,22 @@ namespace geodesuka::core {
 
 		// Determine the type of render target, then record commands.
 		aRenderTarget->DrawCommandPool.Mutex.lock();
-		switch (aRenderTarget->rtid()) {
+		switch (aRenderTarget->id()) {
 		default:
 			break;
-		case object::system_display::RTID:
+		case object::system_display::ID:
 			this->generate_draw_commands((object::system_display*)aRenderTarget);
 			break;
-		case object::system_window::RTID:
+		case object::system_window::ID:
 			this->generate_draw_commands((object::system_window*)aRenderTarget);
 			break;
-		case object::virtual_window::RTID:
+		case object::virtual_window::ID:
 			this->generate_draw_commands((object::virtual_window*)aRenderTarget);
 			break;
-		case object::camera2d::RTID:
+		case object::camera2d::ID:
 			this->generate_draw_commands((object::camera2d*)aRenderTarget);
 			break;
-		case object::camera3d::RTID:
+		case object::camera3d::ID:
 			this->generate_draw_commands((object::camera3d*)aRenderTarget);
 			break;
 		}

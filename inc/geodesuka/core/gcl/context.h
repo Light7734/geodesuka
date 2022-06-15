@@ -5,7 +5,8 @@
 #include <atomic>
 #include <mutex>
 
-#include "../gcl.h"
+#include "config.h"
+
 #include "command_batch.h"
 #include "device.h"
 
@@ -27,17 +28,23 @@ namespace geodesuka::core::gcl {
 		context(engine* aEngine, device* aDevice, uint32_t aLayerCount, const char** aLayerList, uint32_t aExtensionCount, const char** aExtensionList);
 		~context();
 
+		vk_memory_requirements get_buffer_memory_requirements(vk_buffer aBufferHandle);
+
+		vk_memory_requirements get_image_memory_requirements(vk_image aImageHandle);
+
+		// ----- Command Buffers From Context ----- //
+
 		// Creates a single command buffer with selected operations.
-		VkCommandBuffer create(device::qfs aQFS);
+		vk_command_buffer create(device::qfs aQFS);
 
 		// Creates a list of command buffers with this context and selected support options.
-		VkResult create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer);
+		vk_result create(device::qfs aQFS, uint32_t aCommandBufferCount, vk_command_buffer* aCommandBuffer);
 
 		// Destroys a single command buffer created by this context.
-		void destroy(device::qfs aQFS, VkCommandBuffer &aCommandBuffer);
+		void destroy(device::qfs aQFS, vk_command_buffer &aCommandBuffer);
 
 		// Destroys all command buffers provided if they were created by this context.
-		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer *aCommandBuffer);
+		void destroy(device::qfs aQFS, uint32_t aCommandBufferCount, vk_command_buffer *aCommandBuffer);
 
 		// -------------------- Queue Family Stuff -------------------- //
 
@@ -48,17 +55,17 @@ namespace geodesuka::core::gcl {
 		bool available(device::qfs aQFS);
 
 		//
-		VkResult execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence);
+		vk_result execute(device::qfs aQFS, command_batch& aCommandBatch, vk_fence aFence);
 
 		// Submission for TRANSFER, COMPUTE, GRAPHICS, is multithread safe. 
-		VkResult submit(device::qfs aQID, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence);
+		vk_result submit(device::qfs aQID, uint32_t aSubmissionCount, vk_submit_info* aSubmission, vk_fence aFence);
 
 		// Simply presents images corresponding to indices.
-		VkResult present(VkPresentInfoKHR* aPresentation);
+		vk_result present(vk_present_info_khr* aPresentation);
 
-		VkInstance inst();
+		vk_instance inst();
 		device* parent();
-		VkDevice handle();
+		vk_device handle();
 
 	private:
 
@@ -90,15 +97,15 @@ namespace geodesuka::core::gcl {
 		int UQFI[4];
 
 		float** QueueFamilyPriority;
-		VkDeviceQueueCreateInfo* QueueCreateInfo;
-		VkDeviceCreateInfo CreateInfo{};
-		VkDevice Handle;
+		vk_device_queue_create_info* QueueCreateInfo;
+		vk_device_create_info CreateInfo{};
+		vk_device Handle;
 
 		struct queue {
 			uint32_t i, j;		
 			//device::queue_family_capability Capability;
 			std::mutex Mutex;			// Use mutex wait if no other queues are available.
-			VkQueue Handle;				// vkQueueSubmit() must be done by one thread at a time.
+			vk_queue Handle;				// vkQueueSubmit() must be done by one thread at a time.
 			queue();
 		};
 
@@ -107,10 +114,10 @@ namespace geodesuka::core::gcl {
 		queue *Queue;
 
 		// Builtin command pools.
-		VkCommandPoolCreateInfo PoolCreateInfo[3];
-		VkCommandPool Pool[3];
+		vk_command_pool_create_info PoolCreateInfo[3];
+		vk_command_pool Pool[3];
 		uint32_t CommandBufferCount[3];
-		VkCommandBuffer *CommandBuffer[3];
+		vk_command_buffer *CommandBuffer[3];
 
 	};
 

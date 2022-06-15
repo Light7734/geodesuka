@@ -18,9 +18,9 @@ namespace geodesuka::core::object {
 	class virtual_window : public window {
 	public:
 
-		static constexpr int RTID = 3;
+		static constexpr int ID = 3;
 
-		virtual int rtid() override;
+		virtual int id() override;
 
 	protected:
 

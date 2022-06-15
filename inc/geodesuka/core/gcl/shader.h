@@ -4,10 +4,11 @@
 
 #include <vector>
 
+#include "../io/file.h"
+
+#include "config.h"
 #include "device.h"
 #include "context.h"
-
-#include "../io/file.h"
 
 namespace geodesuka::core::gcl {
 
@@ -26,13 +27,10 @@ namespace geodesuka::core::gcl {
 			COMPUTE
 		};
 
-		VkResult ErrorCode;
+		vk_result ErrorCode;
 
 		// Create a shader from provided source string.
 		shader(context* aDeviceContext, stage aStage, const char* aSource);
-
-		// Use for compiling a shader object and creating it.
-		shader(context* aDeviceContext, const char* aFilePath);
 
 		// Create a shader from plain_text object.
 		//shader(device_context* aDeviceContext, io::plaintext &aPlainText);
@@ -43,8 +41,8 @@ namespace geodesuka::core::gcl {
 		// Just clears shader up.
 		~shader();
 
-		VkShaderStageFlagBits get_stage();
-		VkShaderModule get_handle();
+		vk_shader_stage_flag_bits get_stage();
+		vk_shader_module get_handle();
 
 		VkPipelineShaderStageCreateInfo stageci();
 

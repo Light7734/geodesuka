@@ -1,3 +1,10 @@
+/// <summary>
+/// rendertarget is an extendable class which the engine user can use to create custom
+/// rendertargets for whatever the user may need. For something to be considered a render
+/// target, it must have frame attachments which can be used as targets for rendering commands
+/// by derived object classes.
+/// </summary>
+
 #pragma once
 #ifndef GEODESUKA_CORE_OBJECT_RENDERTARGET_H
 #define GEODESUKA_CORE_OBJECT_RENDERTARGET_H
@@ -16,30 +23,23 @@
 
 #include "../object.h"
 
-/// <summary>
-/// rendertarget is an extendable class which the engine user can use to create custom
-/// rendertargets for whatever the user may need. For something to be considered a render
-/// target, it must have frame attachments which can be used as targets for rendering commands
-/// by derived object classes.
-/// </summary>
 namespace geodesuka::core::object {
 
 	class rendertarget : public object_t {
 	public:
 
-		//friend class engine;
+		friend class engine;
 		friend class stage_t;
 
 		uint32_t FrameCount;			// The total number of back buffer frames of the rendertarget.
 		double FrameRate;				// The rate at which the frames will be iterated through by the engine per unit of time.
-		logic::timer FrameRateTimer;
 		uint3 Resolution;				// [Pixels] The grid resolution of every frame and frame attachment of the rendertarget.
 		
 		int FrameAttachmentCount;									// The number of attachments for each frame.
 		VkAttachmentDescription* FrameAttachmentDescription;		// The attachment descriptions of each frame.
 		VkImageView** FrameAttachment;								// The image view handles of each frame attachment.
 
-		//uint32_t FrameReadIndex;
+		// This is the current frame that is being drawn to. Do not use for reading in same operation.
 		uint32_t FrameDrawIndex;
 
 		gcl::command_pool DrawCommandPool;
@@ -47,9 +47,12 @@ namespace geodesuka::core::object {
 		~rendertarget();
 
 		// Used for runtime rendertarget discrimination.
-		virtual int rtid() = 0;
+		virtual int id() = 0;
 
 		// -------------------- Called By Stage.render() ------------------------- \\
+
+		// Must be called by stage backend.
+		virtual gcl::command_batch render(stage_t* aStage);
 
 		// Will acquire next frame index, if semephore is not VK_NULL_HANDLE, 
 		// use as wait semaphore for render operations. This really only applies
@@ -68,16 +71,19 @@ namespace geodesuka::core::object {
 
 	protected:
 
+		// Should be used only for backend render logic.
+		// TODO: Add event based trigger system for GUI libs.
+		logic::timer FrameRateTimer;
+
+		// This is used if a rendertarget is resized at runtime and
+		// needs to be Rebuilt.
+		//bool Rebuild;
+
 		// Used to back store aggregated draw commands.
 		uint32_t* AggregatedDrawCommandCount;
 		VkCommandBuffer** AggregatedDrawCommandList;
 
 		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/);
-
-	private:
-
-
-
 
 	};
 }

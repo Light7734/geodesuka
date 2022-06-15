@@ -9,8 +9,6 @@
 * Most likely to extend object.h
 */
 
-#include "../util/str.h"
-
 #include "file.h"
 
 namespace geodesuka::core::io {
@@ -19,7 +17,6 @@ namespace geodesuka::core::io {
 	public:
 
 		dynalib(const char* aLibraryPath);
-
 		~dynalib();
 
 		void* get_pfn(const char* aName);

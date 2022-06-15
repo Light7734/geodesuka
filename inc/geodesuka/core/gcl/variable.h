@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GEODESUKA_CORE_UTIL_VARIABLE_H
-#define GEODESUKA_CORE_UTIL_VARIABLE_H
+#ifndef GEODESUKA_CORE_GCL_VARIABLE_H
+#define GEODESUKA_CORE_GCL_VARIABLE_H
 
 /* --------------- Written By ShaderKitty 08/11/2019 --------------- */
 
@@ -165,8 +165,8 @@ struct_declarator:
 #endif // MODE_DEBUG
 
 #include "../math.h"
-//GEODESUKA_CORE_UTIL_VARIABLE_H
-namespace geodesuka::core::util {
+
+namespace geodesuka::core::gcl {
 
 	class variable;
 
@@ -421,4 +421,4 @@ namespace geodesuka::core::util {
 
 }
 
-#endif // !GEODESUKA_CORE_UTIL_VARIABLE_H
+#endif // !GEODESUKA_CORE_GCL_VARIABLE_H

@@ -2,8 +2,10 @@
 #ifndef GEODESUKA_CORE_GCL_IMAGE_H
 #define GEODESUKA_CORE_GCL_IMAGE_H
 
-#include "../util/variable.h"
 
+#include "config.h"
+
+#include "variable.h"
 #include "device.h"
 #include "context.h"
 
@@ -118,6 +120,9 @@ namespace geodesuka::core::gcl {
 		VkCommandBuffer operator<<(buffer& aRhs);
 		// Copies the contents of the first mip level to the buffer on the right.
 		VkCommandBuffer operator>>(buffer& aRhs);
+
+		// These should not produce command buffers.
+
 		// Produces OTS Graphics command to generate mip maps from base level.
 		VkCommandBuffer generate_mipmaps(VkFilter aFilter);
 		// Transitions layout of all mip levels and array layers to proposed layout.
@@ -140,10 +145,10 @@ namespace geodesuka::core::gcl {
 	private:
 
 		context* Context;
-		VkImageCreateInfo CreateInfo{};
-		VkImage Handle;
-		VkMemoryAllocateInfo AllocateInfo{};
-		VkDeviceMemory MemoryHandle;
+		vk_image_create_info CreateInfo{};
+		vk_image Handle;
+		vk_memory_allocate_info AllocateInfo{};
+		vk_device_memory MemoryHandle;
 		int MemoryType;
 		size_t BytesPerPixel;
 		size_t MemorySize; // Size of the image

@@ -11,6 +11,10 @@ namespace geodesuka::core::stage {
 
 	}
 
+	int scene3d::id() {
+		return ID;
+	}
+
 	//stage_t::batch scene3d::render() {
 	//	batch DrawBatch;
 	//	return DrawBatch;

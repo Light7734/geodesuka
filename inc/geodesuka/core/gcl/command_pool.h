@@ -5,7 +5,8 @@
 #include <vector>
 #include <mutex>
 
-#include "../gcl.h"
+#include "config.h"
+
 #include "device.h"
 #include "context.h"
 #include "command_list.h"
@@ -33,12 +34,12 @@ namespace geodesuka::core::gcl {
 		command_pool(context* aContext, int aFlags, device::qfs aQueueFamilySupport);
 		~command_pool();
 
-		VkCommandBuffer allocate(int aLevel);
-		VkResult allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		vk_command_buffer allocate(int aLevel);
+		VkResult allocate(int aLevel, uint32_t aCommandBufferCount, vk_command_buffer* aCommandBufferList);
 		command_list allocate(int aLevel, uint32_t aCommandBufferCount);
 
-		void release(VkCommandBuffer aCommandBuffer);
-		void release(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		void release(vk_command_buffer aCommandBuffer);
+		void release(uint32_t aCommandBufferCount, vk_command_buffer* aCommandBufferList);
 		void release(command_list& aCommandList);
 
 	private:

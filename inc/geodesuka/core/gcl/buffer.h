@@ -16,8 +16,10 @@
 
 #include "../math.h"
 
-#include "../util/variable.h"
 
+#include "config.h"
+
+#include "variable.h"
 #include "device.h"
 #include "context.h"
 
@@ -43,9 +45,13 @@ namespace geodesuka::core::gcl {
 			SHADER_DEVICE_ADDRESS	= 0x00020000
 		};
 
+		// Empty buffer
 		buffer();
-		buffer(context* aContext, int aMemoryType, int aUsage, int aCount, util::variable aMemoryLayout, void* aBufferData);
-		buffer(context* aContext, int aMemoryType, int aUsage, size_t aMemorySize, void* aBufferData);
+		// Vertex/Index Buffer Creation.
+		buffer(context* aContext, vk_memory_property_flags aMemoryPropertyFlags, vk_buffer_usage_flags aBufferUsageFlags, int aVertexCount, variable aVertexLayout, void* aVertexData);
+		// General Buffer creation.
+		buffer(context* aContext, vk_memory_property_flags aMemoryProperty, vk_buffer_usage_flags aBufferUsage, size_t aBufferSize, void* aBufferData);
+		// Desctructor
 		~buffer();
 
 		buffer(buffer& aInp);																					// Copy Constructor
@@ -58,35 +64,33 @@ namespace geodesuka::core::gcl {
 		// used for transfer operations. 
 		
 		// Will copy data from from right to left.
-		VkCommandBuffer operator<<(buffer& aRhs);
+		vk_command_buffer operator<<(buffer& aRhs);
 		// Will copy data from left to right.
-		VkCommandBuffer operator>>(buffer& aRhs);
+		vk_command_buffer operator>>(buffer& aRhs);
 		// Will copy data from right to left.
-		VkCommandBuffer operator<<(image& aRhs);
+		vk_command_buffer operator<<(image& aRhs);
 		// Will copy data from left to right.
-		VkCommandBuffer operator>>(image& aRhs);
+		vk_command_buffer operator>>(image& aRhs);
 
 		// Use Command Buffers to update. vkCmdUpdateBuffer() 64kB limit.
 		// Has to be host memory to be used.
 		void write(size_t aMemOffset, size_t aMemSize, void* aData);
-		void write(uint32_t aRegionCount, VkBufferCopy *aRegion, void *aData);
+		void write(uint32_t aRegionCount, vk_buffer_copy *aRegion, void *aData);
 		void read(size_t aMemOffset, size_t aMemSize, void* aData);
-		void read(uint32_t aRegionCount, VkBufferCopy* aRegion, void* aData);
+		void read(uint32_t aRegionCount, vk_buffer_copy* aRegion, void* aData);
 
-		VkBuffer& handle();
+		vk_buffer& handle();
 
 	private:
 
 		context* Context;
-
-		VkBufferCreateInfo CreateInfo{};
-		VkBuffer Handle;
-		VkMemoryAllocateInfo AllocateInfo{};
-		VkDeviceMemory MemoryHandle;
-		int MemoryProperty;
-
 		int Count;
-		util::variable MemoryLayout;
+		variable MemoryLayout;
+
+		vk_buffer_create_info CreateInfo{};
+		vk_buffer Handle;
+		vk_memory_allocate_info AllocateInfo{};
+		vk_device_memory MemoryHandle;
 
 		void pmclearall();
 

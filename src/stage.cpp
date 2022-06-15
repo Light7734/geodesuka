@@ -20,13 +20,12 @@ namespace geodesuka::core {
 		}
 	}
 
-	int stage_t::generate_render_commands() {
+	int stage_t::generate_renderops() {
 		for (size_t i = 0; i < this->Object.size(); i++) {
 			for (size_t j = 0; j < this->RenderTarget.size(); j++) {
-				this->Object[i]->generate_draw_commands(this->RenderTarget[j]);
+				this->Object[i]->generate_renderops(this->RenderTarget[j]);
 			}
 		}
-
 		return 0;
 	}
 
@@ -84,6 +83,29 @@ namespace geodesuka::core {
 		return ComputeBatch;
 	}
 
+	/* Legacy Code, code should be runtime changeble. */
+	//gcl::command_batch stage_t::render() {
+	//	gcl::command_batch Batch;
+	//	this->Mutex.lock();
+	//	// Iterate through render targets and gather render commands.
+	//	for (size_t i = 0; i < this->RenderTarget.size(); i++) {
+	//		// Check if time to perform render operations on render target.
+	//		if (!this->RenderTarget[i]->isReadyToBeProcessed.load()) continue;
+	//		if (this->RenderTarget[i]->FrameRateTimer.check_and_reset()) {
+	//			// Acquire next available frame from target.
+	//			this->RenderTarget[i]->next_frame();
+
+	//			// Use next_frame semaphore to pause render operations until
+	//			Batch += this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
+
+	//			// Use Submission Semaphore to hold present.
+	//			Batch += this->RenderTarget[i]->present_frame();
+	//		}
+	//	}
+	//	this->Mutex.unlock();
+	//	return Batch;
+	//}
+
 	gcl::command_batch stage_t::render() {
 		gcl::command_batch Batch;
 		this->Mutex.lock();
@@ -91,15 +113,12 @@ namespace geodesuka::core {
 		for (size_t i = 0; i < this->RenderTarget.size(); i++) {
 			// Check if time to perform render operations on render target.
 			if (!this->RenderTarget[i]->isReadyToBeProcessed.load()) continue;
+			// Check if rendertarget is ready to render parent stage.
 			if (this->RenderTarget[i]->FrameRateTimer.check_and_reset()) {
-				// Acquire next available frame from target.
-				this->RenderTarget[i]->next_frame();
-
-				// Use next_frame semaphore to pause render operations until
-				Batch += this->RenderTarget[i]->draw(this->Object.size(), this->Object.data());
-
-				// Use Submission Semaphore to hold present.
-				Batch += this->RenderTarget[i]->present_frame();
+				// 
+				
+				// Render target calls user specific stage rendering methods.
+				//this->RenderTarget[i]->render(this);
 			}
 		}
 		this->Mutex.unlock();

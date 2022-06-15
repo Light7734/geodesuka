@@ -1,5 +1,7 @@
 #include <geodesuka/core/object/rendertarget.h>
 
+#include <geodesuka/core/stage.h>
+
 namespace geodesuka::core::object {
 
 	rendertarget::~rendertarget() {
@@ -25,6 +27,22 @@ namespace geodesuka::core::object {
 
 		this->AggregatedDrawCommandCount = NULL;
 		this->AggregatedDrawCommandList = NULL;
+	}
+
+	gcl::command_batch rendertarget::render(stage_t* aStage) {
+		gcl::command_batch ReturnBatch;
+		this->Mutex.lock();
+
+		this->next_frame();
+
+		// Use next_frame semaphore to pause render operations until
+		ReturnBatch += this->draw(aStage->Object.size(), aStage->Object.data());
+
+		// Use Submission Semaphore to hold present.
+		ReturnBatch += this->present_frame();
+
+		this->Mutex.unlock();
+		return ReturnBatch;
 	}
 
 	void rendertarget::next_frame() {

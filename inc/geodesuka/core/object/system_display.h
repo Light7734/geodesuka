@@ -16,7 +16,7 @@ namespace geodesuka::core::object {
 		friend class engine;
 		friend class system_window;
 
-		static constexpr int RTID = 1;
+		static constexpr int ID = 1;
 
 		// TODO: Move this constructor to private.
 		system_display(engine *aEngine, gcl::context* aContext, GLFWmonitor* aMonitor);
@@ -26,7 +26,7 @@ namespace geodesuka::core::object {
 
 		// ----- rendertarget ----- //
 
-		virtual int rtid() override;
+		virtual int id() override;
 
 		// ----- window ----- //
 

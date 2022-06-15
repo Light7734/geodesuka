@@ -11,6 +11,8 @@
 #include <vector>
 #include <chrono>
 
+#include <filesystem>
+
 /* --------------- Third Party Libraries --------------- */
 
 #include <GLFW/glfw3.h>
@@ -49,6 +51,8 @@ namespace geodesuka {
 		// Query for Monitors (No primary monitor = Start up failure)
 		// Query for gcl devices (No discrete gpu = Start up failure)
 		//
+
+		CurrentWorkingDirectory = std::filesystem::current_path().string().c_str();
 
 		// (GLSLang)
 		isGLSLANGReady = shader::initialize();
@@ -214,13 +218,31 @@ namespace geodesuka {
 	}
 
 	file* engine::open(const char* aFilePath) {
-		// utilizes singleton.
-		file* lFileHandle = file::open(aFilePath);
-		if (lFileHandle != nullptr) {
+		std::filesystem::path FilePath = aFilePath;
 
+		// Check if Relative Path, or absolute.
+		if (FilePath.is_relative()) {
+			FilePath = std::filesystem::absolute(FilePath);
 		}
 
-		return nullptr;
+		// Check if File has already been loaded.
+		for (size_t i = 0; i < File.size(); i++) {
+			if (File[i]->get_path() == FilePath.string().c_str()) {
+				return File[i];
+			}
+		}
+
+		// Check if file path exists.
+		if (!std::filesystem::exists(FilePath)) {
+			return nullptr;
+		}
+
+		// If File Exists, open it.
+		file* NewFile = file::open(FilePath.string().c_str());
+
+		File.push_back(NewFile);
+
+		return NewFile;
 	}
 
 	void engine::close(file* aFile) {
@@ -263,18 +285,18 @@ namespace geodesuka {
 
 	int engine::run(app* aApp) {
 
-		StateID						= state::RUNNING;
+		StateID						= state::id::RUNNING;
 		MainThreadID				= std::this_thread::get_id();
 		RenderThread				= std::thread(&engine::render, this);
 		SystemTerminalThread		= std::thread(&engine::terminal, this);
-		AppThread					= std::thread(&app::run, aApp);
+		AppThread					= std::thread(&app::prerun, aApp);
 
-		this->update();
+		this->update(aApp->TimeStep);
 
 		RenderThread.join();
 		SystemTerminalThread.join();
 		AppThread.join();
-		StateID = state::READY;
+		StateID = state::id::READY;
 
 		return 0;
 	}
@@ -283,10 +305,10 @@ namespace geodesuka {
 	// The main thread is used to spawn backend threads along
 	// with the app thread.
 	// --------------- Engine Main Thread --------------- //
-	void engine::update() {
+	void engine::update(double aTimeStep) {
 
 		double DeltaTime = 0.0;
-		time_step TimeStep(0.01);
+		time_step TimeStep(aTimeStep);
 
 		// The update thread is the main thread.
 		while (!Shutdown.load()) {
@@ -300,7 +322,6 @@ namespace geodesuka {
 			system_window::mtcd_process_window_handle_call();
 
 			// Poll Input Events.
-			//glfwPollEvents();
 			system_window::poll_events();
 
 			// ----- ----- Host Work is done here... ----- -----

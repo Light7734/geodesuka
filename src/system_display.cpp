@@ -46,8 +46,8 @@ namespace geodesuka::core::object {
 
 	}
 
-	int system_display::rtid() {
-		return RTID;
+	int system_display::id() {
+		return ID;
 	}
 
 	VkSubmitInfo system_display::draw(size_t aObjectCount, object_t** aObject) {

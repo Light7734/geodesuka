@@ -8,12 +8,11 @@
 #include <fstream>
 #include <sstream>
 
-// Used for generic file loading.
 #include <geodesuka/core/io/dynalib.h>
-//#include <geodesuka/core/io/image.h>
+#include <geodesuka/core/gcl/shader.h>
+#include <geodesuka/core/gcl/image.h>
 #include <geodesuka/core/io/font.h>
-//#include <geodesuka/core/io/model.h>
-
+#include <geodesuka/core/graphics/model.h>
 
 // Image Loading
 //#define FREEIMAGE_LIB
@@ -34,38 +33,211 @@
 
 namespace geodesuka::core::io {
 
-	// This is just a lookup table for file type extensions.
-	// Extension ID, Extension String, Category
-	file::built_in_type file::BuiltInTypes[] = {
-		{ file::extension::DYN,		{"dll", "so", "dylib"}		},
-		{ file::extension::VSH,		{"vsh"}						},
-		{ file::extension::TCSH,	{"tcsh"}					},
-		{ file::extension::TESH,	{"tesh"}					},
-		{ file::extension::GSH,		{"gsh"}						},
-		{ file::extension::PSH,		{"psh", "fsh"}				},
-		{ file::extension::GLSL,	{"glsl"}					},
-		{ file::extension::SPV,		{"spv"}						},
+	// Lookup Table for extension IDs and strings.
+	file::extension::data_base file::extension::DataBase[] = {
+		{	DYNALIB_DYN,		{ "dll", "so", "dyn" }},
+		{	SCRIPT_LUA,			{ "lua" } },
+		{	SHADER_GLSL,		{ "glsl" } },
+		{	SHADER_HLSL,		{ "hlsl" } },
+		{	SHADER_PVSH,		{ "pvsh", "vsh", "vert" }},
+		{	SHADER_TCSH,		{ "tcsh" } },
+		{	SHADER_TESH,		{ "tesh" } },
+		{	SHADER_PGSH,		{ "pgsh", "gsh", "geom" }},
+		{	SHADER_PPSH,		{ "ppsh", "psh", "fsh", "frag" }},
+		{	SHADER_RGSH,		{ "rgsh" } },
+		{	SHADER_AHSH,		{ "ahsh" } },
+		{	SHADER_CHSH,		{ "chsh" } },
+		{	SHADER_RISH,		{ "rish" } },
+		{	SHADER_RMSH,		{ "rmsh" } },
+		{	SHADER_RCSH,		{ "rcsh" } },
+		{	SHADER_CSH,			{ "csh" } },
+		{	SHADER_SPV,			{ "spv" } },
+		{	IMAGE_BMP,			{ "bmp" } },
+		{	IMAGE_ICO,			{ "ico" } },
+		{	IMAGE_JPEG,			{ "jpeg" } },
+		{	IMAGE_JNG,			{ "jng" } },
+		{	IMAGE_KOALA,		{ "koala" } },
+		{	IMAGE_LBM,			{ "lbm" } },
+		{	IMAGE_MNG,			{ "mng" } },
+		{	IMAGE_PBM,			{ "pbm" } },
+		{	IMAGE_PBMRAW,		{ "pbmraw" } },
+		{	IMAGE_PCD,			{ "pcd" } },
+		{	IMAGE_PCX,			{ "pcx" } },
+		{	IMAGE_PGM,			{ "pgm" } },
+		{	IMAGE_PGMRAW,		{ "pgmraw" } },
+		{	IMAGE_PNG,			{ "png" } },
+		{	IMAGE_PPM,			{ "ppm" } },
+		{	IMAGE_PPMRAW,		{ "ppmraw" } },
+		{	IMAGE_RAS,			{ "ras" } },
+		{	IMAGE_TARGA,		{ "targa" } },
+		{	IMAGE_TIFF,			{ "tiff" } },
+		{	IMAGE_WBMP,			{ "wbmp" } },
+		{	IMAGE_PSD,			{ "psd" } },
+		{	IMAGE_CUT,			{ "cut" } },
+		{	IMAGE_XBM,			{ "xbm" } },
+		{	IMAGE_XPM,			{ "xpm" } },
+		{	IMAGE_DDS,			{ "dds" } },
+		{	IMAGE_GIF,			{ "gif" } },
+		{	IMAGE_HDR,			{ "hdr" } },
+		{	IMAGE_FAXG3,		{ "faxg3" } },
+		{	IMAGE_SGI,			{ "sgi" } },
+		{	IMAGE_EXR,			{ "exr" } },
+		{	IMAGE_J2K,			{ "j2k" } },
+		{	IMAGE_JP2,			{ "jp2" } },
+		{	IMAGE_PFM,			{ "pfm" } },
+		{	IMAGE_PICT,			{ "pict" } },
+		{	IMAGE_RAW,			{ "raw" } },
+		{	IMAGE_WEBP,			{ "webp" } },
+		{	IMAGE_JXR,			{ "jxr" } },
+		{	MODEL_COLLADA,		{ "collada" } },
+		{	MODEL_X,			{ "x" } },
+		{	MODEL_STP,			{ "stp" } },
+		{	MODEL_OBJ,			{ "obj" } },
+		{	MODEL_OBJNOMTL,		{ "objnomtl" } },
+		{	MODEL_STL,			{ "stl" } },
+		{	MODEL_STLB,			{ "stlb" } },
+		{	MODEL_PLY,			{ "ply" } },
+		{	MODEL_PLYB,			{ "plyb" } },
+		{	MODEL_3DS,			{ "3ds" } },
+		{	MODEL_GLTF2,		{ "gltf2" } },
+		{	MODEL_GLB2,			{ "glb2" } },
+		{	MODEL_GLTF,			{ "gltf" } },
+		{	MODEL_GLB,			{ "glb" } },
+		{	MODEL_ASSBIN,		{ "assbin" } },
+		{	MODEL_ASSXML,		{ "assxml" } },
+		{	MODEL_X3D,			{ "x3d" } },
+		{	MODEL_FBX,			{ "fbx" } },
+		{	MODEL_FBXA,			{ "fbxa" } },
+		{	MODEL_M3D,			{ "m3d" } },
+		{	MODEL_M3DA,			{ "m3da" } },
+		{	MODEL_3MF,			{ "3mf" } },
+		{	MODEL_PBRT,			{ "pbrt" } },
+		{	MODEL_ASSJSON,		{ "assjson" } },
+		{	FONT_TTF,			{ "ttf" } },
+		{	FONT_TTC,			{ "ttc" } },
+		{	FONT_OTF,			{ "otf" } },
+		{	FONT_PFM,			{ "pfm" } }
 	};
 
-	file::extension file::str2type(util::str aString) {
-		extension temp = UNK;
-		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
-			for (size_t j = 0; j < BuiltInTypes[i].Extension.size(); j++)
-				if (BuiltInTypes[i].Extension[j] == aString) {
-					return BuiltInTypes[i].Type;
+	file::extension::id file::extension::str2id(const char* aString) {
+		util::str temp = aString;
+		return str2id(temp);
+	}
+
+	file::extension::id file::extension::str2id(util::str aString) {
+		extension::id temp = extension::id::UNKNOWN;
+		for (size_t i = 0; i < sizeof(DataBase) / sizeof(data_base); i++) {
+			for (size_t j = 0; j < DataBase[i].ExtensionStr.size(); j++)
+				if (aString == DataBase[i].ExtensionStr[j]) {
+					return DataBase[i].ExtensionID;
 				}
 		}
 		return temp;
 	}
 
-	util::str file::type2str(extension aType) {
+	const char* file::extension::id2str(file::extension::id aID) {
 		const char* temp = "";
-		for (size_t i = 0; i < sizeof(BuiltInTypes) / sizeof(built_in_type); i++) {
-			if (BuiltInTypes[i].Type == aType) {
-				return BuiltInTypes[i].Extension[0].ptr();
+		for (size_t i = 0; i < sizeof(DataBase) / sizeof(data_base); i++) {
+			if (DataBase[i].ExtensionID == aID) {
+				temp = DataBase[i].ExtensionStr[0];
 			}
 		}
 		return temp;
+	}
+
+	file::type::id file::type::extid2typeid(file::extension::id aID) {
+		switch (aID) {
+		default:
+			return id::UNKNOWN;
+		case extension::id::DYNALIB_DYN:
+			return id::DYNALIB;
+		case extension::id::SCRIPT_LUA:
+			return id::SCRIPT;
+		case extension::id::SHADER_GLSL:
+		case extension::id::SHADER_HLSL:
+		case extension::id::SHADER_PVSH:
+		case extension::id::SHADER_TCSH:
+		case extension::id::SHADER_TESH:
+		case extension::id::SHADER_PGSH:
+		case extension::id::SHADER_PPSH:
+		case extension::id::SHADER_RGSH:
+		case extension::id::SHADER_AHSH:
+		case extension::id::SHADER_CHSH:
+		case extension::id::SHADER_RISH:
+		case extension::id::SHADER_RMSH:
+		case extension::id::SHADER_RCSH:
+		case extension::id::SHADER_CSH:
+		case extension::id::SHADER_SPV:
+			return id::SHADER;
+		case extension::id::IMAGE_BMP:
+		case extension::id::IMAGE_ICO:
+		case extension::id::IMAGE_JPEG:
+		case extension::id::IMAGE_JNG:
+		case extension::id::IMAGE_KOALA:
+		case extension::id::IMAGE_LBM:
+		case extension::id::IMAGE_MNG:
+		case extension::id::IMAGE_PBM:
+		case extension::id::IMAGE_PBMRAW:
+		case extension::id::IMAGE_PCD:
+		case extension::id::IMAGE_PCX:
+		case extension::id::IMAGE_PGM:
+		case extension::id::IMAGE_PGMRAW:
+		case extension::id::IMAGE_PNG:
+		case extension::id::IMAGE_PPM:
+		case extension::id::IMAGE_PPMRAW:
+		case extension::id::IMAGE_RAS:
+		case extension::id::IMAGE_TARGA:
+		case extension::id::IMAGE_TIFF:
+		case extension::id::IMAGE_WBMP:
+		case extension::id::IMAGE_PSD:
+		case extension::id::IMAGE_CUT:
+		case extension::id::IMAGE_XBM:
+		case extension::id::IMAGE_XPM:
+		case extension::id::IMAGE_DDS:
+		case extension::id::IMAGE_GIF:
+		case extension::id::IMAGE_HDR:
+		case extension::id::IMAGE_FAXG3:
+		case extension::id::IMAGE_SGI:
+		case extension::id::IMAGE_EXR:
+		case extension::id::IMAGE_J2K:
+		case extension::id::IMAGE_JP2:
+		case extension::id::IMAGE_PFM:
+		case extension::id::IMAGE_PICT:
+		case extension::id::IMAGE_RAW:
+		case extension::id::IMAGE_WEBP:
+		case extension::id::IMAGE_JXR:
+			return id::IMAGE;
+		case extension::id::MODEL_COLLADA:
+		case extension::id::MODEL_X:
+		case extension::id::MODEL_STP:
+		case extension::id::MODEL_OBJ:
+		case extension::id::MODEL_OBJNOMTL:
+		case extension::id::MODEL_STL:
+		case extension::id::MODEL_STLB:
+		case extension::id::MODEL_PLY:
+		case extension::id::MODEL_PLYB:
+		case extension::id::MODEL_3DS:
+		case extension::id::MODEL_GLTF2:
+		case extension::id::MODEL_GLB2:
+		case extension::id::MODEL_GLTF:
+		case extension::id::MODEL_GLB:
+		case extension::id::MODEL_ASSBIN:
+		case extension::id::MODEL_ASSXML:
+		case extension::id::MODEL_X3D:
+		case extension::id::MODEL_FBX:
+		case extension::id::MODEL_FBXA:
+		case extension::id::MODEL_M3D:
+		case extension::id::MODEL_M3DA:
+		case extension::id::MODEL_3MF:
+		case extension::id::MODEL_PBRT:
+		case extension::id::MODEL_ASSJSON:
+			return id::MODEL;
+		case extension::id::FONT_TTF:
+		case extension::id::FONT_TTC:
+		case extension::id::FONT_OTF:
+		case extension::id::FONT_PFM:
+			return id::FONT;
+		}
 	}
 
 	file* file::open(const char* aFilePath) {
@@ -73,15 +245,28 @@ namespace geodesuka::core::io {
 		temp.reverse();
 		util::str Extension = temp.split_at('.');
 		Extension.reverse();
-		extension ExtID = str2type(Extension);
+		extension::id ExtID = extension::str2id(Extension);
+		type::id TypeID = type::extid2typeid(ExtID);
 
-		switch (ExtID) {
+		// Will select class type base on 
+		switch (TypeID) {
 		default:
+			return nullptr;
+		case type::id::DYNALIB:
+			//return new dynalib(aFilePath);
+		case type::id::SCRIPT:
+			return nullptr;
+		case type::id::SHADER:
+			//return new gcl::shader(aFilePath);
+		case type::id::IMAGE:
+			//return new gcl::image(aFilePath);
+		case type::id::MODEL:
+			//return new graphics::model(aFilePath);
+		case type::id::AUDIO:
+			//return new sound::audio(aFilePath);
+		case type::id::FONT:
+			//return new graphcis::font(aFilePath);
 			break;
-			/*
-			
-
-			*/
 		}
 
 		return nullptr;
@@ -123,7 +308,7 @@ namespace geodesuka::core::io {
 		this->Dir = "";
 		this->Name = "";
 		this->Ext = "";
-		this->ID = UNK;
+		this->ID = extension::id::UNKNOWN;
 		this->Data = NULL;
 		this->DataSize = 0;
 	}
@@ -146,7 +331,7 @@ namespace geodesuka::core::io {
 		this->Name.reverse();
 		this->Dir = temp;
 		this->Dir.reverse();
-		this->ID = str2type(this->Ext);
+		this->ID = extension::str2id(this->Ext);
 		return false;
 	}
 

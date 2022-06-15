@@ -121,7 +121,7 @@ namespace geodesuka::core {
 		/*
 		* These methods will be used to generate draw commands.
 		*/
-		virtual void generate_draw_commands(object::rendertarget* aRenderTarget);
+		virtual void generate_renderops(object::rendertarget* aRenderTarget);
 		virtual void generate_draw_commands(object::system_display* aSystemDisplay);
 		virtual void generate_draw_commands(object::system_window* aSystemWindow);
 		virtual void generate_draw_commands(object::virtual_window* aVirtualWindow);

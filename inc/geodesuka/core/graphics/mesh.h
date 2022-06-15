@@ -1,8 +1,8 @@
 #pragma once
-#ifndef GEODESUKA_CORE_GCL_MESH_H
-#define GEODESUKA_CORE_GCL_MESH_H
+#ifndef GEODESUKA_CORE_GRAPHICS_MESH_H
+#define GEODESUKA_CORE_GRAPHICS_MESH_H
 
-#include "../util/variable.h"
+#include "../gcl/variable.h"
 
 #include "../gcl/context.h"
 #include "../gcl/buffer.h"
@@ -21,7 +21,7 @@ namespace geodesuka::core::graphics {
 		vertex* Vertex;
 
 		size_t IndexCount;
-		util::type::id IndexType;
+		gcl::type::id IndexType;
 		void* Index;
 
 		// Per Vertex Texture Coordinate.

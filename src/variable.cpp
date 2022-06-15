@@ -1,4 +1,4 @@
-#include <geodesuka/core/util/variable.h>
+#include <geodesuka/core/gcl/variable.h>
 
 //#include <stdio.h>
 #include <stdlib.h>
@@ -14,7 +14,7 @@
 
 #define BUILT_IN_TYPE_LIST_SIZE 39
 
-namespace geodesuka::core::util {
+namespace geodesuka::core::gcl {
 
 	// TODO: Maybe move this to a gconfig.h file so it can be shared with other objects?
 	static struct {

@@ -112,7 +112,7 @@ namespace geodesuka::core::object {
 		// Required Extensions for the class
 		static std::vector<const char*> RequiredInstanceExtension;
 		static std::vector<const char*> RequiredContextExtension;
-		static constexpr int RTID = 2;
+		static constexpr int ID = 2;
 
 		gcl::image* Frame;
 		
@@ -128,7 +128,7 @@ namespace geodesuka::core::object {
 
 		// ----- rendertarget inheritance ----- //
 
-		virtual int rtid() override;
+		virtual int id() override;
 		virtual void next_frame() override;
 		virtual VkSubmitInfo draw(size_t aObjectCount, object_t** aObject) override;
 		virtual VkPresentInfoKHR present_frame() override;

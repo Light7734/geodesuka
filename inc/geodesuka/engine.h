@@ -2,122 +2,68 @@
 #ifndef GEODESUKA_ENGINE_H
 #define GEODESUKA_ENGINE_H
 
-/*
+/* Standard C Libraries*/
 
-// ------------------------- TODO: ------------------------- \\
-
-// ------------------------- Notes ------------------------- \\
-As of right now geodesuka is the primary namespace. Engine
-is the factory manager of all objects, including memory. Can
-be used to 
-
-\\ ------------------------- Notes ------------------------- //
-*/
-
-/* --------------- System Macros (Tweak) --------------- */
-
-/*
-Disabled Warnings:
-C4244
-C6386
-C26451
-
-Include: $(ProjectDir)..\glslang
-
-*/
-
-// Disables Terminal Window, for windows only
-#if defined(_WIN32) || defined(_WIN64)
-//#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-#endif
-
-/* --------------- Standard C Libraries --------------- */
-
-/* --------------- Standard C++ Libraries --------------- */
+/* Standard C++ Libraries*/
 #include <vector>
 #include <chrono>
-
 #include <thread>
 #include <mutex>
 #include <atomic>
 
-// ------------------------- Mathematics Library ------------------------- //
+/* Third Party Libraries */
+#include <vulkan/vulkan.h>
+
+/* Engine Configuration */
+#include "config.h"
+
+/* Math Library */
 #include "core/math.h"
 
-// ------------------------- Utility Classes ------------------------- //
-// Simple replacement for std::string, extended functionality.
-#include "core/util/log.h"
-#include "core/util/str.h"
-#include "core/util/variable.h"
+/* Engine Utility Library */
+#include "core/util.h"
 
-#include "core/logic/timer.h"
-#include "core/logic/time_step.h"
-#include "core/logic/trap.h"
+/* Input/Output File System Library*/
+#include "core/io.h"
 
-// ------------------------- File System Manager ------------------------- //
-#include "core/io/file.h"
-#include "core/io/dynalib.h"
-//#include "core/io/image.h"
-//#include "core/io/font.h"
+/* Human Interface Device Library */
+#include "core/hid.h"
 
-// ------------------------- Graphics & Computation API ------------------------- //
+/* Graphics & Computation Library */
 #include "core/gcl.h"
-#include "core/gcl/device.h"
-#include "core/gcl/context.h"
-#include "core/gcl/command_list.h"
-#include "core/gcl/command_pool.h"
-#include "core/gcl/command_batch.h"
-#include "core/gcl/buffer.h"
-#include "core/gcl/shader.h"
-#include "core/gcl/image.h"
-#include "core/gcl/renderpass.h"
-#include "core/gcl/drawpack.h"
-#include "core/gcl/pipeline.h"
 
-// ------------------------- Human Interface Devices ------------------------- //
+/* Graphics */
+#include "core/graphics.h"
 
-// Human Interface devices go here.
-#include "core/hid/keyboard.h"
-#include "core/hid/mouse.h"
-#include "core/hid/joystick.h"
+/* Sound Library */
+#include "core/sound.h"
 
-// ------------------------- Component Classes ------------------------- //
-//#include "core/component/...h"
-
-// ------------------------- Objects ------------------------- //
-/*
-* The classes included here are built in objects for the core game engine.
-* They will be used for setting up guis and interfaces.
-*/
+/* Objects */
 #include "core/object.h"
 
-// Do not mistake with system window.
 #include "core/object/system_terminal.h"
 
-// Might change this later into something else.
 #include "core/object/rendertarget.h"
 
-// Includes window primitives which can be drawn to.
 #include "core/object/window.h"
 #include "core/object/system_display.h"
 #include "core/object/system_window.h"
 #include "core/object/virtual_window.h"
 
-// camera.h is the base class for extendable cameras
-// that will perform deferred rendering. 
 #include "core/object/camera.h"
 #include "core/object/camera2d.h"
 #include "core/object/camera3d.h"
 
-// This section is for GUI sh... stuff!
 #include "core/object/text.h"
 
+/* Stages */
 #include "core/stage.h"
+#include "core/stage/desktop.h"
 #include "core/stage/canvas.h"
 #include "core/stage/scene2d.h"
 #include "core/stage/scene3d.h"
-#include "core/stage/desktop.h"
 
+// App entry point for engine.
 #include "core/app.h"
 
 namespace geodesuka {
@@ -138,7 +84,6 @@ namespace geodesuka {
 			int Revision;
 		};
 
-		// TODO: Stupid Object, Remove Later
 		struct state {
 			enum id {
 				FAILURE = -1,
@@ -152,8 +97,11 @@ namespace geodesuka {
 		engine(int aCmdArgCount, const char** aCmdArgList, int aLayerCount, const char** aLayerList, int aExtensionCount, const char** aExtensionList);
 		~engine();
 
+		// TODO: Reference Pools?
+		const char* get_process_directory();
 		core::io::file* open(const char* aFilePath);
 		void close(core::io::file* aFile);
+
 		core::gcl::device** get_device_list(size_t* aListSize);
 		core::gcl::device* get_primary_device();
 		core::object::system_display** get_display_list(size_t* aListSize);
@@ -172,9 +120,9 @@ namespace geodesuka {
 		const int Date = 20220529; //YYYYMMDD
 		std::vector<const char*> Layer;
 		std::vector<const char*> Extension;
-		VkApplicationInfo AppInfo{};
-		VkInstanceCreateInfo CreateInfo{};
-		VkInstance Handle;
+		vk_application_info AppInfo{};
+		vk_instance_create_info CreateInfo{};
+		vk_instance Handle;
 
 		// ------------------------------ Engine State ------------------------------ //
 		
@@ -195,6 +143,7 @@ namespace geodesuka {
 		// ----- Memory Managed Items ----- //
 
 		// Maybe make shared pointers?
+		core::util::str CurrentWorkingDirectory;
 		std::vector<core::io::file*> File;
 		std::vector<core::gcl::context*> Context;
 		std::vector<core::object_t*> Object;
@@ -213,10 +162,10 @@ namespace geodesuka {
 		std::thread SystemTerminalThread;
 		std::thread AppThread;
 
-		void update();
-		void render();			// Thread honors frame rates of respective targets.
-		void audio();			// Thread Handles audio streams.
-		void terminal();		// Thread handles terminal input to the engine.
+		void update(double aTimeStep);		// 
+		void render();						// Thread honors frame rates of respective targets.
+		void audio();						// Thread Handles audio streams.
+		void terminal();					// Thread handles terminal input to the engine.
 
 	};
 

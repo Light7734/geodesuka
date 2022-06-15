@@ -38,7 +38,7 @@ namespace geodesuka::core::gcl {
 		}
 
 
-		VkResult Result = VkResult::VK_SUCCESS;
+		vk_result Result = vk_result::VK_SUCCESS;
 
 		// If -1, then the option is not supported by the device.
 		this->QFI[0] = this->Device->qfi(device::qfs::TRANSFER);
@@ -88,7 +88,7 @@ namespace geodesuka::core::gcl {
 
 		// With UQFI found, generate queues for selected indices.
 		uint32_t QueueFamilyCount = 0;
-		const VkQueueFamilyProperties *QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		const vk_queue_family_properties *QueueFamilyProperty = this->Device->get_queue_family_properties(&QueueFamilyCount);
 
 		this->QueueCount = 0;
 		for (int i = 0; i < this->UQFICount; i++) {
@@ -107,7 +107,7 @@ namespace geodesuka::core::gcl {
 			}
 		}
 
-		this->QueueCreateInfo = (VkDeviceQueueCreateInfo*)malloc(this->UQFICount * sizeof(VkDeviceQueueCreateInfo));
+		this->QueueCreateInfo = (vk_device_queue_create_info*)malloc(this->UQFICount * sizeof(vk_device_queue_create_info));
 		this->Queue = new queue[this->QueueCount];
 
 		// Check for allocation failure.
@@ -134,7 +134,7 @@ namespace geodesuka::core::gcl {
 
 		// Loads all create info.
 		for (int i = 0; i < this->UQFICount; i++) {
-			this->QueueCreateInfo[i].sType				= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			this->QueueCreateInfo[i].sType				= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			this->QueueCreateInfo[i].pNext				= NULL;
 			this->QueueCreateInfo[i].flags				= 0;
 			this->QueueCreateInfo[i].queueFamilyIndex	= this->UQFI[i];
@@ -143,7 +143,7 @@ namespace geodesuka::core::gcl {
 		}
 
 		// Load VkDevice Create Info.
-		this->CreateInfo.sType						= VkStructureType::VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		this->CreateInfo.sType						= VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		this->CreateInfo.pNext						= NULL;
 		this->CreateInfo.flags						= 0;
 		this->CreateInfo.queueCreateInfoCount		= this->UQFICount;
@@ -176,7 +176,7 @@ namespace geodesuka::core::gcl {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			this->PoolCreateInfo[i].sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+			this->PoolCreateInfo[i].sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 			this->PoolCreateInfo[i].pNext = NULL;
 		}
 
@@ -189,15 +189,15 @@ namespace geodesuka::core::gcl {
 		
 		// One time submit pool
 		// Transfer operations.
-		this->PoolCreateInfo[0].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[0].flags				= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		this->PoolCreateInfo[0].queueFamilyIndex	= this->qfi(device::qfs::TRANSFER);
 
 		// Compute operations.
-		this->PoolCreateInfo[1].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[1].flags				= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		this->PoolCreateInfo[1].queueFamilyIndex	= this->qfi(device::qfs::COMPUTE);
 
 		// Graphics operations.
-		this->PoolCreateInfo[2].flags				= VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VkCommandPoolCreateFlagBits::VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+		this->PoolCreateInfo[2].flags				= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 		this->PoolCreateInfo[2].queueFamilyIndex	= this->qfi(device::qfs::GRAPHICS_AND_COMPUTE);
 
 		for (int i = 0; i < 3; i++) {
@@ -211,8 +211,8 @@ namespace geodesuka::core::gcl {
 			this->CommandBuffer[i] = NULL;
 		}
 
-		VkFenceCreateInfo FenceCreateInfo{};
-		FenceCreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		vk_fence_create_info FenceCreateInfo{};
+		FenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 		FenceCreateInfo.pNext = NULL;
 		FenceCreateInfo.flags = 0;
 
@@ -287,14 +287,26 @@ namespace geodesuka::core::gcl {
 
 	}
 
-	VkCommandBuffer context::create(device::qfs aQFS) {
-		VkCommandBuffer temp = VK_NULL_HANDLE;
+	vk_memory_requirements context::get_buffer_memory_requirements(vk_buffer aBufferHandle) {
+		vk_memory_requirements Return{};
+		vkGetBufferMemoryRequirements(Handle, aBufferHandle, &Return);
+		return Return;
+	}
+
+	vk_memory_requirements context::get_image_memory_requirements(vk_image aImageHandle) {
+		vk_memory_requirements Return{};
+		vkGetImageMemoryRequirements(Handle, aImageHandle, &Return);
+		return Return;
+	}
+
+	vk_command_buffer context::create(device::qfs aQFS) {
+		vk_command_buffer temp = VK_NULL_HANDLE;
 		this->create(aQFS, 1, &temp);
 		return temp;
 	}
 
-	VkResult context::create(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
-		VkResult Result = VkResult::VK_INCOMPLETE;
+	vk_result context::create(device::qfs aQFS, uint32_t aCommandBufferCount, vk_command_buffer* aCommandBuffer) {
+		vk_result Result = vk_result::VK_INCOMPLETE;
 		if ((this->qfi(aQFS) < 0) || (aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return Result;
 
 		int i;
@@ -308,18 +320,18 @@ namespace geodesuka::core::gcl {
 		// Pool is invalid.
 		if (this->Pool[i] == VK_NULL_HANDLE) return Result;
 
-		VkCommandBufferAllocateInfo AllocateInfo{};
+		vk_command_buffer_allocate_info AllocateInfo{};
 
-		AllocateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		AllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		AllocateInfo.pNext = NULL;
 		AllocateInfo.commandPool = this->Pool[i];
-		AllocateInfo.level = VkCommandBufferLevel::VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+		AllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		AllocateInfo.commandBufferCount = aCommandBufferCount;
 
 		this->Mutex.lock();
 		// Check if allocation is succesful.
 		Result = vkAllocateCommandBuffers(this->Handle, &AllocateInfo, aCommandBuffer);
-		if (Result != VkResult::VK_SUCCESS) {
+		if (Result != vk_result::VK_SUCCESS) {
 			this->Mutex.unlock();
 			return Result;
 		}
@@ -327,15 +339,15 @@ namespace geodesuka::core::gcl {
 		// alloc/realloc command buffer memory pool.
 		void* nptr = NULL;
 		if (this->CommandBuffer[i] == NULL) {
-			nptr = malloc(aCommandBufferCount * sizeof(VkCommandBuffer));
+			nptr = malloc(aCommandBufferCount * sizeof(vk_command_buffer));
 		}
 		else {
-			nptr = realloc(this->CommandBuffer[i], (aCommandBufferCount + this->CommandBufferCount[i]) * sizeof(VkCommandBuffer));
+			nptr = realloc(this->CommandBuffer[i], (aCommandBufferCount + this->CommandBufferCount[i]) * sizeof(vk_command_buffer));
 		}
 
 		// Out of host memory.
 		if (nptr == NULL) {
-			Result = VkResult::VK_ERROR_OUT_OF_HOST_MEMORY;
+			Result = vk_result::VK_ERROR_OUT_OF_HOST_MEMORY;
 			vkFreeCommandBuffers(this->Handle, this->Pool[i], aCommandBufferCount, aCommandBuffer);
 			for (size_t j = 0; j < aCommandBufferCount; j++) {
 				aCommandBuffer[j] = VK_NULL_HANDLE;
@@ -345,10 +357,10 @@ namespace geodesuka::core::gcl {
 		}
 
 		// Copy new pointer over.
-		this->CommandBuffer[i] = (VkCommandBuffer*)nptr;
+		this->CommandBuffer[i] = (vk_command_buffer*)nptr;
 
 		// Store new command buffers.
-		std::memcpy(&(this->CommandBuffer[i][this->CommandBufferCount[i]]), aCommandBuffer, aCommandBufferCount * sizeof(VkCommandBuffer));
+		std::memcpy(&(this->CommandBuffer[i][this->CommandBufferCount[i]]), aCommandBuffer, aCommandBufferCount * sizeof(vk_command_buffer));
 		//for (int j = this->CommandBufferCount[i]; j < aCommandBufferCount + this->CommandBufferCount[i]; j++) {
 		//	this->CommandBuffer[i][j] = aCommandBuffer[j - this->CommandBufferCount[i]];
 		//}
@@ -359,11 +371,11 @@ namespace geodesuka::core::gcl {
 		return Result;
 	}
 
-	void context::destroy(device::qfs aQFS, VkCommandBuffer& aCommandBuffer) {
+	void context::destroy(device::qfs aQFS, vk_command_buffer& aCommandBuffer) {
 		this->destroy(aQFS, 1, &aCommandBuffer);
 	}
 
-	void context::destroy(device::qfs aQFS, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBuffer) {
+	void context::destroy(device::qfs aQFS, uint32_t aCommandBufferCount, vk_command_buffer* aCommandBuffer) {
 		if ((this->qfi(aQFS) < 0) || (aCommandBufferCount == 0) || (aCommandBuffer == NULL)) return;
 		// Takes a list of aggregated command buffers and cross references them
 		// with already created command buffers.
@@ -381,8 +393,8 @@ namespace geodesuka::core::gcl {
 
 		// Match
 		int MatchCount = 0;
-		VkCommandBuffer* MatchBuffer = NULL;
-		VkCommandBuffer* NewBuffer = NULL;
+		vk_command_buffer* MatchBuffer = NULL;
+		vk_command_buffer* NewBuffer = NULL;
 
 		this->Mutex.lock();
 		// Count number of matches.
@@ -417,8 +429,8 @@ namespace geodesuka::core::gcl {
 			return;
 		}
 
-		MatchBuffer = (VkCommandBuffer*)malloc(MatchCount * sizeof(VkCommandBuffer));
-		NewBuffer = (VkCommandBuffer*)malloc((this->CommandBufferCount[Index] - MatchCount) * sizeof(VkCommandBuffer));
+		MatchBuffer = (vk_command_buffer*)malloc(MatchCount * sizeof(vk_command_buffer));
+		NewBuffer = (vk_command_buffer*)malloc((this->CommandBufferCount[Index] - MatchCount) * sizeof(vk_command_buffer));
 
 		// Memory allocation failure.
 		if ((MatchBuffer == NULL) || (NewBuffer == NULL)) {
@@ -484,13 +496,13 @@ namespace geodesuka::core::gcl {
 		return (this->qfi(aQFS) != -1);
 	}
 
-	VkResult context::execute(device::qfs aQFS, command_batch& aCommandBatch, VkFence aFence) {
-		VkResult Result = VkResult::VK_INCOMPLETE;
+	vk_result context::execute(device::qfs aQFS, command_batch& aCommandBatch, vk_fence aFence) {
+		vk_result Result = vk_result::VK_INCOMPLETE;
 		if ((this->qfi(aQFS) == -1) || ((aQFS == device::qfs::PRESENT) ? (aCommandBatch.PresentationCount == 0) : (aCommandBatch.SubmissionCount == 0))) return Result;
 		
 
 		uint32_t QueueFamilyCount = 0;
-		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		const vk_queue_family_properties* QueueFamilyProperty = this->Device->get_queue_family_properties(&QueueFamilyCount);
 		int lQFI = this->qfi(aQFS);
 
 		int Offset = 0;
@@ -509,7 +521,7 @@ namespace geodesuka::core::gcl {
 			if (this->Queue[Index].Mutex.try_lock()) {
 				switch (aQFS) {
 				default:
-					return VkResult::VK_ERROR_FEATURE_NOT_PRESENT;
+					return vk_result::VK_ERROR_FEATURE_NOT_PRESENT;
 				case device::qfs::TRANSFER: case device::qfs::COMPUTE: case device::qfs::GRAPHICS: case device::qfs::GRAPHICS_AND_COMPUTE:
 					Result = vkQueueSubmit(this->Queue[Index].Handle, aCommandBatch.SubmissionCount, aCommandBatch.Submission, aFence);
 					break;
@@ -531,14 +543,14 @@ namespace geodesuka::core::gcl {
 		return Result;
 	}
 
-	VkResult context::submit(device::qfs aQFS, uint32_t aSubmissionCount, VkSubmitInfo* aSubmission, VkFence aFence) {
-		VkResult Result = VkResult::VK_INCOMPLETE;
+	vk_result context::submit(device::qfs aQFS, uint32_t aSubmissionCount, vk_submit_info* aSubmission, vk_fence aFence) {
+		vk_result Result = vk_result::VK_INCOMPLETE;
 		if ((aSubmissionCount < 1) || (aSubmission == NULL) || (this->qfi(aQFS) == -1)) return Result;
 		// When placing an execution submission, thread must find
 		// and available queue to submit to.
 
 		uint32_t QueueFamilyCount = 0;
-		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		const vk_queue_family_properties* QueueFamilyProperty = this->Device->get_queue_family_properties(&QueueFamilyCount);
 		int lQFI = this->qfi(aQFS);
 
 		int Offset = 0;
@@ -567,12 +579,12 @@ namespace geodesuka::core::gcl {
 		return Result;
 	}
 
-	VkResult context::present(VkPresentInfoKHR* aPresentation) {
-		VkResult Result = VkResult::VK_INCOMPLETE;
+	vk_result context::present(vk_present_info_khr* aPresentation) {
+		vk_result Result = vk_result::VK_INCOMPLETE;
 		if ((aPresentation == NULL) || (this->qfi(device::qfs::PRESENT) == -1)) return Result;
 
 		uint32_t QueueFamilyCount = 0;
-		const VkQueueFamilyProperties* QueueFamilyProperty = this->Device->get_queue_families(&QueueFamilyCount);
+		const vk_queue_family_properties* QueueFamilyProperty = this->Device->get_queue_family_properties(&QueueFamilyCount);
 		int lQFI = this->qfi(device::qfs::PRESENT);
 
 		int Offset = 0;
@@ -601,7 +613,7 @@ namespace geodesuka::core::gcl {
 		return Result;
 	}
 
-	VkInstance context::inst() {
+	vk_instance context::inst() {
 		return this->Device->inst();
 	}
 
@@ -609,7 +621,7 @@ namespace geodesuka::core::gcl {
 		return this->Device;
 	}
 
-	VkDevice context::handle() {
+	vk_device context::handle() {
 		return this->Handle;
 	}
 

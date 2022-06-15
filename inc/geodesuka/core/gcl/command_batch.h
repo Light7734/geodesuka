@@ -4,6 +4,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "config.h"
+
 namespace geodesuka::core::gcl {
 
 	/*
@@ -16,33 +18,33 @@ namespace geodesuka::core::gcl {
 		friend class context;
 
 		command_batch();
-		command_batch(VkSubmitInfo aSubmission);
-		command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission);
-		command_batch(VkPresentInfoKHR aPresentation);
-		command_batch(size_t aPresentationCount, VkPresentInfoKHR* aPresentation);
+		command_batch(vk_submit_info aSubmission);
+		command_batch(size_t aSubmissionCount, vk_submit_info* aSubmission);
+		command_batch(vk_present_info_khr aPresentation);
+		command_batch(size_t aPresentationCount, vk_present_info_khr* aPresentation);
 		command_batch(const command_batch& aInput);
 		command_batch(command_batch&& aInput) noexcept;
 		~command_batch();
 
-		//VkSubmitInfo operator[](int aIndex) const;
-		//VkSubmitInfo& operator[](int aIndex);
+		//vk_submit_info operator[](int aIndex) const;
+		//vk_submit_info& operator[](int aIndex);
 
 		command_batch& operator=(const command_batch& aRhs);
 		command_batch& operator=(command_batch&& aRhs) noexcept;
 
 		// Will be used to aggregate render_target submissions.
-		command_batch& operator+=(VkSubmitInfo aRhs);
-		command_batch& operator+=(VkPresentInfoKHR aRhs);
+		command_batch& operator+=(vk_submit_info aRhs);
+		command_batch& operator+=(vk_present_info_khr aRhs);
 		command_batch& operator+=(const command_batch& aRhs);
 
 		void clear();
 
 	private:
 		size_t SubmissionCount;
-		VkSubmitInfo* Submission;
+		vk_submit_info* Submission;
 
 		size_t PresentationCount;
-		VkPresentInfoKHR* Presentation;
+		vk_present_info_khr* Presentation;
 	};
 
 }

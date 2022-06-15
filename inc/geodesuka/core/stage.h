@@ -32,31 +32,39 @@ namespace geodesuka::core {
 
 		friend class engine;
 
-
-		~stage_t();
-
-	protected:
-
+		// Stage Objects and Render Targets.
 		std::vector<object_t*> Object;
 		std::vector<object::rendertarget*> RenderTarget;
 
-		std::mutex Mutex;
-		std::atomic<bool> isReadyToBeProcessed;
+		~stage_t();
+
+		// Used for runtime stage discrimination.
+		virtual int id() = 0;
+
+	protected:
 
 		engine* Engine;
 		gcl::context* Context;
+		std::mutex Mutex;
+		std::atomic<bool> isReadyToBeProcessed;
+
 
 		stage_t(engine* aEngine, gcl::context* aContext);
 
-		int generate_render_commands();
+		// This function can be called after all objects and render targets have been created.
+		// It will then generate draw commands for each object_t/rendertarget pair on the stage.
+		int generate_renderops();
+
+		// Base class method does nothing, but can be overriden to update stage resources.
+		virtual VkSubmitInfo update(double aDeltaTime);
+
+		// Base class does nothing
+		virtual VkSubmitInfo compute();
 
 	private:
 
-		virtual VkSubmitInfo update(double aDeltaTime);
-
-		virtual VkSubmitInfo compute();
-
-		virtual gcl::command_batch render();
+		// This is fixed by the engine, and cannot be overriden.
+		gcl::command_batch render();
 
 	};
 

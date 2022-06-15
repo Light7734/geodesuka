@@ -15,7 +15,7 @@ namespace geodesuka::core::gcl {
 		PresentationCount = 0;
 	}
 
-	command_batch::command_batch(VkSubmitInfo aSubmission) {
+	command_batch::command_batch(vk_submit_info aSubmission) {
 		Submission = NULL;
 		SubmissionCount = 0;
 		Presentation = NULL;
@@ -23,10 +23,10 @@ namespace geodesuka::core::gcl {
 		*this += command_batch(1, &aSubmission);
 	}
 
-	command_batch::command_batch(size_t aSubmissionCount, VkSubmitInfo* aSubmission) {
-		Submission = (VkSubmitInfo*)malloc(aSubmissionCount * sizeof(VkSubmitInfo));
+	command_batch::command_batch(size_t aSubmissionCount, vk_submit_info* aSubmission) {
+		Submission = (vk_submit_info*)malloc(aSubmissionCount * sizeof(vk_submit_info));
 		if (Submission != NULL) {
-			memcpy(Submission, aSubmission, aSubmissionCount * sizeof(VkSubmitInfo));
+			memcpy(Submission, aSubmission, aSubmissionCount * sizeof(vk_submit_info));
 			SubmissionCount = aSubmissionCount;
 		}
 		else {
@@ -36,7 +36,7 @@ namespace geodesuka::core::gcl {
 		PresentationCount = 0;
 	}
 
-	command_batch::command_batch(VkPresentInfoKHR aPresentation) {
+	command_batch::command_batch(vk_present_info_khr aPresentation) {
 		Submission = NULL;
 		SubmissionCount = 0;
 		Presentation = NULL;
@@ -44,12 +44,12 @@ namespace geodesuka::core::gcl {
 		*this += command_batch(1, &aPresentation);
 	}
 
-	command_batch::command_batch(size_t aPresentationCount, VkPresentInfoKHR* aPresentation) {
+	command_batch::command_batch(size_t aPresentationCount, vk_present_info_khr* aPresentation) {
 		Submission = NULL;
 		SubmissionCount = 0;
-		Presentation = (VkPresentInfoKHR*)malloc(aPresentationCount * sizeof(VkPresentInfoKHR));
+		Presentation = (vk_present_info_khr*)malloc(aPresentationCount * sizeof(vk_present_info_khr));
 		if (Presentation != NULL) {
-			memcpy(Presentation, aPresentation, aPresentationCount * sizeof(VkPresentInfoKHR));
+			memcpy(Presentation, aPresentation, aPresentationCount * sizeof(vk_present_info_khr));
 			PresentationCount = aPresentationCount;
 		}
 		else {
@@ -61,17 +61,17 @@ namespace geodesuka::core::gcl {
 		Submission = NULL;
 		SubmissionCount = 0;
 		if (aInput.SubmissionCount > 0) {
-			Submission = (VkSubmitInfo*)malloc(aInput.SubmissionCount * sizeof(VkSubmitInfo));
+			Submission = (vk_submit_info*)malloc(aInput.SubmissionCount * sizeof(vk_submit_info));
 			if (Submission != NULL) {
-				memcpy(Submission, aInput.Submission, aInput.SubmissionCount * sizeof(VkSubmitInfo));
+				memcpy(Submission, aInput.Submission, aInput.SubmissionCount * sizeof(vk_submit_info));
 			}
 		}
 		Presentation = NULL;
 		PresentationCount = 0;
 		if (aInput.PresentationCount > 0) {
-			Presentation = (VkPresentInfoKHR*)malloc(aInput.PresentationCount * sizeof(VkPresentInfoKHR));
+			Presentation = (vk_present_info_khr*)malloc(aInput.PresentationCount * sizeof(vk_present_info_khr));
 			if (Presentation != NULL) {
-				memcpy(Presentation, aInput.Presentation, aInput.PresentationCount * sizeof(VkPresentInfoKHR));
+				memcpy(Presentation, aInput.Presentation, aInput.PresentationCount * sizeof(vk_present_info_khr));
 			}
 		}
 	}
@@ -95,17 +95,17 @@ namespace geodesuka::core::gcl {
 		if (aRhs.Submission != NULL) {
 			void* nptr = NULL;
 			if (Submission == NULL) {
-				nptr = malloc(aRhs.SubmissionCount * sizeof(VkSubmitInfo));
+				nptr = malloc(aRhs.SubmissionCount * sizeof(vk_submit_info));
 			}
 			else if (SubmissionCount != aRhs.SubmissionCount) {
-				nptr = realloc(Submission, aRhs.SubmissionCount * sizeof(VkSubmitInfo));
+				nptr = realloc(Submission, aRhs.SubmissionCount * sizeof(vk_submit_info));
 			}
 			else {
 				nptr = Submission;
 			}
-			if (nptr != (void*)Submission) Submission = (VkSubmitInfo*)nptr;
+			if (nptr != (void*)Submission) Submission = (vk_submit_info*)nptr;
 			if ((Submission != NULL) && (aRhs.Submission != NULL) && (aRhs.SubmissionCount != 0)) {
-				memcpy(Submission, aRhs.Submission, aRhs.SubmissionCount * sizeof(VkSubmitInfo));
+				memcpy(Submission, aRhs.Submission, aRhs.SubmissionCount * sizeof(vk_submit_info));
 				SubmissionCount = aRhs.SubmissionCount;
 			}
 		}
@@ -118,17 +118,17 @@ namespace geodesuka::core::gcl {
 		if (aRhs.Presentation != NULL) {
 			void* nptr = NULL;
 			if (Presentation == NULL) {
-				nptr = malloc(aRhs.PresentationCount * sizeof(VkPresentInfoKHR));
+				nptr = malloc(aRhs.PresentationCount * sizeof(vk_present_info_khr));
 			}
 			else if (PresentationCount != aRhs.PresentationCount) {
-				nptr = realloc(Presentation, aRhs.PresentationCount * sizeof(VkPresentInfoKHR));
+				nptr = realloc(Presentation, aRhs.PresentationCount * sizeof(vk_present_info_khr));
 			}
 			else {
 				nptr = Presentation;
 			}
-			if (nptr != (void*)Presentation) Presentation = (VkPresentInfoKHR*)nptr;
+			if (nptr != (void*)Presentation) Presentation = (vk_present_info_khr*)nptr;
 			if ((Presentation != NULL) && (aRhs.Presentation != NULL) && (aRhs.PresentationCount != 0)) {
-				memcpy(Presentation, aRhs.Presentation, aRhs.PresentationCount * sizeof(VkPresentInfoKHR));
+				memcpy(Presentation, aRhs.Presentation, aRhs.PresentationCount * sizeof(vk_present_info_khr));
 				PresentationCount = aRhs.PresentationCount;
 			}
 		}
@@ -154,12 +154,12 @@ namespace geodesuka::core::gcl {
 		return *this;
 	}
 
-	command_batch& command_batch::operator+=(VkSubmitInfo aRhs) {
+	command_batch& command_batch::operator+=(vk_submit_info aRhs) {
 		if (aRhs.pCommandBuffers == NULL) return *this;
 		return (*this += command_batch(1, &aRhs));
 	}
 
-	command_batch& command_batch::operator+=(VkPresentInfoKHR aRhs) {
+	command_batch& command_batch::operator+=(vk_present_info_khr aRhs) {
 		if (aRhs.pImageIndices == NULL) return *this;
 		return (*this += command_batch(1, &aRhs));
 	}
@@ -170,18 +170,18 @@ namespace geodesuka::core::gcl {
 			// Allocate memory for more subs
 			void* nptr = NULL;
 			if (Submission == NULL) {
-				nptr = malloc(aRhs.SubmissionCount * sizeof(VkSubmitInfo));
+				nptr = malloc(aRhs.SubmissionCount * sizeof(vk_submit_info));
 			}
 			else {
-				nptr = realloc(Submission, (SubmissionCount + aRhs.SubmissionCount) * sizeof(VkSubmitInfo));
+				nptr = realloc(Submission, (SubmissionCount + aRhs.SubmissionCount) * sizeof(vk_submit_info));
 			}
 
 			// Check for allocation failure.
 			assert(nptr != NULL);
 			// Use new pointer if reallocated.
-			if (nptr != Submission) Submission = (VkSubmitInfo*)nptr;
+			if (nptr != Submission) Submission = (vk_submit_info*)nptr;
 			// Copy new elements
-			memcpy(&Submission[SubmissionCount], aRhs.Submission, aRhs.SubmissionCount * sizeof(VkSubmitInfo));
+			memcpy(&Submission[SubmissionCount], aRhs.Submission, aRhs.SubmissionCount * sizeof(vk_submit_info));
 			SubmissionCount += aRhs.SubmissionCount;
 		}
 
@@ -189,18 +189,18 @@ namespace geodesuka::core::gcl {
 			// Allocate memory for more subs
 			void* nptr = NULL;
 			if (Presentation == NULL) {
-				nptr = malloc(aRhs.PresentationCount * sizeof(VkPresentInfoKHR));
+				nptr = malloc(aRhs.PresentationCount * sizeof(vk_present_info_khr));
 			}
 			else {
-				nptr = realloc(Presentation, (PresentationCount + aRhs.PresentationCount) * sizeof(VkPresentInfoKHR));
+				nptr = realloc(Presentation, (PresentationCount + aRhs.PresentationCount) * sizeof(vk_present_info_khr));
 			}
 
 			// Check for allocation failure.
 			assert(nptr != NULL);
 			// Use new pointer if reallocated.
-			if (nptr != Presentation) Presentation = (VkPresentInfoKHR*)nptr;
+			if (nptr != Presentation) Presentation = (vk_present_info_khr*)nptr;
 			// Copy new elements
-			memcpy(&Presentation[PresentationCount], aRhs.Presentation, aRhs.PresentationCount * sizeof(VkPresentInfoKHR));
+			memcpy(&Presentation[PresentationCount], aRhs.Presentation, aRhs.PresentationCount * sizeof(vk_present_info_khr));
 			PresentationCount += aRhs.PresentationCount;
 		}
 

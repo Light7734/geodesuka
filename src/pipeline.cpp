@@ -16,7 +16,6 @@ namespace geodesuka::core::gcl {
 		this->InputAssembly.pNext = NULL;
 		this->InputAssembly.flags = 0;
 
-		// Depends
 		this->Tesselation.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO;
 		this->Tesselation.pNext = NULL;
 		this->Tesselation.flags = 0;
@@ -41,12 +40,21 @@ namespace geodesuka::core::gcl {
 		this->ColorBlend.pNext = NULL;
 		this->ColorBlend.flags = 0;
 
-		this->DynamicState.sType = VkStructureType::VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		this->DynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 		this->DynamicState.pNext = NULL;
 		this->DynamicState.flags = 0;
 
 		bool TesselationShaderExists = false;
 		bool GeometryShaderExists = false;
+
+		StageCount = aShaderCount;
+		StageList = (vk_pipeline_shader_stage_create_info*)malloc(StageCount * sizeof(vk_pipeline_shader_stage_create_info));
+		if (StageList != NULL) {
+			for (uint32_t i = 0; i < aShaderCount; i++) {
+				StageList[i] = aShaderList[i]->stageci();
+			}
+		}
+
 
 		CreateInfo.sType					= VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 		CreateInfo.pNext					= NULL;
@@ -86,34 +94,34 @@ namespace geodesuka::core::gcl {
 	pipeline::pipeline(context* aContext, rasterizer& aRasterizer, VkRenderPass aRenderPass, uint32_t aSubpassIndex) {
 		VkResult Result = VkResult::VK_SUCCESS;
 
-		Type = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		BindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 		Context = aContext;
 		Rasterizer = aRasterizer;
 
-		// Create Descriptor Set Layouts
-		for (uint32_t i = 0; i < Rasterizer.UniformSetCount; i++) {
-			VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInfo{};
-			DescriptorSetLayoutCreateInfo.sType				= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-			DescriptorSetLayoutCreateInfo.pNext				= NULL;
-			DescriptorSetLayoutCreateInfo.flags				= 0;
-			DescriptorSetLayoutCreateInfo.bindingCount		= Rasterizer.UniformSetBindingCount[i];
-			DescriptorSetLayoutCreateInfo.pBindings			= Rasterizer.UniformSetBindingList[i];
-			Result = vkCreateDescriptorSetLayout(Context->handle(), &DescriptorSetLayoutCreateInfo, NULL, &DescriptorSetLayoutList[i]);
-		}
+		//// Create Descriptor Set Layouts
+		//for (uint32_t i = 0; i < Rasterizer.UniformSetCount; i++) {
+		//	VkDescriptorSetLayoutCreateInfo DescriptorSetLayoutCreateInfo{};
+		//	DescriptorSetLayoutCreateInfo.sType				= VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+		//	DescriptorSetLayoutCreateInfo.pNext				= NULL;
+		//	DescriptorSetLayoutCreateInfo.flags				= 0;
+		//	DescriptorSetLayoutCreateInfo.bindingCount		= Rasterizer.UniformSetBindingCount[i];
+		//	DescriptorSetLayoutCreateInfo.pBindings			= Rasterizer.UniformSetBindingList[i];
+		//	Result = vkCreateDescriptorSetLayout(Context->handle(), &DescriptorSetLayoutCreateInfo, NULL, &DescriptorSetLayoutList[i]);
+		//}
 
-		VkDescriptorSetLayoutBinding;
+		//VkDescriptorSetLayoutBinding;
 
-		// Number of Pool Types.
+		//// Number of Pool Types.
 
-		VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
-		DescriptorPoolCreateInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		DescriptorPoolCreateInfo.pNext			= NULL;
-		DescriptorPoolCreateInfo.flags			= 0;
-		DescriptorPoolCreateInfo.maxSets		;
-		DescriptorPoolCreateInfo.poolSizeCount	;
-		DescriptorPoolCreateInfo.pPoolSizes		;
+		//VkDescriptorPoolCreateInfo DescriptorPoolCreateInfo{};
+		//DescriptorPoolCreateInfo.sType			= VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		//DescriptorPoolCreateInfo.pNext			= NULL;
+		//DescriptorPoolCreateInfo.flags			= 0;
+		//DescriptorPoolCreateInfo.maxSets		;
+		//DescriptorPoolCreateInfo.poolSizeCount	;
+		//DescriptorPoolCreateInfo.pPoolSizes		;
 
-		Result = vkCreateDescriptorPool(Context->handle(), &DescriptorPoolCreateInfo, NULL, &DescriptorPool);
+		//Result = vkCreateDescriptorPool(Context->handle(), &DescriptorPoolCreateInfo, NULL, &DescriptorPool);
 
 		VkPipelineLayoutCreateInfo LayoutCreateInfo{};
 		LayoutCreateInfo.sType					= VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -137,7 +145,7 @@ namespace geodesuka::core::gcl {
 	pipeline::pipeline(context* aContext, raytracer& aRaytracer) {
 		VkResult Result = VkResult::VK_SUCCESS;
 
-		Type = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR;
+		BindPoint = VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR;
 		Context = aContext;
 		Raytracer = aRaytracer;
 
@@ -147,7 +155,7 @@ namespace geodesuka::core::gcl {
 	pipeline::pipeline(context* aContext, compute& aCompute) {
 		VkResult Result = VkResult::VK_SUCCESS;
 
-		Type = VK_PIPELINE_BIND_POINT_COMPUTE;
+		BindPoint = VK_PIPELINE_BIND_POINT_COMPUTE;
 		Context = aContext;
 		Compute = aCompute;
 
@@ -155,8 +163,10 @@ namespace geodesuka::core::gcl {
 	}
 
 	void pipeline::subpass(VkCommandBuffer aCommandBuffer) {
-		vkCmdBindPipeline(aCommandBuffer, Type, Handle);
-		switch (Type) {
+		vkCmdBindPipeline(aCommandBuffer, BindPoint, Handle);
+		vkCmdBindDescriptorSets(aCommandBuffer, BindPoint, Layout, 0, 0, NULL, 0, NULL);
+		
+		switch (BindPoint) {
 		default:
 			break;
 		case VK_PIPELINE_BIND_POINT_GRAPHICS:

@@ -36,7 +36,7 @@ namespace geodesuka::core::object {
 			gcl::image PixelNormal;
 		};
 
-		static constexpr int RTID = 5;
+		static constexpr int ID = 5;
 
 		geometry_buffer *GeometryBuffer;
 
@@ -47,7 +47,7 @@ namespace geodesuka::core::object {
 
 		// ----- rendertarget methods ----- //
 
-		virtual int rtid() override;
+		virtual int id() override;
 
 		// ----- camera methods ----- //
 

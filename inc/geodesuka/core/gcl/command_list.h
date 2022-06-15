@@ -4,6 +4,8 @@
 
 #include <vulkan/vulkan.h>
 
+#include "config.h"
+
 namespace geodesuka::core::gcl {
 
 	//class command_pool;
@@ -14,26 +16,26 @@ namespace geodesuka::core::gcl {
 		friend class command_pool;
 
 		command_list();
-		command_list(VkCommandBuffer aCommandBuffer);
-		command_list(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList);
+		command_list(vk_command_buffer aCommandBuffer);
+		command_list(uint32_t aCommandBufferCount, vk_command_buffer* aCommandBufferList);
 		command_list(const command_list& aCommandList);
 		command_list(command_list&& aCommandList) noexcept;
 		~command_list();
 
-		//command_list& operator=(VkCommandBuffer aRhs);
+		//command_list& operator=(vk_command_buffer aRhs);
 		command_list& operator=(const command_list& aRhs);
 		command_list& operator=(command_list&& aRhs) noexcept;
 
-		//VkCommandBuffer operator[](uint32_t aIndex);
-		VkCommandBuffer& operator[](uint32_t aIndex);
+		//vk_command_buffer operator[](uint32_t aIndex);
+		vk_command_buffer& operator[](uint32_t aIndex);
 
-		command_list& operator+=(VkCommandBuffer aRhs);
+		command_list& operator+=(vk_command_buffer aRhs);
 		command_list& operator+=(const command_list& aRhs);
 
 	private:
 
 		uint32_t n;
-		VkCommandBuffer* ptr;
+		vk_command_buffer* ptr;
 
 	};
 

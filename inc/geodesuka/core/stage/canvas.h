@@ -16,7 +16,11 @@ namespace geodesuka::core::stage {
 	class canvas : public stage_t {
 	public:
 
+		static constexpr int ID = 1;
+
 		~canvas();
+
+		virtual int id() override;
 
 	protected:
 

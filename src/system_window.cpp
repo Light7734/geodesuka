@@ -740,8 +740,8 @@ namespace geodesuka::core::object {
 
 	//VkCommandBuffer system_window::draw(rendertarget* aRenderTarget) {}
 
-	int system_window::rtid() {
-		return RTID;
+	int system_window::id() {
+		return ID;
 	}
 
 	void system_window::next_frame() {

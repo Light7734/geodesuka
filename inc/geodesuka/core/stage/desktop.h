@@ -19,7 +19,13 @@ namespace geodesuka::core::stage {
 
 		friend class engine;
 
+		static constexpr int ID = 0;
+
 		~desktop();
+
+		// ----- stage_t methods ----- //
+
+		virtual int id() override;
 
 	protected:
 

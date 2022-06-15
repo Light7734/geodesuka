@@ -16,8 +16,11 @@ namespace geodesuka::core::stage {
 	class scene2d : public stage_t {
 	public:
 
+		static constexpr int ID = 2;
+
 		~scene2d();
 
+		virtual int id() override;
 
 	protected:
 

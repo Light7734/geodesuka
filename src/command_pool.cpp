@@ -7,20 +7,20 @@ namespace geodesuka::core::gcl {
 	command_pool::command_pool(context* aContext, int aFlags, uint32_t aQueueFamilyIndex) {
 		this->Context = aContext;
 		if (this->Context == nullptr) return;
-		this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		this->CreateInfo.pNext = NULL;
-		this->CreateInfo.flags = aFlags;
-		this->CreateInfo.queueFamilyIndex = aQueueFamilyIndex;
+		this->CreateInfo.sType				= VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		this->CreateInfo.pNext				= NULL;
+		this->CreateInfo.flags				= aFlags;
+		this->CreateInfo.queueFamilyIndex	= aQueueFamilyIndex;
 		vkCreateCommandPool(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 	}
 
 	command_pool::command_pool(context* aContext, int aFlags, device::qfs aQueueFamilySupport) {
 		this->Context = aContext;
 		if (this->Context == nullptr) return;
-		this->CreateInfo.sType = VkStructureType::VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		this->CreateInfo.pNext = NULL;
-		this->CreateInfo.flags = aFlags;
-		this->CreateInfo.queueFamilyIndex = aContext->parent()->qfi(aQueueFamilySupport);
+		this->CreateInfo.sType				= VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+		this->CreateInfo.pNext				= NULL;
+		this->CreateInfo.flags				= aFlags;
+		this->CreateInfo.queueFamilyIndex	= aContext->parent()->qfi(aQueueFamilySupport);
 		vkCreateCommandPool(aContext->handle(), &this->CreateInfo, NULL, &this->Handle);
 	}
 
@@ -39,55 +39,55 @@ namespace geodesuka::core::gcl {
 		Context = nullptr;
 	}
 
-	VkCommandBuffer command_pool::allocate(int aLevel) {
-		VkCommandBufferAllocateInfo AllocateInfo{};
-		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	vk_command_buffer command_pool::allocate(int aLevel) {
+		vk_command_buffer_allocate_info AllocateInfo{};
+		AllocateInfo.sType					= VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		AllocateInfo.pNext					= NULL;
 		AllocateInfo.commandPool			= Handle;
-		AllocateInfo.level					= (VkCommandBufferLevel)aLevel;
+		AllocateInfo.level					= (vk_command_buffer_level)aLevel;
 		AllocateInfo.commandBufferCount		= 1;
-		VkCommandBuffer CommandBuffer		= VK_NULL_HANDLE;
-		VkResult Result = vkAllocateCommandBuffers(this->Context->handle(), &AllocateInfo, &CommandBuffer);
+		vk_command_buffer CommandBuffer		= VK_NULL_HANDLE;
+		vk_result Result = vkAllocateCommandBuffers(this->Context->handle(), &AllocateInfo, &CommandBuffer);
 		return CommandBuffer;
 	}
 
-	VkResult command_pool::allocate(int aLevel, uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList) {
-		VkCommandBufferAllocateInfo AllocateInfo{};
-		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	vk_result command_pool::allocate(int aLevel, uint32_t aCommandBufferCount, vk_command_buffer* aCommandBufferList) {
+		vk_command_buffer_allocate_info AllocateInfo{};
+		AllocateInfo.sType					= VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		AllocateInfo.pNext					= NULL;
 		AllocateInfo.commandPool			= this->Handle;
-		AllocateInfo.level					= (VkCommandBufferLevel)aLevel;
+		AllocateInfo.level					= (vk_command_buffer_level)aLevel;
 		AllocateInfo.commandBufferCount		= aCommandBufferCount;
-		VkResult Result = vkAllocateCommandBuffers(this->Context->handle(), &AllocateInfo, aCommandBufferList);
+		vk_result Result = vkAllocateCommandBuffers(this->Context->handle(), &AllocateInfo, aCommandBufferList);
 		return Result;
 	}
 
 	command_list command_pool::allocate(int aLevel, uint32_t aCommandBufferCount) {
 		command_list ReturnList;
-		VkCommandBufferAllocateInfo AllocateInfo{};
-		AllocateInfo.sType					= VkStructureType::VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+		vk_command_buffer_allocate_info AllocateInfo{};
+		AllocateInfo.sType					= VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		AllocateInfo.pNext					= NULL;
 		AllocateInfo.commandPool			= Handle;
-		AllocateInfo.level					= (VkCommandBufferLevel)aLevel;
+		AllocateInfo.level					= (vk_command_buffer_level)aLevel;
 		AllocateInfo.commandBufferCount		= aCommandBufferCount;
 		ReturnList.n						= aCommandBufferCount;
-		ReturnList.ptr						= (VkCommandBuffer*)malloc(aCommandBufferCount * sizeof(VkCommandBuffer));
+		ReturnList.ptr						= (vk_command_buffer*)malloc(aCommandBufferCount * sizeof(vk_command_buffer));
 		if (ReturnList.ptr != NULL) {
-			VkResult Result = vkAllocateCommandBuffers(Context->handle(), &AllocateInfo, ReturnList.ptr);
+			vk_result Result = vkAllocateCommandBuffers(Context->handle(), &AllocateInfo, ReturnList.ptr);
 		}
 		return ReturnList;
 	}
 
-	void command_pool::release(VkCommandBuffer aCommandBuffer) {
+	void command_pool::release(vk_command_buffer aCommandBuffer) {
 		this->release(1, &aCommandBuffer);
 	}
 
-	void command_pool::release(uint32_t aCommandBufferCount, VkCommandBuffer* aCommandBufferList) {
+	void command_pool::release(uint32_t aCommandBufferCount, vk_command_buffer* aCommandBufferList) {
 
 		uint32_t RemoveCount = 0;
-		VkCommandBuffer* RemoveList = NULL;	
+		vk_command_buffer* RemoveList = NULL;	
 		uint32_t NewCount = 0;
-		VkCommandBuffer* NewList = NULL;
+		vk_command_buffer* NewList = NULL;
 
 		for (uint32_t i = 0; i < aCommandBufferCount; i++) {
 			for (uint32_t j = 0; j < CommandList.n; j++) {
@@ -98,8 +98,8 @@ namespace geodesuka::core::gcl {
 		}
 
 		NewCount = CommandList.n - RemoveCount;
-		RemoveList = (VkCommandBuffer*)malloc(RemoveCount * sizeof(VkCommandBuffer));
-		NewList = (VkCommandBuffer*)malloc(NewCount * sizeof(VkCommandBuffer));
+		RemoveList = (vk_command_buffer*)malloc(RemoveCount * sizeof(vk_command_buffer));
+		NewList = (vk_command_buffer*)malloc(NewCount * sizeof(vk_command_buffer));
 
 		assert(!((RemoveList == NULL) || (NewList == NULL)));
 

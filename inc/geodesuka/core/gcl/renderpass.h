@@ -2,7 +2,7 @@
 #ifndef GEODESUKA_CORE_GCL_RENDERPASS_H
 #define GEODESUKA_CORE_GCL_RENDERPASS_H
 
-#include "../gcl.h"
+#include "config.h"
 
 #include "device.h"
 #include "context.h"

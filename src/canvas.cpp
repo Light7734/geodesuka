@@ -11,6 +11,10 @@ namespace geodesuka::core::stage {
         // Will be used to clear out all windows.
     }
 
+    int canvas::id() {
+        return ID;
+    }
+
     //stage_t::batch canvas::render() {
     //    stage_t::batch DrawBatch;
     //    this->Mutex.lock();

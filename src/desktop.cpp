@@ -10,4 +10,8 @@ namespace geodesuka::core::stage {
 
 	}
 
+	int desktop::id() {
+		return ID;
+	}
+
 }

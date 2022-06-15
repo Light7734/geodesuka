@@ -2,8 +2,8 @@
 
 namespace geodesuka::core::object {
 
-	int virtual_window::rtid() {
-		return RTID;
+	int virtual_window::id() {
+		return ID;
 	}
 
 	VkSubmitInfo virtual_window::draw(size_t aObjectCount, object_t** aObject) {
