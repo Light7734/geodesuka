@@ -229,7 +229,7 @@
     <ClCompile Include="src\pipeline.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\renderpass.cpp" />
-    <ClCompile Include="src\rendertarget.cpp" />
+    <ClCompile Include="src\render_target.cpp" />
     <ClCompile Include="src\scene2d.cpp" />
     <ClCompile Include="src\scene3d.cpp" />
     <ClCompile Include="src\script.cpp" />
@@ -357,7 +357,7 @@
     <ClInclude Include="inc\geodesuka\core\object\camera2d.h" />
     <ClInclude Include="inc\geodesuka\core\object\camera3d.h" />
     <ClInclude Include="inc\geodesuka\core\object\light.h" />
-    <ClInclude Include="inc\geodesuka\core\object\rendertarget.h" />
+    <ClInclude Include="inc\geodesuka\core\object\render_target.h" />
     <ClInclude Include="inc\geodesuka\core\object\skybox.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_display.h" />
     <ClInclude Include="inc\geodesuka\core\object\system_terminal.h" />

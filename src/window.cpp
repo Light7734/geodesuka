@@ -53,7 +53,7 @@ namespace geodesuka::core::object {
 		return false;
 	}
 
-	window::window(engine* aEngine, gcl::context* aContext, stage_t* aStage) : rendertarget(aEngine, aContext, aStage) {
+	window::window(engine* aEngine, gcl::context* aContext, stage_t* aStage) : render_target(aEngine, aContext, aStage) {
 		Title = "";
 		Size = float2(0.0, 0.0);
 	}

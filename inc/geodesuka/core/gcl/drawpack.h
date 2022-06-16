@@ -12,7 +12,7 @@
 
 // Forward Declaration.
 namespace geodesuka::core::object {
-	class rendertarget;
+	class render_target;
 }
 
 namespace geodesuka::core::gcl {
@@ -21,7 +21,7 @@ namespace geodesuka::core::gcl {
 	public:
 
 		context* Context;
-		object::rendertarget* RenderTarget;
+		object::render_target* RenderTarget;
 
 		VkRenderPass RenderPass;
 		VkFramebuffer* FrameBuffer;
@@ -31,7 +31,7 @@ namespace geodesuka::core::gcl {
 		VkPipeline *Pipeline;
 		VkPipelineBindPoint BindPoint;
 
-		drawpack(context *aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
+		drawpack(context *aContext, object::render_target* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
 		~drawpack();
 
 		VkCommandBuffer operator[](int aIndex);

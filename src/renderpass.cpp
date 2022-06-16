@@ -6,7 +6,7 @@
 
 namespace geodesuka::core::gcl {
 
-	renderpass::renderpass(context* aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList) {
+	renderpass::renderpass(context* aContext, object::render_target* aRenderTarget, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList) {
 
 		FramebufferCount = aRenderTarget->FrameCount;
 		Framebuffer = (vk_framebuffer*)malloc(aRenderTarget->FrameCount * sizeof(vk_framebuffer));

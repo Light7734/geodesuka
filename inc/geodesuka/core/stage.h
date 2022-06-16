@@ -34,12 +34,14 @@ namespace geodesuka::core {
 
 		// Stage Objects and Render Targets.
 		std::vector<object_t*> Object;
-		std::vector<object::rendertarget*> RenderTarget;
+		std::vector<object::render_target*> RenderTarget;
 
 		~stage_t();
 
 		// Used for runtime stage discrimination.
 		virtual int id() = 0;
+
+		
 
 	protected:
 

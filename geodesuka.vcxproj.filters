@@ -252,9 +252,6 @@
     <ClCompile Include="src\example.cpp">
       <Filter>src\builtin\stage</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendertarget.cpp">
-      <Filter>src\core\object</Filter>
-    </ClCompile>
     <ClCompile Include="src\str.cpp">
       <Filter>src\core\util</Filter>
     </ClCompile>
@@ -405,6 +402,9 @@
     <ClCompile Include="src\variable.cpp">
       <Filter>src\core\gcl</Filter>
     </ClCompile>
+    <ClCompile Include="src\render_target.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -533,9 +533,6 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\builtin\stage\example.h">
       <Filter>inc\geodesuka\builtin\stage</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object\rendertarget.h">
-      <Filter>inc\geodesuka\core\object</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl.h">
       <Filter>inc\geodesuka\core</Filter>
@@ -719,5 +716,8 @@
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\graphics.h" />
     <ClInclude Include="inc\geodesuka\core\sound.h" />
+    <ClInclude Include="inc\geodesuka\core\object\render_target.h">
+      <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

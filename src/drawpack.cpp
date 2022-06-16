@@ -10,7 +10,7 @@
 
 namespace geodesuka::core::gcl {
 
-	drawpack::drawpack(context* aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList) {
+	drawpack::drawpack(context* aContext, object::render_target* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList) {
 		Context = aContext;
 		RenderTarget = aRenderTarget;
 

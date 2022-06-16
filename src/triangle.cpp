@@ -294,7 +294,7 @@ namespace geodesuka::builtin::object {
 		delete VertexBuffer;
 	}
 
-	VkCommandBuffer triangle::draw(core::object::rendertarget* aRenderTarget) {
+	VkCommandBuffer triangle::draw(core::object::render_target* aRenderTarget) {
 		return CommandBuffer[aRenderTarget->FrameDrawIndex];
 	}
 

@@ -1,14 +1,14 @@
-#include <geodesuka/core/object/rendertarget.h>
+#include <geodesuka/core/object/render_target.h>
 
 #include <geodesuka/core/stage.h>
 
 namespace geodesuka::core::object {
 
-	rendertarget::~rendertarget() {
+	render_target::~render_target() {
 
 	}
 
-	rendertarget::rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/) : 
+	render_target::render_target(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/) : 
 		object_t(aEngine, aContext, aStage), 
 		DrawCommandPool(aContext, 0, gcl::device::qfs::GRAPHICS_AND_COMPUTE)
 	{
@@ -29,7 +29,7 @@ namespace geodesuka::core::object {
 		this->AggregatedDrawCommandList = NULL;
 	}
 
-	gcl::command_batch rendertarget::render(stage_t* aStage) {
+	gcl::command_batch render_target::render(stage_t* aStage) {
 		gcl::command_batch ReturnBatch;
 		this->Mutex.lock();
 
@@ -45,14 +45,14 @@ namespace geodesuka::core::object {
 		return ReturnBatch;
 	}
 
-	void rendertarget::next_frame() {
+	void render_target::next_frame() {
 		this->Mutex.lock();
 		//this->FrameReadIndex = this->FrameDrawIndex;
 		this->FrameDrawIndex = ((this->FrameDrawIndex == (this->FrameCount - 1)) ? 0 : (this->FrameDrawIndex + 1));
 		this->Mutex.unlock();
 	}
 
-	VkPresentInfoKHR rendertarget::present_frame() {
+	VkPresentInfoKHR render_target::present_frame() {
 		// Is left empty, because it is not used for anything besides system_window.
 		VkPresentInfoKHR PresentInfo{};
 		PresentInfo.sType					= VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;

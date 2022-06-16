@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../object.h"
-#include "../object/rendertarget.h"
+#include "../object/render_target.h"
 #include "../object/camera3d.h"
 
 #include "../stage.h"

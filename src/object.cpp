@@ -67,7 +67,7 @@ namespace geodesuka::core {
 		return this->Position;
 	}
 
-	VkCommandBuffer object_t::draw(object::rendertarget* aRenderTarget) {
+	VkCommandBuffer object_t::draw(object::render_target* aRenderTarget) {
 		VkCommandBuffer ReturnDrawCommand = VK_NULL_HANDLE;
 		this->Mutex.lock();
 		/*(this->DrawCommand.find(aRenderTarget) != this->DrawCommand.end())*/
@@ -80,7 +80,7 @@ namespace geodesuka::core {
 
 	// Discriminator for generic render targets. Only works for built in rendertargets.
 	// User is free to create new render targets if he/she/they wish to expand.
-	void object_t::generate_renderops(object::rendertarget* aRenderTarget) {
+	void object_t::generate_renderops(object::render_target* aRenderTarget) {
 		this->Mutex.lock();
 		// Return previously generated command buffers to render target.
 		if (this->DrawCommand.count(aRenderTarget) != 0) {
@@ -97,7 +97,7 @@ namespace geodesuka::core {
 		VkResult Result = VkResult::VK_ERROR_UNKNOWN;
 
 		// Generate new pair for render target.
-		std::pair<object::rendertarget*, VkCommandBuffer*> NewPair = std::pair<object::rendertarget*, VkCommandBuffer*>(aRenderTarget, NULL);
+		std::pair<object::render_target*, VkCommandBuffer*> NewPair = std::pair<object::render_target*, VkCommandBuffer*>(aRenderTarget, NULL);
 		// Allocate space for command buffers, one for each frame.
 		NewPair.second = (VkCommandBuffer*)malloc(aRenderTarget->FrameCount * sizeof(VkCommandBuffer));
 		// Allocate command buffers for rendering.

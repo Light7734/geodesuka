@@ -53,7 +53,7 @@ namespace geodesuka::core {
 
 		friend class engine;
 		friend class stage_t;
-		friend class object::rendertarget;
+		friend class object::render_target;
 		
 		virtual ~object_t() /*= default*/;
 
@@ -67,7 +67,7 @@ namespace geodesuka::core {
 		*/
 		// This is public for rendertargets to access object draw commands.
 		// This is public because it is needed for user defined rendertargets.
-		virtual VkCommandBuffer draw(object::rendertarget* aRenderTarget);
+		virtual VkCommandBuffer draw(object::render_target* aRenderTarget);
 
 	protected:
 
@@ -102,10 +102,10 @@ namespace geodesuka::core {
 		//bool isTransparent;
 
 		// Get rid of this
-		std::map<object::rendertarget*, gcl::drawpack*> DrawPack;
+		std::map<object::render_target*, gcl::drawpack*> DrawPack;
 
 		// The number of draw commands is equal to the number of frames per render target.
-		std::map<object::rendertarget*, VkCommandBuffer*> DrawCommand;
+		std::map<object::render_target*, VkCommandBuffer*> DrawCommand;
 
 
 		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
@@ -121,7 +121,7 @@ namespace geodesuka::core {
 		/*
 		* These methods will be used to generate draw commands.
 		*/
-		virtual void generate_renderops(object::rendertarget* aRenderTarget);
+		virtual void generate_renderops(object::render_target* aRenderTarget);
 		virtual void generate_draw_commands(object::system_display* aSystemDisplay);
 		virtual void generate_draw_commands(object::system_window* aSystemWindow);
 		virtual void generate_draw_commands(object::virtual_window* aVirtualWindow);

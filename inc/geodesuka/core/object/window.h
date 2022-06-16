@@ -31,14 +31,14 @@ Property List:
 #include "../math.h"
 
 #include "../object.h"
-#include "rendertarget.h"
+#include "render_target.h"
 
 namespace geodesuka::core::object {
 
 	// A window is a general type object that can be drawn to, which also has the properties
 	// of every object, which it too can be drawn. Each window has a canvas, which is what is actually drawn
 	// to. A full window is Canvas + Frame.
-	class window : public rendertarget {
+	class window : public render_target {
 	public:
 
 		struct option {

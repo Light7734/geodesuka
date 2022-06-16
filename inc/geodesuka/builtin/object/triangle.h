@@ -14,7 +14,7 @@ namespace geodesuka::builtin::object {
 
 	protected:
 
-		virtual VkCommandBuffer draw(core::object::rendertarget* aRenderTarget) override;
+		virtual VkCommandBuffer draw(core::object::render_target* aRenderTarget) override;
 
 	private:
 

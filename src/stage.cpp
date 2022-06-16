@@ -3,6 +3,30 @@
 
 namespace geodesuka::core {
 
+	// Base destructor.
+	stage_t::~stage_t() {
+		// If engine is in destruction state, do not attempt to remove from engine.
+		//isReadyToBeProcessed.store(false);
+		if (Engine->StateID != engine::state::id::DESTRUCTION) {
+			// Removes Object from Engine State.
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(true);
+				Engine->ThreadTrap.wait_until(2);
+			}
+			// Finds object in engine, and removes it.
+			for (size_t i = 0; i < Engine->Stage.size(); i++) {
+				if (Engine->Stage[i] == this) {
+					Engine->Stage.erase(Engine->Stage.begin() + i);
+				}
+			}
+			if (Engine->StateID == engine::state::id::RUNNING) {
+				Engine->ThreadTrap.set(false);
+			}
+		}
+	}
+
+
+	// Base constructor.
 	stage_t::stage_t(engine* aEngine, gcl::context* aContext) {
 		Engine				= aEngine;
 		Context				= aContext;
@@ -29,26 +53,6 @@ namespace geodesuka::core {
 		return 0;
 	}
 
-	stage_t::~stage_t() {
-		// If engine is in destruction state, do not attempt to remove from engine.
-		//isReadyToBeProcessed.store(false);
-		if (Engine->StateID != engine::state::id::DESTRUCTION) {
-			// Removes Object from Engine State.
-			if (Engine->StateID == engine::state::id::RUNNING) {
-				Engine->ThreadTrap.set(true);
-				Engine->ThreadTrap.wait_until(2);
-			}
-			// Finds object in engine, and removes it.
-			for (size_t i = 0; i < Engine->Stage.size(); i++) {
-				if (Engine->Stage[i] == this) {
-					Engine->Stage.erase(Engine->Stage.begin() + i);
-				}
-			}
-			if (Engine->StateID == engine::state::id::RUNNING) {
-				Engine->ThreadTrap.set(false);
-			}
-		}
-	}
 
 	VkSubmitInfo stage_t::update(double aDeltaTime) {
 		VkSubmitInfo TransferBatch{};

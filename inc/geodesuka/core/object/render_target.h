@@ -6,8 +6,8 @@
 /// </summary>
 
 #pragma once
-#ifndef GEODESUKA_CORE_OBJECT_RENDERTARGET_H
-#define GEODESUKA_CORE_OBJECT_RENDERTARGET_H
+#ifndef GEODESUKA_CORE_OBJECT_RENDER_TARGET_H
+#define GEODESUKA_CORE_OBJECT_RENDER_TARGET_H
 
 //#include <vector>
 
@@ -25,7 +25,7 @@
 
 namespace geodesuka::core::object {
 
-	class rendertarget : public object_t {
+	class render_target : public object_t {
 	public:
 
 		friend class engine;
@@ -44,7 +44,7 @@ namespace geodesuka::core::object {
 
 		gcl::command_pool DrawCommandPool;
 
-		~rendertarget();
+		~render_target();
 
 		// Used for runtime rendertarget discrimination.
 		virtual int id() = 0;
@@ -83,9 +83,9 @@ namespace geodesuka::core::object {
 		uint32_t* AggregatedDrawCommandCount;
 		VkCommandBuffer** AggregatedDrawCommandList;
 
-		rendertarget(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/);
+		render_target(engine* aEngine, gcl::context* aContext, stage_t* aStage/*, int aFrameCount, double aFrameRate*/);
 
 	};
 }
 
-#endif // !GEODESUKA_CORE_OBJECT_RENDERTARGET_H
+#endif // !GEODESUKA_CORE_OBJECT_RENDER_TARGET_H

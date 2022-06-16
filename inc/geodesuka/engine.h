@@ -43,7 +43,7 @@
 
 #include "core/object/system_terminal.h"
 
-#include "core/object/rendertarget.h"
+#include "core/object/render_target.h"
 
 #include "core/object/window.h"
 #include "core/object/system_display.h"

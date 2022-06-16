@@ -10,7 +10,7 @@
 
 // Forward Declaration.
 namespace geodesuka::core::object {
-	class rendertarget;
+	class render_target;
 }
 
 namespace geodesuka::core::gcl {
@@ -22,14 +22,14 @@ namespace geodesuka::core::gcl {
 		uint32_t FramebufferCount;
 		vk_framebuffer* Framebuffer;
 
-		renderpass(context *aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList);
+		renderpass(context *aContext, object::render_target* aRenderTarget, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList);
 		//renderpass(context* aContext, uint32_t aAttachmentCount, vk_image_view* aAttachmentList, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList);
 		~renderpass();
 
 	private:
 
 		context* Context;
-		object::rendertarget* RenderTarget;
+		object::render_target* RenderTarget;
 
 	};
 

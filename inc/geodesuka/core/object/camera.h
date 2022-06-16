@@ -28,11 +28,11 @@
 //#include "../graphical/frame_buffer.h"
 
 #include "../object.h"
-#include "rendertarget.h"
+#include "render_target.h"
 
 namespace geodesuka::core::object {
 
-	class camera : public rendertarget {
+	class camera : public render_target {
 	public:
 
 		~camera();
