@@ -8,23 +8,28 @@
 #include "context.h"
 #include "image.h"
 
+// Forward Declaration.
+namespace geodesuka::core::object {
+	class rendertarget;
+}
+
 namespace geodesuka::core::gcl {
 
 	class renderpass {
 	public:
 
-		context* Context;
-		//object::rendertarget* RenderTarget;
+		vk_render_pass Handle;
+		uint32_t FramebufferCount;
+		vk_framebuffer* Framebuffer;
 
-		VkRenderPass RenderPass;
-		VkFramebuffer* FrameBuffer;
-		VkCommandBuffer* CommandBuffer;
-
-		//renderpass(context* aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
-		renderpass(context* aContext, uint32_t aAttachmentCount, VkImageView* aAttachmentList, uint32_t aSubpassDescriptionCount, VkSubpassDescription* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, VkSubpassDependency* aSubpassDependencyList);
+		renderpass(context *aContext, object::rendertarget* aRenderTarget, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList);
+		//renderpass(context* aContext, uint32_t aAttachmentCount, vk_image_view* aAttachmentList, uint32_t aSubpassDescriptionCount, vk_subpass_description* aSubpassDescriptionList, uint32_t aSubpassDependencyCount, vk_subpass_dependency* aSubpassDependencyList);
 		~renderpass();
 
 	private:
+
+		context* Context;
+		object::rendertarget* RenderTarget;
 
 	};
 

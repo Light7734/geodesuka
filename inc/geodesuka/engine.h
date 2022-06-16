@@ -63,7 +63,7 @@
 #include "core/stage/scene2d.h"
 #include "core/stage/scene3d.h"
 
-// App entry point for engine.
+/* Application */
 #include "core/app.h"
 
 namespace geodesuka {
@@ -98,7 +98,7 @@ namespace geodesuka {
 		~engine();
 
 		// TODO: Reference Pools?
-		const char* get_process_directory();
+		//const char* get_process_directory();
 		core::io::file* open(const char* aFilePath);
 		void close(core::io::file* aFile);
 
