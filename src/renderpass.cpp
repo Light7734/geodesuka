@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include <geodesuka/core/object/rendertarget.h>
+#include <geodesuka/core/object/render_target.h>
 
 namespace geodesuka::core::gcl {
 

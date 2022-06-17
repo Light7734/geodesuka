@@ -1,6 +1,6 @@
 #include <geodesuka/core/gcl/drawpack.h>
 
-#include <geodesuka/core/object/rendertarget.h>
+#include <geodesuka/core/object/render_target.h>
 
 #include <assert.h>
 
