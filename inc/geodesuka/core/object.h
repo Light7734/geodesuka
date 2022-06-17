@@ -17,144 +17,16 @@
 #ifndef GEODESUKA_CORE_OBJECT_H
 #define GEODESUKA_CORE_OBJECT_H
 
-#include <atomic>
-#include <mutex>
-#include <map>
-
-#include "./math.h"
-
-#include "gcl/device.h"
-#include "gcl/context.h"
-#include "gcl/drawpack.h"
-
-//#include "graphics/mesh.h"
-//#include "graphics/material.h"
-//#include "graphics/model.h"
-
-#include "hid/keyboard.h"
-#include "hid/mouse.h"
-#include "hid/joystick.h"
-
-// Forward declared built in render targets.
-namespace geodesuka::core::object {
-	class system_display;
-	class system_window;
-	class virtual_window;
-	class camera2d;
-	class camera3d;
-}
-
-namespace geodesuka::core {
-
-	class stage_t;
-
-	class object_t {
-	public:
-
-		friend class engine;
-		friend class stage_t;
-		friend class object::render_target;
-		
-		virtual ~object_t() /*= default*/;
-
-		virtual void set_position(float3 aPosition);
-		float3 get_position() const;
-
-		/*
-		* This function will be called by a particular rendertarget to gather Draw Commands
-		* from the object in question. Base object class must provide default render methods for generic
-		* runtime data.
-		*/
-		// This is public for rendertargets to access object draw commands.
-		// This is public because it is needed for user defined rendertargets.
-		virtual VkCommandBuffer draw(object::render_target* aRenderTarget);
-
-	protected:
-
-		// Used for shared usage between Engine & App.
-		std::mutex Mutex;
-		std::atomic<bool> isReadyToBeProcessed;
-
-		// Parent Item References
-		engine* Engine;
-		gcl::context* Context;
-		stage_t* Stage;
-
-		/*
-		* Do not forget, position is in reference to a particular space
-		* the object is in. This is up to the user to decide how to
-		* interpret and use an objects position.
-		*/
-
-		float3 InputVelocity;
-		float3 InputForce;
-
-		float Mass;				// Kilogram		[kg]
-		float Time;				// Second 		[s]
-		float3 Position;		// Meter		[m]
-		float3 Momentum;		//				[kg*m/s]
-		float3 Force;			// Newton		[kg*m^2/s^2]
-		float3 DirectionX;		// Right		[Normalized]
-		float3 DirectionY;		// Up			[Normalized]
-		float3 DirectionZ;		// Forward		[Normalized]
-
-		// Processsing Flags.
-		//bool isTransparent;
-
-		// Get rid of this
-		std::map<object::render_target*, gcl::drawpack*> DrawPack;
-
-		// The number of draw commands is equal to the number of frames per render target.
-		std::map<object::render_target*, VkCommandBuffer*> DrawCommand;
-
-
-		//boolean isStationary;			// Is this object stationary, or is it allowed to move?
-		//boolean isDeterministic;		// Does this object have predefined motion?
-		//boolean isAnimate;				// Is this object a living creature?
-		//boolean isPickup;				// Can an entitiy pick up this object?
-
-		//boolean isCollisionActive;
-		//boolean isGraphicalActive;
-
-		object_t(engine *aEngine, gcl::context *aContext, stage_t* aStage);
-
-		/*
-		* These methods will be used to generate draw commands.
-		*/
-		virtual void generate_renderops(object::render_target* aRenderTarget);
-		virtual void generate_draw_commands(object::system_display* aSystemDisplay);
-		virtual void generate_draw_commands(object::system_window* aSystemWindow);
-		virtual void generate_draw_commands(object::virtual_window* aVirtualWindow);
-		virtual void generate_draw_commands(object::camera2d* aCamera2D);
-		virtual void generate_draw_commands(object::camera3d* aCamera3D);
-
-		/*
-		* If input stream is being forwarded to a particular instance of an object,
-		* this method will be called depending on input recieved by the engine. This
-		* method is effectively a forwarded callback stream for the particular instance
-		* of the object.
-		*/
-		virtual void input(const hid::keyboard& aKeyboard);
-
-		/*
-		* Basically a call back as well, but uses mouse info instead.
-		*/
-		virtual void input(const hid::mouse& aMouse);
-
-		/*
-		* The implementation of this method will allow the object to internally time evolve
-		* itself with a provided time step. It will be the responsibility of the engine
-		* to insure that the time step remains stable.
-		*/
-		virtual VkSubmitInfo update(double aDeltaTime);
-
-		/*
-		* Will produce compute operation submissions.
-		*/
-		virtual VkSubmitInfo compute();
-
-	};
-
-}
+#include "object_t.h"
+#include "object/system_terminal.h"
+#include "object/render_target.h"
+#include "object/window.h"
+#include "object/system_display.h"
+#include "object/system_window.h"
+#include "object/virtual_window.h"
+#include "object/camera.h"
+#include "object/camera2d.h"
+#include "object/camera3d.h"
+#include "object/text.h"
 
 #endif // !GEODESUKA_CORE_OBJECT_H

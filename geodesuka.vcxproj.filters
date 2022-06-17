@@ -183,9 +183,6 @@
     <ClCompile Include="src\mouse.cpp">
       <Filter>src\core\hid</Filter>
     </ClCompile>
-    <ClCompile Include="src\object.cpp">
-      <Filter>src\core</Filter>
-    </ClCompile>
     <ClCompile Include="src\system_window.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
@@ -206,9 +203,6 @@
     </ClCompile>
     <ClCompile Include="src\log.cpp">
       <Filter>src\core\util</Filter>
-    </ClCompile>
-    <ClCompile Include="src\stage.cpp">
-      <Filter>src\core</Filter>
     </ClCompile>
     <ClCompile Include="src\engine.cpp">
       <Filter>src</Filter>
@@ -405,6 +399,12 @@
     <ClCompile Include="src\render_target.cpp">
       <Filter>src\core\object</Filter>
     </ClCompile>
+    <ClCompile Include="src\object_t.cpp">
+      <Filter>src\core\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stage_t.cpp">
+      <Filter>src\core\stage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -483,17 +483,11 @@
     <ClInclude Include="inc\geodesuka\core\io\script.h">
       <Filter>inc\geodesuka\core\io</Filter>
     </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\object.h">
-      <Filter>inc\geodesuka\core</Filter>
-    </ClInclude>
     <ClInclude Include="inc\geodesuka\core\gcl\context.h">
       <Filter>inc\geodesuka\core\gcl</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\util\log.h">
       <Filter>inc\geodesuka\core\util</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\geodesuka\core\stage.h">
-      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h">
       <Filter>inc\geodesuka\core\stage</Filter>
@@ -718,6 +712,18 @@
     <ClInclude Include="inc\geodesuka\core\sound.h" />
     <ClInclude Include="inc\geodesuka\core\object\render_target.h">
       <Filter>inc\geodesuka\core\object</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object_t.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\stage_t.h">
+      <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -225,7 +225,7 @@
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\mouse.cpp" />
     <ClCompile Include="src\multiply.cpp" />
-    <ClCompile Include="src\object.cpp" />
+    <ClCompile Include="src\object_t.cpp" />
     <ClCompile Include="src\pipeline.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
     <ClCompile Include="src\renderpass.cpp" />
@@ -238,7 +238,7 @@
     <ClCompile Include="src\short3.cpp" />
     <ClCompile Include="src\short4.cpp" />
     <ClCompile Include="src\skybox.cpp" />
-    <ClCompile Include="src\stage.cpp" />
+    <ClCompile Include="src\stage_t.cpp" />
     <ClCompile Include="src\str.cpp" />
     <ClCompile Include="src\system_display.cpp" />
     <ClCompile Include="src\system_terminal.cpp" />
@@ -365,12 +365,14 @@
     <ClInclude Include="inc\geodesuka\core\object\text.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\object_t.h" />
     <ClInclude Include="inc\geodesuka\core\sound.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />
     <ClInclude Include="inc\geodesuka\core\stage\canvas.h" />
     <ClInclude Include="inc\geodesuka\core\stage\desktop.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene2d.h" />
     <ClInclude Include="inc\geodesuka\core\stage\scene3d.h" />
+    <ClInclude Include="inc\geodesuka\core\stage_t.h" />
     <ClInclude Include="inc\geodesuka\core\util.h" />
     <ClInclude Include="inc\geodesuka\core\util\log.h" />
     <ClInclude Include="inc\geodesuka\core\util\str.h" />

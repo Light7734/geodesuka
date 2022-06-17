@@ -8,7 +8,6 @@
 
 namespace geodesuka::core {
 
-
 	class app {
 	public:
 

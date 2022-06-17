@@ -29,41 +29,22 @@
 /* Human Interface Device Library */
 #include "core/hid.h"
 
+/* Sound Library */
+#include "core/sound.h"
+
 /* Graphics & Computation Library */
 #include "core/gcl.h"
 
 /* Graphics */
 #include "core/graphics.h"
 
-/* Sound Library */
-#include "core/sound.h"
-
-/* Objects */
+/* Object Library */
 #include "core/object.h"
 
-#include "core/object/system_terminal.h"
-
-#include "core/object/render_target.h"
-
-#include "core/object/window.h"
-#include "core/object/system_display.h"
-#include "core/object/system_window.h"
-#include "core/object/virtual_window.h"
-
-#include "core/object/camera.h"
-#include "core/object/camera2d.h"
-#include "core/object/camera3d.h"
-
-#include "core/object/text.h"
-
-/* Stages */
+/* Stage Library */
 #include "core/stage.h"
-#include "core/stage/desktop.h"
-#include "core/stage/canvas.h"
-#include "core/stage/scene2d.h"
-#include "core/stage/scene3d.h"
 
-/* Application */
+/* Application Interface */
 #include "core/app.h"
 
 namespace geodesuka {
