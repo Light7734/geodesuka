@@ -225,6 +225,7 @@
     <ClCompile Include="src\model.cpp" />
     <ClCompile Include="src\mouse.cpp" />
     <ClCompile Include="src\multiply.cpp" />
+    <ClCompile Include="src\object_list.cpp" />
     <ClCompile Include="src\object_t.cpp" />
     <ClCompile Include="src\pipeline.cpp" />
     <ClCompile Include="src\quaternion.cpp" />
@@ -365,6 +366,7 @@
     <ClInclude Include="inc\geodesuka\core\object\text.h" />
     <ClInclude Include="inc\geodesuka\core\object\virtual_window.h" />
     <ClInclude Include="inc\geodesuka\core\object\window.h" />
+    <ClInclude Include="inc\geodesuka\core\object_list.h" />
     <ClInclude Include="inc\geodesuka\core\object_t.h" />
     <ClInclude Include="inc\geodesuka\core\sound.h" />
     <ClInclude Include="inc\geodesuka\core\stage.h" />

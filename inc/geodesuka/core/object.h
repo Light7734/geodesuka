@@ -18,6 +18,7 @@
 #define GEODESUKA_CORE_OBJECT_H
 
 #include "object_t.h"
+//#include "object_list.h"
 #include "object/system_terminal.h"
 #include "object/render_target.h"
 #include "object/window.h"

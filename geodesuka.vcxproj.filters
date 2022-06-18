@@ -405,6 +405,9 @@
     <ClCompile Include="src\stage_t.cpp">
       <Filter>src\core\stage</Filter>
     </ClCompile>
+    <ClCompile Include="src\object_list.cpp">
+      <Filter>src\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="README.md" />
@@ -723,6 +726,9 @@
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
     <ClInclude Include="inc\geodesuka\core\stage_t.h">
+      <Filter>inc\geodesuka\core</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\geodesuka\core\object_list.h">
       <Filter>inc\geodesuka\core</Filter>
     </ClInclude>
   </ItemGroup>
