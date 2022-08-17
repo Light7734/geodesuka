@@ -14,8 +14,6 @@ asynchronously, the main focus here on out, is getting something to be drawn to 
 has been created derived from canvas, where a system window is a render target, it will mark the first successful usage 
 of the geodesuka engine for graphics capability that will be extendable.
 
-<div align="center">
-
 # Description
 
 The name "Geodesuka" has it's origins from a General Relativity class I took with a friend in 2017. It was
